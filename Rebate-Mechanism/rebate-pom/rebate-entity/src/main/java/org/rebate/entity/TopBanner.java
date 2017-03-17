@@ -1,8 +1,10 @@
 package org.rebate.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
 import org.rebate.entity.base.BaseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,33 +17,32 @@ import org.springframework.web.multipart.MultipartFile;
 @Entity
 @Table(name = "rm_top_banner")
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_top_banner_sequence")
-public class TopBanner extends BaseEntity{
+public class TopBanner extends BaseEntity {
 
-  /**
-   * 
-   */
+
   private static final long serialVersionUID = 1L;
-  
+
   /**
    * banner名称
    */
   private String bannerName;
-  
+
   /**
    * banner URL
    */
   private String bannerUrl;
-  
+
   /**
    * 是否生效
    */
   private Boolean isActive;
-  
+
   /**
    * banner 图片内容
    */
   private MultipartFile bannerPicture;
 
+  @Column(length = 100)
   public String getBannerName() {
     return bannerName;
   }
@@ -50,6 +51,7 @@ public class TopBanner extends BaseEntity{
     this.bannerName = bannerName;
   }
 
+  @Column(length = 200)
   public String getBannerUrl() {
     return bannerUrl;
   }
