@@ -47,20 +47,19 @@ public class CommonEnum {
     FREE_PARKING
   }
 
-  /**
-   * 支付方式
-   */
-  public enum PaymentType {
-
-    /** 翼支付 */
-    TELECOM,
-    /** 微信支付 */
-    WECHAT,
-    /** 支付宝支付 */
-    ALIPAY,
-    /** 代金券支付 */
-    COUPON
-  }
+  // /**
+  // * 支付方式
+  // */
+  // public enum PaymentType {
+  // /** 翼支付 */
+  // TELECOM,
+  // /** 微信支付 */
+  // WECHAT,
+  // /** 支付宝支付 */
+  // ALIPAY,
+  // /** 乐分支付 */
+  // LESCORE
+  // }
 
   /**
    * 审核状态
@@ -78,5 +77,41 @@ public class CommonEnum {
     AUDIT_FAILED
 
   }
+  /**
+   * 代理级别
+   * 
+   *
+   */
+  public enum AgencyLevel {
+    /** 省 */
+    PROVINCE,
+    /** 市 */
+    CITY,
+    /** 县 */
+    COUNTY,
+    /** 镇 */
+    TOWN
 
+  }
+
+  /**
+   * 配置项名称
+   * 
+   *
+   */
+  public enum SystemConfigKey {
+    /** 支付方式 */
+    PAYMENTTYPE
+
+  }
+
+  /**
+   * 返利类型
+   */
+  public enum RebateType {
+    /** 消费返用户积分 */
+    REBATE_USER,
+    /** 消费返商户积分 */
+    REBATE_SELLER
+  }
 }

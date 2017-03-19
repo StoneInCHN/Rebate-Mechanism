@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -17,7 +18,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.rebate.entity.base.BaseEntity;
 
 /**
- * Entity - 商家评价
+ * Entity - 用户对商家评价
  * 
  * @author Andrea
  *
@@ -59,6 +60,21 @@ public class SellerEvaluate extends BaseEntity {
   /** 评价的图片 */
   private List<SellerEvaluateImage> evaluateImages = new ArrayList<SellerEvaluateImage>();
 
+  /**
+   * 评价对应的订单
+   * 
+   */
+  private Order order;
+
+
+  @OneToOne(mappedBy = "evaluate")
+  public Order getOrder() {
+    return order;
+  }
+
+  public void setOrder(Order order) {
+    this.order = order;
+  }
 
   @Valid
   @ElementCollection

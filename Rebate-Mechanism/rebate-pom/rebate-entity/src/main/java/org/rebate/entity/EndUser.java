@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
+import org.rebate.entity.commonenum.CommonEnum.AgencyLevel;
 import org.rebate.entity.commonenum.CommonEnum.Gender;
 
 /**
@@ -66,6 +67,11 @@ public class EndUser extends BaseEntity {
    * 推荐人
    */
   private String recommender;
+
+  /**
+   * 推荐人ID
+   */
+  private Long recommenderId;
 
   /**
    * 账号状态
@@ -116,47 +122,62 @@ public class EndUser extends BaseEntity {
   private Seller seller;
 
   /**
-   * 积分
+   * 当前积分
    */
-  private BigDecimal score;
+  private BigDecimal curScore;
 
   /**
-   * 乐心
+   * 当前乐心
    */
-  private BigDecimal leMind;
+  private BigDecimal curLeMind;
 
   /**
-   * 乐分
+   * 当前乐分
    */
-  private BigDecimal leScore;
+  private BigDecimal curLeScore;
+
+  /**
+   * 累计积分
+   */
+  private BigDecimal totalScore;
+
+  /**
+   * 累计乐心
+   */
+  private BigDecimal totalLeMind;
+
+  /**
+   * 累计乐分
+   */
+  private BigDecimal totalLeScore;
+
+  /**
+   * 代理级别
+   */
+  private AgencyLevel agencyLevel;
 
 
+  /**
+   * 用户订单
+   */
+  private Set<Order> userOrders = new HashSet<Order>();
 
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getScore() {
-    return score;
+
+  @OneToMany(mappedBy = "endUser")
+  public Set<Order> getUserOrders() {
+    return userOrders;
   }
 
-  public void setScore(BigDecimal score) {
-    this.score = score;
+  public void setUserOrders(Set<Order> userOrders) {
+    this.userOrders = userOrders;
   }
 
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getLeMind() {
-    return leMind;
+  public AgencyLevel getAgencyLevel() {
+    return agencyLevel;
   }
 
-  public void setLeMind(BigDecimal leMind) {
-    this.leMind = leMind;
-  }
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getLeScore() {
-    return leScore;
-  }
-
-  public void setLeScore(BigDecimal leScore) {
-    this.leScore = leScore;
+  public void setAgencyLevel(AgencyLevel agencyLevel) {
+    this.agencyLevel = agencyLevel;
   }
 
   @OneToOne(mappedBy = "endUser")
@@ -302,4 +323,67 @@ public class EndUser extends BaseEntity {
   public void setRecommender(String recommender) {
     this.recommender = recommender;
   }
+
+  public Long getRecommenderId() {
+    return recommenderId;
+  }
+
+  public void setRecommenderId(Long recommenderId) {
+    this.recommenderId = recommenderId;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getCurScore() {
+    return curScore;
+  }
+
+  public void setCurScore(BigDecimal curScore) {
+    this.curScore = curScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getCurLeMind() {
+    return curLeMind;
+  }
+
+  public void setCurLeMind(BigDecimal curLeMind) {
+    this.curLeMind = curLeMind;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getCurLeScore() {
+    return curLeScore;
+  }
+
+  public void setCurLeScore(BigDecimal curLeScore) {
+    this.curLeScore = curLeScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getTotalScore() {
+    return totalScore;
+  }
+
+  public void setTotalScore(BigDecimal totalScore) {
+    this.totalScore = totalScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getTotalLeMind() {
+    return totalLeMind;
+  }
+
+  public void setTotalLeMind(BigDecimal totalLeMind) {
+    this.totalLeMind = totalLeMind;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getTotalLeScore() {
+    return totalLeScore;
+  }
+
+  public void setTotalLeScore(BigDecimal totalLeScore) {
+    this.totalLeScore = totalLeScore;
+  }
+
 }

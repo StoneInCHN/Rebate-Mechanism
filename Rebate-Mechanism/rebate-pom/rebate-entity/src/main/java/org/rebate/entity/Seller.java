@@ -1,19 +1,27 @@
 package org.rebate.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
@@ -145,7 +153,52 @@ public class Seller extends BaseEntity {
    */
   private EndUser endUser;
 
+  /**
+   * 商家订单
+   */
+  private Set<Order> sellerOrders = new HashSet<Order>();
 
+  /**
+   * 商户收款二维码
+   */
+  private byte[] qrImage;
+
+  /**
+   * 商家环境图片
+   */
+  private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
+
+
+  @Valid
+  @ElementCollection
+  @LazyCollection(LazyCollectionOption.FALSE)
+  @CollectionTable(name = "rm_seller_env_image")
+  public List<SellerEnvImage> getEnvImages() {
+    return envImages;
+  }
+
+  public void setEnvImages(List<SellerEnvImage> envImages) {
+    this.envImages = envImages;
+  }
+
+  @Lob
+  @Column(length = 100000, columnDefinition = "blob")
+  public byte[] getQrImage() {
+    return qrImage;
+  }
+
+  public void setQrImage(byte[] qrImage) {
+    this.qrImage = qrImage;
+  }
+
+  @OneToMany(mappedBy = "seller")
+  public Set<Order> getSellerOrders() {
+    return sellerOrders;
+  }
+
+  public void setSellerOrders(Set<Order> sellerOrders) {
+    this.sellerOrders = sellerOrders;
+  }
 
   @OneToOne
   public EndUser getEndUser() {
