@@ -122,10 +122,14 @@ public class CommonEnum {
    * 返利类型
    */
   public enum RebateType {
-    /** 消费返用户积分 */
-    REBATE_USER,
-    /** 消费返商户积分 */
-    REBATE_SELLER
+    /** 消费返用户 */
+    CONSUME_USER,
+    /** 消费返商户 */
+    CONSUME_SELLER,
+    /** 推荐返利 */
+    RECOMMEND,
+    /** 代理商提成 */
+    AGENT
   }
   public enum FileType {
 

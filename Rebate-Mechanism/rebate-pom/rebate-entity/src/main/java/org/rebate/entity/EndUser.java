@@ -137,6 +137,21 @@ public class EndUser extends BaseEntity {
   private BigDecimal curLeScore;
 
   /**
+   * 激励乐分
+   */
+  private BigDecimal motivateLeScore;
+
+  /**
+   * 商家收益乐分
+   */
+  private BigDecimal merchantLeScore;
+
+  /**
+   * 分红乐分
+   */
+  private BigDecimal bonusCurLeScore;
+
+  /**
    * 累计积分
    */
   private BigDecimal totalScore;
@@ -152,6 +167,16 @@ public class EndUser extends BaseEntity {
   private BigDecimal totalLeScore;
 
   /**
+   * 当前乐豆
+   */
+  private BigDecimal curLeBean;
+
+  /**
+   * 累计乐豆（无法提取）
+   */
+  private BigDecimal totalLeBean;
+
+  /**
    * 代理级别
    */
   private AgencyLevel agencyLevel;
@@ -162,6 +187,51 @@ public class EndUser extends BaseEntity {
    */
   private Set<Order> userOrders = new HashSet<Order>();
 
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getMotivateLeScore() {
+    return motivateLeScore;
+  }
+
+  public void setMotivateLeScore(BigDecimal motivateLeScore) {
+    this.motivateLeScore = motivateLeScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getMerchantLeScore() {
+    return merchantLeScore;
+  }
+
+  public void setMerchantLeScore(BigDecimal merchantLeScore) {
+    this.merchantLeScore = merchantLeScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getBonusCurLeScore() {
+    return bonusCurLeScore;
+  }
+
+  public void setBonusCurLeScore(BigDecimal bonusCurLeScore) {
+    this.bonusCurLeScore = bonusCurLeScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getCurLeBean() {
+    return curLeBean;
+  }
+
+  public void setCurLeBean(BigDecimal curLeBean) {
+    this.curLeBean = curLeBean;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getTotalLeBean() {
+    return totalLeBean;
+  }
+
+  public void setTotalLeBean(BigDecimal totalLeBean) {
+    this.totalLeBean = totalLeBean;
+  }
 
   @OneToMany(mappedBy = "endUser")
   public Set<Order> getUserOrders() {

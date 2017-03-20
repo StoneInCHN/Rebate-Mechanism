@@ -12,27 +12,27 @@ import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.RebateType;
 
 /**
- * 用户消费返利积分记录
+ * 返利记录(包括消费返利，推荐返利，提成返利)
  * 
  * @author Andrea
  *
  */
 @Entity
-@Table(name = "rm_rebate_score")
+@Table(name = "rm_rebate_record")
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_rebate_score_sequence")
-public class RebateScore extends BaseEntity {
+public class RebateRecord extends BaseEntity {
 
 
   private static final long serialVersionUID = 1L;
 
 
   /**
-   * 返利积分所属商家
+   * 消费返利的商家
    */
   private Seller seller;
 
   /**
-   * 返利积分的用户
+   * 返利积分的用户（用户可以是endUser或seller）
    */
   private EndUser endUser;
 
@@ -50,17 +50,85 @@ public class RebateScore extends BaseEntity {
    * 返利积分
    */
   private BigDecimal rebateScore;
+
+  /**
+   * 返利乐心
+   */
+  private BigDecimal rebateLeMind;
+
+  /**
+   * 返利乐分
+   */
+  private BigDecimal rebateLeScore;
   /**
    * 返利类型
    */
   private RebateType rebateType;
 
   /**
+   * 用户当前积分
+   */
+  private BigDecimal userCurScore;
+
+  /**
+   * 用户当前乐心
+   */
+  private BigDecimal userCurLeMind;
+
+  /**
+   * 用户当前乐分
+   */
+  private BigDecimal userCurLeScore;
+  /**
    * 备注
    */
   private String remark;
 
 
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getRebateLeMind() {
+    return rebateLeMind;
+  }
+
+  public void setRebateLeMind(BigDecimal rebateLeMind) {
+    this.rebateLeMind = rebateLeMind;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getRebateLeScore() {
+    return rebateLeScore;
+  }
+
+  public void setRebateLeScore(BigDecimal rebateLeScore) {
+    this.rebateLeScore = rebateLeScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getUserCurLeMind() {
+    return userCurLeMind;
+  }
+
+  public void setUserCurLeMind(BigDecimal userCurLeMind) {
+    this.userCurLeMind = userCurLeMind;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getUserCurLeScore() {
+    return userCurLeScore;
+  }
+
+  public void setUserCurLeScore(BigDecimal userCurLeScore) {
+    this.userCurLeScore = userCurLeScore;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getUserCurScore() {
+    return userCurScore;
+  }
+
+  public void setUserCurScore(BigDecimal userCurScore) {
+    this.userCurScore = userCurScore;
+  }
 
   public Long getOrderId() {
     return orderId;
