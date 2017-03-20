@@ -7,6 +7,19 @@ package org.rebate.entity.commonenum;
  *
  */
 public class CommonEnum {
+
+  /**
+   * 帐号状态
+   */
+  public enum AdminStatus {
+
+    /** 帐号正常 */
+    actived,
+
+    /** 帐号锁定 */
+    locked
+  }
+
   /**
    * 帐号状态
    */
@@ -113,5 +126,12 @@ public class CommonEnum {
     REBATE_USER,
     /** 消费返商户积分 */
     REBATE_SELLER
+  }
+  public enum FileType {
+
+    /** 图片 */
+    image,
+    /** 文件 */
+    file
   }
 }

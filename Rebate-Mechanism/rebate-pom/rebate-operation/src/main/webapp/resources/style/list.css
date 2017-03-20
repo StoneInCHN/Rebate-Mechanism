@@ -1,0 +1,47 @@
+#listForm .operation{
+	margin-top:10px;
+}
+#listForm .operationButton{
+	/* height:30px; */
+}
+.operationButton .btn{
+	line-height:20px;
+}
+#listTable .sort{
+	color:#666666;
+	
+}
+.dropdown a , .dropdown .caret{
+	color:#666;
+}
+/*时间选择器*/
+.dateClass{
+	margin:8px 10px 0px 5px;
+}
+.dateClass input{
+	width:90px;	
+}
+
+.dropdown-menu a.checked {
+	color: #2b2b2b;
+	font-weight: bold;
+	background: url(../images/common.gif) -220px -150px no-repeat;
+}
+
+.dropdown-menu a.active {
+	color: #2b2b2b;
+	font-weight: bold;
+	background: url(../images/common.gif) -220px -150px no-repeat;
+}
+
+.dropdown-menu li.active {
+	color: #2b2b2b;
+	font-weight: bold;
+	background: url(../images/common.gif) -220px -150px no-repeat;
+}
+
+.dropdown-menu li.active a:hover {
+	color: #2b2b2b !important;
+}
+
+td i{font-size:17px;}

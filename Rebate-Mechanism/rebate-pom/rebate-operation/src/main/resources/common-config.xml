@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csh>
+	<setting name="passwordMinlength" value="6" />
+	<setting name="passwordMaxlength" value="32" />
+	<setting name="mobilePattern" value="^1[3|4|5|8][0-9]\d{8}$" />
+	<setting name="captchaTypes"
+		value="adminLogin,adminApply,findPassword,resetPassword,other" />
+
+	<setting name="siteName" value="rebate" />
+	<setting name="smtpFromMail" value="microctrllife@163.com" />
+	<setting name="smtpHost" value="smtp.163.com" />
+	<setting name="smtpPort" value="25" />
+	<setting name="smtpUsername" value="microctrllife@163.com" />
+	<setting name="smtpPassword" value="o123456" />
+
+
+</csh>	
+	

@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,6 +69,7 @@ public class TopBanner extends BaseEntity {
     this.isActive = isActive;
   }
 
+  @Transient
   public MultipartFile getBannerPicture() {
     return bannerPicture;
   }
