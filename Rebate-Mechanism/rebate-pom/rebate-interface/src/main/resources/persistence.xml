@@ -5,7 +5,7 @@
 			 http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
 
 	<persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
-		<jar-file>classpath:../lib/csh-entity-0.0.1-SNAPSHOT.jar</jar-file>
+		<jar-file>classpath:../lib/rebate-entity-0.0.1-SNAPSHOT.jar</jar-file>
 	</persistence-unit>
 
 </persistence>
