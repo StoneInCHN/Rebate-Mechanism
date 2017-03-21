@@ -9,7 +9,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
-import org.rebate.entity.commonenum.CommonEnum.RebateType;
 
 /**
  * 返利记录(包括消费返利，推荐返利，提成返利)
@@ -25,14 +24,13 @@ public class RebateRecord extends BaseEntity {
 
   private static final long serialVersionUID = 1L;
 
-
   /**
    * 消费返利的商家
    */
   private Seller seller;
 
   /**
-   * 返利积分的用户（用户可以是endUser或seller）
+   * 返利积分的用户
    */
   private EndUser endUser;
 
@@ -56,14 +54,14 @@ public class RebateRecord extends BaseEntity {
    */
   private BigDecimal rebateLeMind;
 
-  /**
-   * 返利乐分
-   */
-  private BigDecimal rebateLeScore;
-  /**
-   * 返利类型
-   */
-  private RebateType rebateType;
+  // /**
+  // * 返利乐分
+  // */
+  // private BigDecimal rebateLeScore;
+  // /**
+  // * 返利类型
+  // */
+  // private RebateType rebateType;
 
   /**
    * 用户当前积分
@@ -75,10 +73,11 @@ public class RebateRecord extends BaseEntity {
    */
   private BigDecimal userCurLeMind;
 
-  /**
-   * 用户当前乐分
-   */
-  private BigDecimal userCurLeScore;
+  // /**
+  // * 用户当前乐分
+  // */
+  // private BigDecimal userCurLeScore;
+
   /**
    * 备注
    */
@@ -95,30 +94,12 @@ public class RebateRecord extends BaseEntity {
   }
 
   @Column(scale = 2, precision = 10)
-  public BigDecimal getRebateLeScore() {
-    return rebateLeScore;
-  }
-
-  public void setRebateLeScore(BigDecimal rebateLeScore) {
-    this.rebateLeScore = rebateLeScore;
-  }
-
-  @Column(scale = 2, precision = 10)
   public BigDecimal getUserCurLeMind() {
     return userCurLeMind;
   }
 
   public void setUserCurLeMind(BigDecimal userCurLeMind) {
     this.userCurLeMind = userCurLeMind;
-  }
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getUserCurLeScore() {
-    return userCurLeScore;
-  }
-
-  public void setUserCurLeScore(BigDecimal userCurLeScore) {
-    this.userCurLeScore = userCurLeScore;
   }
 
   @Column(scale = 2, precision = 10)
@@ -147,13 +128,6 @@ public class RebateRecord extends BaseEntity {
     this.rebateScore = rebateScore;
   }
 
-  public RebateType getRebateType() {
-    return rebateType;
-  }
-
-  public void setRebateType(RebateType rebateType) {
-    this.rebateType = rebateType;
-  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getAmount() {

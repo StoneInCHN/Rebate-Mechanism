@@ -25,6 +25,10 @@ public class Order extends BaseEntity {
 
   private static final long serialVersionUID = 1L;
 
+  /**
+   * 订单编号
+   */
+  private String sn;
 
   /**
    * 订单所属商家
@@ -47,9 +51,14 @@ public class Order extends BaseEntity {
   private BigDecimal amount;
 
   /**
-   * 消费赠送积分
+   * 消费返利用户积分
    */
-  private BigDecimal score;
+  private BigDecimal userScore;
+
+  /**
+   * 消费返利商户积分
+   */
+  private BigDecimal sellerScore;
 
   /**
    * 备注
@@ -61,6 +70,16 @@ public class Order extends BaseEntity {
    */
   private SellerEvaluate evaluate;
 
+
+  @Column(length = 30)
+  public String getSn() {
+    return sn;
+  }
+
+
+  public void setSn(String sn) {
+    this.sn = sn;
+  }
 
   @OneToOne
   public SellerEvaluate getEvaluate() {
@@ -83,15 +102,22 @@ public class Order extends BaseEntity {
     this.amount = amount;
   }
 
-
   @Column(scale = 2, precision = 10)
-  public BigDecimal getScore() {
-    return score;
+  public BigDecimal getUserScore() {
+    return userScore;
   }
 
+  public void setUserScore(BigDecimal userScore) {
+    this.userScore = userScore;
+  }
 
-  public void setScore(BigDecimal score) {
-    this.score = score;
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getSellerScore() {
+    return sellerScore;
+  }
+
+  public void setSellerScore(BigDecimal sellerScore) {
+    this.sellerScore = sellerScore;
   }
 
   @Column(length = 500)

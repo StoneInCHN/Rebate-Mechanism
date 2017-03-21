@@ -9,6 +9,16 @@ package org.rebate.entity.commonenum;
 public class CommonEnum {
 
   /**
+   * 通用状态
+   */
+  public enum CommonStatus {
+
+    /** 可用 */
+    ACITVE,
+    /** 不可用 */
+    INACTIVE
+  }
+  /**
    * 帐号状态
    */
   public enum AdminStatus {
@@ -119,18 +129,43 @@ public class CommonEnum {
   }
 
   /**
-   * 返利类型
+   * 乐分类型
    */
-  public enum RebateType {
-    /** 消费返用户 */
-    CONSUME_USER,
-    /** 消费返商户 */
+  public enum LeScoreType {
+    /** 消费直接返商户的收益 */
     CONSUME_SELLER,
-    /** 推荐返利 */
-    RECOMMEND,
+    /** 乐心（积分）产生的分红 */
+    BONUS,
+    /** 推荐好友消费返利 */
+    RECOMMEND_USER,
+    /** 推荐店铺收益返利 */
+    RECOMMEND_SELLER,
     /** 代理商提成 */
     AGENT
   }
+
+  /**
+   * app platform
+   * 
+   */
+  public enum AppPlatform {
+    /** android */
+    ANDROID,
+    /** IOS */
+    IOS
+  }
+
+  /**
+   * 乐豆变化类型
+   * 
+   */
+  public enum LeBeanChangeType {
+    /** 乐心分红赠送乐豆 */
+    BONUS,
+    /** 消费 */
+    CONSUME
+  }
+
   public enum FileType {
 
     /** 图片 */

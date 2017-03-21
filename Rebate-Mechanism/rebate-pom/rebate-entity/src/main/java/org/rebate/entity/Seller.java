@@ -168,6 +168,34 @@ public class Seller extends BaseEntity {
    */
   private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
 
+  /**
+   * 推荐人
+   */
+  private String recommender;
+
+  /**
+   * 推荐人ID
+   */
+  private Long recommenderId;
+
+
+  @Column(length = 20)
+  public String getRecommender() {
+    return recommender;
+  }
+
+  public void setRecommender(String recommender) {
+    this.recommender = recommender;
+  }
+
+  public Long getRecommenderId() {
+    return recommenderId;
+  }
+
+  public void setRecommenderId(Long recommenderId) {
+    this.recommenderId = recommenderId;
+  }
+
 
   @Valid
   @ElementCollection

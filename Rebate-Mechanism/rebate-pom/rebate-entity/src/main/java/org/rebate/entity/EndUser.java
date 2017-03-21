@@ -147,9 +147,9 @@ public class EndUser extends BaseEntity {
   private BigDecimal merchantLeScore;
 
   /**
-   * 分红乐分
+   * 推荐乐分
    */
-  private BigDecimal bonusCurLeScore;
+  private BigDecimal recommendLeScore;
 
   /**
    * 累计积分
@@ -207,18 +207,20 @@ public class EndUser extends BaseEntity {
   }
 
   @Column(scale = 2, precision = 10)
-  public BigDecimal getBonusCurLeScore() {
-    return bonusCurLeScore;
+  public BigDecimal getRecommendLeScore() {
+    return recommendLeScore;
   }
 
-  public void setBonusCurLeScore(BigDecimal bonusCurLeScore) {
-    this.bonusCurLeScore = bonusCurLeScore;
+  public void setRecommendLeScore(BigDecimal recommendLeScore) {
+    this.recommendLeScore = recommendLeScore;
   }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getCurLeBean() {
     return curLeBean;
   }
+
+
 
   public void setCurLeBean(BigDecimal curLeBean) {
     this.curLeBean = curLeBean;
