@@ -41,25 +41,6 @@ public class UserBonusReport extends BaseEntity {
   private BigDecimal highBonusLeScore;
 
   /**
-   * 积分
-   */
-  private BigDecimal score;
-
-  /**
-   * 乐心
-   */
-  private BigDecimal leMind;
-  /**
-   * 乐分
-   */
-  private BigDecimal leScore;
-  /**
-   * 乐豆
-   */
-  private BigDecimal leBean;
-
-
-  /**
    * 统计日期
    */
   private Date reportDate;
@@ -101,41 +82,6 @@ public class UserBonusReport extends BaseEntity {
     this.highBonusLeScore = highBonusLeScore;
   }
 
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getScore() {
-    return score;
-  }
-
-  public void setScore(BigDecimal score) {
-    this.score = score;
-  }
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getLeMind() {
-    return leMind;
-  }
-
-  public void setLeMind(BigDecimal leMind) {
-    this.leMind = leMind;
-  }
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getLeScore() {
-    return leScore;
-  }
-
-  public void setLeScore(BigDecimal leScore) {
-    this.leScore = leScore;
-  }
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getLeBean() {
-    return leBean;
-  }
-
-  public void setLeBean(BigDecimal leBean) {
-    this.leBean = leBean;
-  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getBonusLeScore() {

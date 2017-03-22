@@ -46,21 +46,21 @@ public class NationBonusReport extends BaseEntity {
   private BigDecimal publicTotalAmount;
 
   /**
-   * 累计分红乐心
+   * 当日累计分红乐心
    */
-  private BigDecimal totalLeMind;
+  private BigDecimal leMindByDay;
   /**
-   * 累计消费
+   * 当日累计消费
    */
-  private BigDecimal totalConsume;
+  private BigDecimal consumeByDay;
   /**
-   * 分红乐分
+   * 当日分红乐分
    */
-  private BigDecimal bonusLeScore;
+  private BigDecimal bonusLeScoreByDay;
   /**
    * 公益金额
    */
-  private BigDecimal publicAmount;
+  private BigDecimal publicAmountByDay;
 
 
   /**
@@ -109,39 +109,39 @@ public class NationBonusReport extends BaseEntity {
   }
 
   @Column(scale = 2, precision = 10)
-  public BigDecimal getTotalLeMind() {
-    return totalLeMind;
+  public BigDecimal getLeMindByDay() {
+    return leMindByDay;
   }
 
-  public void setTotalLeMind(BigDecimal totalLeMind) {
-    this.totalLeMind = totalLeMind;
-  }
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getTotalConsume() {
-    return totalConsume;
-  }
-
-  public void setTotalConsume(BigDecimal totalConsume) {
-    this.totalConsume = totalConsume;
+  public void setLeMindByDay(BigDecimal leMindByDay) {
+    this.leMindByDay = leMindByDay;
   }
 
   @Column(scale = 2, precision = 10)
-  public BigDecimal getBonusLeScore() {
-    return bonusLeScore;
+  public BigDecimal getConsumeByDay() {
+    return consumeByDay;
   }
 
-  public void setBonusLeScore(BigDecimal bonusLeScore) {
-    this.bonusLeScore = bonusLeScore;
+  public void setConsumeByDay(BigDecimal consumeByDay) {
+    this.consumeByDay = consumeByDay;
   }
 
   @Column(scale = 2, precision = 10)
-  public BigDecimal getPublicAmount() {
-    return publicAmount;
+  public BigDecimal getBonusLeScoreByDay() {
+    return bonusLeScoreByDay;
   }
 
-  public void setPublicAmount(BigDecimal publicAmount) {
-    this.publicAmount = publicAmount;
+  public void setBonusLeScoreByDay(BigDecimal bonusLeScoreByDay) {
+    this.bonusLeScoreByDay = bonusLeScoreByDay;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getPublicAmountByDay() {
+    return publicAmountByDay;
+  }
+
+  public void setPublicAmountByDay(BigDecimal publicAmountByDay) {
+    this.publicAmountByDay = publicAmountByDay;
   }
 
   @Temporal(TemporalType.DATE)
