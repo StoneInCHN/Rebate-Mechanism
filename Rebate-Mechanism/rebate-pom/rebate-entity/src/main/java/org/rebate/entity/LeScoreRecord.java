@@ -77,6 +77,9 @@ public class LeScoreRecord extends BaseEntity {
     return recommenderId;
   }
 
+  public void setRecommenderId(Long recommenderId) {
+    this.recommenderId = recommenderId;
+  }
 
   public LeScoreType getLeScoreType() {
     return leScoreType;
