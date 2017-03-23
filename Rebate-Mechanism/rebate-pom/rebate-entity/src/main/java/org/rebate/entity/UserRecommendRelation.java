@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -23,17 +24,18 @@ import org.rebate.entity.base.BaseEntity;
  */
 
 @Entity
-@Table(name = "rm_user_recommend_relation")
+@Table(name = "rm_user_recommend_relation", indexes = {@Index(name = "cellPhoneNumIndex",
+    columnList = "cellPhoneNum")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_user_recommend_relation_sequence")
 public class UserRecommendRelation extends BaseEntity {
 
 
   private static final long serialVersionUID = 1L;
 
-  /**
-   * 用户ID
-   */
-  private Long userId;
+  // /**
+  // * 用户ID
+  // */
+  // private Long userId;
 
   /**
    * 手机号
@@ -55,14 +57,6 @@ public class UserRecommendRelation extends BaseEntity {
    */
   private Set<UserRecommendRelation> children = new HashSet<UserRecommendRelation>();
 
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
 
   public String getCellPhoneNum() {
     return cellPhoneNum;

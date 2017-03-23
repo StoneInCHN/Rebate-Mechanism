@@ -41,28 +41,17 @@ public class Setting implements Serializable {
   private Integer smsCodeTimeOut;
 
   /** 短信服务平台地址 */
-  private String ucpaasUrl;
+  private String smsUrl;
 
-  /** 短信平台AccountId */
-  private String ucpaasSid;
+  /** 短信平台机构代码 */
+  private String smsOrgId;
 
-  /** 短信平台Token */
-  private String ucpaasToken;
+  /** 短信平台用户名 */
+  private String smsUserName;
 
-  /** 短信平台软件版本 */
-  private String ucpaasVersion;
+  /** 短信平台密码 */
+  private String smsPwd;
 
-  /** 短信平台APPID */
-  private String ucpaasAppId;
-
-  /** 短信平台验证码短信模板 */
-  private String ucpaasTemplate;
-
-  /** 短信平台购买服务短信模板 */
-  private String ucpaasServiceTemplate;
-
-  /** 短信平台语音回拨号码 */
-  private String ucpaasCallDisplay;
 
   /** 邮箱正则表达式 */
   private String emailPattern;
@@ -284,6 +273,38 @@ public class Setting implements Serializable {
   private String tenantAppUrl;
 
 
+  public String getSmsUrl() {
+    return smsUrl;
+  }
+
+  public void setSmsUrl(String smsUrl) {
+    this.smsUrl = smsUrl;
+  }
+
+  public String getSmsOrgId() {
+    return smsOrgId;
+  }
+
+  public void setSmsOrgId(String smsOrgId) {
+    this.smsOrgId = smsOrgId;
+  }
+
+  public String getSmsUserName() {
+    return smsUserName;
+  }
+
+  public void setSmsUserName(String smsUserName) {
+    this.smsUserName = smsUserName;
+  }
+
+  public String getSmsPwd() {
+    return smsPwd;
+  }
+
+  public void setSmsPwd(String smsPwd) {
+    this.smsPwd = smsPwd;
+  }
+
   public String getTenantAppUrl() {
     return tenantAppUrl;
   }
@@ -445,13 +466,6 @@ public class Setting implements Serializable {
     this.convertAddressUrl = convertAddressUrl;
   }
 
-  public String getUcpaasServiceTemplate() {
-    return ucpaasServiceTemplate;
-  }
-
-  public void setUcpaasServiceTemplate(String ucpaasServiceTemplate) {
-    this.ucpaasServiceTemplate = ucpaasServiceTemplate;
-  }
 
   public String getConvertMapUrl() {
     return convertMapUrl;
@@ -557,21 +571,7 @@ public class Setting implements Serializable {
     this.insuranceId = insuranceId;
   }
 
-  public String getUcpaasCallDisplay() {
-    return ucpaasCallDisplay;
-  }
 
-  public void setUcpaasCallDisplay(String ucpaasCallDisplay) {
-    this.ucpaasCallDisplay = ucpaasCallDisplay;
-  }
-
-  public String getUcpaasAppId() {
-    return ucpaasAppId;
-  }
-
-  public void setUcpaasAppId(String ucpaasAppId) {
-    this.ucpaasAppId = ucpaasAppId;
-  }
 
   public Integer getSearchRadius() {
     return searchRadius;
@@ -638,45 +638,7 @@ public class Setting implements Serializable {
     this.smsCodeTimeOut = smsCodeTimeOut;
   }
 
-  public String getUcpaasUrl() {
-    return ucpaasUrl;
-  }
 
-  public void setUcpaasUrl(String ucpaasUrl) {
-    this.ucpaasUrl = ucpaasUrl;
-  }
-
-  public String getUcpaasSid() {
-    return ucpaasSid;
-  }
-
-  public void setUcpaasSid(String ucpaasSid) {
-    this.ucpaasSid = ucpaasSid;
-  }
-
-  public String getUcpaasToken() {
-    return ucpaasToken;
-  }
-
-  public void setUcpaasToken(String ucpaasToken) {
-    this.ucpaasToken = ucpaasToken;
-  }
-
-  public String getUcpaasVersion() {
-    return ucpaasVersion;
-  }
-
-  public void setUcpaasVersion(String ucpaasVersion) {
-    this.ucpaasVersion = ucpaasVersion;
-  }
-
-  public String getUcpaasTemplate() {
-    return ucpaasTemplate;
-  }
-
-  public void setUcpaasTemplate(String ucpaasTemplate) {
-    this.ucpaasTemplate = ucpaasTemplate;
-  }
 
   /**
    * 获取发件人邮箱

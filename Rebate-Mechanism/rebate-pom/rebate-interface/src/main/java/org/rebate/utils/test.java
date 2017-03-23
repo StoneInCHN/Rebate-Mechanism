@@ -15,6 +15,8 @@ public class test {
     // String pwd = KeyGenerator.encrypt("genius77", RSAHelper.getPublicKey(serverPublicKey));
     // System.out.println(pwd);
 
+    System.out.println(ToolsUtils.createUserName());
+    ToolsUtils.sendSmsMsg("17381945036", "【翼享生活】短信验证码是1256");
   }
 
   // public static void payWeChatNotify() {

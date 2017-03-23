@@ -3,6 +3,7 @@ package org.rebate.dao.impl;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
+import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
@@ -74,6 +75,24 @@ public class EndUserDaoImpl extends BaseDaoImpl<EndUser, Long> implements EndUse
   @CachePut(value = "endUser", key = "'endUser.appPlatform='+#id")
   public AppPlatform createEndUserAppPlatform(AppPlatform appPlatform, Long id) {
     return appPlatform;
+  }
+
+  @Override
+  @CachePut(value = "endUser", key = "'endUser.smsCode='+#cellPhoneNum")
+  public SMSVerificationCode createSmsCode(String cellPhoneNum, SMSVerificationCode smsCode) {
+    return smsCode;
+  }
+
+  @Override
+  @Cacheable(value = "endUser", key = "'endUser.smsCode='+#cellPhone")
+  public SMSVerificationCode getSmsCode(String cellPhone) {
+    return null;
+  }
+
+  @Override
+  @CacheEvict(value = "endUser", key = "'endUser.smsCode='+#cellPhone")
+  public void deleteSmsCode(String cellPhone) {
+
   }
 
 

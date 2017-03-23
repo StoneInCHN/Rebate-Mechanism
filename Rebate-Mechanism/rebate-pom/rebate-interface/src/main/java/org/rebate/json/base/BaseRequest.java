@@ -10,10 +10,10 @@ public class BaseRequest {
    * 用户名
    */
   private String userName;
-  // /**
-  // * 手机号
-  // */
-  // private String mobileNum;
+  /**
+   * 手机号
+   */
+  private String cellPhoneNum;
   /**
    * 用户ID
    */
@@ -28,6 +28,14 @@ public class BaseRequest {
    */
   private Integer pageNumber;
 
+
+  public String getCellPhoneNum() {
+    return cellPhoneNum;
+  }
+
+  public void setCellPhoneNum(String cellPhoneNum) {
+    this.cellPhoneNum = cellPhoneNum;
+  }
 
   public Long getUserId() {
     return userId;

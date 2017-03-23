@@ -128,57 +128,57 @@ public class EndUser extends BaseEntity {
   /**
    * 当前积分
    */
-  private BigDecimal curScore;
+  private BigDecimal curScore = new BigDecimal("0");
 
   /**
    * 当前乐心
    */
-  private BigDecimal curLeMind;
+  private BigDecimal curLeMind = new BigDecimal("0");
 
   /**
    * 当前乐分
    */
-  private BigDecimal curLeScore;
+  private BigDecimal curLeScore = new BigDecimal("0");
 
   /**
    * 激励乐分
    */
-  private BigDecimal motivateLeScore;
+  private BigDecimal motivateLeScore = new BigDecimal("0");
 
   /**
    * 商家收益乐分
    */
-  private BigDecimal merchantLeScore;
+  private BigDecimal merchantLeScore = new BigDecimal("0");
 
   /**
    * 推荐乐分
    */
-  private BigDecimal recommendLeScore;
+  private BigDecimal recommendLeScore = new BigDecimal("0");
 
   /**
    * 累计积分
    */
-  private BigDecimal totalScore;
+  private BigDecimal totalScore = new BigDecimal("0");
 
   /**
    * 累计乐心
    */
-  private BigDecimal totalLeMind;
+  private BigDecimal totalLeMind = new BigDecimal("0");
 
   /**
    * 累计乐分
    */
-  private BigDecimal totalLeScore;
+  private BigDecimal totalLeScore = new BigDecimal("0");
 
   /**
    * 当前乐豆
    */
-  private BigDecimal curLeBean;
+  private BigDecimal curLeBean = new BigDecimal("0");
 
   /**
    * 累计乐豆（无法提取）
    */
-  private BigDecimal totalLeBean;
+  private BigDecimal totalLeBean = new BigDecimal("0");
 
   /**
    * 用户订单
