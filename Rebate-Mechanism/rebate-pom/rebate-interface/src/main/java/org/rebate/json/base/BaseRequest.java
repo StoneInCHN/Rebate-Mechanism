@@ -28,18 +28,6 @@ public class BaseRequest {
    */
   private Integer pageNumber;
 
-  /**
-   * 租户ID
-   */
-  private Long tenantId;
-
-  public Long getTenantId() {
-    return tenantId;
-  }
-
-  public void setTenantId(Long tenantId) {
-    this.tenantId = tenantId;
-  }
 
   public Long getUserId() {
     return userId;

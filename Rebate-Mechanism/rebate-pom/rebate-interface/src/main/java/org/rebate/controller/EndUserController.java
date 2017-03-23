@@ -1,11 +1,15 @@
 package org.rebate.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.rebate.beans.CommonAttributes;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.BaseResponse;
+import org.rebate.service.EndUserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/endUser")
 public class EndUserController extends MobileBaseController {
 
-  // @Resource(name = "endUserServiceImpl")
-  // private EndUserService endUserService;
+  @Resource(name = "endUserServiceImpl")
+  private EndUserService endUserService;
+
   //
   // @Resource(name = "smsTokenServiceImpl")
   // private SmsTokenService smsTokenService;
@@ -29,18 +34,17 @@ public class EndUserController extends MobileBaseController {
   // private ReportUserRegStatisticsService reportUserRegStatisticsService;
 
 
-  // /**
-  // * 测试
-  // *
-  // * @return
-  // */
-  // @RequestMapping(value = "/test", method = RequestMethod.POST)
-  // public @ResponseBody BaseResponse test(@RequestBody BaseRequest req) {
-  // BaseResponse response = new BaseResponse();
-  // ReportUserRegStatistics aRegStatistics =
-  // reportUserRegStatisticsService.getReportByDate(TimeUtils.formatDate2Day(new Date()));
-  // return response;
-  // }
+  /**
+   * 测试
+   *
+   * @return
+   */
+  @RequestMapping(value = "/test", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse test(@RequestBody BaseRequest req) {
+    BaseResponse response = new BaseResponse();
+    endUserService.createEndUserToken(req.getToken(), req.getUserId());
+    return response;
+  }
 
   // /**
   // * 用户注销

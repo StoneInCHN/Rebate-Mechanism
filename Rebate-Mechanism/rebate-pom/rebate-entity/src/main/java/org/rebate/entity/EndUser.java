@@ -19,7 +19,6 @@ import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
-import org.rebate.entity.commonenum.CommonEnum.AgencyLevel;
 import org.rebate.entity.commonenum.CommonEnum.Gender;
 
 /**
@@ -119,7 +118,12 @@ public class EndUser extends BaseEntity {
   /**
    * 用户拥有的商户店铺
    */
-  private Seller seller;
+  private Set<Seller> sellers = new HashSet<Seller>();
+
+  /**
+   * 用户是否为代理商
+   */
+  private Agent agent;
 
   /**
    * 当前积分
@@ -177,16 +181,18 @@ public class EndUser extends BaseEntity {
   private BigDecimal totalLeBean;
 
   /**
-   * 代理级别
-   */
-  private AgencyLevel agencyLevel;
-
-
-  /**
    * 用户订单
    */
   private Set<Order> userOrders = new HashSet<Order>();
 
+  @OneToOne
+  public Agent getAgent() {
+    return agent;
+  }
+
+  public void setAgent(Agent agent) {
+    this.agent = agent;
+  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getMotivateLeScore() {
@@ -244,21 +250,13 @@ public class EndUser extends BaseEntity {
     this.userOrders = userOrders;
   }
 
-  public AgencyLevel getAgencyLevel() {
-    return agencyLevel;
+  @OneToMany(mappedBy = "endUser")
+  public Set<Seller> getSellers() {
+    return sellers;
   }
 
-  public void setAgencyLevel(AgencyLevel agencyLevel) {
-    this.agencyLevel = agencyLevel;
-  }
-
-  @OneToOne(mappedBy = "endUser")
-  public Seller getSeller() {
-    return seller;
-  }
-
-  public void setSeller(Seller seller) {
-    this.seller = seller;
+  public void setSellers(Set<Seller> sellers) {
+    this.sellers = sellers;
   }
 
   @Column(length = 200)

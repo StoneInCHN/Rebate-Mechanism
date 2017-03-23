@@ -124,8 +124,15 @@ public class CommonEnum {
    */
   public enum SystemConfigKey {
     /** 支付方式 */
-    PAYMENTTYPE
-
+    PAYMENTTYPE,
+    /** 商户返利积分参数 */
+    REBATESCORE_SELLER,
+    /** 用户返利积分参数 */
+    REBATESCORE_USER,
+    /** 收益后乐分乐豆比例 */
+    LESCORE_PERCENTAGE,
+    /** 每个乐心分红的阈值 */
+    BONUS_MAXIMUM,
   }
 
   /**

@@ -15,7 +15,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -228,7 +227,7 @@ public class Seller extends BaseEntity {
     this.sellerOrders = sellerOrders;
   }
 
-  @OneToOne
+  @ManyToOne
   public EndUser getEndUser() {
     return endUser;
   }
@@ -316,6 +315,7 @@ public class Seller extends BaseEntity {
     this.accountStatus = accountStatus;
   }
 
+  @ManyToOne
   public Area getArea() {
     return area;
   }

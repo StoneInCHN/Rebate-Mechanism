@@ -20,9 +20,9 @@ import org.rebate.entity.base.BaseEntity;
  *
  */
 @Entity
-@Table(name = "rm_bonus_by_mind_for_day")
-@SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_bonus_by_mind_for_day_sequence")
-public class BonusByMindForDay extends BaseEntity {
+@Table(name = "rm_bonus_by_mind_per_day")
+@SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_bonus_by_mind_per_day_sequence")
+public class BonusByMindPerDay extends BaseEntity {
 
 
   private static final long serialVersionUID = 1L;

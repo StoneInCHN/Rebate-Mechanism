@@ -23,49 +23,41 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Override
   public EndUser findByUserName(String userName) {
-    // TODO Auto-generated method stub
-    return null;
+    return endUserDao.findByUserName(userName);
   }
 
   @Override
   public EndUser findByUserMobile(String mobileNo) {
-    // TODO Auto-generated method stub
-    return null;
+    return endUserDao.findByUserMobile(mobileNo);
   }
 
   @Override
   public String getEndUserToken(Long id) {
-    // TODO Auto-generated method stub
-    return null;
+    return endUserDao.getEndUserToken(id);
   }
 
   @Override
   public String createEndUserToken(String token, Long id) {
-    // TODO Auto-generated method stub
-    return null;
+    return endUserDao.createEndUserToken(token, id);
   }
 
   @Override
   public AppPlatform getEndUserAppPlatform(Long id) {
-    // TODO Auto-generated method stub
-    return null;
+    return endUserDao.getEndUserAppPlatform(id);
   }
 
   @Override
   public AppPlatform createEndUserAppPlatform(AppPlatform appPlatform, Long id) {
-    // TODO Auto-generated method stub
-    return null;
+    return endUserDao.createEndUserAppPlatform(appPlatform, id);
   }
 
   @Override
   public void deleteEndUserToken(Long id) {
-    // TODO Auto-generated method stub
-
+    endUserDao.deleteEndUserToken(id);
   }
 
   @Override
   public EndUser userReg(String userName, String password) {
-    // TODO Auto-generated method stub
     return null;
   }
 }
