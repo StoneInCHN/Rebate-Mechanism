@@ -1,7 +1,6 @@
 package org.rebate.controller;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,6 +14,7 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
+import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.ResponseOne;
@@ -90,7 +90,7 @@ public class EndUserController extends MobileBaseController {
     // token验证
     if (!TokenGenerator.isValiableToken(token, userToken)) {
       response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("csh.user.token.timeout").getContent());
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
       return response;
     }
     EndUser endUser = endUserService.find(userId);
@@ -134,7 +134,7 @@ public class EndUserController extends MobileBaseController {
     String smsCode = userLoginReq.getSmsCode();
 
 
-    if (StringUtils.isEmpty(cellPhoneNum) || isMobileNumber(cellPhoneNum)) {
+    if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
       response.setCode(CommonAttributes.FAIL_LOGIN);
       response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
       return response;
@@ -328,10 +328,11 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getSmsCode", method = RequestMethod.POST)
-  public @ResponseBody BaseResponse getSmsToken(HttpServletRequest request,
+  public @ResponseBody BaseResponse getSmsCode(HttpServletRequest request,
       @RequestBody SmsCodeRequest smsCodeRequest) {
     BaseResponse response = new BaseResponse();
     String cellPhoneNum = smsCodeRequest.getCellPhoneNum();
+    SmsCodeType smsCodeType = smsCodeRequest.getSmsCodeType();
     if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
       response.setCode(CommonAttributes.FAIL_SMSTOKEN);
       response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
@@ -345,7 +346,15 @@ public class EndUserController extends MobileBaseController {
         endUserService.deleteSmsCode(cellPhoneNum);
       }
       Integer smsCode = (int) ((Math.random() * 9 + 1) * 1000);
-      ToolsUtils.sendSmsMsg(cellPhoneNum, "");// 发送短信验证码
+      String msg = "";
+      if (SmsCodeType.LOGIN.equals(smsCodeType)) {
+        msg += setting.getSmsLoginTemp();
+      } else if (SmsCodeType.REG.equals(smsCodeType)) {
+        msg += setting.getSmsRegTemp();
+      } else if (SmsCodeType.RESETPWD.equals(smsCodeType)) {
+        msg += setting.getSmsResetPwdTemp();
+      }
+      ToolsUtils.sendSmsMsg(cellPhoneNum, msg + smsCode.toString() + setting.getSmsPostfix());// 发送短信验证码
       SMSVerificationCode newSmsCode = new SMSVerificationCode();
       newSmsCode.setCellPhoneNum(cellPhoneNum);
       newSmsCode.setSmsCode(smsCode.toString());
@@ -456,8 +465,8 @@ public class EndUserController extends MobileBaseController {
     }
 
     EndUser regUser = endUserService.userReg(cellPhoneNum, password, recommenderMobile);
-    Map<String, Object> map = new HashMap<String, Object>();
-    response.setMsg(map);
+    // Map<String, Object> map = new HashMap<String, Object>();
+    // response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     response.setDesc(regUser.getId().toString());
     String token = TokenGenerator.generateToken();

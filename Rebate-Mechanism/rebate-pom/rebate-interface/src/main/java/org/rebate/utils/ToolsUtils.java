@@ -27,7 +27,7 @@ public class ToolsUtils {
     StringBuffer response = new StringBuffer();
     try {
       if (LogUtil.isDebugEnabled(ApiUtils.class)) {
-        LogUtil.debug(null, "Request API URL is : %s", smsUrl + parameters);
+        LogUtil.debug(ApiUtils.class, "Request API URL is : %s", smsUrl + parameters);
       }
 
       URL url = new URL(smsUrl);

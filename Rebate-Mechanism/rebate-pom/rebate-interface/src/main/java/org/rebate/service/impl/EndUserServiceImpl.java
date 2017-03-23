@@ -75,7 +75,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     regUser.setCellPhoneNum(cellPhoneNum);
     regUser.setLoginPwd(DigestUtils.md5Hex(password));
     regUser.setAccountStatus(AccountStatus.ACTIVED);
-
+    regUser.setNickName(cellPhoneNum.substring(3, 7));
     UserRecommendRelation relation = new UserRecommendRelation();
     if (recommenderMobile != null) {
       EndUser recommend = endUserDao.findByUserMobile(recommenderMobile);

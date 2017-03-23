@@ -70,19 +70,20 @@ public class CommonEnum {
     FREE_PARKING
   }
 
-  // /**
-  // * 支付方式
-  // */
-  // public enum PaymentType {
-  // /** 翼支付 */
-  // TELECOM,
-  // /** 微信支付 */
-  // WECHAT,
-  // /** 支付宝支付 */
-  // ALIPAY,
-  // /** 乐分支付 */
-  // LESCORE
-  // }
+  /**
+   * 短信验证码类型
+   * 
+   * @author sujinxuan
+   *
+   */
+  public enum SmsCodeType {
+    /** 注册 */
+    REG,
+    /** 登录 */
+    LOGIN,
+    /** 重置密码 */
+    RESETPWD
+  }
 
   /**
    * 审核状态
