@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -93,6 +94,13 @@ public class SellerApplication extends BaseEntity {
    */
   private String email;
 
+  /**
+   * 商家类别
+   */
+  private SellerCategory sellerCategory;
+  
+  private Integer   endUserId;
+  
   @Column(length = 100)
   public String getSellerName() {
     return sellerName;
@@ -209,5 +217,21 @@ public class SellerApplication extends BaseEntity {
     this.email = email;
   }
 
+  @ManyToOne
+  public SellerCategory getSellerCategory() {
+    return sellerCategory;
+  }
 
+  public void setSellerCategory(SellerCategory sellerCategory) {
+    this.sellerCategory = sellerCategory;
+  }
+
+  public Integer getEndUserId() {
+    return endUserId;
+  }
+
+  public void setEndUserId(Integer endUserId) {
+    this.endUserId = endUserId;
+  }
+  
 }

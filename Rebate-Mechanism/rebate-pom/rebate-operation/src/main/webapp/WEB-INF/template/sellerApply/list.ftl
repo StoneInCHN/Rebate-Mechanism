@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.admin.list")}</title>
+<title>${message("rebate.sellerApplication.list")}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -19,9 +19,9 @@
 <div class="mainbar">
 				<div class="page-head">
 					<div class="bread-crumb">
-						<a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> 
+						<a ><i class="fa fa-user"></i> ${message("rebate.main.sellerApply")}</a> 
 						<span class="divider">/</span> 
-						<span  class="bread-current"><i class="fa fa-list"></i>${message("rebate.admin.list")}(${message("rebate.common.page.totalPages", page.total)})</span>
+						<span  class="bread-current"><i class="fa fa-list"></i>${message("rebate.sellerApplication.list")}(${message("rebate.common.page.totalPages", page.total)})</span>
 					</div>
 					<div class="clearfix"></div>
 				</div>
@@ -32,9 +32,6 @@
 						  <div class="col-xs-9 col-md-9 col-lg-9">
 						  		<ul class="nav">
 									 <li class="pull-left">
-										<div class="btn-group operationButton">
-										  <button type="button" id="addButton" class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;&nbsp;${message("rebate.common.add")}</button>
-										</div>
 										<div class="btn-group operationButton">
 										  <button type="button" id="deleteButton" class="btn btn-default disabled"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;${message("rebate.common.delete")}</button>
 										</div>
@@ -68,9 +65,9 @@
 								      <div class="input-group-btn">
 								        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">${message("rebate.common.choose")} <span class="caret"></span></button>
 								        <ul class="dropdown-menu menuWrap" id="searchPropertyOption" role="menu">
-								          <li [#if page.searchProperty == "username" || page.searchProperty ==null] selected="selected" class="active" [/#if] title="username"><a href="#">${message("rebate.admin.username")}</a></li>
-								          <li [#if page.searchProperty == "email"] selected="selected" class="active" [/#if] title="email"><a href="#">${message("rebate.admin.email")}</a></li>
-								          <li [#if page.searchProperty == "name"] selected="selected" class="active" [/#if] title="name"><a href="#">${message("rebate.admin.name")}</a></li>
+								          <li [#if page.searchProperty == "sellerName" || page.searchProperty ==null] selected="selected" class="active" [/#if] title="sellerName"><a href="#">${message("rebate.sellerApplication.sellerName")}</a></li>
+								          <li [#if page.searchProperty == "email"] selected="selected" class="active" [/#if] title="email"><a href="#">${message("rebate.sellerApplication.email")}</a></li>
+								          <li [#if page.searchProperty == "contactCellPhone"] selected="selected" class="active" [/#if] title="contactCellPhone"><a href="#">${message("rebate.sellerApplication.contactCellPhone")}</a></li>
 								        </ul>
 								      </div>
 								      <input type="text" class="form-control" id="searchValue" name="searchValue" value="${page.searchValue}" maxlength="200" />
@@ -85,7 +82,7 @@
 			              <div class="col-md-12">
 			                <div class="widget">
 									 <div class="widget-head">
-						                  <div class="pull-left"><i class="fa fa-list"></i>${message("rebate.main.admin")}</div>
+						                  <div class="pull-left"><i class="fa fa-list"></i>${message("rebate.main.sellerApply")}</div>
 						                  <div class="clearfix"></div>
 						              </div>
 						              <div class="widget-content">
@@ -96,25 +93,43 @@
 														<input type="checkbox" id="selectAll" />
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="username">${message("rebate.admin.username")}</a>
+														<a href="javascript:;" class="sort" name="sellerName">${message("rebate.sellerApplication.sellerName")}</a>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="email">${message("rebate.admin.email")}</a>
+														<a href="javascript:;" class="sort" name="sellerCategory">${message("rebate.sellerApplication.sellerCategory")}</a>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="name">${message("rebate.admin.name")}</a>
+														<a href="javascript:;" class="sort" name="email">${message("rebate.sellerApplication.email")}</a>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="loginDate">${message("rebate.admin.loginDate")}</a>
+														<a href="javascript:;" class="sort" name="address">${message("rebate.sellerApplication.address")}</a>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="loginIp">${message("rebate.admin.loginIp")}</a>
+														<a href="javascript:;" class="sort" name="contactPerson">${message("rebate.sellerApplication.contactPerson")}</a>
+													</th>
+													<th>
+														<a href="javascript:;" class="sort" name="contactCellPhone">${message("rebate.sellerApplication.contactCellPhone")}</a>
+													</th>
+													<th>
+														<a href="javascript:;" class="sort" name="area">${message("rebate.sellerApplication.area")}</a>
+													</th>
+													<th>
+														<a href="javascript:;" class="sort" name="license">${message("rebate.sellerApplication.license")}</a>
+													</th>
+													<th>
+														<a href="javascript:;" class="sort" name="storePhoto">${message("rebate.sellerApplication.storePhoto")}</a>
+													</th>
+													<th>
+														<a href="javascript:;" class="sort" name="latitude">${message("rebate.sellerApplication.latitude")}</a>
+													</th>
+													<th>
+														<a href="javascript:;" class="sort" name="longitude">${message("rebate.sellerApplication.longitude")}</a>
 													</th>
 													<th>
 														<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="adminStatus">${message("rebate.admin.adminStatus")}</a>
+														<a href="javascript:;" class="sort" name="sellerApplicationStatus">${message("rebate.sellerApplication.applyStatus")}</a>
 													</th>
 													<th>
 														<span>${message("rebate.common.handle")}</span>
@@ -122,38 +137,73 @@
 												</tr>
 											</thead>
 											<tbody>
-												[#list page.content as admin]
+												[#list page.content as sellerApplication]
 												<tr>
 													<td>
-														<input type="checkbox"  name="ids" value="${admin.id}" />
+														<input type="checkbox"  name="ids" value="${sellerApplication.id}" />
 													</td>
 													<td>
-														${admin.username}
+														${sellerApplication.sellerName}
 													</td>
 													<td>
-														${admin.email}
-													</td>
-													<td>
-														${admin.name}
-													</td>
-													<td>
-														[#if admin.loginDate??]
-															<span title="${admin.loginDate?string("yyyy-MM-dd HH:mm:ss")}">${admin.loginDate}</span>
+														[#if  sellerApplication.sellerCategory??]
+															${sellerApplication.sellerCategory.categoryName}
 														[#else]
-															-
+															--
+														[/#if]
+														
+													</td>
+													<td>
+														${sellerApplication.email}
+													</td>
+													<td>
+														${sellerApplication.address}
+													</td>
+													<td>
+														${sellerApplication.contactPerson}
+													</td>
+													<td>
+														${sellerApplication.contactCellPhone}
+													</td>
+													<td>
+														${sellerApplication.area}
+													</td>
+													<td>
+														[#if  sellerApplication.license??]
+															<a href="${base}${sellerApplication.license}" target="1024"><img src="${base}${sellerApplication.license}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.license")}"></a>
+														[#else]
+															--
+														[/#if]			
+													</td>
+													<td>
+														[#if  sellerApplication.storePhone ??]
+															<a href="${base}${sellerApplication.storePhone}" target="1024"><img src="${base}${sellerApplication.storePhone}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.storePhone")}"></a>
+														[#else]
+															--
 														[/#if]
 													</td>
 													<td>
-														${(admin.loginIp)!"-"}
+														${sellerApplication.latitude}
 													</td>
 													<td>
-														<span title="${admin.createDate?string("yyyy-MM-dd HH:mm:ss")}">${admin.createDate}</span>
+														${sellerApplication.longitude}
 													</td>
 													<td>
-														${message("rebate.admin.adminStatus."+admin.adminStatus)}
+														<span title="${sellerApplication.createDate?string("yyyy-MM-dd HH:mm:ss")}">${sellerApplication.createDate}</span>
 													</td>
 													<td>
-														<a href="edit.jhtml?id=${admin.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+														[#if  tenantApply.applyStatus ??]
+															${message("rebate.common.auditStatus."+sellerApplication.applyStatus)}
+														[#else]
+															--
+														[/#if]
+													</td>
+													<td>
+														[#if  sellerApplication.applyStatus =="AUDIT_WAITING"]
+															<a href="edit.jhtml?id=${sellerApplication.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+														[#else]
+															<a href="details.jhtml?id=${sellerApplication.id}" title="${message("csh.common.details")}"><i class="fa fa-eye"></i></a>
+														[/#if]
 													</td>
 												</tr>
 											</tbody>
@@ -176,6 +226,5 @@
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
-<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("csh.role.add")}</title>
+<title>${message("rebate.role.add")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -66,11 +66,11 @@ $().ready(function() {
 		<div class="mainbar">
 		<div class="page-head">
 			<div class="bread-crumb">
-				<a ><i class="fa fa-user"></i> ${message("csh.main.role")}</a> 
+				<a ><i class="fa fa-user"></i> ${message("rebate.main.role")}</a> 
 				<span class="divider">/</span> 
-				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("csh.role.list")}</a>
+				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("rebate.role.list")}</a>
 				<span class="divider">/</span> 
-				<span  class="bread-current"><i class="fa fa-plus"></i>${message("csh.role.add")}</span>
+				<span  class="bread-current"><i class="fa fa-plus"></i>${message("rebate.role.add")}</span>
 			</div>
 			<div class="clearfix"></div>
 		</div>
@@ -80,7 +80,7 @@ $().ready(function() {
             <div class="col-md-12">
               <div class="widget wgreen">
                 <div class="widget-head">
-                  <div class="pull-left"><i class="fa fa-plus"></i>${message("csh.role.add")}</div>
+                  <div class="pull-left"><i class="fa fa-plus"></i>${message("rebate.role.add")}</div>
                   <div class="clearfix"></div>
                 </div>
                 <div class="widget-content">
@@ -89,7 +89,7 @@ $().ready(function() {
 							<table class="input">
 								<tr>
 									<th>
-										<span class="requiredField">*</span>${message("csh.role.name")}:
+										<span class="requiredField">*</span>${message("rebate.role.name")}:
 									</th>
 									<td>
 										<input type="text" name="name" class="text" maxlength="200" />
@@ -97,7 +97,7 @@ $().ready(function() {
 								</tr>
 								<tr>
 									<th>
-										${message("csh.role.description")}:
+										${message("rebate.role.description")}:
 									</th>
 									<td>
 										<textarea  name="description" class="text" maxlength="200"></textarea>
@@ -110,84 +110,27 @@ $().ready(function() {
 								</tr>
 								<tr class="authorities">
 									<th>
-										<a href="javascript:;" class="selectAll" title="${message("csh.role.selectAll")}">${message("csh.main.systemNav")}</a>
+										<a href="javascript:;" class="selectAll" title="${message("rebate.role.selectAll")}">${message("rebate.main.systemNav")}</a>
 									</th>
 									<td>
 										<span class="fieldSet">
 											<label>
-												<input type="checkbox" name="authorities" value="admin:admin" /><span>${message("csh.role.admin")}</span>
+												<input type="checkbox" name="authorities" value="rebate:admin" /><span>${message("rebate.role.admin")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:role" /><span>${message("csh.role.role")}</span>
+												<input type="checkbox" name="authorities" value="rebate:role" /><span>${message("rebate.role.role")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:account" /><span>${message("csh.account.settingGroup")}</span>
+												<input type="checkbox" name="authorities" value="rebate:account" /><span>${message("rebate.account.settingGroup")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:apply" /><span>${message("csh.main.apply")}</span>
+												<input type="checkbox" name="authorities" value="rebate:apply" /><span>${message("rebate.main.apply")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:area" /><span>${message("csh.main.area")}</span>
+												<input type="checkbox" name="authorities" value="rebate:area" /><span>${message("rebate.main.area")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:tenantAccount" /><span>${message("csh.main.tenantAccount")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:tenantInfo" /><span>${message("csh.main.tenantInfo")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:deviceType" /><span>${message("csh.main.deviceType")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:deviceInfo" /><span>${message("csh.main.deviceInfo")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:advertisement" /><span>${message("csh.main.advertisement")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:distributor" /><span>${message("csh.main.distributor")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:vehicleBrand" /><span>${message("csh.main.vehicleBrand")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:vehicleLine" /><span>${message("csh.main.vehicleLine")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:vehicleBrandDetail" /><span>${message("csh.main.vehicleBrandDetail")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:serviceCategory" /><span>${message("csh.main.serviceCategory")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:feedBack" /><span>${message("csh.main.feedBack")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:vehicle" /><span>${message("csh.main.vehicle")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:endUser" /><span>${message("csh.main.endUser")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:clearingRecord" /><span>${message("csh.main.clearingRecord")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:carServiceRecord" /><span>${message("csh.main.carServiceRecord")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:walletRecord" /><span>${message("csh.main.walletRecord")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:deviceProvide4distributor" /><span>${message("csh.main.deviceInfo.list4distributor")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:reportUserReg" /><span>${message("csh.report.reportUserReg")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:reportDeviceBind" /><span>${message("csh.report.reportDeviceBind")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="admin:faultCode" /><span>${message("csh.main.faultCode")}</span>
+												<input type="checkbox" name="authorities" value="rebate:advertisement" /><span>${message("rebate.main.advertisement")}</span>
 											</label>
 										</span>
 									</td>
@@ -197,8 +140,8 @@ $().ready(function() {
 										&nbsp;
 									</th>
 									<td>
-										<input type="submit" class="button" value="${message("csh.common.submit")}" />
-										<input type="button" class="button" value="${message("csh.common.back")}" onclick="location.href='list.jhtml'" />
+										<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+										<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 									</td>
 								</tr>
 							</table>

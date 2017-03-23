@@ -1,0 +1,58 @@
+body{
+	padding:0;
+	margin:0;
+	background-color: #ffffff;
+}
+.header {
+	min-width: 1000px;
+	font-weight: normal !important;
+	text-shadow: none !important;
+	background-color: #ffffff;
+	border:0
+}
+.logo{
+	width: 150px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#nav{
+	margin-left:150px;
+	display:block;
+}	
+#nav .nav>li>a {
+    color: #3c3c3c;
+    text-shadow: 0px 0px 0 rgba(0,0,0,0);
+    font-family: "Microsoft YaHei";
+    font-size: 14px;
+}
+
+#nav .nav > li > a.active {
+    color: #1FB5AB;
+    border-bottom: 2px solid #1fb5ab;
+}
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    color: #1FB5AB;
+}
+
+.content{
+	min-width:1000px;
+}
+.sidebar {
+    width: 230px;
+}
+.mainbar{
+	margin-left:230px;	
+}
+
+ul.sub_ul li i{
+	height: 24px !important;
+    line-height: 24px !important;
+    width: 24px !important;
+}
+.sub_ul li.active{
+  color: #2b2b2b;
+  font-weight: bold;
+  background-color:#eee;
+}

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("csh.role.list")}</title>
+<title>${message("rebate.role.list")}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -19,9 +19,9 @@
 <div class="mainbar">
 				<div class="page-head">
 					<div class="bread-crumb">
-						<a ><i class="fa fa-male"></i>${message("csh.main.role")}</a> 
+						<a ><i class="fa fa-male"></i>${message("rebate.main.role")}</a> 
 						<span class="divider">/</span> 
-						<span  class="bread-current"><i class="fa fa-list"></i>${message("csh.role.list")}(${message("csh.page.total", page.total)})</span>
+						<span  class="bread-current"><i class="fa fa-list"></i>${message("rebate.role.list")}(${message("rebate.page.total", page.total)})</span>
 					</div>
 					<div class="clearfix"></div>
 				</div>
@@ -33,18 +33,18 @@
 						  		<ul class="nav">
 									 <li class="pull-left">
 										<div class="btn-group operationButton">
-										  <button type="button" id="addButton" class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;&nbsp;${message("csh.common.add")}</button>
+										  <button type="button" id="addButton" class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;&nbsp;${message("rebate.common.add")}</button>
 										</div>
 									<!--	<div class="btn-group operationButton">
-										  <button type="button" id="deleteButton" class="btn btn-default disabled"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;${message("csh.common.delete")}</button>
+										  <button type="button" id="deleteButton" class="btn btn-default disabled"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;${message("rebate.common.delete")}</button>
 										</div> -->
 										<div class="btn-group operationButton">
-										  <button type="button" id="refreshButton" class="btn btn-default"><i class="fa fa-refresh"></i>&nbsp;&nbsp;${message("csh.common.refresh")}</button>
+										  <button type="button" id="refreshButton" class="btn btn-default"><i class="fa fa-refresh"></i>&nbsp;&nbsp;${message("rebate.common.refresh")}</button>
 										</div>
 									</li>
 									  <li role="presentation" class="dropdown pull-right">
 										    <a id="pageSizeSelect" aria-expanded="false" role="button" aria-haspopup="true" data-toggle="dropdown" class="dropdown-toggle" href="#">
-										      ${message("csh.page.pageSize")} <span class="caret"></span>
+										      ${message("rebate.common.page.pageSize")} <span class="caret"></span>
 										    </a>
 										    <ul id="pageSizeOption" class="dropdown-menu" role="menu" aria-labelledby="pageSizeSelect">
 										     	<li>
@@ -66,9 +66,9 @@
 						  <div class="col-xs-3 col-md-3 col-lg-3">
 						  		<div class="input-group">
 								      <div class="input-group-btn">
-								        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">${message("csh.common.choose")} <span class="caret"></span></button>
+								        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">${message("rebate.common.choose")} <span class="caret"></span></button>
 								        <ul class="dropdown-menu menuWrap" id="searchPropertyOption" role="menu">
-								          <li selected="selected" class="active" title="name"><a href="#">${message("csh.role.name")}</a></li>
+								          <li selected="selected" class="active" title="name"><a href="#">${message("rebate.role.name")}</a></li>
 								        </ul>
 								      </div>
 								      <input type="text" class="form-control" id="searchValue" name="searchValue" value="${page.searchValue}" maxlength="200" />
@@ -83,7 +83,7 @@
 			              <div class="col-md-12">
 			                <div class="widget">
 									 <div class="widget-head">
-						                  <div class="pull-left"><i class="fa fa-list"></i>${message("csh.main.role")}</div>
+						                  <div class="pull-left"><i class="fa fa-list"></i>${message("rebate.main.role")}</div>
 						                  <div class="clearfix"></div>
 						              </div>
 						              <div class="widget-content">
@@ -94,19 +94,19 @@
 														<input type="checkbox" id="selectAll" />
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="name">${message("csh.role.name")}</a>
+														<a href="javascript:;" class="sort" name="name">${message("rebate.role.name")}</a>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="isSystem">${message("csh.role.isSystem")}</a>
+														<a href="javascript:;" class="sort" name="isSystem">${message("rebate.role.isSystem")}</a>
 													</th>
 													<th>
-														<span>${message("csh.role.description")}</span>
+														<span>${message("rebate.role.description")}</span>
 													</th>
 													<th>
-														<a href="javascript:;" class="sort" name="createDate">${message("csh.common.createDate")}</a>
+														<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
 													</th>
 													<th>
-														<span>${message("csh.common.handle")}</span>
+														<span>${message("rebate.common.handle")}</span>
 													</th>
 												</tr>
 											</thead>
@@ -114,13 +114,13 @@
 												[#list page.content as role]
 													<tr>
 														<td>
-															<input type="checkbox" name="ids"[#if role.isSystem] title="${message("csh.role.deleteSystemNotAllowed")}" disabled="disabled"[#else] value="${role.id}"[/#if] />
+															<input type="checkbox" name="ids"[#if role.isSystem] title="${message("rebate.role.deleteSystemNotAllowed")}" disabled="disabled"[#else] value="${role.id}"[/#if] />
 														</td>
 														<td>
 															${role.name}
 														</td>
 														<td>
-															${message(role.isSystem?string('csh.common.true', 'csh.common.false'))}
+															${message(role.isSystem?string('rebate.common.true', 'rebate.common.false'))}
 														</td>
 														<td>
 															[#if role.description??]
@@ -131,7 +131,7 @@
 															<span title="${role.createDate?string("yyyy-MM-dd HH:mm:ss")}">${role.createDate}</span>
 														</td>
 														<td>
-															<a href="edit.jhtml?id=${role.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+															<a href="edit.jhtml?id=${role.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
 														</td>
 													</tr>
 												[/#list]

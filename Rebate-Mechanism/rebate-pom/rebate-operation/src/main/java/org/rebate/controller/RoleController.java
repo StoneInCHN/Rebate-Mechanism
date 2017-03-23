@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.rebate.beans.Message;
-import org.rebate.beans.Setting;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Role;
 import org.rebate.framework.filter.Filter;
@@ -14,7 +13,6 @@ import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.service.AdminService;
 import org.rebate.service.RoleService;
-import org.rebate.utils.SettingUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,14 +56,8 @@ public class RoleController extends BaseController {
    */
   @RequestMapping(value = "/edit", method = RequestMethod.GET)
   public String edit(Long id, ModelMap model) {
-    Role role = roleService.find(id);
-    Setting setting = SettingUtils.get();
     model.addAttribute("role", roleService.find(id));
-    if (setting.getDefaultDistributorRoleId().equals(role.getId())) {
-      return "/role/edit4distributor";
-    } else {
-      return "/role/edit";
-    }
+    return "/role/edit";
   }
 
   /**

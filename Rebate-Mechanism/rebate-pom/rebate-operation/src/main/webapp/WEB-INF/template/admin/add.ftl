@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("admin.admin.add")}</title>
+<title>${message("rebate.admin.add")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -49,10 +49,10 @@ $().ready(function() {
 		},
 		messages: {
 			username: {
-				remote: "${message("admin.validate.exist")}"
+				remote: "${message("rebate.admin.validate.exist")}"
 			},
 			password: {
-				pattern: "${message("admin.validate.illegal")}"
+				pattern: "${message("rebate.admin.validate.illegal")}"
 			}
 		}
 	});
@@ -64,11 +64,11 @@ $().ready(function() {
 	<div class="mainbar">
 		<div class="page-head">
 			<div class="bread-crumb">
-				<a ><i class="fa fa-user"></i> ${message("csh.main.admin")}</a> 
+				<a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> 
 				<span class="divider">/</span> 
-				<a href="list.jhtml" class="bread-current"><i class="fa fa-list"></i>${message("csh.admin.list")}</a>
+				<a href="list.jhtml" class="bread-current"><i class="fa fa-list"></i>${message("rebate.admin.list")}</a>
 				<span class="divider">/</span> 
-				<span  class="bread-current"><i class="fa fa-plus"></i>${message("admin.admin.add")}</span>
+				<span  class="bread-current"><i class="fa fa-plus"></i>${message("rebate.admin.add")}</span>
 			</div>
 			<div class="clearfix"></div>
 		</div>
@@ -78,7 +78,7 @@ $().ready(function() {
             <div class="col-md-12">
               <div class="widget wgreen">
                 <div class="widget-head">
-                  <div class="pull-left"><i class="fa fa-plus"></i>${message("admin.admin.base")}</div>
+                  <div class="pull-left"><i class="fa fa-plus"></i>${message("rebate.admin.base")}</div>
                   <div class="clearfix"></div>
                 </div>
                 <div class="widget-content">
@@ -87,7 +87,7 @@ $().ready(function() {
                      	<table class="input tabContent">
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.username")}:
+									<span class="requiredField">*</span>${message("rebate.admin.username")}:
 								</th>
 								<td>
 									<input type="text" name="username" class="text" maxlength="20" />
@@ -95,7 +95,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.password")}:
+									<span class="requiredField">*</span>${message("rebate.admin.password")}:
 								</th>
 								<td>
 									<input type="password" id="password" name="password" class="text" maxlength="20" />
@@ -103,7 +103,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.rePassword")}:
+									<span class="requiredField">*</span>${message("rebate.admin.rePassword")}:
 								</th>
 								<td>
 									<input type="password" name="rePassword" class="text" maxlength="20" />
@@ -111,7 +111,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.name")}:
+									<span class="requiredField">*</span>${message("rebate.admin.name")}:
 								</th>
 								<td>
 									<input type="text" name="name" class="text" maxlength="200" />
@@ -119,7 +119,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.email")}:
+									<span class="requiredField">*</span>${message("rebate.admin.email")}:
 								</th>
 								<td>
 									<input type="text" name="email" class="text" maxlength="200" />
@@ -127,7 +127,7 @@ $().ready(function() {
 							</tr>
 							<tr class="roles">
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.roles")}:
+									<span class="requiredField">*</span>${message("rebate.admin.roles")}:
 								</th>
 								<td>
 									<span class="fieldSet">
@@ -141,11 +141,11 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("csh.admin.adminStatus")}:
+									<span class="requiredField">*</span>${message("rebate.admin.adminStatus")}:
 								</th>
 								<td>
-									<input type="radio" value="actived" name="adminStatus" checked="checked" />${message("csh.admin.adminStatus.actived")}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="radio" value="locked" name="adminStatus" />${message("csh.admin.adminStatus.locked")}
+									<input type="radio" value="actived" name="adminStatus" checked="checked" />${message("rebate.admin.adminStatus.actived")}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<input type="radio" value="locked" name="adminStatus" />${message("rebate.admin.adminStatus.locked")}
 								</td>
 							</tr>
 						</table>
@@ -155,8 +155,8 @@ $().ready(function() {
 									&nbsp;
 								</th>
 								<td>
-									<input type="submit" class="button" value="${message("csh.common.submit")}" />
-									<input type="button" class="button" value="${message("csh.common.back")}" onclick="location.href='list.jhtml'" />
+									<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
 						</table>                                     
