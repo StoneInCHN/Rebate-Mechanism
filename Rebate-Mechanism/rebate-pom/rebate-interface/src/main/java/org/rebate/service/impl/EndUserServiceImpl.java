@@ -1,5 +1,8 @@
 package org.rebate.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -7,15 +10,18 @@ import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.SellerApplication;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
+import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.EndUserService;
 import org.rebate.utils.ToolsUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service("endUserServiceImpl")
 public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implements EndUserService {
@@ -110,5 +116,28 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   @Override
   public void deleteSmsCode(String cellPhone) {
     endUserDao.deleteSmsCode(cellPhone);
+  }
+
+  @Override
+  public Map<String, Object> isUserHasSeller(EndUser endUser) {
+    Map<String, Object> map = new HashMap<String, Object>();
+    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
+      map.put("sellerStatus", "YES");
+    } else {
+      if (!CollectionUtils.isEmpty(endUser.getSellerApplications())) {
+        for (SellerApplication application : endUser.getSellerApplications()) {
+          if (ApplyStatus.AUDIT_WAITING.equals(application.getApplyStatus())) {
+            map.put("sellerStatus", "AUDIT_WAITING"); // 待审核
+          } else if (ApplyStatus.AUDIT_FAILED.equals(application.getApplyStatus())) {
+            map.put("sellerStatus", "AUDIT_FAILED"); // 审核失败
+            map.put("applyId", application.getId());
+          }
+          break;
+        }
+      } else {
+        map.put("sellerStatus", "NO");
+      }
+    }
+    return null;
   }
 }

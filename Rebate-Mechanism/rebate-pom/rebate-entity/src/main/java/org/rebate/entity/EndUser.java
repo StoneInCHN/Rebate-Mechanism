@@ -127,6 +127,12 @@ public class EndUser extends BaseEntity {
   private Set<Seller> sellers = new HashSet<Seller>();
 
   /**
+   * 用户发起的商户申请
+   */
+  private Set<SellerApplication> sellerApplications = new HashSet<SellerApplication>();
+
+
+  /**
    * 用户是否为代理商
    */
   private Agent agent;
@@ -264,6 +270,15 @@ public class EndUser extends BaseEntity {
 
   public void setUserOrders(Set<Order> userOrders) {
     this.userOrders = userOrders;
+  }
+
+  @OneToMany(mappedBy = "endUser")
+  public Set<SellerApplication> getSellerApplications() {
+    return sellerApplications;
+  }
+
+  public void setSellerApplications(Set<SellerApplication> sellerApplications) {
+    this.sellerApplications = sellerApplications;
   }
 
   @OneToMany(mappedBy = "endUser")

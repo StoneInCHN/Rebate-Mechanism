@@ -98,9 +98,12 @@ public class SellerApplication extends BaseEntity {
    * 商家类别
    */
   private SellerCategory sellerCategory;
-  
-  private Integer   endUserId;
-  
+
+  /**
+   * 提出申请的用户
+   */
+  private EndUser endUser;
+
   @Column(length = 100)
   public String getSellerName() {
     return sellerName;
@@ -226,12 +229,12 @@ public class SellerApplication extends BaseEntity {
     this.sellerCategory = sellerCategory;
   }
 
-  public Integer getEndUserId() {
-    return endUserId;
+  public EndUser getEndUser() {
+    return endUser;
   }
 
-  public void setEndUserId(Integer endUserId) {
-    this.endUserId = endUserId;
+  public void setEndUser(EndUser endUser) {
+    this.endUser = endUser;
   }
-  
+
 }

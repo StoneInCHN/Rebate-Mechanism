@@ -1,5 +1,7 @@
 package org.rebate.service;
 
+import java.util.Map;
+
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
@@ -85,4 +87,12 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   void deleteSmsCode(String cellPhone);
+
+  /**
+   * 判断用户进入我的店铺页面显示内容
+   * 
+   * @param endUser
+   * @return
+   */
+  Map<String, Object> isUserHasSeller(EndUser endUser);
 }

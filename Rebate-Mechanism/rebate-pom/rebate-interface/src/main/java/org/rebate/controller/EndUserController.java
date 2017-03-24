@@ -32,7 +32,6 @@ import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
 import org.rebate.utils.ToolsUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -224,11 +223,7 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, loginUser);
-    if (!CollectionUtils.isEmpty(loginUser.getSellers())) {
-      map.put("isSeller", true);
-    } else {
-      map.put("isSeller", false);
-    }
+    map.putAll(endUserService.isUserHasSeller(loginUser));
     response.setMsg(map);
     String token = TokenGenerator.generateToken();
     endUserService.createEndUserToken(token, loginUser.getId());
@@ -688,11 +683,8 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
-    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
-      map.put("isSeller", true);
-    } else {
-      map.put("isSeller", false);
-    }
+    map.putAll(endUserService.isUserHasSeller(endUser));
+
     response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     String newtoken = TokenGenerator.generateToken(req.getToken());
@@ -728,11 +720,7 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
-    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
-      map.put("isSeller", true);
-    } else {
-      map.put("isSeller", false);
-    }
+    map.putAll(endUserService.isUserHasSeller(endUser));
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());
