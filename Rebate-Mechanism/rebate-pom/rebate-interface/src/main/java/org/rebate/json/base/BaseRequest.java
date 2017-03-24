@@ -20,6 +20,11 @@ public class BaseRequest {
   private Long userId;
 
   /**
+   * 所需entity的ID
+   */
+  private Long entityId;
+
+  /**
    * 分页-页面大小
    */
   private Integer pageSize;
@@ -28,6 +33,13 @@ public class BaseRequest {
    */
   private Integer pageNumber;
 
+  public Long getEntityId() {
+    return entityId;
+  }
+
+  public void setEntityId(Long entityId) {
+    this.entityId = entityId;
+  }
 
   public String getCellPhoneNum() {
     return cellPhoneNum;

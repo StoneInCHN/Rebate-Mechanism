@@ -11,6 +11,7 @@ import javax.persistence.Index;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -93,6 +94,11 @@ public class EndUser extends BaseEntity {
    * 地址
    */
   private String address;
+
+  /**
+   * 用户所在地区
+   */
+  private Area area;
 
   /**
    * 极光push注册ID
@@ -184,6 +190,16 @@ public class EndUser extends BaseEntity {
    * 用户订单
    */
   private Set<Order> userOrders = new HashSet<Order>();
+
+
+  @ManyToOne
+  public Area getArea() {
+    return area;
+  }
+
+  public void setArea(Area area) {
+    this.area = area;
+  }
 
   @OneToOne
   public Agent getAgent() {

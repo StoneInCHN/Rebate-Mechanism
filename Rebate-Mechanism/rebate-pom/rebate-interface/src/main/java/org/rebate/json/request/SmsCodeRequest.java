@@ -12,11 +12,6 @@ public class SmsCodeRequest extends BaseRequest {
   private String smsCode;
 
   /**
-   * 手机号
-   */
-  private String cellPhoneNum;
-
-  /**
    * 验证码类型
    */
   private SmsCodeType smsCodeType;
@@ -28,14 +23,6 @@ public class SmsCodeRequest extends BaseRequest {
 
   public void setSmsCodeType(SmsCodeType smsCodeType) {
     this.smsCodeType = smsCodeType;
-  }
-
-  public String getCellPhoneNum() {
-    return cellPhoneNum;
-  }
-
-  public void setCellPhoneNum(String cellPhoneNum) {
-    this.cellPhoneNum = cellPhoneNum;
   }
 
   public String getSmsCode() {

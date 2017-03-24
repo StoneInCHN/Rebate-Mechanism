@@ -1,6 +1,8 @@
 package org.rebate.json.request;
 
+import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.json.base.BaseRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public class UserRequest extends BaseRequest {
@@ -29,6 +31,58 @@ public class UserRequest extends BaseRequest {
    * 推荐人手机号
    */
   private String recommenderMobile;
+
+  /**
+   * 昵称
+   */
+  private String nickName;
+
+  /**
+   * 用户所在地区ID
+   */
+  private Long areaId;
+
+  /**
+   * 验证码类型
+   */
+  private SmsCodeType smsCodeType;
+
+  /**
+   * 用户头像
+   */
+  private MultipartFile photo;
+
+  public MultipartFile getPhoto() {
+    return photo;
+  }
+
+  public void setPhoto(MultipartFile photo) {
+    this.photo = photo;
+  }
+
+  public SmsCodeType getSmsCodeType() {
+    return smsCodeType;
+  }
+
+  public void setSmsCodeType(SmsCodeType smsCodeType) {
+    this.smsCodeType = smsCodeType;
+  }
+
+  public String getNickName() {
+    return nickName;
+  }
+
+  public void setNickName(String nickName) {
+    this.nickName = nickName;
+  }
+
+  public Long getAreaId() {
+    return areaId;
+  }
+
+  public void setAreaId(Long areaId) {
+    this.areaId = areaId;
+  }
 
   public String getRecommenderMobile() {
     return recommenderMobile;

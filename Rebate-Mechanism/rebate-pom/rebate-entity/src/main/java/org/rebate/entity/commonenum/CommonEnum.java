@@ -82,7 +82,11 @@ public class CommonEnum {
     /** 登录 */
     LOGIN,
     /** 重置密码 */
-    RESETPWD
+    RESETPWD,
+    /** 修改登录密码 */
+    UPDATELOGINPWD,
+    /** 修改支付密码 */
+    UPDATEPAYPWD
   }
 
   /**
@@ -172,6 +176,13 @@ public class CommonEnum {
     BONUS,
     /** 消费 */
     CONSUME
+  }
+
+
+  public enum ImageType {
+
+    /** 头像 */
+    PHOTO
   }
 
   public enum FileType {
