@@ -113,9 +113,12 @@ public class Seller extends BaseEntity {
   private BigDecimal longitude;
 
   /**
-   * 营业执照
+   * 营业执照号
    */
-  private String license;
+  private String licenseNum;
+
+  /** 营业执照图片 */
+  private String licenseImgUrl;
 
   /**
    * 店铺介绍
@@ -177,6 +180,23 @@ public class Seller extends BaseEntity {
    */
   private Long recommenderId;
 
+  @Column(length = 100)
+  public String getLicenseNum() {
+    return licenseNum;
+  }
+
+  public void setLicenseNum(String licenseNum) {
+    this.licenseNum = licenseNum;
+  }
+
+  @Column(length = 200)
+  public String getLicenseImgUrl() {
+    return licenseImgUrl;
+  }
+
+  public void setLicenseImgUrl(String licenseImgUrl) {
+    this.licenseImgUrl = licenseImgUrl;
+  }
 
   @Column(length = 20)
   public String getRecommender() {
@@ -359,14 +379,6 @@ public class Seller extends BaseEntity {
     this.longitude = longitude;
   }
 
-  @Column(length = 200)
-  public String getLicense() {
-    return license;
-  }
-
-  public void setLicense(String license) {
-    this.license = license;
-  }
 
   @Column(length = 1000)
   public String getDescription() {

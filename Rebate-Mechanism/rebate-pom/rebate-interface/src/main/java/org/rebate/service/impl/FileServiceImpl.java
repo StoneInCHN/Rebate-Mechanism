@@ -123,11 +123,16 @@ public class FileServiceImpl implements FileService {
       }
       String uuid = UUID.randomUUID().toString();
 
-      // if (imageType == ImageType.LICENSE) {
-      // imgUploadPath = uploadPath+ File.separator+"license";
-      // projectPath = projectUploadPath+File.separator+"license";
-      // }
-      if (imageType == ImageType.PHOTO) {
+      if (imageType == ImageType.STORE_LICENSE) {
+        imgUploadPath = uploadPath + File.separator + "store" + File.separator + "license";
+        projectPath = projectUploadPath + File.separator + "store" + File.separator + "license";
+      } else if (imageType == ImageType.STORE_ENV) {
+        imgUploadPath = uploadPath + File.separator + "store" + File.separator + "env";
+        projectPath = projectUploadPath + File.separator + "store" + File.separator + "env";
+      } else if (imageType == ImageType.STORE_SIGN) {
+        imgUploadPath = uploadPath + File.separator + "store" + File.separator + "sign";
+        projectPath = projectUploadPath + File.separator + "store" + File.separator + "sign";
+      } else if (imageType == ImageType.PHOTO) {
         imgUploadPath = uploadPath + File.separator + "profile";
         projectPath = projectUploadPath + File.separator + "profile";
       }

@@ -180,9 +180,14 @@ public class CommonEnum {
 
 
   public enum ImageType {
-
     /** 头像 */
-    PHOTO
+    PHOTO,
+    /** 店铺环境 */
+    STORE_ENV,
+    /** 店铺营业执照 */
+    STORE_LICENSE,
+    /** 店铺列表展示图片 */
+    STORE_SIGN
   }
 
   public enum FileType {

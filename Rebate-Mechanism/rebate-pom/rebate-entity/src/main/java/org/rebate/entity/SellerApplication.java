@@ -1,13 +1,20 @@
 package org.rebate.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 
@@ -54,20 +61,19 @@ public class SellerApplication extends BaseEntity {
   private Area area;
 
   /**
-   * 营业执照
+   * 营业执照号
    */
-  private String license;
+  private String licenseNum;
 
-  // /** 营业执照文件 */
-  // private MultipartFile licenseFile;
+  /**
+   * 营业执照图片
+   * */
+  private String licenseImgUrl;
 
   /**
    * 门店照片
    */
   private String storePhoto;
-
-  // /** 门店照片文件 */
-  // private MultipartFile storePhotoFile;
 
   /**
    * 纬度
@@ -103,6 +109,54 @@ public class SellerApplication extends BaseEntity {
    * 提出申请的用户
    */
   private EndUser endUser;
+
+  /**
+   * 折扣
+   */
+  private BigDecimal discount;
+
+  /**
+   * 商家环境图片
+   */
+  private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
+
+  @Valid
+  @ElementCollection
+  @LazyCollection(LazyCollectionOption.FALSE)
+  @CollectionTable(name = "rm_seller_env_image")
+  public List<SellerEnvImage> getEnvImages() {
+    return envImages;
+  }
+
+  public void setEnvImages(List<SellerEnvImage> envImages) {
+    this.envImages = envImages;
+  }
+
+  @Column(length = 100)
+  public String getLicenseNum() {
+    return licenseNum;
+  }
+
+  public void setLicenseNum(String licenseNum) {
+    this.licenseNum = licenseNum;
+  }
+
+  @Column(length = 200)
+  public String getLicenseImgUrl() {
+    return licenseImgUrl;
+  }
+
+  public void setLicenseImgUrl(String licenseImgUrl) {
+    this.licenseImgUrl = licenseImgUrl;
+  }
+
+  public BigDecimal getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(BigDecimal discount) {
+    this.discount = discount;
+  }
 
   @Column(length = 100)
   public String getSellerName() {
@@ -155,15 +209,6 @@ public class SellerApplication extends BaseEntity {
 
   public void setArea(Area area) {
     this.area = area;
-  }
-
-  @Column(length = 200)
-  public String getLicense() {
-    return license;
-  }
-
-  public void setLicense(String license) {
-    this.license = license;
   }
 
 
