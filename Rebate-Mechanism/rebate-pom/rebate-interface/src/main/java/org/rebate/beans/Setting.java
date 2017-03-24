@@ -53,13 +53,7 @@ public class Setting implements Serializable {
   private String smsPwd;
 
   /** 登录验证码消息内容 */
-  private String smsLoginTemp;
-
-  /** 注册验证码消息内容 */
-  private String smsRegTemp;
-
-  /** 重置密码验证码消息内容 */
-  private String smsResetPwdTemp;
+  private String smsContentTemp;
 
 
   /** 邮箱正则表达式 */
@@ -296,28 +290,12 @@ public class Setting implements Serializable {
     this.smsPostfix = smsPostfix;
   }
 
-  public String getSmsLoginTemp() {
-    return smsLoginTemp;
+  public String getSmsContentTemp() {
+    return smsContentTemp;
   }
 
-  public void setSmsLoginTemp(String smsLoginTemp) {
-    this.smsLoginTemp = smsLoginTemp;
-  }
-
-  public String getSmsRegTemp() {
-    return smsRegTemp;
-  }
-
-  public void setSmsRegTemp(String smsRegTemp) {
-    this.smsRegTemp = smsRegTemp;
-  }
-
-  public String getSmsResetPwdTemp() {
-    return smsResetPwdTemp;
-  }
-
-  public void setSmsResetPwdTemp(String smsResetPwdTemp) {
-    this.smsResetPwdTemp = smsResetPwdTemp;
+  public void setSmsContentTemp(String smsContentTemp) {
+    this.smsContentTemp = smsContentTemp;
   }
 
   public String getSmsUrl() {

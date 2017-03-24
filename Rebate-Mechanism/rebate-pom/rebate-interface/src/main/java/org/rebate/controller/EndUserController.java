@@ -14,7 +14,6 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
-import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.ResponseOne;
@@ -332,7 +331,7 @@ public class EndUserController extends MobileBaseController {
       @RequestBody SmsCodeRequest smsCodeRequest) {
     BaseResponse response = new BaseResponse();
     String cellPhoneNum = smsCodeRequest.getCellPhoneNum();
-    SmsCodeType smsCodeType = smsCodeRequest.getSmsCodeType();
+    // SmsCodeType smsCodeType = smsCodeRequest.getSmsCodeType();
     if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
       response.setCode(CommonAttributes.FAIL_SMSTOKEN);
       response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
@@ -346,15 +345,8 @@ public class EndUserController extends MobileBaseController {
         endUserService.deleteSmsCode(cellPhoneNum);
       }
       Integer smsCode = (int) ((Math.random() * 9 + 1) * 1000);
-      String msg = "";
-      if (SmsCodeType.LOGIN.equals(smsCodeType)) {
-        msg += setting.getSmsLoginTemp();
-      } else if (SmsCodeType.REG.equals(smsCodeType)) {
-        msg += setting.getSmsRegTemp();
-      } else if (SmsCodeType.RESETPWD.equals(smsCodeType)) {
-        msg += setting.getSmsResetPwdTemp();
-      }
-      ToolsUtils.sendSmsMsg(cellPhoneNum, msg + smsCode.toString() + setting.getSmsPostfix());// 发送短信验证码
+      ToolsUtils.sendSmsMsg(cellPhoneNum, setting.getSmsContentTemp() + smsCode.toString()
+          + setting.getSmsPostfix());// 发送短信验证码
       SMSVerificationCode newSmsCode = new SMSVerificationCode();
       newSmsCode.setCellPhoneNum(cellPhoneNum);
       newSmsCode.setSmsCode(smsCode.toString());

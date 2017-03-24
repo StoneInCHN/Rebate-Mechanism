@@ -20,15 +20,11 @@
 		<!-- 密码 -->
 		<setting name="smsPwd" value="552233" />
 		
-		<!-- 登录验证码消息内容 -->
-		<setting name="smsLoginTemp" value="【翼享生活】您的登录验证码为: " />
-		<!-- 注册验证码消息内容 -->
-		<setting name="smsRegTemp" value="【翼享生活】您的注册验证码为: " />
-		<!-- 重置密码验证码消息内容 -->
-		<setting name="smsResetPwdTemp" value="【翼享生活】您正在重置密码,验证码为: " />
+		<!-- 验证码消息内容 -->
+		<setting name="smsContentTemp" value="【翼享生活】您的验证码是" />
 		
 		<!-- 验证码消息内容后缀 -->
-		<setting name="smsPostfix" value="，回T退订" />
+		<setting name="smsPostfix" value="，如非本人操作请忽略。" />
 		
 		<setting name="siteName" value="翼享生活App" />
 		<setting name="siteUrl" value="http://120.27.92.247:10001/csh-interface" />
