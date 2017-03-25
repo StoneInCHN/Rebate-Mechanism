@@ -495,7 +495,6 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/editUserInfo", method = RequestMethod.POST)
-  @UserValidCheck
   public @ResponseBody ResponseOne<Map<String, Object>> editUserInfo(@RequestBody UserRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
