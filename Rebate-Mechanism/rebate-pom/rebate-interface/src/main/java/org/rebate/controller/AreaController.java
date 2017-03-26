@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  */
 @Controller("areaController")
-@RequestMapping("/areaController")
+@RequestMapping("/area")
 public class AreaController extends MobileBaseController {
 
   @Resource(name = "areaServiceImpl")

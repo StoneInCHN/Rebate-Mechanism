@@ -138,6 +138,6 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         map.put("sellerStatus", "NO");
       }
     }
-    return null;
+    return map;
   }
 }

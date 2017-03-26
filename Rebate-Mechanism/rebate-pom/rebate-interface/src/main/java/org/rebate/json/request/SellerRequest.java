@@ -77,6 +77,19 @@ public class SellerRequest extends BaseRequest {
    */
   private BigDecimal longitude;
 
+  /**
+   * 申请的ID
+   */
+  private Long applyId;
+
+
+  public Long getApplyId() {
+    return applyId;
+  }
+
+  public void setApplyId(Long applyId) {
+    this.applyId = applyId;
+  }
 
   public BigDecimal getLatitude() {
     return latitude;

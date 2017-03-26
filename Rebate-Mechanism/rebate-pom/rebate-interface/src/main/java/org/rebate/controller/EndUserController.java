@@ -520,8 +520,8 @@ public class EndUserController extends MobileBaseController {
     }
     if (LogUtil.isDebugEnabled(EndUserController.class)) {
       LogUtil.debug(EndUserController.class, "edit user info",
-          "Edit EndUser Info. NickName: %s, area: %s", endUser.getNickName(), endUser.getArea()
-              .getName());
+          "Edit EndUser Info. NickName: %s, area: %s", endUser.getNickName(),
+          endUser.getArea() != null ? endUser.getArea().getName() : null);
     }
     endUserService.update(endUser);
 
@@ -641,6 +641,7 @@ public class EndUserController extends MobileBaseController {
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
     return response;
 
   }
@@ -725,6 +726,7 @@ public class EndUserController extends MobileBaseController {
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
 

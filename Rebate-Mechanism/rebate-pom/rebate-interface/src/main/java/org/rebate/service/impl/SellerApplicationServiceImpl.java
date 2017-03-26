@@ -54,6 +54,10 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public SellerApplication createApplication(SellerRequest req) {
     SellerApplication application = new SellerApplication();
+    if (req.getApplyId() != null) {
+      application = sellerApplicationDao.find(req.getApplyId());
+    }
+
     application.setSellerName(req.getSellerName());
     application.setAddress(req.getAddress());
     application.setContactCellPhone(req.getContactCellPhone());
@@ -86,7 +90,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     }
     application.setEnvImages(envImages);
 
-    sellerApplicationDao.persist(application);
+    sellerApplicationDao.merge(application);
     return application;
   }
 }

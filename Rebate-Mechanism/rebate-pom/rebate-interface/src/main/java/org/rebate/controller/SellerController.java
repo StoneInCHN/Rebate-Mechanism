@@ -126,10 +126,10 @@ public class SellerController extends MobileBaseController {
           .debug(
               SellerController.class,
               "apply",
-              "apply seller. userId: %s, contactCellPhone: %s, sellerName: %s, categoryId: %s, discount: %s, storePhone: %s, areaId: %s, address: %s, licenseNum: %s, latitude: %s, longitude: %s",
-              userId, req.getContactCellPhone(), req.getSellerName(), req.getCategoryId(),
-              req.getDiscount(), req.getStorePhone(), req.getAreaId(), req.getAddress(),
-              req.getLicenseNum(), req.getLatitude(), req.getLongitude());
+              "apply seller. applyId: %s,userId: %s, contactCellPhone: %s, sellerName: %s, categoryId: %s, discount: %s, storePhone: %s, areaId: %s, address: %s, licenseNum: %s, latitude: %s, longitude: %s",
+              req.getApplyId(), userId, req.getContactCellPhone(), req.getSellerName(),
+              req.getCategoryId(), req.getDiscount(), req.getStorePhone(), req.getAreaId(),
+              req.getAddress(), req.getLicenseNum(), req.getLatitude(), req.getLongitude());
     }
 
     response.setCode(CommonAttributes.SUCCESS);
@@ -151,7 +151,6 @@ public class SellerController extends MobileBaseController {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
     String token = req.getToken();
-    Long sellerId = req.getEntityId();
 
     // 验证登录token
     String userToken = endUserService.getEndUserToken(userId);
@@ -161,7 +160,8 @@ public class SellerController extends MobileBaseController {
       return response;
     }
 
-    Seller seller = sellerService.find(sellerId);
+
+    Seller seller = sellerService.findSellerByUser(userId);
 
     String[] properties =
         {"id", "name", "storePictureUrl", "address", "storePhone", "businessTime", "avgPrice",
@@ -177,6 +177,7 @@ public class SellerController extends MobileBaseController {
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
 
@@ -216,6 +217,7 @@ public class SellerController extends MobileBaseController {
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
 
