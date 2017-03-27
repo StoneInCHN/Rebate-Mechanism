@@ -147,7 +147,7 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getSellerInfo", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> getUserInfo(@RequestBody BaseRequest req) {
+  public @ResponseBody ResponseOne<Map<String, Object>> getSellerInfo(@RequestBody BaseRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
     String token = req.getToken();
@@ -165,7 +165,8 @@ public class SellerController extends MobileBaseController {
 
     String[] properties =
         {"id", "name", "storePictureUrl", "address", "storePhone", "businessTime", "avgPrice",
-            "latitude", "longitude", "description", "discount", "favoriteNum", "featuredService"};
+            "latitude", "longitude", "description", "discount", "favoriteNum", "featuredService",
+            "totalOrderNum", "totalOrderAmount", "unClearingAmount"};
     List<String> envImgs = new ArrayList<String>();
     for (SellerEnvImage envImage : seller.getEnvImages()) {
       envImgs.add(envImage.getSource());
@@ -253,7 +254,9 @@ public class SellerController extends MobileBaseController {
       seller.setQrImage(bytes);
       sellerService.update(seller);
     }
-    map.put("qrCode", seller.getQrImage());
+
+    String[] properties = {"id", "name", "storePictureUrl", "area.fullName", "qrImage"};
+    map = FieldFilterUtils.filterEntityMap(properties, seller);
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());

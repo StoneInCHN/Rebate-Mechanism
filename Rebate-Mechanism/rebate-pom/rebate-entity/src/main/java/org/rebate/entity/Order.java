@@ -10,6 +10,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 
 /**
  * 用户消费订单
@@ -69,6 +70,36 @@ public class Order extends BaseEntity {
    * 订单对应的用户评价
    */
   private SellerEvaluate evaluate;
+
+  /**
+   * 订单状态
+   */
+  private OrderStatus status;
+
+  /**
+   * 订单直接收益是否结算(提取)
+   */
+  private Boolean isClearing = false;
+
+
+  public Boolean getIsClearing() {
+    return isClearing;
+  }
+
+
+  public void setIsClearing(Boolean isClearing) {
+    this.isClearing = isClearing;
+  }
+
+
+  public OrderStatus getStatus() {
+    return status;
+  }
+
+
+  public void setStatus(OrderStatus status) {
+    this.status = status;
+  }
 
 
   @Column(length = 30)

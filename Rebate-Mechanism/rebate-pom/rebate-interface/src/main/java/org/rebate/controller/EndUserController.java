@@ -1,6 +1,8 @@
 package org.rebate.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,19 +17,26 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
+import org.rebate.framework.paging.Page;
+import org.rebate.framework.paging.Pageable;
 import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.BaseResponse;
+import org.rebate.json.base.PageResponse;
+import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
 import org.rebate.service.AreaService;
 import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
+import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
+import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
 import org.rebate.utils.ToolsUtils;
@@ -54,9 +63,8 @@ public class EndUserController extends MobileBaseController {
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
 
-  //
-  // @Resource(name = "reportUserRegStatisticsServiceImpl")
-  // private ReportUserRegStatisticsService reportUserRegStatisticsService;
+  @Resource(name = "userRecommendRelationServiceImpl")
+  private UserRecommendRelationService userRecommendRelationService;
 
 
   /**
@@ -724,6 +732,98 @@ public class EndUserController extends MobileBaseController {
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 用户二维码
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/getQrCode", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> getQrCode(@RequestBody BaseRequest req) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    Long userId = req.getUserId();
+    String token = req.getToken();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    Map<String, Object> map = new HashMap<String, Object>();
+    if (endUser.getQrImage() == null) {
+      String content =
+          "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"cellPhoneNum\":\""
+              + endUser.getCellPhoneNum() + "\"}";
+      byte[] bytes = QRCodeGenerator.generateQrImage(content);
+      endUser.setQrImage(bytes);
+      endUserService.update(endUser);
+    }
+
+    String[] properties = {"qrImage"};
+    map = FieldFilterUtils.filterEntityMap(properties, endUser);
+    response.setMsg(map);
+
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 获取用户推荐记录
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getRecommendRec", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderSeller(
+      @RequestBody BaseRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    Page<UserRecommendRelation> page =
+        userRecommendRelationService.getRelationsByRecommender(userId, pageable);
+    String[] propertys = {"id", "endUser.nickName", "endUser.totalLeScore", "endUser.userPhoto"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);

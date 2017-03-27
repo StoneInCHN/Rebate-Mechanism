@@ -103,6 +103,19 @@ public class SellerRequest extends BaseRequest {
    */
   private FeaturedService featuredService;
 
+  /**
+   * 商家回复评价
+   */
+  private String sellerReply;
+
+
+  public String getSellerReply() {
+    return sellerReply;
+  }
+
+  public void setSellerReply(String sellerReply) {
+    this.sellerReply = sellerReply;
+  }
 
   public String getAvgPrice() {
     return avgPrice;

@@ -59,17 +59,24 @@ public class FieldFilterUtils<T> {
    */
   public static Map<String, Object> filterEntityMap(String[] propertys, Object entity) {
     Map<String, Object> map = new HashMap<String, Object>();
-    Map<String, Object> childMap = new HashMap<String, Object>();
-    if (entity==null) {
-		return map;
-	}
+    // Map<String, Object> childMap = new HashMap<String, Object>();
+    if (entity == null) {
+      return map;
+    }
     BeanMap beanMap = BeanMap.create(entity);
     for (String key : propertys) {
       String[] pros = key.split("\\.");
       if (pros != null && pros.length > 1) {// 目前只支持取2级对象，参数格式如lawyer.id
+        Map<String, Object> childMap = new HashMap<String, Object>();
         String[] str = {pros[1]};
         childMap.putAll(filterEntityMap(str, beanMap.get(pros[0])));
-        map.put(pros[0], childMap);
+        if (map.get(pros[0]) != null) {
+          Object obj = map.get(pros[0]);
+          ((Map<String, Object>) obj).putAll(childMap);
+        } else {
+          map.put(pros[0], childMap);
+        }
+
       } else {
         map.put(key, beanMap.get(key));
       }
@@ -77,8 +84,6 @@ public class FieldFilterUtils<T> {
     return map;
 
   }
-
-
   //
 
 }

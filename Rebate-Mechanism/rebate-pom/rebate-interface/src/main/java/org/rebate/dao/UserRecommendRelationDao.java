@@ -1,15 +1,27 @@
 package org.rebate.dao;
 
+import org.rebate.entity.EndUser;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.framework.dao.BaseDao;
+import org.rebate.framework.paging.Page;
+import org.rebate.framework.paging.Pageable;
 
 public interface UserRecommendRelationDao extends BaseDao<UserRecommendRelation, Long> {
 
   /**
    * 根据手机号码查找终端用户推荐关系
    * 
-   * @param mobileNo 手机号
+   * @param EndUser
    * @return 终端用户， 若不存在则返回null
    */
-  UserRecommendRelation findByUserMobile(String mobileNo);
+  UserRecommendRelation findByUser(EndUser endUser);
+
+  /**
+   * 查找用户的推荐记录
+   * 
+   * @param userId
+   * @param pageable
+   * @return
+   */
+  Page<UserRecommendRelation> getRelationsByRecommender(Long userId, Pageable pageable);
 }

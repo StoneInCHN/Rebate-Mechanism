@@ -6,9 +6,9 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,8 +24,7 @@ import org.rebate.entity.base.BaseEntity;
  */
 
 @Entity
-@Table(name = "rm_user_recommend_relation", indexes = {@Index(name = "cellPhoneNumIndex",
-    columnList = "cellPhoneNum")})
+@Table(name = "rm_user_recommend_relation")
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_user_recommend_relation_sequence")
 public class UserRecommendRelation extends BaseEntity {
 
@@ -38,14 +37,9 @@ public class UserRecommendRelation extends BaseEntity {
   // private Long userId;
 
   /**
-   * 手机号
+   * 用户
    */
-  private String cellPhoneNum;
-
-  /**
-   * 昵称
-   */
-  private String nickName;
+  private EndUser endUser;
 
   /**
    * 上级推荐人
@@ -57,21 +51,13 @@ public class UserRecommendRelation extends BaseEntity {
    */
   private Set<UserRecommendRelation> children = new HashSet<UserRecommendRelation>();
 
-
-  public String getCellPhoneNum() {
-    return cellPhoneNum;
+  @OneToOne
+  public EndUser getEndUser() {
+    return endUser;
   }
 
-  public void setCellPhoneNum(String cellPhoneNum) {
-    this.cellPhoneNum = cellPhoneNum;
-  }
-
-  public String getNickName() {
-    return nickName;
-  }
-
-  public void setNickName(String nickName) {
-    this.nickName = nickName;
+  public void setEndUser(EndUser endUser) {
+    this.endUser = endUser;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
