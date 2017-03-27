@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +18,17 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.LeBeanRecord;
+import org.rebate.entity.LeMindRecord;
+import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.RebateRecord;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
+import org.rebate.framework.filter.Filter;
+import org.rebate.framework.filter.Filter.Operator;
+import org.rebate.framework.ordering.Ordering.Direction;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.json.base.BaseRequest;
@@ -33,6 +41,10 @@ import org.rebate.json.request.UserRequest;
 import org.rebate.service.AreaService;
 import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
+import org.rebate.service.LeBeanRecordService;
+import org.rebate.service.LeMindRecordService;
+import org.rebate.service.LeScoreRecordService;
+import org.rebate.service.RebateRecordService;
 import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
@@ -65,6 +77,19 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "userRecommendRelationServiceImpl")
   private UserRecommendRelationService userRecommendRelationService;
+
+  @Resource(name = "rebateRecordServiceImpl")
+  private RebateRecordService rebateRecordService;
+
+  @Resource(name = "leMindRecordServiceImpl")
+  private LeMindRecordService leMindRecordService;
+
+  @Resource(name = "leScoreRecordServiceImpl")
+  private LeScoreRecordService leScoreRecordService;
+
+  @Resource(name = "leBeanRecordServiceImpl")
+  private LeBeanRecordService leBeanRecordService;
+
 
 
   /**
@@ -229,7 +254,9 @@ public class EndUserController extends MobileBaseController {
     // }
 
     String[] properties =
-        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel"};
+        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
+            "curScore", "curLeMind", "curLeScore", "totalScore", "totalLeMind", "totalLeScore",
+            "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, loginUser);
     map.putAll(endUserService.isUserHasSeller(loginUser));
     response.setMsg(map);
@@ -689,7 +716,9 @@ public class EndUserController extends MobileBaseController {
     }
 
     String[] properties =
-        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel"};
+        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
+            "curScore", "curLeMind", "curLeScore", "totalScore", "totalLeMind", "totalLeScore",
+            "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
 
@@ -726,7 +755,9 @@ public class EndUserController extends MobileBaseController {
     EndUser endUser = endUserService.find(userId);
 
     String[] properties =
-        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel"};
+        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
+            "curScore", "curLeMind", "curLeScore", "totalScore", "totalLeMind", "totalLeScore",
+            "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
     response.setMsg(map);
@@ -814,6 +845,229 @@ public class EndUserController extends MobileBaseController {
     Page<UserRecommendRelation> page =
         userRecommendRelationService.getRelationsByRecommender(userId, pageable);
     String[] propertys = {"id", "endUser.nickName", "endUser.totalLeScore", "endUser.userPhoto"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+  /**
+   * 用户积分记录列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/scoreRec", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> scoreRec(
+      @RequestBody BaseRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(userFilter);
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<RebateRecord> page = rebateRecordService.findPage(pageable);
+    String[] propertys =
+        {"id", "seller.name", "createDate", "seller.storePictureUrl", "rebateScore", "paymentType",
+            "userCurScore"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 用户乐心记录列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/leMindRec", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> leMindRec(
+      @RequestBody BaseRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(userFilter);
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<LeMindRecord> page = leMindRecordService.findPage(pageable);
+    String[] propertys = {"id", "amount", "createDate", "score", "userCurLeMind"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 用户乐分记录列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/leScoreRec", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> leScoreRec(
+      @RequestBody BaseRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(userFilter);
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
+    String[] propertys =
+        {"id", "seller.name", "createDate", "seller.storePictureUrl", "amount", "leScoreType",
+            "userCurLeScore", "recommender", "recommenderPhoto", "withdrawStatus"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 用户乐豆记录列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/leBeanRec", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> leBeanRec(
+      @RequestBody BaseRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(userFilter);
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<LeBeanRecord> page = leBeanRecordService.findPage(pageable);
+    String[] propertys = {"id", "amount", "createDate", "userCurLeBean", "type"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 

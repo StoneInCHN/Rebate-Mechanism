@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import org.rebate.entity.base.BaseEntity;
 
 /**
- * 返利记录(包括消费返利，推荐返利，提成返利)
+ * 返利积分记录
  * 
  * @author Andrea
  *
@@ -49,58 +49,33 @@ public class RebateRecord extends BaseEntity {
    */
   private BigDecimal rebateScore;
 
-  /**
-   * 返利乐心
-   */
-  private BigDecimal rebateLeMind;
-
-  // /**
-  // * 返利乐分
-  // */
-  // private BigDecimal rebateLeScore;
-  // /**
-  // * 返利类型
-  // */
-  // private RebateType rebateType;
 
   /**
    * 用户当前积分
    */
   private BigDecimal userCurScore;
 
-  /**
-   * 用户当前乐心
-   */
-  private BigDecimal userCurLeMind;
-
-  // /**
-  // * 用户当前乐分
-  // */
-  // private BigDecimal userCurLeScore;
 
   /**
    * 备注
    */
   private String remark;
 
+  /**
+   * 支付方式
+   */
+  private String paymentType;
 
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getRebateLeMind() {
-    return rebateLeMind;
+  @Column(length = 20)
+  public String getPaymentType() {
+    return paymentType;
   }
 
-  public void setRebateLeMind(BigDecimal rebateLeMind) {
-    this.rebateLeMind = rebateLeMind;
+
+  public void setPaymentType(String paymentType) {
+    this.paymentType = paymentType;
   }
 
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getUserCurLeMind() {
-    return userCurLeMind;
-  }
-
-  public void setUserCurLeMind(BigDecimal userCurLeMind) {
-    this.userCurLeMind = userCurLeMind;
-  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getUserCurScore() {

@@ -153,7 +153,9 @@ public class CommonEnum {
     /** 推荐店铺收益返利 */
     RECOMMEND_SELLER,
     /** 代理商提成 */
-    AGENT
+    AGENT,
+    /** 提现 */
+    WITHDRAW
   }
 
   /**
