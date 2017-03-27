@@ -3,6 +3,7 @@ package org.rebate.json.request;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
 import org.rebate.json.base.BaseRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -78,10 +79,62 @@ public class SellerRequest extends BaseRequest {
   private BigDecimal longitude;
 
   /**
-   * 申请的ID
+   * 商铺申请请求的ID
    */
   private Long applyId;
 
+  /**
+   * 商铺ID
+   */
+  private Long sellerId;
+
+  /**
+   * 人均消费
+   */
+  private String avgPrice;
+
+  /**
+   * 营业时间
+   */
+  private String businessTime;
+
+  /**
+   * 特色服务
+   */
+  private FeaturedService featuredService;
+
+
+  public String getAvgPrice() {
+    return avgPrice;
+  }
+
+  public void setAvgPrice(String avgPrice) {
+    this.avgPrice = avgPrice;
+  }
+
+  public String getBusinessTime() {
+    return businessTime;
+  }
+
+  public void setBusinessTime(String businessTime) {
+    this.businessTime = businessTime;
+  }
+
+  public FeaturedService getFeaturedService() {
+    return featuredService;
+  }
+
+  public void setFeaturedService(FeaturedService featuredService) {
+    this.featuredService = featuredService;
+  }
+
+  public Long getSellerId() {
+    return sellerId;
+  }
+
+  public void setSellerId(Long sellerId) {
+    this.sellerId = sellerId;
+  }
 
   public Long getApplyId() {
     return applyId;
