@@ -64,19 +64,24 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-				 [#list ["rebate:sellerApply"] as permission]
+				 [#list ["rebate:sellerApply","rebate:seller"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
 		                           <a href="#">
 		                               <i class="fa fa-user"></i>
-		                               <span class="text-normal">${message("rebate.main.systemNav")}</span>
+		                               <span class="text-normal">${message("rebate.main.sellerManager")}</span>
 		                           </a>
 		                       </div>
 		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
 		                     	  [@shiro.hasPermission name="rebate:sellerApply"]
 		                           <li>
 		                               <a href="../sellerApply/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.sellerApply")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:seller"]
+		                           <li>
+		                               <a href="../seller/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.seller")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>

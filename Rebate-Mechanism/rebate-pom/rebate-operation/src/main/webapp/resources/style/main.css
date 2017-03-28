@@ -114,8 +114,7 @@ ul.nav li>a{
     right: 0px;
     overflow: auto;
     background: #FFF;
-    padding-left: 22px;
-    padding-top: 15px;
+    padding:0 15px 15px 22px;
 }
 .breadcrumb{
     margin-bottom: 5px;
@@ -157,7 +156,10 @@ ul.nav li>a{
 .button-group{
     margin: 0;
 }
-a.btn,a.btn:hover{
+.button-group span{
+	margin-left:5px;
+}
+a.btn,a.btn:hover , .queryFiled .btn , .queryFiled .btn:hover{
     -webkit-box-sizing: border-box;
     background: rgba(31,181,171,0.1);
     border-radius: 4px;
@@ -170,7 +172,7 @@ a.btn,a.btn:hover{
     margin: 5px 5px 5px 0;
     float: left;
 }
-#contentTable tr th {
+#listTable tr th {
     -webkit-box-sizing: border-box;
     background-image: none;
     background: #1fb5ac;
@@ -182,7 +184,7 @@ a.btn,a.btn:hover{
     vertical-align: middle;
     white-space: nowrap;
 }
-#contentTable tr td {
+#listTable tr td {
     -webkit-box-sizing: border-box;
     height: 40px;
     font-size: 12px;
@@ -190,7 +192,7 @@ a.btn,a.btn:hover{
     text-align: center;
     white-space: nowrap;
 }
-#contentTable tr .hoverChange:hover {
+#listTable tr .hoverChange:hover {
     text-decoration: underline;
     cursor: pointer;
 }
@@ -248,4 +250,7 @@ a.btn,a.btn:hover{
 }
 .footer{
     height: 30px;
+}
+.footer p{
+	text-align: center;
 }
