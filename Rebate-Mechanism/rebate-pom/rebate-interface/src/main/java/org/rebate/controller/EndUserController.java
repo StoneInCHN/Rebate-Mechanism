@@ -521,7 +521,6 @@ public class EndUserController extends MobileBaseController {
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, regUser);
     map.putAll(endUserService.isUserHasSeller(regUser));
     response.setMsg(map);
-    response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     response.setDesc(regUser.getId().toString());
     String token = TokenGenerator.generateToken();
