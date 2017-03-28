@@ -8,17 +8,15 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
-import org.rebate.entity.EndUser;
-import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SellerCategory;
-import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
-import org.rebate.service.EndUserService;
+import org.rebate.request.SellerApplicationReq;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
-import org.rebate.service.SellerService;
+import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,15 +31,9 @@ public class SellerApplicationController extends BaseController {
   @Resource(name = "sellerApplicationServiceImpl")
   private SellerApplicationService sellerApplicationService;
   
-  @Resource(name = "sellerServiceImpl")
-  private SellerService sellerService;
-  
   @Resource(name = "sellerCategoryServiceImpl")
   private SellerCategoryService sellerCategoryService;
 
-  @Resource(name = "endUserServiceImpl")
-  private EndUserService endUserService;
-  
   /**
    * 编辑
    */
@@ -56,49 +48,52 @@ public class SellerApplicationController extends BaseController {
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public @ResponseBody Message update(SellerApplication sellerApply) {
-    SellerApplication apply = sellerApplicationService.find(sellerApply.getId());
-    try {
-      apply.setApplyStatus(sellerApply.getApplyStatus());
-      if (ApplyStatus.AUDIT_PASSED == sellerApply.getApplyStatus()) {
-        Seller seller =new Seller();
-        SellerCategory sellerCategory = apply.getSellerCategory();
-        EndUser endUser = null;
-        if(apply.getId()!=null){
-          endUser= endUserService.find(apply.getId()); 
-          if(endUser!=null){
-            seller.setEndUser(endUser);
-          }
-        }
-        seller.setAddress(apply.getAddress());
-        seller.setSellerCategory(sellerCategory);
-        seller.setArea(apply.getArea());
-        seller.setContactCellPhone(apply.getContactCellPhone());
-        seller.setContactPerson(apply.getContactPerson());
-        seller.setLatitude(apply.getLatitude());
-        seller.setLicense(apply.getLicense());
-        seller.setLongitude(apply.getLongitude());
-        seller.setStorePhone(apply.getStorePhone());
-        seller.setStorePictureUrl(apply.getStorePhoto());
-        seller.setName(apply.getSellerName());
-        sellerService.save(seller);
-      }
-      sellerApplicationService.update(apply);
-      return SUCCESS_MESSAGE;
-    } catch (Exception e) {
-      return ERROR_MESSAGE;
-    }
-   
-    
+    return sellerApplicationService.applyUpdate(sellerApply);
   }
 
   /**
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(Pageable pageable, ModelMap model) {
+  public String list(Pageable pageable,SellerApplicationReq request, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if(StringUtils.isNotEmpty(request.getSellerName())){
+      filters.add(Filter.like("sellerName", request.getSellerName()));
+      model.addAttribute("sellerName",request.getSellerName());
+    }
+    if(StringUtils.isNotEmpty(request.getContactCellPhone())){
+      filters.add(Filter.like("contactCellPhone", request.getContactCellPhone()));
+      model.addAttribute("contactCellPhone",request.getContactCellPhone());
+    }
+    if(StringUtils.isNotEmpty(request.getContactPerson())){
+      filters.add(Filter.like("contactPerson", request.getContactPerson()));
+      model.addAttribute("contactPerson",request.getContactPerson());
+    }
+    if(request.getAreaId()!=null){
+      filters.add(Filter.eq("area", request.getAreaId()));
+      model.addAttribute("areaId",request.getAreaId());
+    }
+    if(request.getSellerCategoryId()!=null){
+      filters.add(Filter.eq("sellerCategory", request.getSellerCategoryId()));
+      model.addAttribute("sellerCategoryId",request.getSellerCategoryId());
+    }
+    if(request.getApplyStatus()!=null){
+      filters.add(Filter.eq("applyStatus", request.getApplyStatus()));
+      model.addAttribute("applyStatus",request.getApplyStatus());
+    }
+    if(request.getApplyFromDate()!=null){
+      filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getApplyFromDate())));
+      model.addAttribute("applyFromDate",request.getApplyFromDate());
+    }
+    if(request.getApplyToDate()!=null){
+      filters.add(Filter.le("createDate", TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getApplyToDate()))));
+      model.addAttribute("applyToDate",request.getApplyToDate());
+    }
+    pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
     pageable.setOrders(orderings);
+    model.addAttribute("sellerCategorys", sellerCategoryService.findAll());
     model.addAttribute("page", sellerApplicationService.findPage(pageable));
     return "/sellerApply/list";
   }
@@ -108,7 +103,7 @@ public class SellerApplicationController extends BaseController {
    */
   @RequestMapping(value = "/details", method = RequestMethod.GET)
   public String details(Long id, ModelMap model) {
-    model.addAttribute("apply", sellerApplicationService.find(id));
+    model.addAttribute("sellerApply", sellerApplicationService.find(id));
     return "/sellerApply/details";
   }
 

@@ -7,175 +7,161 @@
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/bootstrap-theme.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/style.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/list.css" rel="stylesheet" type="text/css" />
   <!-- HTML5 Support for IE -->
   <!--[if lt IE 9]>
   <script src="${base}/resources/js/html5shim.js"></script>
   <![endif]-->
 </head>
 <body>
-<div class="mainbar">
-				<div class="page-head">
-					<div class="bread-crumb">
-						<a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> 
-						<span class="divider">/</span> 
-						<span  class="bread-current"><i class="fa fa-list"></i>${message("rebate.admin.list")}(${message("rebate.common.page.totalPages", page.total)})</span>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-			
-			<form id="listForm" action="list.jhtml" method="get">
-				  <div class="container operation">
-					<div class="row">
-						  <div class="col-xs-9 col-md-9 col-lg-9">
-						  		<ul class="nav">
-									 <li class="pull-left">
-										<div class="btn-group operationButton">
-										  <button type="button" id="addButton" class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;&nbsp;${message("rebate.common.add")}</button>
-										</div>
-										<div class="btn-group operationButton">
-										  <button type="button" id="deleteButton" class="btn btn-default disabled"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;${message("rebate.common.delete")}</button>
-										</div>
-										<div class="btn-group operationButton">
-										  <button type="button" id="refreshButton" class="btn btn-default"><i class="fa fa-refresh"></i>&nbsp;&nbsp;${message("rebate.common.refresh")}</button>
-										</div>
-									</li>
-									  <li role="presentation" class="dropdown pull-right">
-										    <a id="pageSizeSelect" aria-expanded="false" role="button" aria-haspopup="true" data-toggle="dropdown" class="dropdown-toggle" href="#">
-										      ${message("rebate.common.page.pageSize")} <span class="caret"></span>
-										    </a>
-										    <ul id="pageSizeOption" class="dropdown-menu" role="menu" aria-labelledby="pageSizeSelect">
-										     	<li>
-													<a href="javascript:;"[#if page.pageSize == 10] class="active"[/#if] val="10">10</a>
-												</li>
-												<li>
-													<a href="javascript:;"[#if page.pageSize == 20] class="active"[/#if] val="20">20</a>
-												</li>
-												<li>
-													<a href="javascript:;"[#if page.pageSize == 50] class="active"[/#if] val="50">50</a>
-												</li>
-												<li>
-													<a href="javascript:;"[#if page.pageSize == 100] class="active"[/#if] val="100">100</a>
-												</li>
-										    </ul>
-									  </li>
-									</ul>
-						  </div>
-						  <div class="col-xs-3 col-md-3 col-lg-3">
-						  		<div class="input-group">
-								      <div class="input-group-btn">
-								        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">${message("rebate.common.choose")} <span class="caret"></span></button>
-								        <ul class="dropdown-menu menuWrap" id="searchPropertyOption" role="menu">
-								          <li [#if page.searchProperty == "username" || page.searchProperty ==null] selected="selected" class="active" [/#if] title="username"><a href="#">${message("rebate.admin.username")}</a></li>
-								          <li [#if page.searchProperty == "email"] selected="selected" class="active" [/#if] title="email"><a href="#">${message("rebate.admin.email")}</a></li>
-								          <li [#if page.searchProperty == "name"] selected="selected" class="active" [/#if] title="name"><a href="#">${message("rebate.admin.name")}</a></li>
-								        </ul>
-								      </div>
-								      <input type="text" class="form-control" id="searchValue" name="searchValue" value="${page.searchValue}" maxlength="200" />
-							    </div>
-						  </div>
-					</div>
-				</div>
-				
-				<div class="matter">
-					<div class="container">
-						<div class="row">
-			              <div class="col-md-12">
-			                <div class="widget">
-									 <div class="widget-head">
-						                  <div class="pull-left"><i class="fa fa-list"></i>${message("rebate.main.admin")}</div>
-						                  <div class="clearfix"></div>
-						              </div>
-						              <div class="widget-content">
-										<table id="listTable" class="table table-striped table-bordered table-hover">
-											<thead>
-												<tr>
-													<th class="check">
-														<input type="checkbox" id="selectAll" />
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="username">${message("rebate.admin.username")}</a>
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="email">${message("rebate.admin.email")}</a>
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="name">${message("rebate.admin.name")}</a>
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="loginDate">${message("rebate.admin.loginDate")}</a>
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="loginIp">${message("rebate.admin.loginIp")}</a>
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
-													</th>
-													<th>
-														<a href="javascript:;" class="sort" name="adminStatus">${message("rebate.admin.adminStatus")}</a>
-													</th>
-													<th>
-														<span>${message("rebate.common.handle")}</span>
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												[#list page.content as admin]
-												<tr>
-													<td>
-														<input type="checkbox"  name="ids" value="${admin.id}" />
-													</td>
-													<td>
-														${admin.username}
-													</td>
-													<td>
-														${admin.email}
-													</td>
-													<td>
-														${admin.name}
-													</td>
-													<td>
-														[#if admin.loginDate??]
-															<span title="${admin.loginDate?string("yyyy-MM-dd HH:mm:ss")}">${admin.loginDate}</span>
-														[#else]
-															-
-														[/#if]
-													</td>
-													<td>
-														${(admin.loginIp)!"-"}
-													</td>
-													<td>
-														<span title="${admin.createDate?string("yyyy-MM-dd HH:mm:ss")}">${admin.createDate}</span>
-													</td>
-													<td>
-														${message("rebate.admin.adminStatus."+admin.adminStatus)}
-													</td>
-													<td>
-														<a href="edit.jhtml?id=${admin.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
-													</td>
-												</tr>
-											</tbody>
-											[/#list]
-										</table>
-										<div class="widget-foot">
-					                       [@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
-												[#include "/include/pagination.ftl"]
-										   [/@pagination]
-				                   		 </div>
-									</div>
-								</div>
-							</div>
-						</div>
-					 </div>
-				</div>
-			</form>
-</div>
+	<form id="listForm" action="list.jhtml" method="get">
+ 		<ol class="breadcrumb">
+            <li><a href="#">${message("rebate.main.admin")}</a></li>
+            <li class="active">${message("rebate.admin.list")}(${message("rebate.common.page.totalPages",page.total)})</li>
+        </ol>
+		<div class="content-search accordion-group">
+             <div class="accordion-heading" role="tab" id="headingOne">
+                  <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      	  查询条件
+                  </a>
+             </div>
+             <div id="collapseOne" class="accordion-body in collapse" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="accordion-inner">
+						<table class="queryFiled">
+							<tr>
+								<th>
+									${message("rebate.admin.username")}:
+								</th>
+								<td>
+									<input type="text" name="username" class="text" value="${username}"maxlength="20" />
+								</td>
+								<th>
+									${message("rebate.admin.name")}:
+								</th>
+								<td>
+									<input type="text" name="name" class="text" value="${name}" maxlength="200" />
+								</td>
+								<th>
+									${message("rebate.admin.email")}:
+								</th>
+								<td>
+									<input type="text" name="email" class="text" value="${email}" maxlength="200" />
+								</td>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<input type="submit" class="btn " value="${message("rebate.common.submit")}" />
+									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.admin.loginDate")}:
+								</th>
+								<td>
+									<input type="text" name="loginDate" class="text Wdate" onfocus="WdatePicker();" readonly value="[#if loginDate??]${loginDate?string("yyyy-MM-dd")}[/#if]" />
+								</td>
+								<th>
+									${message("rebate.admin.adminStatus")}:
+								</th>
+								<td>
+									<select  name="adminStatus">
+										<option value="">${message("rebate.admin.adminStatus")}</option>
+										<option value="actived">${message("rebate.admin.adminStatus.actived")}</option>
+										<option value="locked">${message("rebate.admin.adminStatus.locked")}</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+                  </div>
+             </div>
+         </div>
+ 		 <div class="button-group">
+              <a  id="addButton" class="btn btn-default"><i class="fa fa-plus"></i><span>添加</span></a>
+              <a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>
+              <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
+         </div>
+         <table id="listTable" class="table table-striped table-bordered">
+		 		<thead>
+					<tr>
+						<th class="check">
+							<input type="checkbox" id="selectAll" />
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="username">${message("rebate.admin.username")}</a>
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="email">${message("rebate.admin.email")}</a>
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="name">${message("rebate.admin.name")}</a>
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="loginDate">${message("rebate.admin.loginDate")}</a>
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="loginIp">${message("rebate.admin.loginIp")}</a>
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="adminStatus">${message("rebate.admin.adminStatus")}</a>
+						</th>
+						<th>
+							<span>${message("rebate.common.handle")}</span>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					[#list page.content as admin]
+					<tr>
+						<td>
+							<input type="checkbox"  name="ids" value="${admin.id}" />
+						</td>
+						<td>
+							${admin.username}
+						</td>
+						<td>
+							${admin.email}
+						</td>
+						<td>
+							${admin.name}
+						</td>
+						<td>
+							[#if admin.loginDate??]
+								<span title="${admin.loginDate?string("yyyy-MM-dd HH:mm:ss")}">${admin.loginDate}</span>
+							[#else]
+								-
+							[/#if]
+						</td>
+						<td>
+							${(admin.loginIp)!"-"}
+						</td>
+						<td>
+							<span title="${admin.createDate?string("yyyy-MM-dd HH:mm:ss")}">${admin.createDate}</span>
+						</td>
+						<td>
+							${message("rebate.admin.adminStatus."+admin.adminStatus)}
+						</td>
+						<td>
+							<a href="edit.jhtml?id=${admin.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+						</td>
+					</tr>
+					[/#list]
+				</tbody>
+				</table>
+				[@pagination pageNumber = page.pageNumber totalPages = page.totalPages total=page.total]
+					[#include "/include/pagination.ftl"]
+				[/@pagination]
+	</form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
-<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
+<script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
 </body>
 </html>

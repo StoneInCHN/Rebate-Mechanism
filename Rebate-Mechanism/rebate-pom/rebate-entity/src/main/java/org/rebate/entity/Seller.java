@@ -133,7 +133,7 @@ public class Seller extends BaseEntity {
   /**
    * 商家被收藏数
    */
-  private Integer favoriteNum;
+  private Integer favoriteNum = 0;
 
   /**
    * 收藏该商家的用户
@@ -170,15 +170,58 @@ public class Seller extends BaseEntity {
    */
   private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
 
-  /**
-   * 推荐人
-   */
-  private String recommender;
+  // /**
+  // * 推荐人
+  // */
+  // private String recommender;
+  //
+  // /**
+  // * 推荐人ID
+  // */
+  // private Long recommenderId;
 
   /**
-   * 推荐人ID
+   * 商家累计订单数
    */
-  private Long recommenderId;
+  private Integer totalOrderNum = 0;
+
+  /**
+   * 累计订单金额
+   */
+  private BigDecimal totalOrderAmount = new BigDecimal("0");
+
+  /**
+   * 所有订单未结算(提取)的金额
+   */
+  private BigDecimal unClearingAmount = new BigDecimal("0");
+
+
+
+  public Integer getTotalOrderNum() {
+    return totalOrderNum;
+  }
+
+  public void setTotalOrderNum(Integer totalOrderNum) {
+    this.totalOrderNum = totalOrderNum;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getTotalOrderAmount() {
+    return totalOrderAmount;
+  }
+
+  public void setTotalOrderAmount(BigDecimal totalOrderAmount) {
+    this.totalOrderAmount = totalOrderAmount;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getUnClearingAmount() {
+    return unClearingAmount;
+  }
+
+  public void setUnClearingAmount(BigDecimal unClearingAmount) {
+    this.unClearingAmount = unClearingAmount;
+  }
 
   @Column(length = 100)
   public String getLicenseNum() {
@@ -196,23 +239,6 @@ public class Seller extends BaseEntity {
 
   public void setLicenseImgUrl(String licenseImgUrl) {
     this.licenseImgUrl = licenseImgUrl;
-  }
-
-  @Column(length = 20)
-  public String getRecommender() {
-    return recommender;
-  }
-
-  public void setRecommender(String recommender) {
-    this.recommender = recommender;
-  }
-
-  public Long getRecommenderId() {
-    return recommenderId;
-  }
-
-  public void setRecommenderId(Long recommenderId) {
-    this.recommenderId = recommenderId;
   }
 
 

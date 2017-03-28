@@ -1,8 +1,9 @@
 package org.rebate.json.request;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
+import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.json.base.BaseRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,27 +71,131 @@ public class SellerRequest extends BaseRequest {
   /**
    * 纬度
    */
-  private BigDecimal latitude;
+  private String latitude;
 
   /**
    * 经度
    */
-  private BigDecimal longitude;
+  private String longitude;
+
+  /**
+   * 商铺申请请求的ID
+   */
+  private Long applyId;
+
+  /**
+   * 商铺ID
+   */
+  private Long sellerId;
+
+  /**
+   * 人均消费
+   */
+  private String avgPrice;
+
+  /**
+   * 营业时间
+   */
+  private String businessTime;
+
+  /**
+   * 特色服务
+   */
+  private FeaturedService featuredService;
+
+  /**
+   * 商家回复评价
+   */
+  private String sellerReply;
+
+  /**
+   * 排序类型
+   */
+  private SortType sortType;
+
+  /**
+   * 搜索关键字
+   */
+  private String keyWord;
 
 
-  public BigDecimal getLatitude() {
+  public String getKeyWord() {
+    return keyWord;
+  }
+
+  public void setKeyWord(String keyWord) {
+    this.keyWord = keyWord;
+  }
+
+  public SortType getSortType() {
+    return sortType;
+  }
+
+  public void setSortType(SortType sortType) {
+    this.sortType = sortType;
+  }
+
+  public String getSellerReply() {
+    return sellerReply;
+  }
+
+  public void setSellerReply(String sellerReply) {
+    this.sellerReply = sellerReply;
+  }
+
+  public String getAvgPrice() {
+    return avgPrice;
+  }
+
+  public void setAvgPrice(String avgPrice) {
+    this.avgPrice = avgPrice;
+  }
+
+  public String getBusinessTime() {
+    return businessTime;
+  }
+
+  public void setBusinessTime(String businessTime) {
+    this.businessTime = businessTime;
+  }
+
+  public FeaturedService getFeaturedService() {
+    return featuredService;
+  }
+
+  public void setFeaturedService(FeaturedService featuredService) {
+    this.featuredService = featuredService;
+  }
+
+  public Long getSellerId() {
+    return sellerId;
+  }
+
+  public void setSellerId(Long sellerId) {
+    this.sellerId = sellerId;
+  }
+
+  public Long getApplyId() {
+    return applyId;
+  }
+
+  public void setApplyId(Long applyId) {
+    this.applyId = applyId;
+  }
+
+  public String getLatitude() {
     return latitude;
   }
 
-  public void setLatitude(BigDecimal latitude) {
+  public void setLatitude(String latitude) {
     this.latitude = latitude;
   }
 
-  public BigDecimal getLongitude() {
+  public String getLongitude() {
     return longitude;
   }
 
-  public void setLongitude(BigDecimal longitude) {
+  public void setLongitude(String longitude) {
     this.longitude = longitude;
   }
 

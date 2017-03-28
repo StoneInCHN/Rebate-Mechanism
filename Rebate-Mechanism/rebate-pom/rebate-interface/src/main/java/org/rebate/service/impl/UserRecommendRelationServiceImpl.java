@@ -3,7 +3,10 @@ package org.rebate.service.impl;
 import javax.annotation.Resource;
 
 import org.rebate.dao.UserRecommendRelationDao;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.UserRecommendRelation;
+import org.rebate.framework.paging.Page;
+import org.rebate.framework.paging.Pageable;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.UserRecommendRelationService;
 import org.springframework.stereotype.Service;
@@ -21,8 +24,12 @@ public class UserRecommendRelationServiceImpl extends BaseServiceImpl<UserRecomm
   }
 
   @Override
-  public UserRecommendRelation findByUserMobile(String mobileNo) {
-    // TODO Auto-generated method stub
-    return null;
+  public UserRecommendRelation findByUser(EndUser endUser) {
+    return userRecommendRelationDao.findByUser(endUser);
+  }
+
+  @Override
+  public Page<UserRecommendRelation> getRelationsByRecommender(Long userId, Pageable pageable) {
+    return userRecommendRelationDao.getRelationsByRecommender(userId, pageable);
   }
 }

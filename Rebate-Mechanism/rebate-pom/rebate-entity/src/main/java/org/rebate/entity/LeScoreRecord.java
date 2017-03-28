@@ -9,6 +9,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
+import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 
 /**
@@ -54,15 +55,37 @@ public class LeScoreRecord extends BaseEntity {
   private String remark;
 
   /**
-   * 推荐人昵称
+   * 推荐好友昵称
    */
   private String recommender;
 
   /**
-   * 推荐人ID
+   * 推荐好友头像
    */
-  private Long recommenderId;
+  private Long recommenderPhoto;
 
+  /**
+   * 提现状态
+   */
+  private ApplyStatus withdrawStatus;
+
+
+  public ApplyStatus getWithdrawStatus() {
+    return withdrawStatus;
+  }
+
+  public void setWithdrawStatus(ApplyStatus withdrawStatus) {
+    this.withdrawStatus = withdrawStatus;
+  }
+
+  @Column(length = 200)
+  public Long getRecommenderPhoto() {
+    return recommenderPhoto;
+  }
+
+  public void setRecommenderPhoto(Long recommenderPhoto) {
+    this.recommenderPhoto = recommenderPhoto;
+  }
 
   @Column(length = 20)
   public String getRecommender() {
@@ -71,14 +94,6 @@ public class LeScoreRecord extends BaseEntity {
 
   public void setRecommender(String recommender) {
     this.recommender = recommender;
-  }
-
-  public Long getRecommenderId() {
-    return recommenderId;
-  }
-
-  public void setRecommenderId(Long recommenderId) {
-    this.recommenderId = recommenderId;
   }
 
   public LeScoreType getLeScoreType() {

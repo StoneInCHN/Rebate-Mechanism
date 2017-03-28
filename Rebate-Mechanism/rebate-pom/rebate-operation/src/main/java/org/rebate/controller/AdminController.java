@@ -1,6 +1,7 @@
 package org.rebate.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.rebate.framework.paging.Pageable;
 import org.rebate.service.AdminService;
 import org.rebate.service.RoleService;
 import org.rebate.utils.SettingUtils;
+import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,11 +130,34 @@ public class AdminController extends BaseController {
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(Pageable pageable, ModelMap model) {
+  public String list(Pageable pageable,String username,String name,String email,
+      Date loginDate,AdminStatus adminStatus,ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
+    if(username!=null){
+      filters.add(Filter.like("username", username));
+      model.addAttribute("username",username);
+    }
+    if(name!=null){
+      filters.add(Filter.like("name", name));
+      model.addAttribute("name",name);
+    }
+    if(email!=null){
+      filters.add(Filter.like("email", email));
+      model.addAttribute("email",email);
+    }
+    if(loginDate!=null){
+      Date formDate = TimeUtils.formatDate2Day(loginDate);
+      Date toDate = TimeUtils.addDays(1, loginDate);
+      filters.add(Filter.ge("loginDate", formDate));
+      filters.add(Filter.le("loginDate", toDate));
+      model.addAttribute("loginDate",loginDate);
+    }
+    if(adminStatus!=null){
+      filters.add(Filter.eq("adminStatus", adminStatus));
+      model.addAttribute("adminStatus",adminStatus);
+    }
     pageable.setFilters(filters);
     model.addAttribute("page", adminService.findPage(pageable));
-    model.addAttribute("adminStatusTypes", AdminStatus.values());
     return "/admin/list";
   }
 

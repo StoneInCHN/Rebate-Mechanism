@@ -1,43 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.sellerApplication.edit")}</title>
+<title>${message("rebate.sellerApplication.details")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/style.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
-<script type="text/javascript" src="${base}/resources/js/common.js"></script>
-<script type="text/javascript" src="${base}/resources/js/input.js"></script>
-
 </head>
 <body>
-	<div class="mainbar">
-		<div class="page-head">
-			<div class="bread-crumb">
-				<a ><i class="fa fa-user"></i> ${message("rebate.main.sellerApplication")}</a> 
-				<span class="divider">/</span> 
-				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("rebate.sellerApplication.list")}</a>
-				<span class="divider">/</span>
-				<a  class="bread-current"><i class="fa fa-pencil-square-o"></i>${message("rebate.sellerApplication.edit")}</a>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="matter">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="widget wgreen">
-                <div class="widget-head">
-                  <div class="pull-left">${message("rebate.sellerApplication.base")}</div>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="widget-content">
-                  <div class="padd">
-						<input type="hidden" name="id" value="${sellerApplication.id}" />
-						<table class="input">
+	  <ol class="breadcrumb">
+          <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerManager")}</a> </li>
+          <li><a href="list.jhtml">${message("rebate.sellerApplication.list")}</a></li>
+          <li class="active">${message("rebate.sellerApplication.details")}</li>
+      </ol>
+      <table class="input">
 							<tr>
 								<th>
 									${message("rebate.sellerApplication.sellerName")}:
@@ -51,7 +29,7 @@
 									${message("rebate.sellerApplication.sellerCategory")}:
 								</th>
 								<td>
-									[#if  sellerApplication.sellerCategory??]
+									[#if  sellerApply.sellerCategory??]
 										${sellerApply.sellerCategory.categoryName}
 									[#else]
 										--
@@ -119,7 +97,15 @@
 									${message("rebate.sellerApplication.applyStatus")}:
 								</th>
 								<td>
-									${message("rebate.common.auditStatus."+sellerApply.applyStatus)}
+									[#if  sellerApply.applyStatus =="AUDIT_WAITING"]
+										<span class="label label-info">${message("rebate.common.auditStatus.AUDIT_WAITING")}</span>
+									[#elseif sellerApply.applyStatus =="AUDIT_PASSED"]
+										<span class="label label-success">${message("rebate.common.auditStatus.AUDIT_PASSED")}</span>
+									[#elseif sellerApply.applyStatus =="AUDIT_FAILED"]
+										<span class="label label-warning">${message("rebate.common.auditStatus.AUDIT_FAILED")}</span>
+									[#else]
+										--
+									[/#if]
 								</td>
 							</tr>
 							<tr>
@@ -131,14 +117,5 @@
 								</td>
 							</tr>
 						</table>
-                  </div>
-                </div>
-              </div>  
-            </div>
-          </div>
-        </div>
-	   </div>
-	</div>
-	<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
 </body>
 </html>

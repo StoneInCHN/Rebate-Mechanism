@@ -138,6 +138,8 @@ public class CommonEnum {
     LESCORE_PERCENTAGE,
     /** 每个乐心分红的阈值 */
     BONUS_MAXIMUM,
+    /** 单位消费值（消费UNIT_CONSUME元赠送**积分） */
+    UNIT_CONSUME,
   }
 
   /**
@@ -153,7 +155,9 @@ public class CommonEnum {
     /** 推荐店铺收益返利 */
     RECOMMEND_SELLER,
     /** 代理商提成 */
-    AGENT
+    AGENT,
+    /** 提现 */
+    WITHDRAW
   }
 
   /**
@@ -196,5 +200,34 @@ public class CommonEnum {
     image,
     /** 文件 */
     file
+  }
+
+  public enum OrderStatus {
+
+    /** 已支付，待评价 */
+    PAID,
+    /** 已完成 */
+    FINISHED
+  }
+
+  /**
+   * 手机接口查询排序类型
+   * 
+   */
+  public enum SortType {
+    /**
+     * 距离由近及远
+     */
+    DISTANCEASC,
+    /**
+     * 好评分由高到低
+     */
+    SCOREDESC,
+    /**
+     * 收藏由高到低
+     */
+    COLLECTDESC,
+    /** 默认排序（时间先后顺序） */
+    DEFAULT
   }
 }

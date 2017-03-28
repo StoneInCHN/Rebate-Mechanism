@@ -91,7 +91,7 @@ public class Setting implements Serializable {
   private String siteUrl;
 
   /**
-   * app用户查询商家时的搜索半径
+   * app用户查询商家时的搜索半径(单位：米)
    */
   private Integer searchRadius;
 

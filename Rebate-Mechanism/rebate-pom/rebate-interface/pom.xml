@@ -409,6 +409,10 @@
 	   	    <artifactId>java</artifactId>
 	   	    <version>1.0</version>
 		</dependency>
+		<dependency>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>core</artifactId>
+		</dependency>
   </dependencies>
   
     <properties> 

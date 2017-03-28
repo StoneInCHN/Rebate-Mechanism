@@ -123,7 +123,7 @@ public class SellerApplication extends BaseEntity {
   @Valid
   @ElementCollection
   @LazyCollection(LazyCollectionOption.FALSE)
-  @CollectionTable(name = "rm_seller_env_image")
+  @CollectionTable(name = "rm_seller_apply_env_image")
   public List<SellerEnvImage> getEnvImages() {
     return envImages;
   }

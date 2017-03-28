@@ -83,23 +83,22 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     regUser.setAccountStatus(AccountStatus.ACTIVED);
     regUser.setNickName(cellPhoneNum.substring(3, 7));
     UserRecommendRelation relation = new UserRecommendRelation();
+    relation.setEndUser(regUser);
     if (recommenderMobile != null) {
       EndUser recommend = endUserDao.findByUserMobile(recommenderMobile);
       if (recommend != null) {// 存在该推荐人
         regUser.setRecommender(recommend.getNickName());
         regUser.setRecommenderId(recommend.getId());
 
-        UserRecommendRelation parent = userRecommendRelationDao.findByUserMobile(recommenderMobile);
-        relation.setCellPhoneNum(cellPhoneNum);
-        relation.setNickName(regUser.getNickName());
+        UserRecommendRelation parent = userRecommendRelationDao.findByUser(recommend);
         relation.setParent(parent);
       } else {// 无推荐人
-        relation.setCellPhoneNum(cellPhoneNum);
-        relation.setNickName(regUser.getNickName());
+
       }
     }
-    userRecommendRelationDao.persist(relation);
+
     endUserDao.persist(regUser);
+    userRecommendRelationDao.persist(relation);
     return regUser;
   }
 
@@ -138,6 +137,6 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         map.put("sellerStatus", "NO");
       }
     }
-    return null;
+    return map;
   }
 }
