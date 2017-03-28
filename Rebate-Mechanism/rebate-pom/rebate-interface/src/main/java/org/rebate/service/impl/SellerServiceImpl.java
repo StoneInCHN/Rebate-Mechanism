@@ -47,8 +47,8 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     seller.setBusinessTime(req.getBusinessTime());
     seller.setName(req.getSellerName());
     seller.setAddress(req.getAddress());
-    seller.setLatitude(req.getLatitude());
-    seller.setLongitude(req.getLongitude());
+    seller.setLatitude(new BigDecimal(req.getLatitude()));
+    seller.setLongitude(new BigDecimal(req.getLongitude()));
     seller.setFeaturedService(req.getFeaturedService());
     seller.setDescription(req.getNote());
 
@@ -65,4 +65,5 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     sellerDao.merge(seller);
     return seller;
   }
+
 }

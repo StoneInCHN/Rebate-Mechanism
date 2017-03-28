@@ -1,9 +1,9 @@
 package org.rebate.json.request;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
+import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.json.base.BaseRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,12 +71,12 @@ public class SellerRequest extends BaseRequest {
   /**
    * 纬度
    */
-  private BigDecimal latitude;
+  private String latitude;
 
   /**
    * 经度
    */
-  private BigDecimal longitude;
+  private String longitude;
 
   /**
    * 商铺申请请求的ID
@@ -108,6 +108,32 @@ public class SellerRequest extends BaseRequest {
    */
   private String sellerReply;
 
+  /**
+   * 排序类型
+   */
+  private SortType sortType;
+
+  /**
+   * 搜索关键字
+   */
+  private String keyWord;
+
+
+  public String getKeyWord() {
+    return keyWord;
+  }
+
+  public void setKeyWord(String keyWord) {
+    this.keyWord = keyWord;
+  }
+
+  public SortType getSortType() {
+    return sortType;
+  }
+
+  public void setSortType(SortType sortType) {
+    this.sortType = sortType;
+  }
 
   public String getSellerReply() {
     return sellerReply;
@@ -157,19 +183,19 @@ public class SellerRequest extends BaseRequest {
     this.applyId = applyId;
   }
 
-  public BigDecimal getLatitude() {
+  public String getLatitude() {
     return latitude;
   }
 
-  public void setLatitude(BigDecimal latitude) {
+  public void setLatitude(String latitude) {
     this.latitude = latitude;
   }
 
-  public BigDecimal getLongitude() {
+  public String getLongitude() {
     return longitude;
   }
 
-  public void setLongitude(BigDecimal longitude) {
+  public void setLongitude(String longitude) {
     this.longitude = longitude;
   }
 

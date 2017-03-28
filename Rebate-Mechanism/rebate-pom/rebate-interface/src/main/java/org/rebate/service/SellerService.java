@@ -22,4 +22,5 @@ public interface SellerService extends BaseService<Seller, Long> {
    */
   Seller editInfo(SellerRequest req);
 
+
 }

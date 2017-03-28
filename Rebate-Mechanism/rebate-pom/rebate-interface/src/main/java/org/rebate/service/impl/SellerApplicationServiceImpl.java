@@ -64,8 +64,8 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     application.setStorePhone(req.getStorePhone());
     application.setLicenseNum(req.getLicenseNum());
     application.setNotes(req.getNote());
-    application.setLatitude(req.getLatitude());
-    application.setLongitude(req.getLongitude());
+    application.setLatitude(new BigDecimal(req.getLatitude()));
+    application.setLongitude(new BigDecimal(req.getLongitude()));
     application.setDiscount(new BigDecimal(req.getDiscount()));
     application.setApplyStatus(ApplyStatus.AUDIT_WAITING);
 

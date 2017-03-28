@@ -15,18 +15,26 @@ import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
+import org.rebate.entity.SellerEvaluate;
+import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
+import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.ordering.Ordering.Direction;
+import org.rebate.framework.paging.Page;
+import org.rebate.framework.paging.Pageable;
 import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.BaseResponse;
+import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.service.EndUserService;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
+import org.rebate.service.SellerEvaluateService;
+import org.rebate.service.SellerJdbcService;
 import org.rebate.service.SellerService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.QRCodeGenerator;
@@ -54,6 +62,12 @@ public class SellerController extends MobileBaseController {
 
   @Resource(name = "sellerCategoryServiceImpl")
   private SellerCategoryService sellerCategoryService;
+
+  @Resource(name = "sellerJdbcServiceImpl")
+  private SellerJdbcService sellerJdbcService;
+
+  @Resource(name = "sellerEvaluateServiceImpl")
+  private SellerEvaluateService sellerEvaluateService;
 
 
   /**
@@ -94,6 +108,134 @@ public class SellerController extends MobileBaseController {
     // String newtoken = TokenGenerator.generateToken(request.getToken());
     // endUserService.createEndUserToken(newtoken, userId);
     // response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 首页商户列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/list", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> list(@RequestBody SellerRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+    Integer radius = setting.getSearchRadius();
+    String latitude = request.getLatitude();// 纬度
+    String longitude = request.getLongitude();// 经度
+    Long categoryId = request.getCategoryId();
+    Long areaId = request.getAreaId();
+    FeaturedService featuredService = request.getFeaturedService();
+    SortType sortType = request.getSortType();
+    String keyWord = request.getKeyWord();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    if (LogUtil.isDebugEnabled(SellerController.class)) {
+      LogUtil
+          .debug(
+              SellerController.class,
+              "list",
+              "seller list. radius: %s,latitude: %s, longitude: %s, categoryId: %s, areaId: %s, featuredService: %s, sortType: %s, keyWord: %s, pageSize: %s, pageNumber: %s",
+              radius, latitude, longitude, categoryId, areaId, featuredService, sortType, keyWord,
+              pageSize, pageNumber);
+    }
+    Page<Map<String, Object>> page =
+        sellerJdbcService.getSellerList(longitude, latitude, pageable, radius, categoryId, areaId,
+            featuredService, sortType, keyWord);
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(page.getContent());
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 商户评价列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/evaluateList", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> evaluateList(
+      @RequestBody SellerRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+    Long sellerId = request.getSellerId();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    if (LogUtil.isDebugEnabled(SellerController.class)) {
+      LogUtil.debug(SellerController.class, "evaluateList", "seller evaluate list. sellerId: %s",
+          sellerId, pageSize, pageNumber);
+    }
+    Seller seller = sellerService.find(sellerId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    filters.add(sellerFilter);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<SellerEvaluate> page = sellerEvaluateService.findPage(pageable);
+    String[] propertys =
+        {"id", "endUser.userPhoto", "endUser.nickName", "createDate", "content", "evaluateImages",
+            "sellerReply"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
@@ -141,7 +283,7 @@ public class SellerController extends MobileBaseController {
 
 
   /**
-   * 获取店铺信息
+   * 用户获取我的店铺信息
    *
    * @param req
    * @return

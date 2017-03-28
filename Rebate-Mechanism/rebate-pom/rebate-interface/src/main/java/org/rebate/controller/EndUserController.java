@@ -255,8 +255,8 @@ public class EndUserController extends MobileBaseController {
 
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
-            "curScore", "curLeMind", "curLeScore", "totalScore", "totalLeMind", "totalLeScore",
-            "curLeBean", "totalLeBean"};
+            "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, loginUser);
     map.putAll(endUserService.isUserHasSeller(loginUser));
     response.setMsg(map);
@@ -562,7 +562,10 @@ public class EndUserController extends MobileBaseController {
 
 
     response.setCode(CommonAttributes.SUCCESS);
-    String[] properties = {"id", "cellPhoneNum", "nickName", "userPhoto", "area.fullName"};
+    String[] properties =
+        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
+            "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     response.setMsg(map);
 
@@ -717,8 +720,8 @@ public class EndUserController extends MobileBaseController {
 
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
-            "curScore", "curLeMind", "curLeScore", "totalScore", "totalLeMind", "totalLeScore",
-            "curLeBean", "totalLeBean"};
+            "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
 
@@ -756,8 +759,8 @@ public class EndUserController extends MobileBaseController {
 
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
-            "curScore", "curLeMind", "curLeScore", "totalScore", "totalLeMind", "totalLeScore",
-            "curLeBean", "totalLeBean"};
+            "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
     response.setMsg(map);
@@ -819,7 +822,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getRecommendRec", method = RequestMethod.POST)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderSeller(
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getRecommendRec(
       @RequestBody BaseRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
