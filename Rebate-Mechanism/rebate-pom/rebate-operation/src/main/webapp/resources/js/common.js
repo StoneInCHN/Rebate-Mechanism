@@ -345,7 +345,6 @@ function message(code) {
 
 // 令牌
 $().ready(function() {
-	
 	$("form").submit(function() {
 		var $this = $(this);
 		if ($this.attr("method") != null && $this.attr("method").toLowerCase() == "post" && $this.find("input[name='token']").size() == 0) {

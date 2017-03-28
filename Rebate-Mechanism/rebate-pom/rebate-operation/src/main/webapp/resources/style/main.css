@@ -191,6 +191,7 @@ a.btn,a.btn:hover , .queryFiled .btn , .queryFiled .btn:hover{
     color: #3c3c3c;
     text-align: center;
     white-space: nowrap;
+    vertical-align:middle;
 }
 #listTable tr .hoverChange:hover {
     text-decoration: underline;

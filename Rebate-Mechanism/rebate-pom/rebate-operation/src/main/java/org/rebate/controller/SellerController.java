@@ -7,6 +7,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.Seller;
+import org.rebate.entity.SellerApplication;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
@@ -84,7 +86,9 @@ public class SellerController extends BaseController {
    */
   @RequestMapping(value = "/details", method = RequestMethod.GET)
   public String details(Long id, ModelMap model) {
-    model.addAttribute("seller", sellerService.find(id));
+    Seller seller = sellerService.find(id);
+    model.addAttribute("seller", seller);
+    model.addAttribute("envImages", seller.getEnvImages());
     return "/seller/details";
   }
 }

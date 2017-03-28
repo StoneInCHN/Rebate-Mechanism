@@ -288,6 +288,15 @@ table.queryFiled :input{
 ul{
 	list-style-type: none;
 }
-.images li{
+.viewer-images li{
 	float:left;
+	margin-right:10px;
+}
+.viewer-images li img{
+	width:100px;
+	height:100px;
+}
+.img-list{
+	max-width:40px !important;
+	max-height:40px !important;
 }

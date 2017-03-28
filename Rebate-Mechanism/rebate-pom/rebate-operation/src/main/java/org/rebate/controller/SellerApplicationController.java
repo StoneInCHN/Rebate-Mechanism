@@ -39,7 +39,9 @@ public class SellerApplicationController extends BaseController {
    */
   @RequestMapping(value = "/edit", method = RequestMethod.GET)
   public String edit(Long id, ModelMap model) {
-    model.addAttribute("sellerApply", sellerApplicationService.find(id));
+    SellerApplication sellerApplication = sellerApplicationService.find(id);
+    model.addAttribute("sellerApply", sellerApplication);
+    model.addAttribute("envImages", sellerApplication.getEnvImages());
     return "/sellerApply/edit";
   }
 
@@ -103,7 +105,9 @@ public class SellerApplicationController extends BaseController {
    */
   @RequestMapping(value = "/details", method = RequestMethod.GET)
   public String details(Long id, ModelMap model) {
-    model.addAttribute("sellerApply", sellerApplicationService.find(id));
+    SellerApplication sellerApplication = sellerApplicationService.find(id);
+    model.addAttribute("sellerApply", sellerApplication);
+    model.addAttribute("envImages", sellerApplication.getEnvImages());
     return "/sellerApply/details";
   }
 

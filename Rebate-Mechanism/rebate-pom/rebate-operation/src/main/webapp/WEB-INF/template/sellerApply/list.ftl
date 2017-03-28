@@ -10,6 +10,7 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
   <!-- HTML5 Support for IE -->
   <!--[if lt IE 9]>
   <script src="${base}/resources/js/html5shim.js"></script>
@@ -103,7 +104,8 @@
               <a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
-        <table id="listTable" class="table table-striped table-bordered table-hover table-nowrap">
+         <div>
+        <table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
 					<th class="check">
@@ -135,6 +137,9 @@
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="storePhoto">${message("rebate.sellerApplication.storePhoto")}</a>
+					</th>
+					<th>
+						<a href="javascript:;" class="sort" name="storePhone">${message("rebate.sellerApplication.storePhone")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="latitude">${message("rebate.sellerApplication.latitude")}</a>
@@ -185,18 +190,25 @@
 						${sellerApplication.area}
 					</td>
 					<td>
-						[#if  sellerApplication.license??]
-							<a href="${base}${sellerApplication.license}" target="1024"><img src="${base}${sellerApplication.license}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.license")}"></a>
+						[#if  sellerApplication.licenseImgUrl??]
+							<ul  class="viewer-images clearfix">
+								<li><img class="img-list img-rounded img-lazy" data-original="${sellerApplication.licenseImgUrl}" alt="${message("rebate.sellerApplication.license")}"></li>
+						    </ul>
 						[#else]
 							--
 						[/#if]			
 					</td>
 					<td>
-						[#if  sellerApplication.storePhone ??]
-							<a href="${base}${sellerApplication.storePhone}" target="1024"><img src="${base}${sellerApplication.storePhone}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.storePhone")}"></a>
+						[#if  sellerApplication.storePhoto ??]
+							<ul  class="viewer-images clearfix">
+								<li><img class="img-list img-rounded img-lazy" data-original="${sellerApplication.storePhoto}" alt="${message("rebate.sellerApplication.storePhoto")}"></li>
+						    </ul>
 						[#else]
 							--
 						[/#if]
+					</td>
+					<td>
+						${sellerApplication.storePhone}
 					</td>
 					<td>
 						${sellerApplication.latitude}
@@ -232,12 +244,21 @@
 		[@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
 			[#include "/include/pagination.ftl"]
 		[/@pagination]
-		 
+	<div> 
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.viewer-images').viewer();
+	//图片懒加载
+	$('.img-lazy').lazyload();
+})
+</script>
 </body>
 </html>

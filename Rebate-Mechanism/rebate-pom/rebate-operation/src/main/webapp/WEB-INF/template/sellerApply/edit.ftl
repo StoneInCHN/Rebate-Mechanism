@@ -13,12 +13,15 @@
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
 <script type="text/javascript">
 $(function() {
 
 	var $inputForm = $("#inputForm");
 	var $submit = $("#submit");	
-	$('#images').viewer();
+	$('.viewer-images').viewer();
+	$('.img-lazy').lazyload();
+	
 	// 表单验证
 	$inputForm.validate({
 		rules: {
@@ -68,7 +71,7 @@ $(function() {
 									${message("rebate.sellerApplication.sellerCategory")}:
 								</th>
 								<td>
-									[#if  sellerApplication.sellerCategory??]
+									[#if  sellerApply.sellerCategory??]
 										${sellerApply.sellerCategory.categoryName}
 									[#else]
 										--
@@ -112,7 +115,9 @@ $(function() {
 									${message("rebate.sellerApplication.license")}:
 								</th>
 								<td>
-									<a href="${base}${sellerApply.licenseImgUrl}" target="1024"><img src="${base}${sellerApply.licenseImgUrl}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.licenseImgUrl")}"></a>
+									<ul  class="viewer-images clearfix">
+										 <li><img class="img-lazy img-rounded" data-original="${sellerApply.licenseImgUrl}" alt="${message("rebate.sellerApplication.licenseImgUrl")}"></li>
+									</ul>
 								</td>
 							</tr>
 							<tr>
@@ -120,7 +125,9 @@ $(function() {
 									${message("rebate.sellerApplication.storePhoto")}:
 								</th>
 								<td>
-									<a href="${base}${sellerApply.storePhoto}" target="1024"><img src="${base}${sellerApply.storePhoto}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.storePhoto")}"></a>
+									 <ul  class="viewer-images clearfix">
+										 <li><img class="img-lazy img-rounded" data-original="${sellerApply.storePhoto}" alt="${message("rebate.sellerApplication.storePhoto")}"></li>
+									  </ul>
 								</td>
 							</tr>
 							<tr>
@@ -129,16 +136,11 @@ $(function() {
 								</th>
 								<td>
 									<!-- a block container is required -->
-									<div>
-									  <img class="image" src="picture.jpg" alt="Picture">
-									</div>
-									<div>
-									  <ul id="images" class="images clearfix">
-									    <li><img style="max-width:100px;max-height:100px;padding:5px" src="http://pic17.nipic.com/20111017/8488090_144830628199_2.jpg" alt="Picture"></li>
-									    <li><img style="max-width:100px;max-height:100px;padding:5px" src="http://img2.niutuku.com/desk/130220/23/23-niutuku.com-246.jpg" alt="Picture 2"></li>
-									    <li><img style="max-width:100px;max-height:100px;padding:5px" src="http://img1.imgtn.bdimg.com/it/u=291469928,1246097503&fm=21&gp=0.jpg" alt="Picture 3"></li>
+									  <ul  class="viewer-images clearfix">
+									  	[#list envImages as images]	
+											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
+										[/#list]
 									  </ul>
-									</div>
 								</td>
 							</tr>
 							<tr>
@@ -181,6 +183,5 @@ $(function() {
 						</table>
 					</form>
      </div>
-	<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
 </body>
 </html>

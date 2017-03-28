@@ -8,6 +8,7 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	  <ol class="breadcrumb">
@@ -73,7 +74,9 @@
 									${message("rebate.seller.licenseImgUrl")}:
 								</th>
 								<td>
-									<a href="${base}${seller.licenseImgUrl}" target="1024"><img src="${base}${seller.licenseImgUrl}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.seller.licenseImgUrl")}"></a>
+									<ul  class="viewer-images clearfix">
+										 <li><img class="img-lazy img-rounded" data-original="${seller.licenseImgUrl}" alt="${message("rebate.seller.licenseImgUrl")}"></li>
+									  </ul>
 								</td>
 							</tr>
 							<tr>
@@ -81,7 +84,22 @@
 									${message("rebate.seller.storePhoto")}:
 								</th>
 								<td>
-									<a href="${base}${seller.storePhoto}" target="1024"><img src="${base}${seller.storePhoto}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.seller.storePhoto")}"></a>
+									<ul  class="viewer-images clearfix">
+										 <li><img class="img-lazy img-rounded" data-original="${seller.storePhoto}" alt="${message("rebate.seller.storePhoto")}"></li>
+									  </ul>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.envImages")}:
+								</th>
+								<td>
+									<!-- a block container is required -->
+									  <ul  class="viewer-images clearfix">
+									  	[#list envImages as images]	
+											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
+										[/#list]
+									  </ul>
 								</td>
 							</tr>
 							<tr>
@@ -109,5 +127,14 @@
 								</td>
 							</tr>
 						</table>	
+<script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('.viewer-images').viewer();
+		$('.img-lazy').lazyload();
+	})
+</script>	
 </body>
 </html>

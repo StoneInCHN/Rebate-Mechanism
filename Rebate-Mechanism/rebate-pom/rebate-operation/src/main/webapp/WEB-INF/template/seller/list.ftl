@@ -10,6 +10,7 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
   <!-- HTML5 Support for IE -->
   <!--[if lt IE 9]>
   <script src="${base}/resources/js/html5shim.js"></script>
@@ -162,7 +163,9 @@
 					</td>
 					<td>
 						[#if  seller.storePhone ??]
-							<a href="${base}${seller.storePhone}" target="1024"><img src="${base}${seller.storePhone}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.seller.storePhone")}"></a>
+							<ul  class="viewer-images clearfix">
+								<li><img class="img-list img-rounded img-lazy" data-original="${seller.storePhoto}" alt="${message("rebate.seller.storePhoto")}"></li>
+						    </ul>
 						[#else]
 							--
 						[/#if]
@@ -204,8 +207,17 @@
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.viewer-images').viewer();
+	//图片懒加载
+	$('.img-lazy').lazyload();
+})
+</script>
 </body>
 </html>
