@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/style.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
@@ -36,29 +35,13 @@ $().ready(function() {
 </script>
 </head>
 <body>
-	<div class="mainbar">
-		<div class="page-head">
-			<div class="bread-crumb">
-				<a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> 
-				<span class="divider">/</span> 
-				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("rebate.admin.list")}</a>
-				<span class="divider">/</span>
-				<a  class="bread-current"><i class="fa fa-pencil-square-o"></i>${message("rebate.admin.edit")}</a>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="matter">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="widget wgreen">
-                <div class="widget-head">
-                  <div class="pull-left">${message("rebate.admin.base")}</div>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="widget-content">
-                  <div class="padd">
-                    <form id="inputForm" action="update.jhtml" method="post">
+	 <div class="content">
+          <ol class="breadcrumb">
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> </li>
+                <li><a href="#">${message("rebate.admin.list")}</a></li>
+                <li class="active">${message("rebate.admin.edit")}</li>
+          </ol>
+		 <form id="inputForm" action="update.jhtml" method="post">
 						<input type="hidden" name="id" value="${admin.id}" />
 						<input type="hidden" name="username" value="${admin.username}" />
 						<table class="input tabContent">
@@ -122,14 +105,6 @@ $().ready(function() {
 							</tr>
 						</table>
 					</form>
-                  </div>
-                </div>
-              </div>  
-            </div>
-          </div>
-        </div>
-	   </div>
-	</div>
-	<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
+     </div>
 </body>
 </html>

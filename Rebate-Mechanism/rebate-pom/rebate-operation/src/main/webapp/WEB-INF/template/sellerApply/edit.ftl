@@ -6,18 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/style.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript">
 $(function() {
 
 	var $inputForm = $("#inputForm");
 	var $submit = $("#submit");	
-	
+	$('#images').viewer();
 	// 表单验证
 	$inputForm.validate({
 		rules: {
@@ -45,29 +46,13 @@ $(function() {
 </script>
 </head>
 <body>
-	<div class="mainbar">
-		<div class="page-head">
-			<div class="bread-crumb">
-				<a ><i class="fa fa-user"></i> ${message("rebate.main.sellerApplication")}</a> 
-				<span class="divider">/</span> 
-				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("rebate.sellerApplication.list")}</a>
-				<span class="divider">/</span>
-				<a  class="bread-current"><i class="fa fa-pencil-square-o"></i>${message("rebate.sellerApplication.edit")}</a>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="matter">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="widget wgreen">
-                <div class="widget-head">
-                  <div class="pull-left">${message("rebate.sellerApplication.base")}</div>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="widget-content">
-                  <div class="padd">
-                    <form id="inputForm" action="update.jhtml" method="post">
+	 <div class="content">
+          <ol class="breadcrumb">
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerApply")}</a> </li>
+                <li><a href="#">${message("rebate.sellerApplication.list")}</a></li>
+                <li class="active">${message("rebate.sellerApplication.edit")}</li>
+          </ol>
+		  <form id="inputForm" action="update.jhtml" method="post">
 						<input type="hidden" name="id" value="${sellerApply.id}" />
 						<table class="input">
 							<tr>
@@ -127,7 +112,7 @@ $(function() {
 									${message("rebate.sellerApplication.license")}:
 								</th>
 								<td>
-									<a href="${base}${sellerApply.license}" target="1024"><img src="${base}${sellerApply.license}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.license")}"></a>
+									<a href="${base}${sellerApply.licenseImgUrl}" target="1024"><img src="${base}${sellerApply.licenseImgUrl}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.licenseImgUrl")}"></a>
 								</td>
 							</tr>
 							<tr>
@@ -136,6 +121,24 @@ $(function() {
 								</th>
 								<td>
 									<a href="${base}${sellerApply.storePhoto}" target="1024"><img src="${base}${sellerApply.storePhoto}"  style="max-width:100px;max-height:100px;padding:5px" alt="${message("rebate.sellerApplication.storePhoto")}"></a>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.sellerApplication.envImages")}:
+								</th>
+								<td>
+									<!-- a block container is required -->
+									<div>
+									  <img class="image" src="picture.jpg" alt="Picture">
+									</div>
+									<div>
+									  <ul id="images" class="images clearfix">
+									    <li><img style="max-width:100px;max-height:100px;padding:5px" src="http://pic17.nipic.com/20111017/8488090_144830628199_2.jpg" alt="Picture"></li>
+									    <li><img style="max-width:100px;max-height:100px;padding:5px" src="http://img2.niutuku.com/desk/130220/23/23-niutuku.com-246.jpg" alt="Picture 2"></li>
+									    <li><img style="max-width:100px;max-height:100px;padding:5px" src="http://img1.imgtn.bdimg.com/it/u=291469928,1246097503&fm=21&gp=0.jpg" alt="Picture 3"></li>
+									  </ul>
+									</div>
 								</td>
 							</tr>
 							<tr>
@@ -171,20 +174,13 @@ $(function() {
 									&nbsp;
 								</th>
 								<td>
-									<input type="submit" id="submit" class="button" value="${message("rebate.common.submit")}" />
-									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
+									<input type="submit" id="submit" class="btn btn-info" value="${message("rebate.common.submit")}" />
+									<input type="button" class="btn btn-danger" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
 						</table>
 					</form>
-                  </div>
-                </div>
-              </div>  
-            </div>
-          </div>
-        </div>
-	   </div>
-	</div>
+     </div>
 	<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
 </body>
 </html>
