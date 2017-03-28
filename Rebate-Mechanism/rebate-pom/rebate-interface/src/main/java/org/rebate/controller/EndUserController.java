@@ -463,16 +463,20 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
+    try {
+      password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
+      password_confirm =
+          KeyGenerator.decrypt(password_confirm, RSAHelper.getPrivateKey(serverPrivateKey));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     if (!password.equals(password_confirm)) {
       response.setCode(CommonAttributes.FAIL_REG);
       response.setDesc(Message.error("rebate.pwd.no.same").getContent());
       return response;
     }
-    try {
-      password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+
     if (password.length() < setting.getPasswordMinlength()) {
       response.setCode(CommonAttributes.FAIL_REG);
       response.setDesc(Message.error("rebate.pwd.length.error").getContent());
@@ -510,8 +514,14 @@ public class EndUserController extends MobileBaseController {
           recommenderMobile);
     }
 
-    // Map<String, Object> map = new HashMap<String, Object>();
-    // response.setMsg(map);
+    String[] properties =
+        {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
+            "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
+    Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, regUser);
+    map.putAll(endUserService.isUserHasSeller(regUser));
+    response.setMsg(map);
+    response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     response.setDesc(regUser.getId().toString());
     String token = TokenGenerator.generateToken();
