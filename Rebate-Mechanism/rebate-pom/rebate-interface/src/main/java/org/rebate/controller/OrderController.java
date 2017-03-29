@@ -1,6 +1,8 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
+import org.rebate.json.request.OrderRequest;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.service.EndUserService;
 import org.rebate.service.OrderService;
@@ -48,412 +51,441 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/order")
 public class OrderController extends MobileBaseController {
 
-	@Resource(name = "orderServiceImpl")
-	private OrderService orderService;
-	@Resource(name = "endUserServiceImpl")
-	private EndUserService endUserService;
-	@Resource(name = "sellerServiceImpl")
-	private SellerService sellerService;
-	@Resource(name = "sellerEvaluateServiceImpl")
-	private SellerEvaluateService sellerEvaluateService;
+  @Resource(name = "orderServiceImpl")
+  private OrderService orderService;
+  @Resource(name = "endUserServiceImpl")
+  private EndUserService endUserService;
+  @Resource(name = "sellerServiceImpl")
+  private SellerService sellerService;
+  @Resource(name = "sellerEvaluateServiceImpl")
+  private SellerEvaluateService sellerEvaluateService;
 
-	/**
-	 * 商家回复用户评价
-	 *
-	 * @param req
-	 * @return
-	 */
-	@RequestMapping(value = "/userEvaluate", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse userEvaluate(@RequestBody SellerRequest req) {
-		BaseResponse response = new BaseResponse();
 
-		Long userId = req.getUserId();
-		String token = req.getToken();
-		Long evaluateId = req.getEntityId();
-		String reply = req.getSellerReply();
+  /**
+   * 立即下单
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/pay", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> pay(@RequestBody OrderRequest req) {
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("rebate.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
-		SellerEvaluate evaluate = sellerEvaluateService.find(evaluateId);
-		evaluate.setSellerReply(reply);
-		sellerEvaluateService.update(evaluate);
-		if (LogUtil.isDebugEnabled(OrderController.class)) {
-			LogUtil.debug(OrderController.class, "sellerReply",
-					"seller reply user evaluate. evaluateId: %s,reply: %s",
-					evaluateId, reply);
-		}
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    String payType = req.getPayType();
+    BigDecimal amount = req.getAmount();
+    Long sellerId = req.getSellerId();
+    String remark = req.getRemark();
+    Boolean isBeanPay = req.getIsBeanPay();
 
-		response.setCode(CommonAttributes.SUCCESS);
-		String newtoken = TokenGenerator.generateToken(req.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
-		return response;
-	}
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+    Order order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
+    if (LogUtil.isDebugEnabled(OrderController.class)) {
+      LogUtil.debug(OrderController.class, "pay",
+          "pay order. userId: %s,payType: %s,amount: %s,sellerId: %s,remark: %s", userId, payType,
+          amount, sellerId, remark);
+    }
 
-	/**
-	 * 商家回复用户评价
-	 *
-	 * @param req
-	 * @return
-	 */
-	@RequestMapping(value = "/sellerReply", method = RequestMethod.POST)
-	public @ResponseBody BaseResponse sellerReply(@RequestBody SellerRequest req) {
-		BaseResponse response = new BaseResponse();
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("out_trade_no", order.getSn());
+    response.setMsg(map);
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 
-		Long userId = req.getUserId();
-		String token = req.getToken();
-		Long evaluateId = req.getEntityId();
-		String reply = req.getSellerReply();
+  /**
+   * 商家回复用户评价
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/userEvaluate", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse userEvaluate(@RequestBody SellerRequest req) {
+    BaseResponse response = new BaseResponse();
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("rebate.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    Long evaluateId = req.getEntityId();
+    String reply = req.getSellerReply();
 
-		SellerEvaluate evaluate = sellerEvaluateService.find(evaluateId);
-		evaluate.setSellerReply(reply);
-		sellerEvaluateService.update(evaluate);
-		if (LogUtil.isDebugEnabled(OrderController.class)) {
-			LogUtil.debug(OrderController.class, "sellerReply",
-					"seller reply user evaluate. evaluateId: %s,reply: %s",
-					evaluateId, reply);
-		}
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
 
-		response.setCode(CommonAttributes.SUCCESS);
-		String newtoken = TokenGenerator.generateToken(req.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
-		return response;
-	}
-	
-	/**
-	 * 获取商户订单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/getOrderUnderSeller", method = RequestMethod.POST)
-	public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderSeller(
-			@RequestBody BaseRequest request) {
+    SellerEvaluate evaluate = sellerEvaluateService.find(evaluateId);
+    evaluate.setSellerReply(reply);
+    sellerEvaluateService.update(evaluate);
+    if (LogUtil.isDebugEnabled(OrderController.class)) {
+      LogUtil.debug(OrderController.class, "sellerReply",
+          "seller reply user evaluate. evaluateId: %s,reply: %s", evaluateId, reply);
+    }
 
-		ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 
-		Long userId = request.getUserId();
-		String token = request.getToken();
-		Long entityId = request.getEntityId();
-		Integer pageSize = request.getPageSize();
-		Integer pageNumber = request.getPageNumber();
+  /**
+   * 商家回复用户评价
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/sellerReply", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse sellerReply(@RequestBody SellerRequest req) {
+    BaseResponse response = new BaseResponse();
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("rebate.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    Long evaluateId = req.getEntityId();
+    String reply = req.getSellerReply();
 
-		Seller seller = sellerService.find(entityId);
-		List<Filter> filters = new ArrayList<Filter>();
-		Filter sellerFilter = new Filter("seller", Operator.eq, seller);
-		filters.add(sellerFilter);
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
 
-		Pageable pageable = new Pageable();
-		pageable.setPageNumber(pageNumber);
-		pageable.setPageSize(pageSize);
-		pageable.setFilters(filters);
-		pageable.setOrderDirection(Direction.desc);
-		pageable.setOrderProperty("createDate");
+    SellerEvaluate evaluate = sellerEvaluateService.find(evaluateId);
+    evaluate.setSellerReply(reply);
+    sellerEvaluateService.update(evaluate);
+    if (LogUtil.isDebugEnabled(OrderController.class)) {
+      LogUtil.debug(OrderController.class, "sellerReply",
+          "seller reply user evaluate. evaluateId: %s,reply: %s", evaluateId, reply);
+    }
 
-		Page<Order> page = orderService.findPage(pageable);
-		String[] propertys = { "id", "seller.name", "createDate",
-				"endUser.nickName", "amount", "endUser.cellPhoneNum",
-				"endUser.userPhoto", "sn", "remark", "userScore", "status",
-				"evaluate.sellerReply" };
-		List<Map<String, Object>> result = FieldFilterUtils
-				.filterCollectionMap(propertys, page.getContent());
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 
-		PageResponse pageInfo = new PageResponse();
-		pageInfo.setPageNumber(pageNumber);
-		pageInfo.setPageSize(pageSize);
-		pageInfo.setTotal((int) page.getTotal());
-		response.setPage(pageInfo);
-		response.setMsg(result);
-		String newtoken = TokenGenerator.generateToken(request.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
-		response.setCode(CommonAttributes.SUCCESS);
-		return response;
-	}
+  /**
+   * 获取商户订单
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getOrderUnderSeller", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderSeller(
+      @RequestBody BaseRequest request) {
 
-	/**
-	 * 获取订单评价内容
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/getEvaluateByOrder", method = RequestMethod.POST)
-	public @ResponseBody ResponseOne<Map<String, Object>> getEvaluateByOrder(
-			@RequestBody BaseRequest request) {
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-		ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Long entityId = request.getEntityId();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
 
-		Long userId = request.getUserId();
-		String token = request.getToken();
-		Long orderId = request.getEntityId();
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("rebate.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    Seller seller = sellerService.find(entityId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    filters.add(sellerFilter);
 
-		SellerEvaluate evaluate = sellerEvaluateService
-				.getEvaluateByOrder(orderId);
-		String[] propertys = { "id", "endUser.userPhoto", "endUser.nickName",
-				"order.amount", "score", "content", "sellerReply" };
-		Map<String, Object> result = FieldFilterUtils.filterEntityMap(
-				propertys, evaluate);
-		List<String> evaluateImgs = new ArrayList<String>();
-		for (SellerEvaluateImage evaluateImage : evaluate.getEvaluateImages()) {
-			evaluateImgs.add(evaluateImage.getSource());
-		}
-		result.put("evaluateImages", evaluateImgs);
-		response.setMsg(result);
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
 
-		String newtoken = TokenGenerator.generateToken(request.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
-		response.setCode(CommonAttributes.SUCCESS);
-		return response;
-	}
+    Page<Order> page = orderService.findPage(pageable);
+    String[] propertys =
+        {"id", "seller.name", "createDate", "endUser.nickName", "amount", "endUser.cellPhoneNum",
+            "endUser.userPhoto", "sn", "remark", "userScore", "status", "evaluate.sellerReply"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
-	/**
-	 * 获取用户订单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/getAllOrderUnderUser", method = RequestMethod.POST)
-	public @ResponseBody ResponseMultiple<Map<String, Object>> getAllOrderUnderUser(
-			@RequestBody BaseRequest request) {
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
-		ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+  /**
+   * 获取订单评价内容
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getEvaluateByOrder", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> getEvaluateByOrder(
+      @RequestBody BaseRequest request) {
 
-		Long userId = request.getUserId();
-		String token = request.getToken();
-		Integer pageNumber = request.getPageNumber();
-		Integer pageSize = request.getPageSize();
-		EndUser endUser = endUserService.find(userId);
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
-		Pageable pageable = new Pageable();
-		pageable.setPageNumber(pageNumber);
-		pageable.setPageSize(pageSize);
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Long orderId = request.getEntityId();
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("csh.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
 
-		List<Filter> filters = new ArrayList<Filter>();
-		Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
-		filters.add(endUserFilter);
-		pageable.setFilters(filters);
+    SellerEvaluate evaluate = sellerEvaluateService.getEvaluateByOrder(orderId);
+    String[] propertys =
+        {"id", "endUser.userPhoto", "endUser.nickName", "order.amount", "score", "content",
+            "sellerReply"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, evaluate);
+    List<String> evaluateImgs = new ArrayList<String>();
+    for (SellerEvaluateImage evaluateImage : evaluate.getEvaluateImages()) {
+      evaluateImgs.add(evaluateImage.getSource());
+    }
+    result.put("evaluateImages", evaluateImgs);
+    response.setMsg(result);
 
-		Page<Order> orderPage = orderService.findPage(pageable);
-		String[] propertys = { "id", "sn", "seller.name", "userScore",
-				"amount", "createDate", "remark", "evaluate.content",
-				"evaluate.sellerReply" };
-		List<Map<String, Object>> result = FieldFilterUtils
-				.filterCollectionMap(propertys, orderPage.getContent());
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
-		response.setMsg(result);
-		String newtoken = TokenGenerator.generateToken(request.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
+  /**
+   * 获取用户订单
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getAllOrderUnderUser", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getAllOrderUnderUser(
+      @RequestBody BaseRequest request) {
 
-		PageResponse pageInfo = new PageResponse();
-		pageInfo.setPageNumber(pageNumber);
-		pageInfo.setPageSize(pageSize);
-		pageInfo.setTotal((int) orderPage.getTotal());
-		response.setPage(pageInfo);
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-		response.setCode(CommonAttributes.SUCCESS);
-		return response;
-	}
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageNumber = request.getPageNumber();
+    Integer pageSize = request.getPageSize();
+    EndUser endUser = endUserService.find(userId);
 
-	/**
-	 * 获取用户已评论订单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/getReplayedOrderUnderUser", method = RequestMethod.POST)
-	public @ResponseBody ResponseMultiple<Map<String, Object>> getReplayedOrderUnderUser(
-			@RequestBody BaseRequest request) {
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
 
-		ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("csh.user.token.timeout").getContent());
+      return response;
+    }
 
-		Long userId = request.getUserId();
-		String token = request.getToken();
-		Integer pageNumber = request.getPageNumber();
-		Integer pageSize = request.getPageSize();
-		EndUser endUser = endUserService.find(userId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(endUserFilter);
+    pageable.setFilters(filters);
 
-		Pageable pageable = new Pageable();
-		pageable.setPageNumber(pageNumber);
-		pageable.setPageSize(pageSize);
+    Page<Order> orderPage = orderService.findPage(pageable);
+    String[] propertys =
+        {"id", "sn", "seller.name", "userScore", "amount", "createDate", "remark",
+            "evaluate.content", "evaluate.sellerReply"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("csh.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
 
-		List<Filter> filters = new ArrayList<Filter>();
-		Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
-		filters.add(endUserFilter);
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) orderPage.getTotal());
+    response.setPage(pageInfo);
 
-		Filter evaluateFilter = Filter.isNotNull("evaluate");
-		filters.add(evaluateFilter);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
-		pageable.setFilters(filters);
+  /**
+   * 获取用户已评论订单
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getReplayedOrderUnderUser", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getReplayedOrderUnderUser(
+      @RequestBody BaseRequest request) {
 
-		Page<Order> orderPage = orderService.findPage(pageable);
-		String[] propertys = { "id", "sn", "seller.name", "userScore",
-				"amount", "createDate", "remark", "evaluate.content",
-				"evaluate.sellerReply" };
-		List<Map<String, Object>> result = FieldFilterUtils
-				.filterCollectionMap(propertys, orderPage.getContent());
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-		response.setMsg(result);
-		String newtoken = TokenGenerator.generateToken(request.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageNumber = request.getPageNumber();
+    Integer pageSize = request.getPageSize();
+    EndUser endUser = endUserService.find(userId);
 
-		PageResponse pageInfo = new PageResponse();
-		pageInfo.setPageNumber(pageNumber);
-		pageInfo.setPageSize(pageSize);
-		pageInfo.setTotal((int) orderPage.getTotal());
-		response.setPage(pageInfo);
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
 
-		response.setCode(CommonAttributes.SUCCESS);
-		return response;
-	}
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("csh.user.token.timeout").getContent());
+      return response;
+    }
 
-	/**
-	 * 获取用户已评论订单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/getUnreplayedOrderUnderUser", method = RequestMethod.POST)
-	public @ResponseBody ResponseMultiple<Map<String, Object>> getUnreplayedOrderUnderUser(
-			@RequestBody BaseRequest request) {
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(endUserFilter);
 
-		ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+    Filter evaluateFilter = Filter.isNotNull("evaluate");
+    filters.add(evaluateFilter);
 
-		Long userId = request.getUserId();
-		String token = request.getToken();
-		Integer pageNumber = request.getPageNumber();
-		Integer pageSize = request.getPageSize();
-		EndUser endUser = endUserService.find(userId);
+    pageable.setFilters(filters);
 
-		Pageable pageable = new Pageable();
-		pageable.setPageNumber(pageNumber);
-		pageable.setPageSize(pageSize);
+    Page<Order> orderPage = orderService.findPage(pageable);
+    String[] propertys =
+        {"id", "sn", "seller.name", "userScore", "amount", "createDate", "remark",
+            "evaluate.content", "evaluate.sellerReply"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("csh.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
 
-		List<Filter> filters = new ArrayList<Filter>();
-		Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
-		filters.add(endUserFilter);
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) orderPage.getTotal());
+    response.setPage(pageInfo);
 
-		Filter evaluateFilter = Filter.isNull("evaluate");
-		filters.add(evaluateFilter);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
-		pageable.setFilters(filters);
+  /**
+   * 获取用户已评论订单
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getUnreplayedOrderUnderUser", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getUnreplayedOrderUnderUser(
+      @RequestBody BaseRequest request) {
 
-		Page<Order> orderPage = orderService.findPage(pageable);
-		String[] propertys = { "id", "sn", "seller.name", "userScore",
-				"amount", "createDate", "remark", "evaluate.content",
-				"evaluate.sellerReply" };
-		List<Map<String, Object>> result = FieldFilterUtils
-				.filterCollectionMap(propertys, orderPage.getContent());
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-		response.setMsg(result);
-		String newtoken = TokenGenerator.generateToken(request.getToken());
-		endUserService.createEndUserToken(newtoken, userId);
-		response.setToken(newtoken);
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageNumber = request.getPageNumber();
+    Integer pageSize = request.getPageSize();
+    EndUser endUser = endUserService.find(userId);
 
-		PageResponse pageInfo = new PageResponse();
-		pageInfo.setPageNumber(pageNumber);
-		pageInfo.setPageSize(pageSize);
-		pageInfo.setTotal((int) orderPage.getTotal());
-		response.setPage(pageInfo);
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
 
-		response.setCode(CommonAttributes.SUCCESS);
-		return response;
-	}
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("csh.user.token.timeout").getContent());
+      return response;
+    }
 
-	/**
-	 * 获取订单详情
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/orderDetail", method = RequestMethod.POST)
-	public @ResponseBody ResponseOne<Map<String, Object>> orderDetail(
-			@RequestBody BaseRequest request) {
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(endUserFilter);
 
-		ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    Filter evaluateFilter = Filter.isNull("evaluate");
+    filters.add(evaluateFilter);
 
-		Long userId = request.getUserId();
-		String token = request.getToken();
-		Long orderId = request.getEntityId();
+    pageable.setFilters(filters);
 
-		// 验证登录token
-		String userToken = endUserService.getEndUserToken(userId);
-		if (!TokenGenerator.isValiableToken(token, userToken)) {
-			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-			response.setDesc(Message.error("rebate.user.token.timeout")
-					.getContent());
-			return response;
-		}
+    Page<Order> orderPage = orderService.findPage(pageable);
+    String[] propertys =
+        {"id", "sn", "seller.name", "userScore", "amount", "createDate", "remark",
+            "evaluate.content", "evaluate.sellerReply"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
-		Order order = orderService.find(orderId);
-		String[] propertys = { "id", "seller.name", "userScore", "amount",
-				"evaluate" };
-		Map<String, Object> result = FieldFilterUtils.filterEntityMap(
-				propertys, order);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
 
-		response.setMsg(result);
-		// String newtoken = TokenGenerator.generateToken(request.getToken());
-		// endUserService.createEndUserToken(newtoken, userId);
-		// response.setToken(newtoken);
-		response.setCode(CommonAttributes.SUCCESS);
-		return response;
-	}
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) orderPage.getTotal());
+    response.setPage(pageInfo);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+  /**
+   * 获取订单详情
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/orderDetail", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> orderDetail(@RequestBody BaseRequest request) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Long orderId = request.getEntityId();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    Order order = orderService.find(orderId);
+    String[] propertys = {"id", "seller.name", "userScore", "amount", "evaluate"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
+
+    response.setMsg(result);
+    // String newtoken = TokenGenerator.generateToken(request.getToken());
+    // endUserService.createEndUserToken(newtoken, userId);
+    // response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 }

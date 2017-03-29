@@ -259,9 +259,17 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, loginUser);
     map.putAll(endUserService.isUserHasSeller(loginUser));
+    map.put("isSetLoginPwd", false);
+    map.put("isSetPayPwd", false);
+    if (loginUser.getLoginPwd() != null) {
+      map.put("isSetLoginPwd", true);
+    }
+    if (loginUser.getPaymentPwd() != null) {
+      map.put("isSetPayPwd", true);
+    }
     response.setMsg(map);
     String token = TokenGenerator.generateToken();
     endUserService.createEndUserToken(token, loginUser.getId());
@@ -524,9 +532,17 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, regUser);
     map.putAll(endUserService.isUserHasSeller(regUser));
+    map.put("isSetLoginPwd", false);
+    map.put("isSetPayPwd", false);
+    if (regUser.getLoginPwd() != null) {
+      map.put("isSetLoginPwd", true);
+    }
+    if (regUser.getPaymentPwd() != null) {
+      map.put("isSetPayPwd", true);
+    }
     response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     response.setDesc(regUser.getId().toString());

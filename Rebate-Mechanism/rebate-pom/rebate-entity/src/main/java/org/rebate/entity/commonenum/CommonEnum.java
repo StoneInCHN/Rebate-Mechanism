@@ -128,18 +128,20 @@ public class CommonEnum {
    *
    */
   public enum SystemConfigKey {
-    /** 支付方式 */
+    /** 支付方式 0 */
     PAYMENTTYPE,
-    /** 商户返利积分参数 */
+    /** 商户返利积分参数 1 */
     REBATESCORE_SELLER,
-    /** 用户返利积分参数 */
+    /** 用户返利积分参数2 */
     REBATESCORE_USER,
-    /** 收益后乐分乐豆比例 */
+    /** 收益后乐分乐豆比例 3 */
     LESCORE_PERCENTAGE,
-    /** 每个乐心分红的阈值 */
+    /** 每个乐心分红的阈值 4 */
     BONUS_MAXIMUM,
-    /** 单位消费值（消费UNIT_CONSUME元赠送**积分） */
+    /** 单位消费值（消费UNIT_CONSUME元赠送**积分）5 */
     UNIT_CONSUME,
+    /** 乐心算法分母 6 */
+    MIND_DIVIDE
   }
 
   /**
@@ -231,4 +233,5 @@ public class CommonEnum {
     /** 默认排序（时间先后顺序） */
     DEFAULT
   }
+
 }

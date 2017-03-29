@@ -25,7 +25,7 @@ public class Sn extends BaseEntity {
    */
   public enum Type {
     /** 订单 */
-    order
+    ORDER
   }
 
   /** 类型 */

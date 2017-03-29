@@ -151,7 +151,7 @@ public class Order extends BaseEntity {
     this.sellerScore = sellerScore;
   }
 
-  @Column(length = 500)
+  @Column(length = 50)
   public String getRemark() {
     return remark;
   }
