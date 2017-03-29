@@ -123,8 +123,8 @@ public class SellerController extends MobileBaseController {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-    Long userId = request.getUserId();
-    String token = request.getToken();
+    // Long userId = request.getUserId();
+    // String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
     Integer radius = setting.getSearchRadius();
@@ -136,13 +136,13 @@ public class SellerController extends MobileBaseController {
     SortType sortType = request.getSortType();
     String keyWord = request.getKeyWord();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
 
     Pageable pageable = new Pageable();
@@ -169,9 +169,9 @@ public class SellerController extends MobileBaseController {
     response.setPage(pageInfo);
     response.setMsg(page.getContent());
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
+    // String newtoken = TokenGenerator.generateToken(request.getToken());
+    // endUserService.createEndUserToken(newtoken, userId);
+    // response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
@@ -188,19 +188,19 @@ public class SellerController extends MobileBaseController {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-    Long userId = request.getUserId();
-    String token = request.getToken();
+    // Long userId = request.getUserId();
+    // String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
     Long sellerId = request.getSellerId();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
 
     Pageable pageable = new Pageable();
@@ -233,9 +233,9 @@ public class SellerController extends MobileBaseController {
     response.setPage(pageInfo);
     response.setMsg(result);
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
+    // String newtoken = TokenGenerator.generateToken(request.getToken());
+    // endUserService.createEndUserToken(newtoken, userId);
+    // response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
