@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.rebate.dao.SellerDao;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
@@ -71,6 +72,11 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
 @Override
 public Page<Seller> findFavoriteSellers(Pageable pageable,Long userId) {
 	return sellerDao.findFavoriteSellers(pageable,userId);
+}
+
+@Override
+public EndUser userCollectSeller(Long userId, Long sellerId) {
+	return sellerDao.userCollectSeller(userId, sellerId);
 }
 
 }

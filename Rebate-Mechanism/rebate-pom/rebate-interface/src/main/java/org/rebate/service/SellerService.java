@@ -1,5 +1,6 @@
 package org.rebate.service;
 
+import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
@@ -31,5 +32,13 @@ public interface SellerService extends BaseService<Seller, Long> {
 	 * @return
 	 */
 	Page<Seller> findFavoriteSellers(Pageable pageable, Long userId);
+	
+	/**
+	 * 用户是否收藏该商铺
+	 * @param userId
+	 * @param sellerId
+	 * @return
+	 */
+	EndUser userCollectSeller(Long userId,Long sellerId);
 
 }

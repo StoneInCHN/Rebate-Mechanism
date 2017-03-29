@@ -1,5 +1,6 @@
 package org.rebate.dao;
 
+import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.framework.dao.BaseDao;
 import org.rebate.framework.paging.Page;
@@ -16,4 +17,12 @@ public interface SellerDao extends BaseDao<Seller, Long> {
 
 
 	Page<Seller> findFavoriteSellers(Pageable pageable, Long userId);
+	
+	/**
+	 * 用户是否收藏该商铺
+	 * @param userId
+	 * @param sellerId
+	 * @return
+	 */
+	EndUser userCollectSeller(Long userId,Long sellerId);
 }

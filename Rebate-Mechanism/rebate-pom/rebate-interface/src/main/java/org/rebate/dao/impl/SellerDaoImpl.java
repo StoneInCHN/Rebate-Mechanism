@@ -7,6 +7,7 @@ import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.rebate.dao.SellerDao;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.framework.dao.impl.BaseDaoImpl;
 import org.rebate.framework.paging.Page;
@@ -40,6 +41,20 @@ public class SellerDaoImpl extends BaseDaoImpl<Seller, Long> implements
 		Map<String, Long> paramMap = new HashMap<>();
 		paramMap.put("userId", userId);
 		return findPageCustomized(pageable, jpql, paramMap);
+	}
+
+	@Override
+	public EndUser userCollectSeller(Long userId, Long sellerId) {
+		if (userId == null || sellerId == null) {
+		      return null;
+		    }
+		    try {
+		      String jpql = "select user from EndUser user inner join user.favoriteSellers u where user.id = :userId and u.id = :sellerId";
+		      return entityManager.createQuery(jpql, EndUser.class).setFlushMode(FlushModeType.COMMIT)
+		          .setParameter("userId", userId).setParameter("sellerId", sellerId).getSingleResult();
+		    } catch (NoResultException e) {
+		      return null;
+		    }
 	}
 
 }
