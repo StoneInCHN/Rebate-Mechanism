@@ -10,6 +10,8 @@ import org.rebate.dao.SellerDao;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.framework.paging.Page;
+import org.rebate.framework.paging.Pageable;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.service.FileService;
@@ -65,5 +67,10 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     sellerDao.merge(seller);
     return seller;
   }
+
+@Override
+public Page<Seller> findFavoriteSellers(Pageable pageable,Long userId) {
+	return sellerDao.findFavoriteSellers(pageable,userId);
+}
 
 }

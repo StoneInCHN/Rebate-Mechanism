@@ -46,8 +46,8 @@ public final class CommonAttributes {
   public static final String FAIL_TOKEN_TIMEOUT = "0004";// Token 失效
   /** 重置密码失败 */
   public static final String FAIL_RESET_PWD = "0005";// 重置密码失败
-  // /** 缺失必要参数 */
-  // public static final String MISSING_REQUIRE_PARAM = "0006";// 缺失必要参数
+   /** 缺失必要参数 */
+   public static final String MISSING_REQUIRE_PARAM = "0006";// 缺失必要参数
   //
   // public static final String FAIL_INAVAILABLE_PARAM = "0007";// 请求参数无效
   // /** 绑定OBD设备失败 */
