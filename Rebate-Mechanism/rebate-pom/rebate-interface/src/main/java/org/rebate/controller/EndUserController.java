@@ -776,9 +776,17 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
+    map.put("isSetLoginPwd", false);
+    map.put("isSetPayPwd", false);
+    if (endUser.getLoginPwd() != null) {
+      map.put("isSetLoginPwd", true);
+    }
+    if (endUser.getPaymentPwd() != null) {
+      map.put("isSetPayPwd", true);
+    }
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());

@@ -14,8 +14,8 @@ import org.rebate.entity.base.BaseEntity;
  * @version
  */
 @Entity
-@Table(name = "rebate_sn")
-@SequenceGenerator(name = "sequenceGenerator", sequenceName = "rebate_sn_sequence")
+@Table(name = "rm_sn")
+@SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_sn_sequence")
 public class Sn extends BaseEntity {
 
   private static final long serialVersionUID = -2330598144835706164L;

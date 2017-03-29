@@ -197,6 +197,19 @@ public class EndUser extends BaseEntity {
    */
   private Set<Order> userOrders = new HashSet<Order>();
 
+  /**
+   * 是否绑定微信
+   */
+  private Boolean isBindWeChat = false;
+
+
+  public Boolean getIsBindWeChat() {
+    return isBindWeChat;
+  }
+
+  public void setIsBindWeChat(Boolean isBindWeChat) {
+    this.isBindWeChat = isBindWeChat;
+  }
 
   @ManyToOne
   public Area getArea() {

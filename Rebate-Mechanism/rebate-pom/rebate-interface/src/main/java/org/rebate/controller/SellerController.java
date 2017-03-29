@@ -176,6 +176,33 @@ public class SellerController extends MobileBaseController {
     return response;
   }
 
+  /**
+   * 首页商家列表详情
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/detail", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> detail(@RequestBody BaseRequest req) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    Long sellerId = req.getEntityId();
+
+
+
+    Seller seller = sellerService.find(sellerId);
+
+    String[] properties = {"id", "name"};
+    List<String> envImgs = new ArrayList<String>();
+    for (SellerEnvImage envImage : seller.getEnvImages()) {
+      envImgs.add(envImage.getSource());
+    }
+    Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, seller);
+    map.put("envImgs", envImgs);
+    response.setMsg(map);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
   /**
    * 商户评价列表

@@ -40,7 +40,7 @@ public class SellerJdbcServiceImpl implements SellerJdbcService {
         LatLonUtil.getAround(Double.valueOf(latitude), Double.valueOf(longitude), radius);
     StringBuffer seller_sql = new StringBuffer();
     seller_sql
-        .append("SELECT distinct(rs.id),rs.name,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name,");
+        .append("SELECT distinct(rs.id),rs.create_date,rs.name,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name,");
     seller_sql.append("round(6378.138*2*asin(sqrt(pow(sin((" + latitude);
     seller_sql.append("*pi()/180-latitude*pi()/180)/2),2)+cos(" + latitude);
     seller_sql.append("*pi()/180)*cos(latitude*pi()/180)*pow(sin((" + longitude);
