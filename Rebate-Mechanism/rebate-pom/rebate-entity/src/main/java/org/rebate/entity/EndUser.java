@@ -398,7 +398,7 @@ public class EndUser extends BaseEntity {
     this.cellPhoneNum = cellPhoneNum;
   }
 
-  @Column(length = 50, nullable = false)
+  @Column(length = 50)
   public String getLoginPwd() {
     return loginPwd;
   }

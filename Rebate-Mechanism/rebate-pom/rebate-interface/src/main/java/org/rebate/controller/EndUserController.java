@@ -182,16 +182,15 @@ public class EndUserController extends MobileBaseController {
           "Fetching User from database with CellPhoneNum: %s", cellPhoneNum);
     }
     EndUser loginUser = endUserService.findByUserMobile(cellPhoneNum);
-    if (loginUser == null) {
-      response.setCode(CommonAttributes.FAIL_LOGIN);
-      response.setDesc(Message.error("rebate.user.noexist").getContent());
-      return response;
-    }
-
     /**
      * 密码登录
      */
     if (!StringUtils.isEmpty(password)) {
+      if (loginUser == null) {
+        response.setCode(CommonAttributes.FAIL_LOGIN);
+        response.setDesc(Message.error("rebate.user.noexist").getContent());
+        return response;
+      }
       try {
         password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
       } catch (Exception e) {
@@ -213,7 +212,7 @@ public class EndUserController extends MobileBaseController {
       }
     }
     /**
-     * 短信验证码登录
+     * 短信验证码登录 1.手机号已注册，直接登录 2.手机号未注册，注册该手机号并登录
      */
     else {
       SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(cellPhoneNum);
@@ -232,6 +231,14 @@ public class EndUserController extends MobileBaseController {
             return response;
           } else {
             endUserService.deleteSmsCode(cellPhoneNum);
+            if (loginUser == null) {// 用户不存在，登录成功的同时注册该手机号
+              loginUser = endUserService.userReg(cellPhoneNum, null, null);
+              if (LogUtil.isDebugEnabled(EndUserController.class)) {
+                LogUtil.debug(EndUserController.class, "login",
+                    "enduser smsCode login with cellPhoneNum no exist.Reg the cellPhoneNum: %s",
+                    cellPhoneNum);
+              }
+            }
           }
         } else {
           response.setCode(CommonAttributes.FAIL_LOGIN);
@@ -248,10 +255,6 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
-    // endUserService.update(loginUser);
-    // if (LogUtil.isDebugEnabled(EndUserController.class)) {
-    // LogUtil.debug(EndUserController.class, "update", "enduser login: %s", cellPhoneNum);
-    // }
 
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
@@ -380,12 +383,16 @@ public class EndUserController extends MobileBaseController {
           response.setDesc(Message.error("rebate.mobile.used").getContent());
           return response;
         }
-      } else {// 登录，找回密码，修改密码（user应存在）
+      } else if (smsCodeType.equals(SmsCodeType.UPDATELOGINPWD)
+          || smsCodeType.equals(SmsCodeType.RESETPWD)
+          || smsCodeType.equals(SmsCodeType.UPDATEPAYPWD)) {// 找回登录密码，修改登录密码，修改支付密码（user应存在）
         if (endUser == null) {
           response.setCode(CommonAttributes.FAIL_SMSTOKEN);
           response.setDesc(Message.error("rebate.user.noexist").getContent());
           return response;
         }
+      } else {// 登录
+        // do nothing
       }
 
 

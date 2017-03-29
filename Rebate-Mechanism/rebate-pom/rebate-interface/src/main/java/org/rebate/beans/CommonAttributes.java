@@ -46,55 +46,56 @@ public final class CommonAttributes {
   public static final String FAIL_TOKEN_TIMEOUT = "0004";// Token 失效
   /** 重置密码失败 */
   public static final String FAIL_RESET_PWD = "0005";// 重置密码失败
-  /** 缺失必要参数 */
-  public static final String MISSING_REQUIRE_PARAM = "0006";// 缺失必要参数
-
-  public static final String FAIL_INAVAILABLE_PARAM = "0007";// 请求参数无效
-  /** 绑定OBD设备失败 */
-  public static final String FAIL_BIND_DEVICE = "0008";// 绑定OBD设备失败
-  /** OBD设备不存在 */
-  public static final String FAIL_DEVICE_NOEXIST = "0009";// OBD设备不存在
-
-  /** OBD设备未绑定车辆 */
-  public static final String FAIL_DEVICE_NOBIND = "0010";// OBD设备不存在
-
-  /** 车辆车牌号或车架号已存在 */
-  public static final String FAIL_VEHICLE_PLATE_EXIST = "0011"; // 车辆车牌号或车架号已存在
-
-  /** 手机号已存在 */
-  public static final String FAIL_MOBILENUM_EXIST = "0012"; // 手机号已存在
-  /** 手机号格式错误 */
-  public static final String FAIL_MOBILENUM_BAD_FORMAT = "0013"; // 手机号格式错误
-  /** 操作失败 */
-  public static final String SEND_EMAIL_SUCCESS = "0014"; // 邮件发送成功
-  /** 操作失败 */
-  public static final String SEND_EMAIL_FAILED = "0015"; // 邮件发送失败
-  /** 邮箱格式错误 */
-  public static final String FAIL_EMAIL_BAD_FORMAT = "0016"; // 手机号格式错误
-
-  /** 优惠券已领完 */
-  public static final String FAIL_COUPON_NO_REMAIN = "0017"; // 优惠券已领完
-
-  /** 车辆已经绑定租户 */
-  public static final String FAIL_VEHICLE_BIND_TENANT = "0018";// 车辆已经绑定租户
-
-  /** 无默认车辆 */
-  public static final String FAIL_DEFAULT_VEHICLE = "0019";// 无默认车辆
-  /** 购买OBD设备失败 */
-  public static final String FAIL_PURCHASE_DEVICE = "0020";// 购买OBD设备失败
-
-  /** 车辆删除失败 */
-  public static final String FAIL_VEHICLE_DELETE = "0021";// 车辆删除失败
-
-  /** 重复消息 */
-  public static final String FAIL_DEVICE_MSG_DUPLICATE = "0022";// 重复消息,不推送
-
+  // /** 缺失必要参数 */
+  // public static final String MISSING_REQUIRE_PARAM = "0006";// 缺失必要参数
+  //
+  // public static final String FAIL_INAVAILABLE_PARAM = "0007";// 请求参数无效
+  // /** 绑定OBD设备失败 */
+  // public static final String FAIL_BIND_DEVICE = "0008";// 绑定OBD设备失败
+  // /** OBD设备不存在 */
+  // public static final String FAIL_DEVICE_NOEXIST = "0009";// OBD设备不存在
+  //
+  // /** OBD设备未绑定车辆 */
+  // public static final String FAIL_DEVICE_NOBIND = "0010";// OBD设备不存在
+  //
+  // /** 车辆车牌号或车架号已存在 */
+  // public static final String FAIL_VEHICLE_PLATE_EXIST = "0011"; // 车辆车牌号或车架号已存在
+  //
+  // /** 手机号已存在 */
+  // public static final String FAIL_MOBILENUM_EXIST = "0012"; // 手机号已存在
+  // /** 手机号格式错误 */
+  // public static final String FAIL_MOBILENUM_BAD_FORMAT = "0013"; // 手机号格式错误
+  // /** 操作失败 */
+  // public static final String SEND_EMAIL_SUCCESS = "0014"; // 邮件发送成功
+  // /** 操作失败 */
+  // public static final String SEND_EMAIL_FAILED = "0015"; // 邮件发送失败
+  // /** 邮箱格式错误 */
+  // public static final String FAIL_EMAIL_BAD_FORMAT = "0016"; // 手机号格式错误
+  //
+  // /** 优惠券已领完 */
+  // public static final String FAIL_COUPON_NO_REMAIN = "0017"; // 优惠券已领完
+  //
+  // /** 车辆已经绑定租户 */
+  // public static final String FAIL_VEHICLE_BIND_TENANT = "0018";// 车辆已经绑定租户
+  //
+  // /** 无默认车辆 */
+  // public static final String FAIL_DEFAULT_VEHICLE = "0019";// 无默认车辆
+  // /** 购买OBD设备失败 */
+  // public static final String FAIL_PURCHASE_DEVICE = "0020";// 购买OBD设备失败
+  //
+  // /** 车辆删除失败 */
+  // public static final String FAIL_VEHICLE_DELETE = "0021";// 车辆删除失败
+  //
+  // /** 重复消息 */
+  // public static final String FAIL_DEVICE_MSG_DUPLICATE = "0022";// 重复消息,不推送
+  //
   /** 操作失败 */
   public static final String FAIL_COMMON = "1000"; // 操作失败
-  /** 没有取得任何信息 */
-  public static final String FAIL_NO_INFO = "2000";// 没有取得任何信息
 
-  public static final String USER_INVALID = "3000";// 用户非法（禁用）
+  // /** 没有取得任何信息 */
+  // public static final String FAIL_NO_INFO = "2000";// 没有取得任何信息
+  //
+  // public static final String USER_INVALID = "3000";// 用户非法（禁用）
 
   /**
    * 不可实例化

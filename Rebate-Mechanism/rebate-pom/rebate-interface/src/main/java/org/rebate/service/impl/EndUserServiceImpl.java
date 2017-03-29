@@ -79,7 +79,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     EndUser regUser = new EndUser();
     regUser.setUserName(ToolsUtils.createUserName());
     regUser.setCellPhoneNum(cellPhoneNum);
-    regUser.setLoginPwd(DigestUtils.md5Hex(password));
+    if (password != null) {
+      regUser.setLoginPwd(DigestUtils.md5Hex(password));
+    }
     regUser.setAccountStatus(AccountStatus.ACTIVED);
     regUser.setNickName(cellPhoneNum.substring(3, 7));
     UserRecommendRelation relation = new UserRecommendRelation();
