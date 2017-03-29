@@ -203,7 +203,8 @@ public class CommonEnum {
   }
 
   public enum OrderStatus {
-
+    /** 未支付 */
+    UNPAID,
     /** 已支付，待评价 */
     PAID,
     /** 已完成 */
