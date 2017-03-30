@@ -1,5 +1,7 @@
 package org.rebate.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
@@ -29,6 +31,21 @@ public class SystemConfigDaoImpl extends BaseDaoImpl<SystemConfig, Long> impleme
       return null;
     }
 
+  }
+
+  @Transactional
+  public List<SystemConfig> getConfigsByKey(SystemConfigKey key) {
+    if (key == null) {
+      return null;
+    }
+    try {
+      String jpql =
+          "select config from SystemConfig config where config.isEnabled = true and config.configKey = :key order by configOrder asc";
+      return entityManager.createQuery(jpql, SystemConfig.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("key", key).getResultList();
+    } catch (NoResultException e) {
+      return null;
+    }
   }
 
 }

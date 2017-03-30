@@ -76,7 +76,7 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getSellerCategory", method = RequestMethod.POST)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> selectArea(
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getSellerCategory(
       @RequestBody BaseRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
@@ -185,7 +185,7 @@ public class SellerController extends MobileBaseController {
   @RequestMapping(value = "/detail", method = RequestMethod.POST)
   public @ResponseBody ResponseOne<Map<String, Object>> detail(@RequestBody BaseRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
-    
+
     Long userId = req.getUserId();
     Long sellerId = req.getEntityId();
 
@@ -199,9 +199,9 @@ public class SellerController extends MobileBaseController {
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, seller);
     map.put("envImgs", envImgs);
     map.put("userCollected", false);
-    if (userId!=null && sellerService.userCollectSeller(userId, sellerId)!=null) {
-    	map.put("userCollected", true);
-	}
+    if (userId != null && sellerService.userCollectSeller(userId, sellerId) != null) {
+      map.put("userCollected", true);
+    }
     response.setMsg(map);
 
     response.setCode(CommonAttributes.SUCCESS);

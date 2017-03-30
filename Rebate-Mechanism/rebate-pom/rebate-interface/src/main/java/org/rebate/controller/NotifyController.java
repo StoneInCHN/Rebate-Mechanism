@@ -199,7 +199,6 @@ public class NotifyController extends MobileBaseController {
   }
 
   private void alipayNotifySuccess(String out_trade_no, String total_fee, String trade_status) {
-    String recordNo = out_trade_no.split("_")[0];
     BigDecimal amount = new BigDecimal(total_fee);
 
     if (LogUtil.isDebugEnabled(NotifyController.class)) {

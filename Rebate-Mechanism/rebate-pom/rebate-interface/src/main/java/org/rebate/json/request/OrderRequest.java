@@ -3,86 +3,101 @@ package org.rebate.json.request;
 import java.math.BigDecimal;
 
 import org.rebate.entity.commonenum.CommonEnum.RequestReplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.json.base.BaseRequest;
 
 public class OrderRequest extends BaseRequest {
 
-	/**
-	 * 支付方式
-	 */
-	private String payType;
+  /**
+   * 支付方式
+   */
+  private String payType;
 
-	/**
-	 * 支付金额
-	 */
-	private BigDecimal amount;
+  /**
+   * 支付金额
+   */
+  private BigDecimal amount;
 
-	/**
-	 * 商铺ID
-	 */
-	private Long sellerId;
+  /**
+   * 商铺ID
+   */
+  private Long sellerId;
 
-	/**
-	 * 备注
-	 */
-	private String remark;
+  /**
+   * 备注
+   */
+  private String remark;
 
-	/**
-	 * 是否为乐豆支付
-	 */
-	private Boolean isBeanPay;
+  /**
+   * 是否为乐豆支付
+   */
+  private Boolean isBeanPay;
 
-	/**
-	 *  根据回复状态查看订单
-	 */
-	private RequestReplyStatus requestReplyStatus;
+  /**
+   * 根据回复状态查看订单
+   */
+  private RequestReplyStatus requestReplyStatus;
 
-	public Boolean getIsBeanPay() {
-		return isBeanPay;
-	}
+  /**
+   * 配置项key
+   */
+  private SystemConfigKey configKey;
 
-	public void setIsBeanPay(Boolean isBeanPay) {
-		this.isBeanPay = isBeanPay;
-	}
 
-	public Long getSellerId() {
-		return sellerId;
-	}
+  public SystemConfigKey getConfigKey() {
+    return configKey;
+  }
 
-	public void setSellerId(Long sellerId) {
-		this.sellerId = sellerId;
-	}
+  public void setConfigKey(SystemConfigKey configKey) {
+    this.configKey = configKey;
+  }
 
-	public String getPayType() {
-		return payType;
-	}
+  public Boolean getIsBeanPay() {
+    return isBeanPay;
+  }
 
-	public void setPayType(String payType) {
-		this.payType = payType;
-	}
+  public void setIsBeanPay(Boolean isBeanPay) {
+    this.isBeanPay = isBeanPay;
+  }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+  public Long getSellerId() {
+    return sellerId;
+  }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+  public void setSellerId(Long sellerId) {
+    this.sellerId = sellerId;
+  }
 
-	public String getRemark() {
-		return remark;
-	}
+  public String getPayType() {
+    return payType;
+  }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+  public void setPayType(String payType) {
+    this.payType = payType;
+  }
 
-	public RequestReplyStatus getRequestReplyStatus() {
-		return requestReplyStatus;
-	}
+  public BigDecimal getAmount() {
+    return amount;
+  }
 
-	public void setRequestReplyStatus(RequestReplyStatus requestReplyStatus) {
-		this.requestReplyStatus = requestReplyStatus;
-	}
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
+
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
+
+  public RequestReplyStatus getRequestReplyStatus() {
+    return requestReplyStatus;
+  }
+
+  public void setRequestReplyStatus(RequestReplyStatus requestReplyStatus) {
+    this.requestReplyStatus = requestReplyStatus;
+  }
 
 }

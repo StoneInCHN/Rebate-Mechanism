@@ -1,5 +1,7 @@
 package org.rebate.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.rebate.dao.SystemConfigDao;
@@ -24,5 +26,10 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfig, Long>
   @Override
   public SystemConfig getConfigByKey(SystemConfigKey key) {
     return systemConfigDao.getConfigByKey(key);
+  }
+
+  @Override
+  public List<SystemConfig> getConfigsByKey(SystemConfigKey key) {
+    return systemConfigDao.getConfigsByKey(key);
   }
 }

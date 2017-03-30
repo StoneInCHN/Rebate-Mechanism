@@ -16,45 +16,45 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository("sellerDaoImpl")
-public class SellerDaoImpl extends BaseDaoImpl<Seller, Long> implements
-		SellerDao {
+public class SellerDaoImpl extends BaseDaoImpl<Seller, Long> implements SellerDao {
 
-	@Transactional
-	public Seller findSellerByUser(Long userId) {
-		if (userId == null) {
-			return null;
-		}
-		try {
-			String jpql = "select seller from Seller seller where seller.endUser.id = :userId";
-			return entityManager.createQuery(jpql, Seller.class)
-					.setFlushMode(FlushModeType.COMMIT)
-					.setParameter("userId", userId).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+  @Transactional
+  public Seller findSellerByUser(Long userId) {
+    if (userId == null) {
+      return null;
+    }
+    try {
+      String jpql = "select seller from Seller seller where seller.endUser.id = :userId";
+      return entityManager.createQuery(jpql, Seller.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("userId", userId).getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
 
-	@Override
-	public Page<Seller> findFavoriteSellers(Pageable pageable, Long userId) {
+  @Override
+  public Page<Seller> findFavoriteSellers(Pageable pageable, Long userId) {
 
-		String jpql = "select seller from Seller seller join seller.favoriteEndUsers u where u.id =:userId";
-		Map<String, Long> paramMap = new HashMap<>();
-		paramMap.put("userId", userId);
-		return findPageCustomized(pageable, jpql, paramMap);
-	}
+    String jpql =
+        "select seller from Seller seller join seller.favoriteEndUsers u where u.id =:userId";
+    Map<String, Long> paramMap = new HashMap<>();
+    paramMap.put("userId", userId);
+    return findPageCustomized(pageable, jpql, paramMap);
+  }
 
-	@Override
-	public EndUser userCollectSeller(Long userId, Long sellerId) {
-		if (userId == null || sellerId == null) {
-		      return null;
-		    }
-		    try {
-		      String jpql = "select user from EndUser user inner join user.favoriteSellers u where user.id = :userId and u.id = :sellerId";
-		      return entityManager.createQuery(jpql, EndUser.class).setFlushMode(FlushModeType.COMMIT)
-		          .setParameter("userId", userId).setParameter("sellerId", sellerId).getSingleResult();
-		    } catch (NoResultException e) {
-		      return null;
-		    }
-	}
+  @Override
+  public EndUser userCollectSeller(Long userId, Long sellerId) {
+    if (userId == null || sellerId == null) {
+      return null;
+    }
+    try {
+      String jpql =
+          "select user from EndUser user join user.favoriteSellers u where user.id = :userId and u.id = :sellerId";
+      return entityManager.createQuery(jpql, EndUser.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("userId", userId).setParameter("sellerId", sellerId).getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
 
 }

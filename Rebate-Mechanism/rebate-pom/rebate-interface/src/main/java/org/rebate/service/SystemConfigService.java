@@ -1,5 +1,7 @@
 package org.rebate.service;
 
+import java.util.List;
+
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.service.BaseService;
@@ -13,5 +15,13 @@ public interface SystemConfigService extends BaseService<SystemConfig, Long> {
    * @return
    */
   SystemConfig getConfigByKey(SystemConfigKey key);
+
+  /**
+   * 根据key获取系统配置
+   * 
+   * @param key
+   * @return
+   */
+  List<SystemConfig> getConfigsByKey(SystemConfigKey key);
 
 }
