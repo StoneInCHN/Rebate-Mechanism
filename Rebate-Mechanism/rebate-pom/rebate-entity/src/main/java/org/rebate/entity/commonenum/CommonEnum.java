@@ -149,7 +149,9 @@ public class CommonEnum {
     /** 消费用户的间接推荐人收益百分比 8 */
     RECOMMEND_INDIRECT_USER,
     /** 消费商户的推荐人收益百分比 9 */
-    RECOMMEND_SELLER
+    RECOMMEND_SELLER,
+    /** 代理商提成百分比 10 */
+    AGENT_COMMISSION
   }
 
   /**
@@ -188,6 +190,10 @@ public class CommonEnum {
   public enum LeBeanChangeType {
     /** 乐心分红赠送乐豆 */
     BONUS,
+    /** 推荐好友消费送乐豆 */
+    RECOMMEND_USER,
+    /** 推荐店铺收益送乐豆 */
+    RECOMMEND_SELLER,
     /** 消费 */
     CONSUME
   }
