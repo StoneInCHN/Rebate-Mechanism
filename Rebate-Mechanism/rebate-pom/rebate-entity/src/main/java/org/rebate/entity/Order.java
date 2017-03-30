@@ -52,6 +52,11 @@ public class Order extends BaseEntity {
   private BigDecimal amount;
 
   /**
+   * 商家收入金额（乐分），打折后的金额
+   */
+  private BigDecimal sellerIncome;
+
+  /**
    * 消费返利用户积分
    */
   private BigDecimal userScore;
@@ -76,20 +81,30 @@ public class Order extends BaseEntity {
    */
   private OrderStatus status;
 
-  /**
-   * 订单直接收益是否结算(提取)
-   */
-  private Boolean isClearing = false;
+  // /**
+  // * 订单直接收益是否结算(提取)
+  // */
+  // private Boolean isClearing = false;
 
 
-  public Boolean getIsClearing() {
-    return isClearing;
+  public BigDecimal getSellerIncome() {
+    return sellerIncome;
   }
 
 
-  public void setIsClearing(Boolean isClearing) {
-    this.isClearing = isClearing;
+  public void setSellerIncome(BigDecimal sellerIncome) {
+    this.sellerIncome = sellerIncome;
   }
+
+
+  // public Boolean getIsClearing() {
+  // return isClearing;
+  // }
+  //
+  //
+  // public void setIsClearing(Boolean isClearing) {
+  // this.isClearing = isClearing;
+  // }
 
 
   public OrderStatus getStatus() {

@@ -62,7 +62,7 @@ public class LeScoreRecord extends BaseEntity {
   /**
    * 推荐好友头像
    */
-  private Long recommenderPhoto;
+  private String recommenderPhoto;
 
   /**
    * 提现状态
@@ -79,11 +79,11 @@ public class LeScoreRecord extends BaseEntity {
   }
 
   @Column(length = 200)
-  public Long getRecommenderPhoto() {
+  public String getRecommenderPhoto() {
     return recommenderPhoto;
   }
 
-  public void setRecommenderPhoto(Long recommenderPhoto) {
+  public void setRecommenderPhoto(String recommenderPhoto) {
     this.recommenderPhoto = recommenderPhoto;
   }
 

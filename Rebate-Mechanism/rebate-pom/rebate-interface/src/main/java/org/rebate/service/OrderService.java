@@ -20,4 +20,22 @@ public interface OrderService extends BaseService<Order, Long> {
    */
   Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
       Boolean isBeanPay);
+
+
+  /**
+   * 支付成功回调更新订单数据
+   * 
+   * @param orderSn
+   * @return
+   */
+  Order updateOrderforPayCallBack(String orderSn);
+
+
+  /**
+   * 根据订单号获取订单
+   * 
+   * @param orderSn
+   * @return
+   */
+  Order getOrderBySn(String orderSn);
 }
