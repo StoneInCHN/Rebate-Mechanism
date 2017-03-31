@@ -274,6 +274,7 @@ public class SellerApplication extends BaseEntity {
     this.sellerCategory = sellerCategory;
   }
 
+  @ManyToOne
   public EndUser getEndUser() {
     return endUser;
   }

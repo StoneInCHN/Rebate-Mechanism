@@ -3,6 +3,7 @@ package org.rebate.service;
 import java.util.Map;
 
 import org.rebate.beans.SMSVerificationCode;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.framework.service.BaseService;
@@ -95,4 +96,11 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   Map<String, Object> isUserHasSeller(EndUser endUser);
+
+  /**
+   * 根据区域获取代理商
+   * 
+   * @return
+   */
+  EndUser getAgentByArea(Area area);
 }
