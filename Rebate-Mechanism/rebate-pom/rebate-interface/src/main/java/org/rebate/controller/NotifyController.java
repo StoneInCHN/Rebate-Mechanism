@@ -98,7 +98,7 @@ public class NotifyController extends MobileBaseController {
                 "user pay order call back successfully with wechat pay. orderSn: %s, amount: %s,",
                 out_trade_no, amount);
           }
-
+          orderService.updateOrderforPayCallBack(out_trade_no);
         } else {
           if (LogUtil.isDebugEnabled(NotifyController.class)) {
             LogUtil.debug(NotifyController.class, "notify_wechat", "WeChat pay fail. orderSn: %s",
@@ -199,7 +199,7 @@ public class NotifyController extends MobileBaseController {
   }
 
   private void alipayNotifySuccess(String out_trade_no, String total_fee, String trade_status) {
-    BigDecimal amount = new BigDecimal(total_fee);
+    // BigDecimal amount = new BigDecimal(total_fee);
 
     if (LogUtil.isDebugEnabled(NotifyController.class)) {
       LogUtil
@@ -209,5 +209,6 @@ public class NotifyController extends MobileBaseController {
               "user pay order call back successfully with alipay. orderSn: %s, amount: %s, trade_status: %s",
               out_trade_no, total_fee, trade_status);
     }
+    orderService.updateOrderforPayCallBack(out_trade_no);
   }
 }

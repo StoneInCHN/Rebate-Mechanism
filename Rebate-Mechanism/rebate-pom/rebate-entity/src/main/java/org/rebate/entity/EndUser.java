@@ -184,6 +184,11 @@ public class EndUser extends BaseEntity {
   private BigDecimal recommendLeScore = new BigDecimal("0");
 
   /**
+   * 分销商提成乐分
+   */
+  private BigDecimal agentLeScore = new BigDecimal("0");
+
+  /**
    * 累计积分
    */
   private BigDecimal totalScore = new BigDecimal("0");
@@ -223,6 +228,15 @@ public class EndUser extends BaseEntity {
    */
   private Set<MsgEndUser> msgEndUsers = new HashSet<MsgEndUser>();
 
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getAgentLeScore() {
+    return agentLeScore;
+  }
+
+  public void setAgentLeScore(BigDecimal agentLeScore) {
+    this.agentLeScore = agentLeScore;
+  }
 
   @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
   public Set<LeMindRecord> getLeMindRecords() {

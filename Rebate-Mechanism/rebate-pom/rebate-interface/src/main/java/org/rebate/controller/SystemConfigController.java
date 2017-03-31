@@ -23,9 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Controller - 城市
+ * Controller - 数据字典
  * 
- * @author sujinxuan
  *
  */
 @Controller("systemConfigController")

@@ -52,6 +52,7 @@ import org.rebate.service.SellerService;
 import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
+import org.rebate.utils.Pinyin4jUtil;
 import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
@@ -113,9 +114,17 @@ public class EndUserController extends MobileBaseController {
     // response.setDesc(code.getSmsCode());
     // response.setToken(code.getTimeoutToken());
     // endUserService.deleteSmsCode("13778999879");
-    Area area = areaService.find(new Long(1));
-    EndUser endUser = endUserService.getAgentByArea(area);
-    response.setDesc(endUser.getCellPhoneNum());
+
+    // Area area = areaService.find(new Long(1));
+    // EndUser endUser = endUserService.getAgentByArea(area);
+    // response.setDesc(endUser.getCellPhoneNum());
+    List<Area> list = areaService.findAll();
+    for (Area area : list) {
+      String pyName = Pinyin4jUtil.converterToSpell(area.getName());
+      area.setPyName(pyName);
+      System.out.println(pyName + "\n");
+    }
+    areaService.update(list);
     return response;
   }
 
@@ -1051,7 +1060,7 @@ public class EndUserController extends MobileBaseController {
     Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
     String[] propertys =
         {"id", "seller.name", "createDate", "seller.storePictureUrl", "amount", "leScoreType",
-            "userCurLeScore", "recommender", "recommenderPhoto", "withdrawStatus"};
+            "userCurLeScore", "recommender", "recommenderPhoto", "withdrawStatus", "remark"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 

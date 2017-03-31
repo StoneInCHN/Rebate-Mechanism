@@ -285,13 +285,13 @@ public class SellerController extends MobileBaseController {
     Long userId = req.getUserId();
     String token = req.getToken();
 
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
 
     sellerApplicationService.createApplication(req);
     if (LogUtil.isDebugEnabled(SellerController.class)) {

@@ -1,12 +1,8 @@
 package org.rebate.controller;
 
-import java.awt.TrayIcon.MessageType;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -17,7 +13,6 @@ import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.MessageInfo;
 import org.rebate.entity.MsgEndUser;
-import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.json.base.BaseRequest;
@@ -28,9 +23,7 @@ import org.rebate.json.request.MsgRequest;
 import org.rebate.service.EndUserService;
 import org.rebate.service.MessageInfoService;
 import org.rebate.service.MsgEndUserService;
-import org.rebate.utils.ApiUtils;
 import org.rebate.utils.FieldFilterUtils;
-import org.rebate.utils.TimeUtils;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,7 +73,7 @@ public class MessageController extends MobileBaseController {
     String userToken = endUserService.getEndUserToken(userId);
     if (!TokenGenerator.isValiableToken(token, userToken)) {
       response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("csh.user.token.timeout").getContent());
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
       return response;
     }
 
@@ -133,7 +126,7 @@ public class MessageController extends MobileBaseController {
    */
   @RequestMapping(value = "/readMessage", method = RequestMethod.POST)
   @UserValidCheck
-  public @ResponseBody BaseResponse showMessage(@RequestBody MsgRequest req) {
+  public @ResponseBody BaseResponse readMessage(@RequestBody MsgRequest req) {
     BaseResponse response = new BaseResponse();
     String token = req.getToken();
     Long userId = req.getUserId();

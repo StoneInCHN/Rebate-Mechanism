@@ -7,21 +7,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
-import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
+import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * 数据字典配置
+ * 用户设置配置
  * 
- * @author sujinxuan
- *
  */
 @Entity
-@Table(name = "rm_system_config", indexes = {@Index(name = "configKeyIndex",
+@Table(name = "rm_setting_config", indexes = {@Index(name = "configKeyIndex",
     columnList = "configKey")})
-@SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_system_config_sequence")
-public class SystemConfig extends BaseEntity {
+@SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_setting_config_sequence")
+public class SettingConfig extends BaseEntity {
 
 
   private static final long serialVersionUID = -1684057707764082356L;
@@ -29,7 +27,7 @@ public class SystemConfig extends BaseEntity {
   /**
    * 配置项值
    */
-  private SystemConfigKey configKey;
+  private SettingConfigKey configKey;
   /**
    * 配置项值
    */
@@ -46,11 +44,11 @@ public class SystemConfig extends BaseEntity {
   private Boolean isEnabled;
 
 
-  public SystemConfigKey getConfigKey() {
+  public SettingConfigKey getConfigKey() {
     return configKey;
   }
 
-  public void setConfigKey(SystemConfigKey configKey) {
+  public void setConfigKey(SettingConfigKey configKey) {
     this.configKey = configKey;
   }
 
@@ -72,7 +70,7 @@ public class SystemConfig extends BaseEntity {
   }
 
   @JsonProperty
-  @Column(length = 50)
+  @Column(length = 5000)
   public String getConfigValue() {
     return configValue;
   }

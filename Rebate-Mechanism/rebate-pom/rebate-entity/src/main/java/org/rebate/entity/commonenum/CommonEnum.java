@@ -125,7 +125,7 @@ public class CommonEnum {
   }
 
   /**
-   * 配置项名称
+   * 数据字典配置项名称
    * 
    *
    */
@@ -152,6 +152,21 @@ public class CommonEnum {
     RECOMMEND_SELLER,
     /** 代理商提成百分比 10 */
     AGENT_COMMISSION
+
+  }
+
+  /**
+   * 设置配置项名称
+   * 
+   *
+   */
+  public enum SettingConfigKey {
+    /** 软件许可协议 1 */
+    LICENSE_AGREEMENT,
+    /** 帮助 2 */
+    HELP,
+    /** 关于 3 */
+    ABOUT_US
   }
 
   /**

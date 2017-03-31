@@ -100,6 +100,9 @@ public class OrderController extends MobileBaseController {
           amount, sellerId, remark);
     }
 
+    if (isBeanPay) {
+      orderService.updateOrderforPayCallBack(order.getSn());
+    }
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("out_trade_no", order.getSn());
     response.setMsg(map);
@@ -233,9 +236,9 @@ public class OrderController extends MobileBaseController {
     }
 
     response.setCode(CommonAttributes.SUCCESS);
-     String newtoken = TokenGenerator.generateToken(req.getToken());
-     endUserService.createEndUserToken(newtoken, userId);
-     response.setToken(newtoken);
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     return response;
   }
 

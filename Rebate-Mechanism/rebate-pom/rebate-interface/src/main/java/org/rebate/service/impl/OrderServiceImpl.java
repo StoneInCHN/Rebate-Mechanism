@@ -13,6 +13,7 @@ import org.rebate.dao.SellerDao;
 import org.rebate.dao.SnDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeScoreRecord;
@@ -175,8 +176,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     /**
      * 乐豆消费无推荐返利
      */
+    BigDecimal rebateAmount = order.getAmount().subtract(order.getSellerIncome());
     if (!order.getIsBeanPay()) {
-      BigDecimal rebateAmount = order.getAmount().subtract(order.getSellerIncome());
+
       SystemConfig leScorePerConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
 
@@ -246,10 +248,38 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     /**
      * 分销商提成
      */
+    SystemConfig agentCommissionConfig =
+        systemConfigDao.getConfigByKey(SystemConfigKey.AGENT_COMMISSION);
+    if (agentCommissionConfig != null && agentCommissionConfig.getConfigValue() != null) {
+      BigDecimal agentAmount =
+          rebateAmount.add(new BigDecimal(agentCommissionConfig.getConfigValue()));
+      List<EndUser> agents = agentCommissionIncome(agentAmount, seller.getArea());
+      endUserDao.merge(agents);
+    }
 
     endUserDao.merge(sellerEndUser);
     orderDao.merge(order);
     return order;
+  }
+
+  private List<EndUser> agentCommissionIncome(BigDecimal agentAmount, Area area) {
+    List<EndUser> records = new ArrayList<EndUser>();
+    if (area != null) {
+      EndUser agent = endUserDao.getAgentByArea(area);
+      LeScoreRecord leScoreRecord = new LeScoreRecord();
+      leScoreRecord.setEndUser(agent);
+      leScoreRecord.setLeScoreType(LeScoreType.AGENT);
+      leScoreRecord.setAmount(agentAmount);
+      leScoreRecord.setUserCurLeScore(agent.getCurLeScore().add(leScoreRecord.getAmount()));
+      agent.setAgentLeScore(agent.getAgentLeScore().add(agentAmount));
+      agent.setCurLeScore(agent.getCurLeScore().add(agentAmount));
+      agent.setTotalLeScore(agent.getTotalLeScore().add(agentAmount));
+      agent.getLeScoreRecords().add(leScoreRecord);
+      records.add(agent);
+      records.addAll(agentCommissionIncome(agentAmount, area.getParent()));
+    }
+    return records;
+
   }
 
   private List<EndUser> userRecommendIncome(UserRecommendRelation userRecommendRelation,

@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
 
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.entity.SystemConfig;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Repository;
 public class SystemConfigDaoImpl extends BaseDaoImpl<SystemConfig, Long> implements SystemConfigDao {
 
 
-  @Transactional
   public SystemConfig getConfigByKey(SystemConfigKey key) {
 
     if (key == null) {
@@ -33,7 +31,6 @@ public class SystemConfigDaoImpl extends BaseDaoImpl<SystemConfig, Long> impleme
 
   }
 
-  @Transactional
   public List<SystemConfig> getConfigsByKey(SystemConfigKey key) {
     if (key == null) {
       return null;
