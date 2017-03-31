@@ -2,6 +2,7 @@ package org.rebate.entity;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -127,7 +128,7 @@ public class Order extends BaseEntity {
     this.sn = sn;
   }
 
-  @OneToOne
+  @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   public SellerEvaluate getEvaluate() {
     return evaluate;
   }

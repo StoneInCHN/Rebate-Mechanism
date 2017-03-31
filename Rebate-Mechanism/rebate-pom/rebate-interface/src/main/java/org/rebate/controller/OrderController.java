@@ -17,6 +17,7 @@ import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SellerEvaluateImage;
+import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -30,7 +31,9 @@ import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.OrderRequest;
 import org.rebate.json.request.SellerRequest;
+import org.rebate.json.request.UserEvaluateOrderRequest;
 import org.rebate.service.EndUserService;
+import org.rebate.service.FileService;
 import org.rebate.service.OrderService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerService;
@@ -41,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller - 订单
@@ -60,6 +64,8 @@ public class OrderController extends MobileBaseController {
 	private SellerService sellerService;
 	@Resource(name = "sellerEvaluateServiceImpl")
 	private SellerEvaluateService sellerEvaluateService;
+	@Resource(name = "fileServiceImpl")
+	private FileService fileService;
 
 	/**
 	 * 立即下单
@@ -182,6 +188,102 @@ public class OrderController extends MobileBaseController {
 					"seller reply user evaluate. evaluateId: %s,reply: %s",
 					evaluateId, reply);
 		}
+
+		response.setCode(CommonAttributes.SUCCESS);
+		String newtoken = TokenGenerator.generateToken(req.getToken());
+		endUserService.createEndUserToken(newtoken, userId);
+		response.setToken(newtoken);
+		return response;
+	}
+
+	/**
+	 * 用户评价订单
+	 *
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping(value = "/userEvaluateOrder", method = RequestMethod.POST)
+	public @ResponseBody BaseResponse userEvaluateOrder(
+			@RequestBody UserEvaluateOrderRequest req) {
+		BaseResponse response = new BaseResponse();
+
+		Long userId = req.getUserId();
+		String token = req.getToken();
+		Long orderId = req.getEntityId();
+
+		// 验证登录token
+		 String userToken = endUserService.getEndUserToken(userId);
+		 if (!TokenGenerator.isValiableToken(token, userToken)) {
+		 response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+		 response.setDesc(Message.error("rebate.user.token.timeout")
+		 .getContent());
+		 return response;
+		 }
+
+		Order order = orderService.find(orderId);
+		EndUser endUser = endUserService.find(userId);
+		SellerEvaluate evaluate = new SellerEvaluate();
+		evaluate.setEndUser(endUser);
+		evaluate.setScore(req.getScore());
+		evaluate.setOrder(order);
+		evaluate.setContent(req.getContent());
+
+		List<SellerEvaluateImage> sellerEvaluateImages = new ArrayList<SellerEvaluateImage>();
+		for (MultipartFile file : req.getEvaluateImage()) {
+			SellerEvaluateImage image = new SellerEvaluateImage();
+			image.setSource(fileService.saveImage(file, ImageType.STORE_ENV));
+			sellerEvaluateImages.add(image);
+		}
+
+		order.setEvaluate(evaluate);
+		orderService.update(order);
+		if (LogUtil.isDebugEnabled(OrderController.class)) {
+			LogUtil.debug(OrderController.class, "User evaluate",
+					"user evaluate for order %s,content: %s", orderId,
+					req.getContent());
+		}
+
+		response.setCode(CommonAttributes.SUCCESS);
+		// String newtoken = TokenGenerator.generateToken(req.getToken());
+		// endUserService.createEndUserToken(newtoken, userId);
+		// response.setToken(newtoken);
+		return response;
+	}
+
+	/**
+	 * 用户评价订单
+	 *
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping(value = "/evaluateDetail", method = RequestMethod.POST)
+	public @ResponseBody ResponseOne<Map<String, Object>> evaluateDetail(
+			@RequestBody BaseRequest req) {
+		ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+		Long userId = req.getUserId();
+		String token = req.getToken();
+		Long orderId = req.getEntityId();
+
+		// 验证登录token
+		String userToken = endUserService.getEndUserToken(userId);
+		if (!TokenGenerator.isValiableToken(token, userToken)) {
+			response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+			response.setDesc(Message.error("rebate.user.token.timeout")
+					.getContent());
+			return response;
+		}
+
+		Order order = orderService.find(orderId);
+
+		SellerEvaluate evaluate = order.getEvaluate();
+
+		String[] propertys = { "id", "endUser.userName", "score", "content",
+				"sellerReply", "evaluateImages.source" };
+		Map<String, Object> result = FieldFilterUtils.filterEntityMap(
+				propertys, evaluate);
+
+		response.setMsg(result);
 
 		response.setCode(CommonAttributes.SUCCESS);
 		String newtoken = TokenGenerator.generateToken(req.getToken());
