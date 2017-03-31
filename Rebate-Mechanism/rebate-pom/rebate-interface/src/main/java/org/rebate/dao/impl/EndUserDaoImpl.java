@@ -1,10 +1,12 @@
 package org.rebate.dao.impl;
 
+
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.framework.dao.impl.BaseDaoImpl;
@@ -93,6 +95,20 @@ public class EndUserDaoImpl extends BaseDaoImpl<EndUser, Long> implements EndUse
   @CacheEvict(value = "endUser", key = "'endUser.smsCode='+#cellPhone")
   public void deleteSmsCode(String cellPhone) {
 
+  }
+
+  @Override
+  public EndUser getAgentByArea(Area area) {
+    if (area == null) {
+      return null;
+    }
+    try {
+      String jpql = "select user from EndUser user where user.agent.area = :area";
+      return entityManager.createQuery(jpql, EndUser.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("area", area).getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
   }
 
 

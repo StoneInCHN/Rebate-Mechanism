@@ -24,6 +24,7 @@ import org.rebate.service.SellerApplicationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("sellerApplicationServiceImpl")
@@ -82,13 +83,16 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     application
         .setLicenseImgUrl(fileService.saveImage(req.getLicenseImg(), ImageType.STORE_LICENSE));
 
-    List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
-    for (MultipartFile file : req.getEnvImgs()) {
-      SellerEnvImage envImg = new SellerEnvImage();
-      envImg.setSource(fileService.saveImage(file, ImageType.STORE_ENV));
-      envImages.add(envImg);
+    if (!CollectionUtils.isEmpty(req.getEnvImgs())) {
+      List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
+      for (MultipartFile file : req.getEnvImgs()) {
+        SellerEnvImage envImg = new SellerEnvImage();
+        envImg.setSource(fileService.saveImage(file, ImageType.STORE_ENV));
+        envImages.add(envImg);
+      }
+      application.setEnvImages(envImages);
     }
-    application.setEnvImages(envImages);
+
 
     sellerApplicationDao.merge(application);
     return application;

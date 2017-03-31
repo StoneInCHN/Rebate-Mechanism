@@ -103,16 +103,19 @@ public class EndUserController extends MobileBaseController {
   @RequestMapping(value = "/test", method = RequestMethod.POST)
   public @ResponseBody BaseResponse test(@RequestBody BaseRequest req) {
     BaseResponse response = new BaseResponse();
-    SMSVerificationCode smsCode = new SMSVerificationCode();
-    smsCode.setCellPhoneNum("13778999879");
-    smsCode.setSmsCode("0987");
-    smsCode.setTimeoutToken("1461223190968");
-    endUserService.createSmsCode(smsCode.getCellPhoneNum(), smsCode);
-    SMSVerificationCode code = endUserService.getSmsCode("13778999879");
-    response.setCode(code.getCellPhoneNum());
-    response.setDesc(code.getSmsCode());
-    response.setToken(code.getTimeoutToken());
-    endUserService.deleteSmsCode("13778999879");
+    // SMSVerificationCode smsCode = new SMSVerificationCode();
+    // smsCode.setCellPhoneNum("13778999879");
+    // smsCode.setSmsCode("0987");
+    // smsCode.setTimeoutToken("1461223190968");
+    // endUserService.createSmsCode(smsCode.getCellPhoneNum(), smsCode);
+    // SMSVerificationCode code = endUserService.getSmsCode("13778999879");
+    // response.setCode(code.getCellPhoneNum());
+    // response.setDesc(code.getSmsCode());
+    // response.setToken(code.getTimeoutToken());
+    // endUserService.deleteSmsCode("13778999879");
+    Area area = areaService.find(new Long(1));
+    EndUser endUser = endUserService.getAgentByArea(area);
+    response.setDesc(endUser.getCellPhoneNum());
     return response;
   }
 

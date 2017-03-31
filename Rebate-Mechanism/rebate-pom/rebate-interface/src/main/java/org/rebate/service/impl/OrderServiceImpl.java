@@ -79,6 +79,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setRemark(remark);
     order.setStatus(OrderStatus.UNPAID);
     order.setSn(snDao.generate(Type.ORDER));
+    order.setIsBeanPay(isBeanPay);
 
     if (!isBeanPay) {
       BigDecimal rebateUserScoreConfig =
@@ -130,11 +131,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     scoreRecord.setUserCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
     sellerEndUser.setCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
     sellerEndUser.setTotalLeScore(sellerEndUser.getTotalLeScore().add(scoreRecord.getAmount()));
+    sellerEndUser.setMerchantLeScore(sellerEndUser.getMerchantLeScore()
+        .add(scoreRecord.getAmount()));
     sellerEndUser.getLeScoreRecords().add(scoreRecord);
+
     // endUserDao.merge(sellerEndUser);
 
     /**
-     * 消费后用户积分返利
+     * 消费后用户积分返利 (乐豆消费无积分返利)
      */
     if (order.getUserScore() != null) {
       endUser.setCurScore(endUser.getCurScore().add(order.getUserScore()));
@@ -151,7 +155,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       endUserDao.merge(endUser);
     }
     /**
-     * 消费后商家积分返利
+     * 消费后商家积分返利(乐豆消费无积分返利)
      */
     if (order.getSellerScore() != null) {
       sellerEndUser.setCurScore(sellerEndUser.getCurScore().add(order.getSellerScore()));
@@ -168,68 +172,80 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       // endUserDao.merge(sellerEndUser);
     }
 
-
-    BigDecimal rebateAmount = order.getAmount().subtract(order.getSellerIncome());
-    SystemConfig leScorePerConfig =
-        systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
-
     /**
-     * 用户消费后推荐人返利乐分
+     * 乐豆消费无推荐返利
      */
-    UserRecommendRelation userRecommendRelation = userRecommendRelationDao.findByUser(endUser);
-    SystemConfig directUserConfig =
-        systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_DIRECT_USER);
-    SystemConfig indirectUserConfig =
-        systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_INDIRECT_USER);
-    if (directUserConfig != null && indirectUserConfig != null && userRecommendRelation != null
-        && leScorePerConfig != null) {
-      List<EndUser> records =
-          userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig,
-              leScorePerConfig, 0, rebateAmount);
-      if (!CollectionUtils.isEmpty(records)) {
-        endUserDao.merge(records);
+    if (!order.getIsBeanPay()) {
+      BigDecimal rebateAmount = order.getAmount().subtract(order.getSellerIncome());
+      SystemConfig leScorePerConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
+
+      /**
+       * 用户消费后推荐人返利乐分
+       */
+      UserRecommendRelation userRecommendRelation = userRecommendRelationDao.findByUser(endUser);
+      SystemConfig directUserConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_DIRECT_USER);
+      SystemConfig indirectUserConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_INDIRECT_USER);
+      if (directUserConfig != null && indirectUserConfig != null && userRecommendRelation != null
+          && leScorePerConfig != null) {
+        List<EndUser> records =
+            userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig,
+                leScorePerConfig, 0, rebateAmount);
+        if (!CollectionUtils.isEmpty(records)) {
+          endUserDao.merge(records);
+        }
+      }
+
+      /**
+       * 商家消费收益后推荐人返利乐分
+       */
+      UserRecommendRelation sellerRecommendRelation =
+          userRecommendRelationDao.findByUser(sellerEndUser);
+      SystemConfig recommendSellerConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_SELLER);
+      if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
+          && leScorePerConfig.getConfigValue() != null) {
+        LeScoreRecord leScoreRecord = new LeScoreRecord();
+        EndUser sellerRecommender = sellerRecommendRelation.getParent().getEndUser();
+        leScoreRecord.setEndUser(sellerRecommender);
+        leScoreRecord.setRecommender(sellerRecommendRelation.getEndUser().getNickName());
+        leScoreRecord.setRecommenderPhoto(userRecommendRelation.getEndUser().getUserPhoto());
+        leScoreRecord.setLeScoreType(LeScoreType.RECOMMEND_SELLER);
+        BigDecimal income =
+            rebateAmount.multiply(new BigDecimal(recommendSellerConfig.getConfigValue()));
+        leScoreRecord.setAmount(income.multiply(new BigDecimal(leScorePerConfig.getConfigValue())));
+        leScoreRecord.setUserCurLeScore(sellerRecommender.getCurLeScore().add(
+            leScoreRecord.getAmount()));
+
+        LeBeanRecord leBeanRecord = new LeBeanRecord();
+        leBeanRecord.setAmount(income.subtract(leScoreRecord.getAmount()));
+        leBeanRecord.setEndUser(sellerRecommender);
+        leBeanRecord.setType(LeBeanChangeType.RECOMMEND_SELLER);
+        leBeanRecord.setUserCurLeBean(sellerRecommender.getCurLeBean()
+            .add(leBeanRecord.getAmount()));
+
+        sellerRecommender.setCurLeBean(sellerRecommender.getCurLeBean().add(
+            leBeanRecord.getAmount()));
+        sellerRecommender.setTotalLeBean(sellerRecommender.getTotalLeBean().add(
+            leBeanRecord.getAmount()));
+        sellerRecommender.getLeBeanRecords().add(leBeanRecord);
+        sellerRecommender.setCurLeScore(sellerRecommender.getCurLeScore().add(
+            leScoreRecord.getAmount()));
+        sellerRecommender.setTotalLeScore(sellerRecommender.getTotalLeScore().add(
+            leScoreRecord.getAmount()));
+        sellerRecommender.setRecommendLeScore(sellerRecommender.getRecommendLeScore().add(
+            leScoreRecord.getAmount()));
+        sellerRecommender.getLeScoreRecords().add(leScoreRecord);
+        endUserDao.merge(sellerRecommender);
       }
     }
 
+
     /**
-     * 商家消费收益后推荐人返利乐分
+     * 分销商提成
      */
-    UserRecommendRelation sellerRecommendRelation =
-        userRecommendRelationDao.findByUser(sellerEndUser);
-    SystemConfig recommendSellerConfig =
-        systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_SELLER);
-    if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
-        && leScorePerConfig.getConfigValue() != null) {
-      LeScoreRecord leScoreRecord = new LeScoreRecord();
-      EndUser sellerRecommender = sellerRecommendRelation.getParent().getEndUser();
-      leScoreRecord.setEndUser(sellerRecommender);
-      leScoreRecord.setRecommender(sellerRecommendRelation.getEndUser().getNickName());
-      leScoreRecord.setRecommenderPhoto(userRecommendRelation.getEndUser().getUserPhoto());
-      leScoreRecord.setLeScoreType(LeScoreType.RECOMMEND_SELLER);
-      BigDecimal income =
-          rebateAmount.multiply(new BigDecimal(recommendSellerConfig.getConfigValue()));
-      leScoreRecord.setAmount(income.multiply(new BigDecimal(leScorePerConfig.getConfigValue())));
-      leScoreRecord.setUserCurLeScore(sellerRecommender.getCurLeScore().add(
-          leScoreRecord.getAmount()));
-
-      LeBeanRecord leBeanRecord = new LeBeanRecord();
-      leBeanRecord.setAmount(income.subtract(leScoreRecord.getAmount()));
-      leBeanRecord.setEndUser(sellerRecommender);
-      leBeanRecord.setType(LeBeanChangeType.RECOMMEND_SELLER);
-      leBeanRecord.setUserCurLeBean(sellerRecommender.getCurLeBean().add(leBeanRecord.getAmount()));
-
-      sellerRecommender
-          .setCurLeBean(sellerRecommender.getCurLeBean().add(leBeanRecord.getAmount()));
-      sellerRecommender.setTotalLeBean(sellerRecommender.getTotalLeBean().add(
-          leBeanRecord.getAmount()));
-      sellerRecommender.getLeBeanRecords().add(leBeanRecord);
-      sellerRecommender.setCurLeScore(sellerRecommender.getCurLeScore().add(
-          leScoreRecord.getAmount()));
-      sellerRecommender.setTotalLeScore(sellerRecommender.getTotalLeScore().add(
-          leScoreRecord.getAmount()));
-      sellerRecommender.getLeScoreRecords().add(leScoreRecord);
-      endUserDao.merge(sellerRecommender);
-    }
 
     endUserDao.merge(sellerEndUser);
     orderDao.merge(order);
@@ -271,6 +287,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       userRecommend.setCurLeScore(userRecommend.getCurLeScore().add(leScoreRecord.getAmount()));
       userRecommend.setTotalLeScore(userRecommend.getTotalLeScore().add(leScoreRecord.getAmount()));
       userRecommend.getLeScoreRecords().add(leScoreRecord);
+      userRecommend.setRecommendLeScore(userRecommend.getRecommendLeScore().add(
+          leScoreRecord.getAmount()));
       records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
           indirectUser, leScorePer, i, rebateAmount));

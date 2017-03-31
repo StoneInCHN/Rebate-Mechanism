@@ -82,12 +82,25 @@ public class Order extends BaseEntity {
    */
   private OrderStatus status;
 
+  /**
+   * 是否为乐豆消费
+   */
+  private Boolean isBeanPay;
+
   // /**
   // * 订单直接收益是否结算(提取)
   // */
   // private Boolean isClearing = false;
 
+  public Boolean getIsBeanPay() {
+    return isBeanPay;
+  }
 
+  public void setIsBeanPay(Boolean isBeanPay) {
+    this.isBeanPay = isBeanPay;
+  }
+
+  @Column(scale = 2, precision = 10)
   public BigDecimal getSellerIncome() {
     return sellerIncome;
   }
@@ -128,7 +141,7 @@ public class Order extends BaseEntity {
     this.sn = sn;
   }
 
-  @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   public SellerEvaluate getEvaluate() {
     return evaluate;
   }

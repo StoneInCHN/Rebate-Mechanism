@@ -1,6 +1,8 @@
 package org.rebate.dao;
 
+
 import org.rebate.beans.SMSVerificationCode;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.framework.dao.BaseDao;
@@ -74,4 +76,11 @@ public interface EndUserDao extends BaseDao<EndUser, Long> {
    * @return
    */
   void deleteSmsCode(String cellPhone);
+
+  /**
+   * 根据区域获取代理商
+   * 
+   * @return
+   */
+  EndUser getAgentByArea(Area area);
 }

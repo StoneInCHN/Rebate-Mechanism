@@ -9,6 +9,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.UserRecommendRelationDao;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.UserRecommendRelation;
@@ -140,5 +141,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
     }
     return map;
+  }
+
+  @Override
+  public EndUser getAgentByArea(Area area) {
+    return endUserDao.getAgentByArea(area);
   }
 }
