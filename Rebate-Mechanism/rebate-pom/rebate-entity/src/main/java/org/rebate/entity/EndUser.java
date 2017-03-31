@@ -218,6 +218,11 @@ public class EndUser extends BaseEntity {
    */
   private Boolean isBindWeChat = false;
 
+  /**
+   * 消息
+   */
+  private Set<MsgEndUser> msgEndUsers = new HashSet<MsgEndUser>();
+
 
   @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
   public Set<LeMindRecord> getLeMindRecords() {
@@ -550,4 +555,12 @@ public class EndUser extends BaseEntity {
     this.totalLeScore = totalLeScore;
   }
 
+  @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
+  public Set<MsgEndUser> getMsgEndUsers() {
+    return msgEndUsers;
+  }
+
+  public void setMsgEndUsers(Set<MsgEndUser> msgEndUsers) {
+    this.msgEndUsers = msgEndUsers;
+  }
 }

@@ -27,43 +27,43 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_message_info_sequence")
 public class MessageInfo extends BaseEntity {
 
-	private static final long serialVersionUID = 1170442128165498366L;
+  private static final long serialVersionUID = 1170442128165498366L;
 
-	/** 消息标题 */
-	private String messageTitle;
+  /** 消息标题 */
+  private String messageTitle;
 
-	/** 消息内容 */
-	private String messageContent;
+  /** 消息内容 */
+  private String messageContent;
 
-	/** 消息、会员对应关系实体 */
-	private Set<MsgEndUser> msgUser = new HashSet<MsgEndUser>();
+  /** 消息、会员对应关系实体 */
+  private Set<MsgEndUser> msgUser = new HashSet<MsgEndUser>();
 
 
-	@JsonProperty
-	public String getMessageTitle() {
-		return messageTitle;
-	}
+  @JsonProperty
+  public String getMessageTitle() {
+    return messageTitle;
+  }
 
-	public void setMessageTitle(String messageTitle) {
-		this.messageTitle = messageTitle;
-	}
+  public void setMessageTitle(String messageTitle) {
+    this.messageTitle = messageTitle;
+  }
 
-	@JsonProperty
-	public String getMessageContent() {
-		return messageContent;
-	}
+  @JsonProperty
+  public String getMessageContent() {
+    return messageContent;
+  }
 
-	public void setMessageContent(String messageContent) {
-		this.messageContent = messageContent;
-	}
+  public void setMessageContent(String messageContent) {
+    this.messageContent = messageContent;
+  }
 
-	@OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	public Set<MsgEndUser> getMsgUser() {
-		return msgUser;
-	}
+  @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  public Set<MsgEndUser> getMsgUser() {
+    return msgUser;
+  }
 
-	public void setMsgUser(Set<MsgEndUser> msgUser) {
-		this.msgUser = msgUser;
-	}
+  public void setMsgUser(Set<MsgEndUser> msgUser) {
+    this.msgUser = msgUser;
+  }
 
 }

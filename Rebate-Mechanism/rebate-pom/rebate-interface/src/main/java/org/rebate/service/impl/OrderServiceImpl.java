@@ -55,7 +55,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Resource(name = "userRecommendRelationDaoImpl")
   private UserRecommendRelationDao userRecommendRelationDao;
 
-  @Resource(name = "leScoreRecordDaoeImpl")
+  @Resource(name = "leScoreRecordDaoImpl")
   private LeScoreRecordDao leScoreRecordDao;
 
   @Resource(name = "orderDaoImpl")
