@@ -117,36 +117,36 @@ public class EndUserController extends MobileBaseController {
     // Area area = areaService.find(new Long(1));
     // EndUser endUser = endUserService.getAgentByArea(area);
     // response.setDesc(endUser.getCellPhoneNum());
-    List<Area> list = areaService.findAll();
-    for (Area area : list) {
-      String name = area.getName();
-      // if (name.contains("自治县")) {
-      // name = name.replace("自治县", "");
-      // }
-      // if (name.contains("县")) {
-      // name = name.replace("县", "");
-      // }
-      // if (name.contains("自治州")) {
-      // name = name.replace("自治州", "");
-      // }
-      // if (name.contains("市")) {
-      // name = name.replace("市", "");
-      // }
+    // List<Area> list = areaService.findAll();
+    // for (Area area : list) {
+    // String name = area.getName();
+    // if (name.contains("自治县")) {
+    // name = name.replace("自治县", "");
+    // }
+    // if (name.contains("县")) {
+    // name = name.replace("县", "");
+    // }
+    // if (name.contains("自治州")) {
+    // name = name.replace("自治州", "");
+    // }
+    // if (name.contains("市")) {
+    // name = name.replace("市", "");
+    // }
 
-      // String pyName = Pinyin4jUtil.converterToSpell(name);
-      // String str[] = pyName.split(",");
-      // if (str.length > 1) {
-      // pyName = str[1];
-      // }
-      String pyName = area.getPyName();
-      if (pyName.endsWith("ou") && name.endsWith("区")) {
-        pyName = pyName.substring(0, pyName.length() - 2);
-        pyName += "qu";
-      }
-      area.setPyName(pyName);
-      System.out.println(area.getName() + "--" + pyName);
-    }
-    areaService.update(list);
+    // String pyName = Pinyin4jUtil.converterToSpell(name);
+    // String str[] = pyName.split(",");
+    // if (str.length > 1) {
+    // pyName = str[1];
+    // }
+    // String pyName = area.getPyName();
+    // if (pyName.endsWith("ou") && name.endsWith("区")) {
+    // pyName = pyName.substring(0, pyName.length() - 2);
+    // pyName += "qu";
+    // }
+    // area.setPyName(pyName);
+    // System.out.println(area.getName() + "--" + pyName);
+    // }
+    // areaService.update(list);
     return response;
   }
 
@@ -1263,6 +1263,72 @@ public class EndUserController extends MobileBaseController {
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 用户获取乐分提现信息
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getWithdrawInfo", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> withdrawReq(@RequestBody UserRequest request) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    Long userId = request.getUserId();
+    String token = request.getToken();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("wxUserPhoto", "wechatUserPhoto");
+    map.put("wxNickName", "wxNickName");
+    map.put("curLeScore", endUser.getCurLeScore());
+    map.putAll(endUserService.getAvlLeScore(endUser));
+    response.setMsg(map);
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setToken(newtoken);
+    return response;
+  }
+
+  /**
+   * 用户确认乐分提现
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/withdrawConfirm", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse withdrawConfirm(@RequestBody UserRequest request) {
+
+    BaseResponse response = new BaseResponse();
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    String remark = request.getRemark();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    endUserService.userWithdraw(userId, remark);
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setToken(newtoken);
     return response;
   }
 }

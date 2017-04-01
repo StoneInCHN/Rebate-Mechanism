@@ -169,24 +169,24 @@ public class EndUser extends BaseEntity {
   private BigDecimal curLeScore = new BigDecimal("0");
 
   /**
-   * 激励乐分
+   * 激励乐分(包括乐心分红乐分，推荐获得乐分)
    */
   private BigDecimal motivateLeScore = new BigDecimal("0");
 
   /**
-   * 商家收益乐分
+   * 直接收入乐分(包括商家收益乐分，代理商提成乐分)
    */
-  private BigDecimal merchantLeScore = new BigDecimal("0");
+  private BigDecimal incomeLeScore = new BigDecimal("0");
 
-  /**
-   * 推荐乐分
-   */
-  private BigDecimal recommendLeScore = new BigDecimal("0");
-
-  /**
-   * 分销商提成乐分
-   */
-  private BigDecimal agentLeScore = new BigDecimal("0");
+  // /**
+  // * 推荐乐分
+  // */
+  // private BigDecimal recommendLeScore = new BigDecimal("0");
+  //
+  // /**
+  // * 分销商提成乐分
+  // */
+  // private BigDecimal agentLeScore = new BigDecimal("0");
 
   /**
    * 累计积分
@@ -228,15 +228,6 @@ public class EndUser extends BaseEntity {
    */
   private Set<MsgEndUser> msgEndUsers = new HashSet<MsgEndUser>();
 
-
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getAgentLeScore() {
-    return agentLeScore;
-  }
-
-  public void setAgentLeScore(BigDecimal agentLeScore) {
-    this.agentLeScore = agentLeScore;
-  }
 
   @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
   public Set<LeMindRecord> getLeMindRecords() {
@@ -309,22 +300,14 @@ public class EndUser extends BaseEntity {
     this.motivateLeScore = motivateLeScore;
   }
 
-  @Column(scale = 2, precision = 10)
-  public BigDecimal getMerchantLeScore() {
-    return merchantLeScore;
-  }
-
-  public void setMerchantLeScore(BigDecimal merchantLeScore) {
-    this.merchantLeScore = merchantLeScore;
-  }
 
   @Column(scale = 2, precision = 10)
-  public BigDecimal getRecommendLeScore() {
-    return recommendLeScore;
+  public BigDecimal getIncomeLeScore() {
+    return incomeLeScore;
   }
 
-  public void setRecommendLeScore(BigDecimal recommendLeScore) {
-    this.recommendLeScore = recommendLeScore;
+  public void setIncomeLeScore(BigDecimal incomeLeScore) {
+    this.incomeLeScore = incomeLeScore;
   }
 
   @Column(scale = 2, precision = 10)

@@ -53,8 +53,24 @@ public class UserRequest extends BaseRequest {
    */
   private MultipartFile photo;
 
+  /**
+   * 设置KEY
+   */
   private SettingConfigKey configKey;
 
+  /**
+   * 备注
+   */
+  private String remark;
+
+
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
 
   public SettingConfigKey getConfigKey() {
     return configKey;

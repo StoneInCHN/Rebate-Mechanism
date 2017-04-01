@@ -151,7 +151,9 @@ public class CommonEnum {
     /** 消费商户的推荐人收益百分比 9 */
     RECOMMEND_SELLER,
     /** 代理商提成百分比 10 */
-    AGENT_COMMISSION
+    AGENT_COMMISSION,
+    /** 激励乐分提现最低金额限制 11 */
+    WITHDRAW_MINIMUM_LIMIT
 
   }
 

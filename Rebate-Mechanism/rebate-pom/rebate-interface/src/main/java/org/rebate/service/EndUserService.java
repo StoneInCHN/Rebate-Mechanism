@@ -1,5 +1,6 @@
 package org.rebate.service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.rebate.beans.SMSVerificationCode;
@@ -103,4 +104,21 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   EndUser getAgentByArea(Area area);
+
+  /**
+   * 获取可提现的乐分
+   * 
+   * @param endUser
+   * @return
+   */
+  Map<String, BigDecimal> getAvlLeScore(EndUser endUser);
+
+  /**
+   * 用户提现
+   * 
+   * @param userId
+   * @param remark
+   * @return
+   */
+  EndUser userWithdraw(Long userId, String remark);
 }

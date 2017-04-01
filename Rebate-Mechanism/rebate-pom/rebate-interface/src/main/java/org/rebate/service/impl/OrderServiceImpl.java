@@ -132,8 +132,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     scoreRecord.setUserCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
     sellerEndUser.setCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
     sellerEndUser.setTotalLeScore(sellerEndUser.getTotalLeScore().add(scoreRecord.getAmount()));
-    sellerEndUser.setMerchantLeScore(sellerEndUser.getMerchantLeScore()
-        .add(scoreRecord.getAmount()));
+    sellerEndUser.setIncomeLeScore(sellerEndUser.getIncomeLeScore().add(scoreRecord.getAmount()));
     sellerEndUser.getLeScoreRecords().add(scoreRecord);
 
     // endUserDao.merge(sellerEndUser);
@@ -172,7 +171,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       sellerEndUser.getRebateRecords().add(rebateRecord);
       // endUserDao.merge(sellerEndUser);
     }
-
+    endUserDao.merge(sellerEndUser);
     /**
      * 乐豆消费无推荐返利
      */
@@ -239,7 +238,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             leScoreRecord.getAmount()));
         sellerRecommender.setTotalLeScore(sellerRecommender.getTotalLeScore().add(
             leScoreRecord.getAmount()));
-        sellerRecommender.setRecommendLeScore(sellerRecommender.getRecommendLeScore().add(
+        sellerRecommender.setMotivateLeScore(sellerRecommender.getMotivateLeScore().add(
             leScoreRecord.getAmount()));
         sellerRecommender.getLeScoreRecords().add(leScoreRecord);
         endUserDao.merge(sellerRecommender);
@@ -259,7 +258,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       endUserDao.merge(agents);
     }
 
-    endUserDao.merge(sellerEndUser);
     orderDao.merge(order);
     return order;
   }
@@ -273,7 +271,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       leScoreRecord.setLeScoreType(LeScoreType.AGENT);
       leScoreRecord.setAmount(agentAmount);
       leScoreRecord.setUserCurLeScore(agent.getCurLeScore().add(leScoreRecord.getAmount()));
-      agent.setAgentLeScore(agent.getAgentLeScore().add(agentAmount));
+      agent.setIncomeLeScore(agent.getIncomeLeScore().add(agentAmount));
       agent.setCurLeScore(agent.getCurLeScore().add(agentAmount));
       agent.setTotalLeScore(agent.getTotalLeScore().add(agentAmount));
       agent.getLeScoreRecords().add(leScoreRecord);
@@ -321,7 +319,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       userRecommend.setCurLeScore(userRecommend.getCurLeScore().add(leScoreRecord.getAmount()));
       userRecommend.setTotalLeScore(userRecommend.getTotalLeScore().add(leScoreRecord.getAmount()));
       userRecommend.getLeScoreRecords().add(leScoreRecord);
-      userRecommend.setRecommendLeScore(userRecommend.getRecommendLeScore().add(
+      userRecommend.setMotivateLeScore(userRecommend.getMotivateLeScore().add(
           leScoreRecord.getAmount()));
       records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,

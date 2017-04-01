@@ -1,5 +1,6 @@
 package org.rebate.service.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,14 +9,19 @@ import javax.annotation.Resource;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
+import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerApplication;
+import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.EndUserService;
 import org.rebate.utils.ToolsUtils;
@@ -33,6 +39,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   @Resource(name = "userRecommendRelationDaoImpl")
   private UserRecommendRelationDao userRecommendRelationDao;
 
+  @Resource(name = "systemConfigDaoImpl")
+  private SystemConfigDao systemConfigDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -146,5 +154,49 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   @Override
   public EndUser getAgentByArea(Area area) {
     return endUserDao.getAgentByArea(area);
+  }
+
+  @Override
+  public Map<String, BigDecimal> getAvlLeScore(EndUser endUser) {
+    SystemConfig minLimit = systemConfigDao.getConfigByKey(SystemConfigKey.WITHDRAW_MINIMUM_LIMIT);
+    BigDecimal incomeScore = endUser.getIncomeLeScore();
+    BigDecimal motivateScore = endUser.getMotivateLeScore();
+    /**
+     * 收益乐分不足1乐分无法提取
+     */
+    incomeScore = incomeScore.setScale(0, BigDecimal.ROUND_DOWN);
+    /**
+     * 激励乐分满config才能提取
+     */
+    motivateScore =
+        ((motivateScore.divide(new BigDecimal(minLimit.getConfigValue()))).setScale(0,
+            BigDecimal.ROUND_DOWN)).multiply(new BigDecimal(minLimit.getConfigValue()));
+
+    BigDecimal avlLeScore = incomeScore.add(motivateScore);
+    Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+    map.put("avlLeScore", avlLeScore);
+    map.put("incomeScore", incomeScore);
+    map.put("motivateScore", motivateScore);
+    return map;
+  }
+
+  @Override
+  public EndUser userWithdraw(Long userId, String remark) {
+    EndUser endUser = endUserDao.find(userId);
+    Map<String, BigDecimal> map = getAvlLeScore(endUser);
+
+    LeScoreRecord leScoreRecord = new LeScoreRecord();
+    leScoreRecord.setEndUser(endUser);
+    leScoreRecord.setLeScoreType(LeScoreType.WITHDRAW);
+    leScoreRecord.setWithdrawStatus(ApplyStatus.AUDIT_WAITING);
+    leScoreRecord.setAmount(map.get("avlLeScore").negate());
+    leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+    endUser.getLeScoreRecords().add(leScoreRecord);
+
+    endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(map.get("incomeScore")));
+    endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(map.get("motivateScore")));
+    endUser.setCurLeScore(endUser.getCurLeScore().subtract(map.get("avlLeScore")));
+    endUserDao.merge(endUser);
+    return endUser;
   }
 }
