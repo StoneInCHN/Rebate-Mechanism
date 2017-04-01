@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Seller;
-import org.rebate.entity.SellerApplication;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
