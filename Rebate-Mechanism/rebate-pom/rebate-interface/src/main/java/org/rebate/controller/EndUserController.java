@@ -52,7 +52,6 @@ import org.rebate.service.SellerService;
 import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
-import org.rebate.utils.Pinyin4jUtil;
 import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
@@ -120,9 +119,32 @@ public class EndUserController extends MobileBaseController {
     // response.setDesc(endUser.getCellPhoneNum());
     List<Area> list = areaService.findAll();
     for (Area area : list) {
-      String pyName = Pinyin4jUtil.converterToSpell(area.getName());
+      String name = area.getName();
+      // if (name.contains("自治县")) {
+      // name = name.replace("自治县", "");
+      // }
+      // if (name.contains("县")) {
+      // name = name.replace("县", "");
+      // }
+      // if (name.contains("自治州")) {
+      // name = name.replace("自治州", "");
+      // }
+      // if (name.contains("市")) {
+      // name = name.replace("市", "");
+      // }
+
+      // String pyName = Pinyin4jUtil.converterToSpell(name);
+      // String str[] = pyName.split(",");
+      // if (str.length > 1) {
+      // pyName = str[1];
+      // }
+      String pyName = area.getPyName();
+      if (pyName.endsWith("ou") && name.endsWith("区")) {
+        pyName = pyName.substring(0, pyName.length() - 2);
+        pyName += "qu";
+      }
       area.setPyName(pyName);
-      System.out.println(pyName + "\n");
+      System.out.println(area.getName() + "--" + pyName);
     }
     areaService.update(list);
     return response;
@@ -1059,7 +1081,7 @@ public class EndUserController extends MobileBaseController {
 
     Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
     String[] propertys =
-        {"id", "seller.name", "createDate", "seller.storePictureUrl", "amount", "leScoreType",
+        {"id", "endUser.userPhoto", "createDate", "endUser.nickName", "amount", "leScoreType",
             "userCurLeScore", "recommender", "recommenderPhoto", "withdrawStatus", "remark"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
@@ -1114,7 +1136,8 @@ public class EndUserController extends MobileBaseController {
     pageable.setOrderProperty("createDate");
 
     Page<LeBeanRecord> page = leBeanRecordService.findPage(pageable);
-    String[] propertys = {"id", "amount", "createDate", "userCurLeBean", "type"};
+    String[] propertys =
+        {"id", "amount", "createDate", "userCurLeBean", "type", "recommender", "recommenderPhoto"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 

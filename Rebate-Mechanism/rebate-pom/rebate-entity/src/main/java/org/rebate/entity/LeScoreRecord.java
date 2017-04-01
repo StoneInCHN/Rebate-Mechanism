@@ -55,12 +55,12 @@ public class LeScoreRecord extends BaseEntity {
   private String remark;
 
   /**
-   * 推荐好友昵称
+   * 推荐的好友昵称
    */
   private String recommender;
 
   /**
-   * 推荐好友头像
+   * 推荐的好友头像
    */
   private String recommenderPhoto;
 

@@ -47,6 +47,15 @@ public class LeBeanRecord extends BaseEntity {
    */
   private BigDecimal userCurLeBean;
 
+  /**
+   * 推荐的好友昵称
+   */
+  private String recommender;
+
+  /**
+   * 推荐的好友头像
+   */
+  private String recommenderPhoto;
 
   /**
    * 备注
@@ -54,6 +63,23 @@ public class LeBeanRecord extends BaseEntity {
   private String remark;
 
 
+  @Column(length = 20)
+  public String getRecommender() {
+    return recommender;
+  }
+
+  public void setRecommender(String recommender) {
+    this.recommender = recommender;
+  }
+
+  @Column(length = 200)
+  public String getRecommenderPhoto() {
+    return recommenderPhoto;
+  }
+
+  public void setRecommenderPhoto(String recommenderPhoto) {
+    this.recommenderPhoto = recommenderPhoto;
+  }
 
   public LeBeanChangeType getType() {
     return type;

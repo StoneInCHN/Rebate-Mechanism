@@ -225,6 +225,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         leBeanRecord.setAmount(income.subtract(leScoreRecord.getAmount()));
         leBeanRecord.setEndUser(sellerRecommender);
         leBeanRecord.setType(LeBeanChangeType.RECOMMEND_SELLER);
+        leBeanRecord.setRecommender(sellerRecommendRelation.getEndUser().getNickName());
+        leBeanRecord.setRecommenderPhoto(userRecommendRelation.getEndUser().getUserPhoto());
         leBeanRecord.setUserCurLeBean(sellerRecommender.getCurLeBean()
             .add(leBeanRecord.getAmount()));
 
@@ -310,6 +312,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       leBeanRecord.setAmount(income.subtract(leScoreRecord.getAmount()));
       leBeanRecord.setEndUser(userRecommend);
       leBeanRecord.setType(LeBeanChangeType.RECOMMEND_USER);
+      leBeanRecord.setRecommender(userRecommendRelation.getEndUser().getNickName());
+      leBeanRecord.setRecommenderPhoto(userRecommendRelation.getEndUser().getUserPhoto());
       leBeanRecord.setUserCurLeBean(userRecommend.getCurLeBean().add(leBeanRecord.getAmount()));
       userRecommend.setCurLeBean(userRecommend.getCurLeBean().add(leBeanRecord.getAmount()));
       userRecommend.setTotalLeBean(userRecommend.getTotalLeBean().add(leBeanRecord.getAmount()));
