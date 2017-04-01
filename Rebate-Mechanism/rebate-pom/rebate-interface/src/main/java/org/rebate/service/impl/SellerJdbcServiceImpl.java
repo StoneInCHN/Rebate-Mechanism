@@ -13,6 +13,7 @@ import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.service.AreaService;
 import org.rebate.service.SellerJdbcService;
 import org.rebate.service.mapper.SellerRowMapper;
 import org.rebate.utils.LatLonUtil;
@@ -29,16 +30,24 @@ public class SellerJdbcServiceImpl implements SellerJdbcService {
   @Resource(name = "systemConfigDaoImpl")
   private SystemConfigDao systemConfigDao;
 
+  @Resource(name = "areaServiceImpl")
+  private AreaService areaService;
 
 
   @Override
   public Page<Map<String, Object>> getSellerList(String longitude, String latitude,
-      Pageable pageable, int radius, Long categoryId, Long areaId, FeaturedService featuredService,
-      SortType sortType, String keyWord) {
+      Pageable pageable, int radius, Long categoryId, String areaIds,
+      FeaturedService featuredService, SortType sortType, String keyWord) {
 
     double[] aroundGps =
         LatLonUtil.getAround(Double.valueOf(latitude), Double.valueOf(longitude), radius);
     StringBuffer seller_sql = new StringBuffer();
+
+    // String areaSql = "";
+    // if (areaId != null) {
+    // areaSql = areaService.genAreaSql(areaService.find(areaId));
+    // areaSql = areaSql.substring(0, areaSql.length() - 1);
+    // }
     seller_sql
         .append("SELECT distinct(rs.id),rs.create_date,rs.name,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name,");
     seller_sql.append("round(6378.138*2*asin(sqrt(pow(sin((" + latitude);
@@ -51,11 +60,17 @@ public class SellerJdbcServiceImpl implements SellerJdbcService {
     if (categoryId != null) {
       seller_sql.append(" AND rsc.id = " + categoryId);
     }
-    if (areaId != null) {
-      seller_sql.append(" AND rs.area = " + areaId);
+    if (areaIds != null) {
+      seller_sql.append(" AND rs.area in (" + areaIds + ")");
     }
     if (featuredService != null) {
-      seller_sql.append(" AND rs.featured_service =" + featuredService.ordinal());
+      if (featuredService.ordinal() == 1) {
+        seller_sql.append(" AND rs.featured_service in (0,1)");
+      } else if (featuredService.ordinal() == 2) {
+        seller_sql.append(" AND rs.featured_service in (0,2)");
+      } else {
+        seller_sql.append(" AND rs.featured_service in (0,1,2)");
+      }
     }
     if (keyWord != null) {
       seller_sql.append(" AND rs.name like '%" + keyWord + "%'");
@@ -93,11 +108,17 @@ public class SellerJdbcServiceImpl implements SellerJdbcService {
     if (categoryId != null) {
       total_count_sql.append(" AND rsc.id = " + categoryId);
     }
-    if (areaId != null) {
-      total_count_sql.append(" AND rs.area = " + areaId);
+    if (areaIds != null) {
+      total_count_sql.append(" AND rs.area in (" + areaIds + ")");
     }
     if (featuredService != null) {
-      total_count_sql.append(" AND rs.featured_service =" + featuredService.ordinal());
+      if (featuredService.ordinal() == 1) {
+        total_count_sql.append(" AND rs.featured_service in (0,1)");
+      } else if (featuredService.ordinal() == 2) {
+        total_count_sql.append(" AND rs.featured_service in (0,2)");
+      } else {
+        total_count_sql.append(" AND rs.featured_service in (0,1,2)");
+      }
     }
     if (keyWord != null) {
       total_count_sql.append(" AND rs.name like '%" + keyWord + "%'");

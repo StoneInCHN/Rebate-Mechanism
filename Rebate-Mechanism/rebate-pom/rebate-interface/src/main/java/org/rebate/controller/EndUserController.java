@@ -1309,10 +1309,11 @@ public class EndUserController extends MobileBaseController {
    */
   @RequestMapping(value = "/withdrawConfirm", method = RequestMethod.POST)
   public @ResponseBody BaseResponse withdrawConfirm(@RequestBody UserRequest request) {
-
+    String serverPrivateKey = setting.getServerPrivateKey();
     BaseResponse response = new BaseResponse();
     Long userId = request.getUserId();
     String token = request.getToken();
+    String password = request.getPassword();
     String remark = request.getRemark();
 
     // 验证登录token
@@ -1320,6 +1321,39 @@ public class EndUserController extends MobileBaseController {
     if (!TokenGenerator.isValiableToken(token, userToken)) {
       response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
       response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    // 密码非空验证
+    if (StringUtils.isEmpty(password)) {
+      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+      response.setDesc(Message.error("rebate.pwd.null.error").getContent());
+      return response;
+    }
+    // 支付密码未设置
+    if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
+      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+      response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
+      return response;
+    }
+    try {
+      password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // 密码长度验证
+    if (password.length() < setting.getPasswordMinlength()) {
+      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+      response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
+          .getContent());
+      return response;
+    }
+
+    if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
+      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+      response.setDesc(Message.error("rebate.payPwd.error").getContent());
       return response;
     }
 

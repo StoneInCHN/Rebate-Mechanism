@@ -8,12 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserRequest extends BaseRequest {
 
   /**
-   * 登录密码
+   * 密码
    */
   private String password;
 
   /**
-   * 注册时的确认密码
+   * 确认密码
    */
   private String password_confirm;
 

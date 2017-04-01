@@ -26,7 +26,7 @@ public interface SellerJdbcService {
    * @return
    */
   Page<Map<String, Object>> getSellerList(String longitude, String latitude, Pageable pageable,
-      int radius, Long categoryId, Long areaId, FeaturedService featuredService, SortType sortType,
-      String keyWord);
+      int radius, Long categoryId, String areaIds, FeaturedService featuredService,
+      SortType sortType, String keyWord);
 
 }

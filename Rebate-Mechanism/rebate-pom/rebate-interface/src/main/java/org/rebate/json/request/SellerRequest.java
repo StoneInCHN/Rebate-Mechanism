@@ -24,6 +24,11 @@ public class SellerRequest extends BaseRequest {
    */
   private Long areaId;
 
+  /**
+   * 用户所在地区ID集合字符串
+   */
+  private String areaIds;
+
 
   /**
    * 联系人手机
@@ -118,6 +123,14 @@ public class SellerRequest extends BaseRequest {
    */
   private String keyWord;
 
+
+  public String getAreaIds() {
+    return areaIds;
+  }
+
+  public void setAreaIds(String areaIds) {
+    this.areaIds = areaIds;
+  }
 
   public String getKeyWord() {
     return keyWord;

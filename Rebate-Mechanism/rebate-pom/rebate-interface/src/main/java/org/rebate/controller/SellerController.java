@@ -131,7 +131,7 @@ public class SellerController extends MobileBaseController {
     String latitude = request.getLatitude();// 纬度
     String longitude = request.getLongitude();// 经度
     Long categoryId = request.getCategoryId();
-    Long areaId = request.getAreaId();
+    String areaIds = request.getAreaIds();
     FeaturedService featuredService = request.getFeaturedService();
     SortType sortType = request.getSortType();
     String keyWord = request.getKeyWord();
@@ -154,12 +154,12 @@ public class SellerController extends MobileBaseController {
           .debug(
               SellerController.class,
               "list",
-              "seller list. radius: %s,latitude: %s, longitude: %s, categoryId: %s, areaId: %s, featuredService: %s, sortType: %s, keyWord: %s, pageSize: %s, pageNumber: %s",
-              radius, latitude, longitude, categoryId, areaId, featuredService, sortType, keyWord,
+              "seller list. radius: %s,latitude: %s, longitude: %s, categoryId: %s, areaIds: %s, featuredService: %s, sortType: %s, keyWord: %s, pageSize: %s, pageNumber: %s",
+              radius, latitude, longitude, categoryId, areaIds, featuredService, sortType, keyWord,
               pageSize, pageNumber);
     }
     Page<Map<String, Object>> page =
-        sellerJdbcService.getSellerList(longitude, latitude, pageable, radius, categoryId, areaId,
+        sellerJdbcService.getSellerList(longitude, latitude, pageable, radius, categoryId, areaIds,
             featuredService, sortType, keyWord);
 
     PageResponse pageInfo = new PageResponse();
