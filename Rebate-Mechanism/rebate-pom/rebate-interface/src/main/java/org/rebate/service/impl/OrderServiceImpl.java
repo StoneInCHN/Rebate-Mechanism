@@ -16,6 +16,7 @@ import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
+import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.RebateRecord;
@@ -23,6 +24,7 @@ import org.rebate.entity.Seller;
 import org.rebate.entity.Sn.Type;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
@@ -137,6 +139,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     // endUserDao.merge(sellerEndUser);
 
+
+    SystemConfig mindDivideConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
+    SystemConfig maxBonusPerConfig = systemConfigDao.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
+
     /**
      * 消费后用户积分返利 (乐豆消费无积分返利)
      */
@@ -152,6 +158,29 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       rebateRecord.setPaymentType(order.getPaymentType());
       rebateRecord.setUserCurScore(endUser.getCurScore());
       endUser.getRebateRecords().add(rebateRecord);
+
+      if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
+        BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
+        BigDecimal mind = endUser.getCurLeScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+        if (mind.compareTo(new BigDecimal(1)) >= 0) {
+          LeMindRecord leMindRecord = new LeMindRecord();
+          leMindRecord.setEndUser(endUser);
+          leMindRecord.setAmount(mind);
+          leMindRecord.setScore(mind.multiply(divideMind));
+          leMindRecord.setStatus(CommonStatus.ACITVE);
+          leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
+
+          leMindRecord.setMaxBonus(mind.multiply(divideMind));
+          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+                .getConfigValue())));
+          }
+          endUser.getLeMindRecords().add(leMindRecord);
+          endUser.setCurScore(endUser.getCurScore().subtract(mind.multiply(divideMind)));
+          endUser.setCurLeMind(endUser.getCurLeMind().add(mind));
+          endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
+        }
+      }
       endUserDao.merge(endUser);
     }
     /**
@@ -170,6 +199,31 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       rebateRecord.setUserCurScore(sellerEndUser.getCurScore());
       sellerEndUser.getRebateRecords().add(rebateRecord);
       // endUserDao.merge(sellerEndUser);
+
+      if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
+        BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
+        BigDecimal mind =
+            sellerEndUser.getCurLeScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+        if (mind.compareTo(new BigDecimal(1)) >= 0) {
+          LeMindRecord leMindRecord = new LeMindRecord();
+          leMindRecord.setEndUser(sellerEndUser);
+          leMindRecord.setAmount(mind);
+          leMindRecord.setScore(mind.multiply(divideMind));
+          leMindRecord.setStatus(CommonStatus.ACITVE);
+          leMindRecord.setUserCurLeMind(sellerEndUser.getCurLeMind().add(mind));
+
+          leMindRecord.setMaxBonus(mind.multiply(divideMind));
+          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+                .getConfigValue())));
+          }
+          sellerEndUser.getLeMindRecords().add(leMindRecord);
+          sellerEndUser
+              .setCurScore(sellerEndUser.getCurScore().subtract(mind.multiply(divideMind)));
+          sellerEndUser.setCurLeMind(sellerEndUser.getCurLeMind().add(mind));
+          sellerEndUser.setTotalLeMind(sellerEndUser.getTotalLeMind().add(mind));
+        }
+      }
     }
     endUserDao.merge(sellerEndUser);
     /**

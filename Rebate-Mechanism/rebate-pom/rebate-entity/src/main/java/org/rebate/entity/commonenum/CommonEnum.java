@@ -153,8 +153,9 @@ public class CommonEnum {
     /** 代理商提成百分比 10 */
     AGENT_COMMISSION,
     /** 激励乐分提现最低金额限制 11 */
-    WITHDRAW_MINIMUM_LIMIT
-
+    WITHDRAW_MINIMUM_LIMIT,
+    /** 每日分红总金额占平台每日总收益的比例 12 */
+    TOTAL_BONUS_PERCENTAGE
   }
 
   /**

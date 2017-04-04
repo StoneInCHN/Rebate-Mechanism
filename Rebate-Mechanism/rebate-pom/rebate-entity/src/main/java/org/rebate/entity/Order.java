@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
@@ -91,6 +92,24 @@ public class Order extends BaseEntity {
   // * 订单直接收益是否结算(提取)
   // */
   // private Boolean isClearing = false;
+
+  /**
+   * 返利金额
+   */
+  private BigDecimal rebateAmount;
+
+
+  @Transient
+  public BigDecimal getRebateAmount() {
+    if (amount != null && sellerIncome != null) {
+      rebateAmount = amount.subtract(sellerIncome);
+    }
+    return rebateAmount;
+  }
+
+  public void setRebateAmount(BigDecimal rebateAmount) {
+    this.rebateAmount = rebateAmount;
+  }
 
   public Boolean getIsBeanPay() {
     return isBeanPay;

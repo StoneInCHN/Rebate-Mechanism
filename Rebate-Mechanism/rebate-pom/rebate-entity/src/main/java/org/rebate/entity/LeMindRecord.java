@@ -1,19 +1,22 @@
 package org.rebate.entity;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 
 /**
  * 乐心记录
  * 
- * @author Andrea
  *
  */
 @Entity
@@ -48,6 +51,62 @@ public class LeMindRecord extends BaseEntity {
    */
   private String remark;
 
+  /**
+   * 乐心状态（是否可以继续产生收益）
+   */
+  private CommonStatus status;
+
+  /**
+   * 乐心累计产生的分红 (最大不超过定义的1个乐心分红的最大值*乐心数量)
+   */
+  private BigDecimal totalBonus = new BigDecimal("0");
+
+  /**
+   * 根据乐心兑换时的配置，乐心应累计产生的最大分红
+   */
+  private BigDecimal maxBonus = new BigDecimal("0");;
+
+  /**
+   * 乐心每天产生的乐分收益
+   */
+  private Set<BonusByMindPerDay> bonusByDays = new HashSet<BonusByMindPerDay>();
+
+
+
+  public CommonStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(CommonStatus status) {
+    this.status = status;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getTotalBonus() {
+    return totalBonus;
+  }
+
+  public void setTotalBonus(BigDecimal totalBonus) {
+    this.totalBonus = totalBonus;
+  }
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getMaxBonus() {
+    return maxBonus;
+  }
+
+  public void setMaxBonus(BigDecimal maxBonus) {
+    this.maxBonus = maxBonus;
+  }
+
+  @OneToMany(mappedBy = "leMindRecord")
+  public Set<BonusByMindPerDay> getBonusByDays() {
+    return bonusByDays;
+  }
+
+  public void setBonusByDays(Set<BonusByMindPerDay> bonusByDays) {
+    this.bonusByDays = bonusByDays;
+  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getScore() {

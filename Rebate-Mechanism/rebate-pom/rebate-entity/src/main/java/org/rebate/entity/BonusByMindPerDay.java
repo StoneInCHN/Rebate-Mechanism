@@ -31,7 +31,7 @@ public class BonusByMindPerDay extends BaseEntity {
   /**
    * 产生每日分红的乐心
    */
-  private MindExchangeByDay mindExchangeByDay;
+  private LeMindRecord leMindRecord;
 
   /**
    * 分红乐分数量
@@ -51,14 +51,13 @@ public class BonusByMindPerDay extends BaseEntity {
 
 
   @ManyToOne
-  public MindExchangeByDay getMindExchangeByDay() {
-    return mindExchangeByDay;
+  public LeMindRecord getLeMindRecord() {
+    return leMindRecord;
   }
 
-  public void setMindExchangeByDay(MindExchangeByDay mindExchangeByDay) {
-    this.mindExchangeByDay = mindExchangeByDay;
+  public void setLeMindRecord(LeMindRecord leMindRecord) {
+    this.leMindRecord = leMindRecord;
   }
-
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getBonusAmount() {
