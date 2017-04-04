@@ -1,5 +1,8 @@
 package org.rebate.dao.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
@@ -74,6 +77,21 @@ public class EndUserDaoImpl extends BaseDaoImpl<EndUser, Long> implements EndUse
   @CachePut(value = "endUser", key = "'endUser.appPlatform='+#id")
   public AppPlatform createEndUserAppPlatform(AppPlatform appPlatform, Long id) {
     return appPlatform;
+  }
+
+  @Override
+  public List<EndUser> getMindUsersByDay(Date startTime, Date endTime) {
+    if (startTime == null || endTime == null) {
+      return null;
+    }
+    try {
+      String jpql =
+          "select user from EndUser user inner join user.leMindRecords userMind where userMind.createDate >= :startTime and userMind.createDate <= :endTime";
+      return entityManager.createQuery(jpql, EndUser.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("startTime", startTime).setParameter("endTime", endTime).getResultList();
+    } catch (NoResultException e) {
+      return null;
+    }
   }
 
 

@@ -1,5 +1,8 @@
 package org.rebate.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.framework.dao.BaseDao;
@@ -49,4 +52,13 @@ public interface EndUserDao extends BaseDao<EndUser, Long> {
    * 创建终端用户登录手机平台信息
    */
   AppPlatform createEndUserAppPlatform(AppPlatform appPlatform, Long id);
+
+  /**
+   * 根据时间获取每日产生大于等于1个乐心的用户
+   * 
+   * @param startTime
+   * @param endTime
+   * @return
+   */
+  List<EndUser> getMindUsersByDay(Date startTime, Date endTime);
 }

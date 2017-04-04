@@ -110,6 +110,22 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
      * 每日分红的金额
      */
     totalBonus = totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue()));
+
+    /**
+     * 计算每日乐心大于等于1的用户
+     */
+    List<EndUser> endUsers = endUserDao.getMindUsersByDay(startTime.getTime(), endTime.getTime());
+    if (CollectionUtils.isEmpty(endUsers)) {
+      if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+        LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
+            "daily Bonus calculate Job. Timer Period: %s, no users exchange leMind", startTime
+                + "-" + endTime);
+      }
+      return;
+    }
+
+    // 乐心换算乐分的value
+    BigDecimal value = totalBonus.divide(new BigDecimal(endUsers.size()));
   }
 
   @Override
@@ -158,6 +174,12 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   public EndUser userReg(String userName, String password) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+
+  @Override
+  public List<EndUser> getMindUsersByDay(Date startTime, Date endTime) {
+    return endUserDao.getMindUsersByDay(startTime, endTime);
   }
 
 
