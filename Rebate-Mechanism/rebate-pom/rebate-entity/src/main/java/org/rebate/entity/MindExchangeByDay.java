@@ -63,6 +63,11 @@ public class MindExchangeByDay extends BaseEntity {
    * 乐心累计产生的分红 (最大不超过定义的1个乐心分红的最大值*乐心数量)
    */
   private BigDecimal totalBonus;
+
+  /**
+   * 根据配置，乐心应累计产生的最大分红
+   */
+  private BigDecimal maxBonus;
   /**
    * 备注
    */
@@ -73,6 +78,15 @@ public class MindExchangeByDay extends BaseEntity {
    */
   private Set<BonusByMindPerDay> bonusByDays = new HashSet<BonusByMindPerDay>();
 
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getMaxBonus() {
+    return maxBonus;
+  }
+
+  public void setMaxBonus(BigDecimal maxBonus) {
+    this.maxBonus = maxBonus;
+  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getTotalBonus() {

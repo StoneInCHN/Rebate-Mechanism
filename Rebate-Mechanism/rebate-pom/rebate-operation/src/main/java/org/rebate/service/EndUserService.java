@@ -59,4 +59,10 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   EndUser userReg(String userName, String password);
+
+
+  /**
+   * 用户每日乐分分红计算
+   */
+  void dailyBonusCalJob();
 }
