@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -20,7 +22,7 @@ import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
  *
  */
 @Entity
-@Table(name = "rm_le_mind_record")
+@Table(name = "rm_le_mind_record", indexes = {@Index(name = "status", columnList = "status")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_le_mind_record_sequence")
 public class LeMindRecord extends BaseEntity {
 
@@ -99,7 +101,7 @@ public class LeMindRecord extends BaseEntity {
     this.maxBonus = maxBonus;
   }
 
-  @OneToMany(mappedBy = "leMindRecord")
+  @OneToMany(mappedBy = "leMindRecord", cascade = CascadeType.ALL)
   public Set<BonusByMindPerDay> getBonusByDays() {
     return bonusByDays;
   }

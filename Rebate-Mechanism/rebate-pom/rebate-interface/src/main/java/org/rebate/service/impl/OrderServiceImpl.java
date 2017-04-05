@@ -2,6 +2,7 @@ package org.rebate.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -112,6 +113,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   public Order updateOrderforPayCallBack(String orderSn) {
     Order order = orderDao.getOrderBySn(orderSn);
     order.setStatus(OrderStatus.PAID);
+    order.setPaymentTime(new Date());
 
     EndUser endUser = order.getEndUser();
     Seller seller = order.getSeller();

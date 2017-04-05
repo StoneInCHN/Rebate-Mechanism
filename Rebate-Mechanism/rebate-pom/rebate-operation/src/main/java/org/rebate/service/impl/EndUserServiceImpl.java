@@ -12,10 +12,13 @@ import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeMindRecordDao;
 import org.rebate.dao.OrderDao;
 import org.rebate.dao.SystemConfigDao;
+import org.rebate.entity.BonusByMindPerDay;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -124,8 +127,72 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       return;
     }
 
-    // 乐心换算乐分的value
+    /**
+     * 当天乐心换算乐分的value(当天总收益的分红金额/当天消费乐心大于等于1的用户人数)
+     */
     BigDecimal value = totalBonus.divide(new BigDecimal(endUsers.size()));
+
+    List<Filter> mindFilters = new ArrayList<Filter>();
+    Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
+    mindFilters.add(statusFilter);
+    List<LeMindRecord> leMindRecords = leMindRecordDao.findList(null, null, mindFilters, null);
+    if (CollectionUtils.isEmpty(leMindRecords)) {
+      if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+        LogUtil
+            .debug(
+                EndUserServiceImpl.class,
+                "dailyBonusCalJob",
+                "daily Bonus calculate Job--search leMind record. Timer Period: %s, no active leMind records",
+                startTime + "-" + endTime);
+      }
+      return;
+    }
+
+    List<EndUser> userList = new ArrayList<EndUser>();
+    for (LeMindRecord leMindRecord : leMindRecords) {
+      EndUser endUser = leMindRecord.getEndUser();
+      BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
+      BigDecimal totalLeScoreBonus = leMindRecord.getTotalBonus().add(curBonus);
+      leMindRecord.setTotalBonus(totalLeScoreBonus);
+      if (totalLeScoreBonus.compareTo(leMindRecord.getMaxBonus()) >= 0) {
+        curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
+        leMindRecord.setTotalBonus(leMindRecord.getMaxBonus());
+        leMindRecord.setStatus(CommonStatus.INACTIVE);
+        endUser.setCurLeMind(endUser.getCurLeMind().subtract(leMindRecord.getAmount()));
+      }
+
+      BonusByMindPerDay bonusByMindPerDay = new BonusByMindPerDay();
+      bonusByMindPerDay.setLeMindRecord(leMindRecord);
+      bonusByMindPerDay.setBonusDate(startTime.getTime());
+      bonusByMindPerDay.setBonusAmount(curBonus);
+      leMindRecord.getBonusByDays().add(bonusByMindPerDay);
+
+      endUser.setCurLeScore(endUser.getCurLeScore().add(curBonus));
+      endUser.setTotalLeScore(endUser.getTotalLeScore().add(curBonus));
+
+      userList.add(endUser);
+    }
+
+    if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+      LogUtil
+          .debug(
+              EndUserServiceImpl.class,
+              "dailyBonusCalJob",
+              "daily Bonus calculate Job--Update User LeScore Info==========start=========. Timer Period: %s",
+              startTime + "-" + endTime);
+    }
+
+    endUserDao.merge(userList);
+
+    if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+      LogUtil
+          .debug(
+              EndUserServiceImpl.class,
+              "dailyBonusCalJob",
+              "daily Bonus calculate Job--Update User LeScore Info==========end=========. Timer Period: %s",
+              startTime + "-" + endTime);
+    }
+
   }
 
   @Override

@@ -25,7 +25,7 @@ public class DailyLeScoreCalJob {
     LogUtil.debug(DailyLeScoreCalJob.class, "dailyLeScoreCalculate",
         "daily user leScore calculate start !");
 
-    //
+    endUserService.dailyBonusCalJob();
     LogUtil.debug(DailyLeScoreCalJob.class, "dailyLeScoreCalculate",
         "daily user leScore calculate end!");
   }

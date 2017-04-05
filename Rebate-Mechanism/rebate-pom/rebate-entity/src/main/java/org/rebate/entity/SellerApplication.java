@@ -203,6 +203,7 @@ public class SellerApplication extends BaseEntity {
     this.contactPerson = contactPerson;
   }
 
+  @ManyToOne
   public Area getArea() {
     return area;
   }

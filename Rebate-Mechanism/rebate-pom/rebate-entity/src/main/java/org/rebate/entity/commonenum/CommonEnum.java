@@ -155,7 +155,9 @@ public class CommonEnum {
     /** 激励乐分提现最低金额限制 11 */
     WITHDRAW_MINIMUM_LIMIT,
     /** 每日分红总金额占平台每日总收益的比例 12 */
-    TOTAL_BONUS_PERCENTAGE
+    TOTAL_BONUS_PERCENTAGE,
+    /** 推荐用户返乐分的最大推荐层级限制 13 */
+    RECOMMEND_LEVEL_LIMIT
   }
 
   /**

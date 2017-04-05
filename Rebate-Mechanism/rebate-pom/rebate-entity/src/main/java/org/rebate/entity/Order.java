@@ -1,10 +1,12 @@
 package org.rebate.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -21,7 +23,8 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
  *
  */
 @Entity
-@Table(name = "rm_order")
+@Table(name = "rm_order", indexes = {@Index(name = "createDate", columnList = "createDate"),
+    @Index(name = "sn", columnList = "sn")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_order_sequence")
 public class Order extends BaseEntity {
 
@@ -47,6 +50,11 @@ public class Order extends BaseEntity {
    * 支付方式
    */
   private String paymentType;
+
+  /**
+   * 支付时间
+   */
+  private Date paymentTime;
 
   /**
    * 消费金额
@@ -109,6 +117,15 @@ public class Order extends BaseEntity {
 
   public void setRebateAmount(BigDecimal rebateAmount) {
     this.rebateAmount = rebateAmount;
+  }
+
+
+  public Date getPaymentTime() {
+    return paymentTime;
+  }
+
+  public void setPaymentTime(Date paymentTime) {
+    this.paymentTime = paymentTime;
   }
 
   public Boolean getIsBeanPay() {
