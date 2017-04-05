@@ -23,8 +23,8 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
  *
  */
 @Entity
-@Table(name = "rm_order", indexes = {@Index(name = "createDate", columnList = "createDate"),
-    @Index(name = "sn", columnList = "sn")})
+@Table(name = "rm_order", indexes = {@Index(name = "createDateIndex", columnList = "createDate"),
+    @Index(name = "snIndex", columnList = "sn")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_order_sequence")
 public class Order extends BaseEntity {
 

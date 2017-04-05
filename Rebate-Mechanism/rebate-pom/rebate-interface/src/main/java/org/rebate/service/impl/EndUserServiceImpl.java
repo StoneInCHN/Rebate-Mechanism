@@ -1,6 +1,7 @@
 package org.rebate.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,12 +12,14 @@ import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
+import org.rebate.dao.UserRegReportDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
+import org.rebate.entity.UserRegReport;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
@@ -24,6 +27,7 @@ import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.EndUserService;
+import org.rebate.utils.TimeUtils;
 import org.rebate.utils.ToolsUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,6 +45,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "systemConfigDaoImpl")
   private SystemConfigDao systemConfigDao;
+
+  @Resource(name = "userRegReportDaoImpl")
+  private UserRegReportDao userRegReportDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -95,6 +102,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     regUser.setNickName(cellPhoneNum.substring(3, 7));
     UserRecommendRelation relation = new UserRecommendRelation();
     relation.setEndUser(regUser);
+    // relation.setStatus(CommonStatus.ACITVE);
     if (recommenderMobile != null) {
       EndUser recommend = endUserDao.findByUserMobile(recommenderMobile);
       if (recommend != null) {// 存在该推荐人
@@ -103,6 +111,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
         UserRecommendRelation parent = userRecommendRelationDao.findByUser(recommend);
         relation.setParent(parent);
+
+
       } else {// 无推荐人
 
       }
@@ -110,6 +120,17 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
     endUserDao.persist(regUser);
     userRecommendRelationDao.persist(relation);
+
+    Date cur = TimeUtils.formatDate2Day(new Date());
+    UserRegReport report = userRegReportDao.getRegReportByDate(cur);
+    if (report != null) {
+      report.setRegNum(report.getRegNum() + 1);
+    } else {
+      report = new UserRegReport();
+      report.setStatisticsDate(cur);
+      report.setRegNum(1);
+    }
+    userRegReportDao.merge(report);
     return regUser;
   }
 

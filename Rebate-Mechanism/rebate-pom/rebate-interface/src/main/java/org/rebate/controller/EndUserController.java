@@ -413,8 +413,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getSmsCode", method = RequestMethod.POST)
-  public @ResponseBody BaseResponse getSmsCode(HttpServletRequest request,
-      @RequestBody SmsCodeRequest smsCodeRequest) {
+  public @ResponseBody BaseResponse getSmsCode(@RequestBody SmsCodeRequest smsCodeRequest) {
     BaseResponse response = new BaseResponse();
     String cellPhoneNum = smsCodeRequest.getCellPhoneNum();
     SmsCodeType smsCodeType = smsCodeRequest.getSmsCodeType();

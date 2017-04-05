@@ -51,6 +51,20 @@ public class UserRecommendRelation extends BaseEntity {
    */
   private Set<UserRecommendRelation> children = new HashSet<UserRecommendRelation>();
 
+  // /**
+  // * 推荐层级状态
+  // */
+  // private CommonStatus status;
+  //
+  //
+  // public CommonStatus getStatus() {
+  // return status;
+  // }
+  //
+  // public void setStatus(CommonStatus status) {
+  // this.status = status;
+  // }
+
   @OneToOne
   public EndUser getEndUser() {
     return endUser;
