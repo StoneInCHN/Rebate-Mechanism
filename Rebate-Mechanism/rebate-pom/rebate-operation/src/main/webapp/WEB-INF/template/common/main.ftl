@@ -64,6 +64,16 @@
 		                               <a href="../systemConfig/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.systemConfig")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:settingConfig"]
+		                           <li>
+		                               <a href="../settingConfig/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.settingConfig")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:operationLog"]
+		                           <li>
+		                               <a href="../operationLog/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.operationLog")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
 		                       </ul>
 		                   </div>
 						   	[#break /]

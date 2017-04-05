@@ -21,6 +21,10 @@
 				<property name="entityManagerFactory" ref="entityManagerFactory" />
 			</bean>
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/console/**" />
+			<bean id="logInterceptor" class="org.rebate.interceptor.OperationLogInterceptor" />
+		</mvc:interceptor>
 	</mvc:interceptors>
 	
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">

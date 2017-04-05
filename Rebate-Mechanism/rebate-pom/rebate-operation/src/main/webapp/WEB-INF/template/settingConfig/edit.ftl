@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.systemConfig.edit")}</title>
+<title>${message("rebate.settingConfig.edit")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -34,45 +34,45 @@ $(function() {
 <body>
 	 <div class="content">
           <ol class="breadcrumb">
-                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.systemConfig")}</a> </li>
-                <li><a href="#">${message("rebate.systemConfig.list")}</a></li>
-                <li class="active">${message("rebate.systemConfig.edit")}</li>
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.settingConfig")}</a> </li>
+                <li><a href="#">${message("rebate.settingConfig.list")}</a></li>
+                <li class="active">${message("rebate.settingConfig.edit")}</li>
           </ol>
 		  <form id="inputForm" action="update.jhtml" method="post">
-						<input type="hidden" name="id" value="${systemConfig.id}" />
+						<input type="hidden" name="id" value="${settingConfig.id}" />
 						<table class="input">
 							<tr>
 								<th>
-									${message("rebate.systemConfig.configKey")}:
+									${message("rebate.settingConfig.configKey")}:
 								</th>
 								<td>
-									${message("rebate.systemConfig.configKey."+systemConfig.configKey)}
+									${message("rebate.settingConfig.configKey."+settingConfig.configKey)}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.systemConfig.configValue")}:
+									${message("rebate.settingConfig.configValue")}:
 								</th>
 								<td>
-									<input type="text" name="configValue" value="${systemConfig.configValue}" class="text" maxlength="20" />
+									<input type="text" name="configValue" value="${settingConfig.configValue}" class="text" maxlength="20" />
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.systemConfig.configOrder")}:
+									${message("rebate.settingConfig.configOrder")}:
 								</th>
 								<td>
-									<input type="text" name="configOrder" value="${systemConfig.configOrder}" class="text" maxlength="20" />
+									<input type="text" name="configOrder" value="${settingConfig.configOrder}" class="text" maxlength="20" />
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.systemConfig.isEnabled")}:
+									${message("rebate.settingConfig.isEnabled")}:
 								</th>
 								<td>
 									<select name="isEnabled">
-										<option [#if systemConfig.isEnabled] selected="selected" [/#if] value="true">${message("rebate.systemConfig.isEnabled.true")}</option>
-										<option [#if !systemConfig.isEnabled] selected="selected" [/#if] value="false">${message("rebate.systemConfig.isEnabled.false")}</option>
+										<option [#if settingConfig.isEnabled] selected="selected" [/#if] value="true">${message("rebate.settingConfig.isEnabled.true")}</option>
+										<option [#if !settingConfig.isEnabled] selected="selected" [/#if] value="false">${message("rebate.settingConfig.isEnabled.false")}</option>
 									</select>
 								</td>
 							</tr>

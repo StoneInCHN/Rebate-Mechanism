@@ -3,6 +3,7 @@ package org.rebate.controller;
 import javax.annotation.Resource;
 
 import org.rebate.entity.Admin;
+import org.rebate.entity.SystemConfig;
 import org.rebate.service.SystemConfigService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,8 +31,8 @@ public class SystemConfigController {
    * 更新
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
-  public String update(Admin admin, Long[] roleIds, RedirectAttributes redirectAttributes) {
-
+  public String update(SystemConfig config) {
+    systemConfigService.update(config, "configKey","createDate");
     return "redirect:list.jhtml";
   }
 
