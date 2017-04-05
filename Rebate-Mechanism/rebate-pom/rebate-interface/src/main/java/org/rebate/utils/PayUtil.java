@@ -8,12 +8,12 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.beans.Setting;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.wechat.WeixinUtil;
+
 import com.tencent.common.MD5;
 
 
@@ -121,12 +121,12 @@ public class PayUtil {
       } else {
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(root.elementText("err_code_des")
-            + Message.success("csh.buyRecord.create.fail").getContent());
+            + Message.success("rebate.payOrder.create.fail").getContent());
       }
     } else {
       response.setCode(CommonAttributes.FAIL_COMMON);
       response.setDesc(root.elementText("return_msg")
-          + Message.success("csh.buyRecord.create.fail").getContent());
+          + Message.success("rebate.payOrder.create.fail").getContent());
     }
     return response;
   }

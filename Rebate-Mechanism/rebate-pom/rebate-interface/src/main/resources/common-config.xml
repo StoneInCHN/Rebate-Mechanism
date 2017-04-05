@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<csh>
+	<rebate>
 		<setting name="serverPublicKey" value="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBMPGboxzPh9SApXHBKMQHF31rgB6LQBZxg3VirK9Rbp0qvgIDw+2ygZxPQAkgiK24PTWuBbw2UTNy5NxglSCsCnY8+vJXd8cwZKrBpnwXEcO0Wuh5G8Z++X0AIisMCIoiDZZwWnvqJ7a3vUQIj62qTX259s0UqvjGA7uvoDM9tQIDAQAB" />
 		<setting name="serverPrivateKey" value="MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAIEw8ZujHM+H1IClccEoxAcXfWuAHotAFnGDdWKsr1FunSq+AgPD7bKBnE9ACSCIrbg9Na4FvDZRM3Lk3GCVIKwKdjz68ld3xzBkqsGmfBcRw7Ra6Hkbxn75fQAiKwwIiiINlnBae+ontre9RAiPrapNfbn2zRSq+MYDu6+gMz21AgMBAAECgYBLHYMNRCynOcnDtu5KKgK4QN8qlwarXmruO0oQQml5RoBZbrrLJ6tYA+Y3afskkHO5UNWaRjllt5bbcdf0zCB/M7nPYidAcu2bCOwQuri+0HBChA19FJ10T07RoiYFiXbaZIL8j/xrCqHhc3eP0JH+1hSAkdMfl24IbfJO+pvLIQJBAL1294TBF9edavieqeu6zO6Gr1zZpARRw+M57N6gz4zolLNwTKU6RbJ8h+j6t2t87mGNjaQ0HTnMXh3H7UNtaTkCQQCuj1ZdeLhirw/kAF1rbdvBTjY99Ji74ds3IjkntxbwHCX0lFozPpJs/Adc2wA9LUqk7HeNPlIdbsGrA7V76CRdAkAJSGnqNDfB1bGnCscSiK1/xlOTPgqeN49cc7saUVC5+69Fd2wZ8Ff33cge7yHLf2yClRfqgq8n5M57sQ777cFpAkACeBaRpeZ9xtojsHmhzmEAX/nWcIJEjhJKuloynJ1fchZ7WinYdbcegYYdIx/ivaRDpvCd99azgeCNabUEdqklAkBy0WoURX90YZ6aNTrNxNUogWyx2mS6RUckLNfCKbSACePlMSl2AbcYUyjdd345IOj2lEzXC2QkJZFbA6vJLylq" />
 		<setting name="tokenTimeOut" value="14400" />
@@ -106,14 +106,5 @@
 		<setting name="duibaAppKey" value="2Q3avyPZ3krtR9yTjphyfhoGabvP"/>
 		<setting name="duibaAppSecret" value="gFxZ77QXSSDqBNgQZEFbN6VpLEA"/>
 		<setting name="duibaLoginUrl" value="http://www.duiba.com.cn/autoLogin/autologin?"/>
-		
-		<!-- 商品订单过期时间（分钟） -->
-		<setting name="orderTimeOut" value="60"/>
-		<!-- 商品订单默认自动收货天数(从发货日期计算) -->
-		<setting name="orderReceiveTimeOut" value="14"/>
-		<!-- 商品订单默认自动完成天数(从收货日期计算) -->
-		<setting name="orderCompleteTimeOut" value="15"/>
-		
-		
-	</csh>	
+	</rebate>	
 	

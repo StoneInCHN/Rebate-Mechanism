@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
-
 import org.rebate.beans.Setting;
 
 
@@ -15,6 +14,7 @@ public class LatLonUtil {
   private static final double PI = 3.14159265;
   private static final double EARTH_RADIUS = 6378137;
   private static final double RAD = Math.PI / 180.0;
+  private static final Setting setting = SettingUtils.get();
 
   /**
    * @param raidus 单位米 return minLat,minLng,maxLat,maxLng
@@ -121,7 +121,6 @@ public class LatLonUtil {
   public static Map<String, Object> convertCoordinateForBaiDuLbs(String lon, String lat) {
     try {
       Map<String, Object> map = new HashMap<String, Object>();
-      Setting setting = SettingUtils.get();
       String url =
           setting.getBdCarConvert() + "coords=" + lon + "," + lat + "&from=3&to=5&ak="
               + setting.getBdCarMapAk();
@@ -146,7 +145,6 @@ public class LatLonUtil {
   public static Map<String, Object> convertCoordinate(String lon, String lat) {
     try {
       Map<String, Object> map = new HashMap<String, Object>();
-      Setting setting = SettingUtils.get();
       String url = setting.getConvertMapUrl() + "?from=0&to=4&x=" + lon + "&y=" + lat;
       String res = ApiUtils.get(url);
       ObjectMapper mapper = new ObjectMapper();
@@ -172,7 +170,6 @@ public class LatLonUtil {
   public static Map<String, Object> convertAddress(String address) {
     try {
       Map<String, Object> map = new HashMap<String, Object>();
-      Setting setting = SettingUtils.get();
       String url =
           setting.getConvertAddressUrl() + "?address=" + address + "&output=json&ak="
               + setting.getMapAk();
@@ -199,7 +196,6 @@ public class LatLonUtil {
   public static String convertCoorForAddr(String lat, String lng) {
     try {
       Map<String, Object> map = new HashMap<String, Object>();
-      Setting setting = SettingUtils.get();
       String url =
           setting.getConvertAddressUrl() + "?location=" + lat + "," + lng + "&output=json&ak="
               + setting.getMapAk();

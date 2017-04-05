@@ -19,11 +19,10 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-import org.springframework.core.io.ClassPathResource;
-
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.EnumConverter;
 import org.rebate.beans.Setting;
+import org.springframework.core.io.ClassPathResource;
 
 
 
@@ -116,7 +115,7 @@ public final class SettingUtils {
     try {
       File commonXmlFile = new ClassPathResource(CommonAttributes.COMMON_CONFIG_XML_PATH).getFile();
       Document document = new SAXReader().read(commonXmlFile);
-      List<Element> elements = document.selectNodes("/csh/setting");
+      List<Element> elements = document.selectNodes("/rebate/setting");
       for (Element element : elements) {
         String name = element.attributeValue("name");
         String value = element.attributeValue("value");
@@ -143,7 +142,7 @@ public final class SettingUtils {
     try {
       File CommonXmlFile = new ClassPathResource(CommonAttributes.COMMON_CONFIG_XML_PATH).getFile();
       Document document = new SAXReader().read(CommonXmlFile);
-      List<Element> elements = document.selectNodes("/csh/setting");
+      List<Element> elements = document.selectNodes("/rebate/setting");
       for (Element element : elements) {
         try {
           String name = element.attributeValue("name");
