@@ -2,6 +2,7 @@ package org.rebate.json.request;
 
 import java.math.BigDecimal;
 
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.RequestReplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.json.base.BaseRequest;
@@ -36,7 +37,7 @@ public class OrderRequest extends BaseRequest {
   /**
    * 根据回复状态查看订单
    */
-  private RequestReplyStatus requestReplyStatus;
+  private OrderStatus orderStatus;
 
   /**
    * 配置项key
@@ -92,12 +93,12 @@ public class OrderRequest extends BaseRequest {
     this.remark = remark;
   }
 
-  public RequestReplyStatus getRequestReplyStatus() {
-    return requestReplyStatus;
+  public OrderStatus getOrderStatus() {
+    return orderStatus;
   }
 
-  public void setRequestReplyStatus(RequestReplyStatus requestReplyStatus) {
-    this.requestReplyStatus = requestReplyStatus;
+  public void setOrderStatus(OrderStatus orderStatus) {
+    this.orderStatus = orderStatus;
   }
 
 }

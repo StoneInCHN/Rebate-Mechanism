@@ -229,6 +229,7 @@ public class OrderController extends MobileBaseController {
     }
 
     order.setEvaluate(evaluate);
+    order.setStatus(OrderStatus.FINISHED);
     orderService.update(order);
     if (LogUtil.isDebugEnabled(OrderController.class)) {
       LogUtil.debug(OrderController.class, "User evaluate",
@@ -386,7 +387,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getOrderUnderUser", method = RequestMethod.POST)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> getUnreplayedOrderUnderUser(
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderUser(
       @RequestBody OrderRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
@@ -405,37 +406,23 @@ public class OrderController extends MobileBaseController {
     String userToken = endUserService.getEndUserToken(userId);
     if (!TokenGenerator.isValiableToken(token, userToken)) {
       response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("csh.user.token.timeout").getContent());
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
       return response;
     }
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
     filters.add(endUserFilter);
-    switch (request.getRequestReplyStatus()) {
-      case ALL:
-        break;
-      case NO_REPLAY_STATUS:
-        Filter evaluateNullFilter = Filter.isNull("evaluate");
-        filters.add(evaluateNullFilter);
-        Filter orderStatusFilter = new Filter("status", Operator.eq, OrderStatus.PAID);
-        filters.add(orderStatusFilter);
-        break;
-      case REPLAY_STATUS:
 
-        Filter evaluateNotNullFilter = Filter.isNotNull("evaluate");
-        filters.add(evaluateNotNullFilter);
-        break;
-      default:
-        break;
-    }
+    Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
+    filters.add(statusFilter);
 
     pageable.setFilters(filters);
 
     Page<Order> orderPage = orderService.findPage(pageable);
     String[] propertys =
         {"id", "sn", "seller.name", "userScore", "amount", "createDate", "remark",
-            "evaluate.content", "evaluate.sellerReply"};
+            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
