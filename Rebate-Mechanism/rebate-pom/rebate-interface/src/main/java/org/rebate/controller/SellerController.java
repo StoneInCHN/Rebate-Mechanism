@@ -101,7 +101,7 @@ public class SellerController extends MobileBaseController {
     orderings.add(ordering);
 
     List<SellerCategory> list = sellerCategoryService.findList(null, filters, orderings);
-    String[] propertys = {"id", "categoryName"};
+    String[] propertys = {"id", "categoryName", "categoryPicUrl"};
     List<Map<String, Object>> result = FieldFilterUtils.filterCollectionMap(propertys, list);
     response.setMsg(result);
 

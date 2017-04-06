@@ -34,6 +34,16 @@ public class TopBanner extends BaseEntity {
   private String bannerUrl;
 
   /**
+   * banner link URL
+   */
+  private String linkUrl;
+
+  /**
+   * banner order
+   */
+  private Integer bannerOrder;
+
+  /**
    * 是否生效
    */
   private Boolean isActive;
@@ -42,6 +52,24 @@ public class TopBanner extends BaseEntity {
    * banner 图片内容
    */
   private MultipartFile bannerPicture;
+
+
+  @Column(length = 200)
+  public String getLinkUrl() {
+    return linkUrl;
+  }
+
+  public void setLinkUrl(String linkUrl) {
+    this.linkUrl = linkUrl;
+  }
+
+  public Integer getBannerOrder() {
+    return bannerOrder;
+  }
+
+  public void setBannerOrder(Integer bannerOrder) {
+    this.bannerOrder = bannerOrder;
+  }
 
   @Column(length = 100)
   public String getBannerName() {

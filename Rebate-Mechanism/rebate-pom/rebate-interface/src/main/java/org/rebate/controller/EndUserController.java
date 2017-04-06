@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
@@ -554,7 +555,13 @@ public class EndUserController extends MobileBaseController {
           response.setCode(CommonAttributes.FAIL_REG);
           response.setDesc(Message.error("rebate.sms.token.error").getContent());
           return response;
-        } else {
+        } else {// 短信验证码匹配成功
+          if (BooleanUtils.isTrue(endUserService.isRecommendLimited(recommenderMobile))) {// 推荐层级关系超过配置的最大层级
+            response.setCode(CommonAttributes.FAIL_REG);
+            response.setDesc(Message.error("rebate.recommend.level.limit", recommenderMobile)
+                .getContent());
+            return response;
+          }
           endUserService.deleteSmsCode(cellPhoneNum);
         }
       } else {
@@ -923,7 +930,9 @@ public class EndUserController extends MobileBaseController {
 
     Page<UserRecommendRelation> page =
         userRecommendRelationService.getRelationsByRecommender(userId, pageable);
-    String[] propertys = {"id", "endUser.nickName", "endUser.totalLeScore", "endUser.userPhoto"};
+    String[] propertys =
+        {"id", "endUser.nickName", "endUser.totalLeScore", "endUser.userPhoto",
+            "endUser.sellerName", "endUser.sellerPicUrl"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 

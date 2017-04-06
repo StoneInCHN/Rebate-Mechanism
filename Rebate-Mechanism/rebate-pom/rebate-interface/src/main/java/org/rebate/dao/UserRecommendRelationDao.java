@@ -9,7 +9,7 @@ import org.rebate.framework.paging.Pageable;
 public interface UserRecommendRelationDao extends BaseDao<UserRecommendRelation, Long> {
 
   /**
-   * 根据手机号码查找终端用户推荐关系
+   * 根据用户查找终端用户推荐关系
    * 
    * @param EndUser
    * @return 终端用户， 若不存在则返回null

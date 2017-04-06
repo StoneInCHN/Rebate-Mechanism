@@ -117,10 +117,7 @@
 						<a href="javascript:;" class="sort" name="storePhoto">${message("rebate.seller.storePhoto")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" class="sort" name="latitude">${message("rebate.seller.latitude")}</a>
-					</th>
-					<th>
-						<a href="javascript:;" class="sort" name="longitude">${message("rebate.seller.longitude")}</a>
+						<a href="javascript:;" class="sort" name="discount">${message("rebate.seller.discount")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
@@ -171,10 +168,7 @@
 						[/#if]
 					</td>
 					<td>
-						${seller.latitude}
-					</td>
-					<td>
-						${seller.longitude}
+						${seller.discount}
 					</td>
 					<td>
 						<span title="${seller.createDate?string("yyyy-MM-dd HH:mm:ss")}">${seller.createDate}</span>

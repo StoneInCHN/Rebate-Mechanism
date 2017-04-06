@@ -8,8 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 商家类别实体
@@ -41,10 +43,37 @@ public class SellerCategory extends BaseEntity {
   private Boolean isActive;
 
   /**
+   * 商家类别图片地址
+   */
+  private String categoryPicUrl;
+
+  /**
+   * 商家类别图片
+   */
+  private MultipartFile categoryPic;
+
+  /**
    * 商家
    */
   private Set<Seller> sellers = new HashSet<Seller>();
 
+  @Column(length = 200)
+  public String getCategoryPicUrl() {
+    return categoryPicUrl;
+  }
+
+  public void setCategoryPicUrl(String categoryPicUrl) {
+    this.categoryPicUrl = categoryPicUrl;
+  }
+
+  @Transient
+  public MultipartFile getCategoryPic() {
+    return categoryPic;
+  }
+
+  public void setCategoryPic(MultipartFile categoryPic) {
+    this.categoryPic = categoryPic;
+  }
 
   @OneToMany(mappedBy = "sellerCategory")
   public Set<Seller> getSellers() {

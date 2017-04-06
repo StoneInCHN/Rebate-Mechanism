@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
@@ -228,6 +229,58 @@ public class EndUser extends BaseEntity {
    */
   private Set<MsgEndUser> msgEndUsers = new HashSet<MsgEndUser>();
 
+  /**
+   * 是否被限制达到推荐层级而无法被推荐
+   */
+  private Boolean isLimitRecommend;
+
+  /**
+   * 商户名称
+   */
+  private String sellerName;
+
+  /**
+   * 商户图片
+   */
+  private String sellerPicUrl;
+
+
+  @Transient
+  public String getSellerName() {
+    if (this.getSellers() != null) {
+      for (Seller seller : this.getSellers()) {
+        return seller.getName();
+      }
+    }
+    return sellerName;
+  }
+
+  public void setSellerName(String sellerName) {
+    this.sellerName = sellerName;
+  }
+
+  @Transient
+  public String getSellerPicUrl() {
+    if (this.getSellers() != null) {
+      for (Seller seller : this.getSellers()) {
+        return seller.getStorePictureUrl();
+      }
+    }
+    return sellerPicUrl;
+  }
+
+  public void setSellerPicUrl(String sellerPicUrl) {
+    this.sellerPicUrl = sellerPicUrl;
+  }
+
+  @Transient
+  public Boolean getIsLimitRecommend() {
+    return isLimitRecommend;
+  }
+
+  public void setIsLimitRecommend(Boolean isLimitRecommend) {
+    this.isLimitRecommend = isLimitRecommend;
+  }
 
   @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
   public Set<LeMindRecord> getLeMindRecords() {
