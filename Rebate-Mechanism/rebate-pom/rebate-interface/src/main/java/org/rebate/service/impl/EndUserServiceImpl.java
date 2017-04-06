@@ -1,8 +1,10 @@
 package org.rebate.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -90,6 +92,39 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   }
 
   @Override
+  public Boolean isRecommendLimited(String recommenderMobile) {
+    SystemConfig recommendLimitConfig =
+        systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_LEVEL_LIMIT);
+    if (recommendLimitConfig == null || recommendLimitConfig.getConfigValue() == null) {
+      return false;
+    }
+    Integer maxLevel = Integer.parseInt(recommendLimitConfig.getConfigValue());
+    EndUser recommend = endUserDao.findByUserMobile(recommenderMobile);
+    if (recommend == null) {
+      return false;
+    }
+    List<UserRecommendRelation> relations = getRecommendRelations(recommend);
+    if (CollectionUtils.isEmpty(relations)) {
+      return false;
+    }
+    if (maxLevel <= relations.size()) {
+      return true;
+    }
+    return false;
+  }
+
+  public List<UserRecommendRelation> getRecommendRelations(EndUser endUser) {
+    List<UserRecommendRelation> relations = new ArrayList<UserRecommendRelation>();
+    UserRecommendRelation relation = userRecommendRelationDao.findByUser(endUser);
+    relations.add(relation);
+    if (relation.getParent() != null) {
+      relations.addAll(getRecommendRelations(relation.getParent().getEndUser()));
+    }
+    return relations;
+
+  }
+
+  @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public EndUser userReg(String cellPhoneNum, String password, String recommenderMobile) {
     EndUser regUser = new EndUser();
@@ -111,8 +146,6 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
         UserRecommendRelation parent = userRecommendRelationDao.findByUser(recommend);
         relation.setParent(parent);
-
-
       } else {// 无推荐人
 
       }
@@ -220,4 +253,6 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     endUserDao.merge(endUser);
     return endUser;
   }
+
+
 }

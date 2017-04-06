@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
@@ -228,6 +229,20 @@ public class EndUser extends BaseEntity {
    */
   private Set<MsgEndUser> msgEndUsers = new HashSet<MsgEndUser>();
 
+  /**
+   * 是否被限制达到推荐层级而无法被推荐
+   */
+  private Boolean isLimitRecommend;
+
+
+  @Transient
+  public Boolean getIsLimitRecommend() {
+    return isLimitRecommend;
+  }
+
+  public void setIsLimitRecommend(Boolean isLimitRecommend) {
+    this.isLimitRecommend = isLimitRecommend;
+  }
 
   @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
   public Set<LeMindRecord> getLeMindRecords() {

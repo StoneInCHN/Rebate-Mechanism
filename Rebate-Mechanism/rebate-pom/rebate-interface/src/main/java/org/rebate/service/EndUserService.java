@@ -121,4 +121,12 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   EndUser userWithdraw(Long userId, String remark);
+
+  /**
+   * 推荐是否被限制
+   * 
+   * @param recommenderMobile
+   * @return
+   */
+  Boolean isRecommendLimited(String recommenderMobile);
 }

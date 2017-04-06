@@ -246,7 +246,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       SystemConfig indirectUserConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_INDIRECT_USER);
       if (directUserConfig != null && indirectUserConfig != null && userRecommendRelation != null
-          && leScorePerConfig != null) {
+          && leScorePerConfig != null && directUserConfig.getConfigValue() != null
+          && indirectUserConfig.getConfigValue() != null
+          && leScorePerConfig.getConfigValue() != null) {
         List<EndUser> records =
             userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig,
                 leScorePerConfig, 0, rebateAmount);
@@ -263,7 +265,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       SystemConfig recommendSellerConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_SELLER);
       if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
-          && leScorePerConfig.getConfigValue() != null) {
+          && leScorePerConfig != null && leScorePerConfig.getConfigValue() != null
+          && sellerRecommendRelation != null && sellerRecommendRelation.getParent() != null) {
         LeScoreRecord leScoreRecord = new LeScoreRecord();
         EndUser sellerRecommender = sellerRecommendRelation.getParent().getEndUser();
         leScoreRecord.setEndUser(sellerRecommender);
@@ -343,8 +346,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       BigDecimal rebateAmount) {
 
     List<EndUser> records = new ArrayList<EndUser>();
-    if (userRecommendRelation.getParent() != null && directUser.getConfigValue() != null
-        && indirectUser.getConfigValue() != null && leScorePer.getConfigValue() != null) {
+    if (userRecommendRelation.getParent() != null) {
       LeScoreRecord leScoreRecord = new LeScoreRecord();
 
       EndUser userRecommend = userRecommendRelation.getParent().getEndUser();
