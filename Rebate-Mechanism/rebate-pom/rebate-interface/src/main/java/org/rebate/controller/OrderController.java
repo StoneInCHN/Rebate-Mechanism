@@ -376,8 +376,14 @@ public class OrderController extends MobileBaseController {
     Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
     filters.add(endUserFilter);
 
-    Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
-    filters.add(statusFilter);
+    if (request.getOrderStatus() != null) {
+      Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
+      filters.add(statusFilter);
+    } else {
+      Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+      filters.add(statusFilter);
+    }
+
 
     pageable.setFilters(filters);
 
