@@ -85,7 +85,7 @@
 								</th>
 								<td>
 									<ul  class="viewer-images clearfix">
-										 <li><img class="img-lazy img-rounded" data-original="${seller.storePhoto}" alt="${message("rebate.seller.storePhoto")}"></li>
+										 <li><img class="img-lazy img-rounded" data-original="${seller.storePictureUrl}" alt="${message("rebate.seller.storePhoto")}"></li>
 									  </ul>
 								</td>
 							</tr>

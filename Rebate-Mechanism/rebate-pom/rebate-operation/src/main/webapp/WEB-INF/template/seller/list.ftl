@@ -162,9 +162,9 @@
 						${seller.area}
 					</td>
 					<td>
-						[#if  seller.storePhone ??]
+						[#if  seller.storePictureUrl ??]
 							<ul  class="viewer-images clearfix">
-								<li><img class="img-list img-rounded img-lazy" data-original="${seller.storePhoto}" alt="${message("rebate.seller.storePhoto")}"></li>
+								<li><img class="img-list img-rounded img-lazy" data-original="${seller.storePictureUrl}" alt="${message("rebate.seller.storePhoto")}"></li>
 						    </ul>
 						[#else]
 							--

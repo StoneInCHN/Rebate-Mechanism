@@ -1,5 +1,6 @@
 package org.rebate.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -50,9 +51,15 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
             seller.setEndUser(endUser);
         }
         List<SellerEnvImage> envImages=apply.getEnvImages();
+        List<SellerEnvImage> sellerEnvImages=new ArrayList<SellerEnvImage>();
+        
         if(envImages!=null && envImages.size() >0){
-          seller.setEnvImages(envImages);
+         for (SellerEnvImage image :envImages) {
+           SellerEnvImage sellerEnvImage =image;
+           sellerEnvImages.add(sellerEnvImage);
         }
+        } 
+        seller.setEnvImages(sellerEnvImages);
         if(sellerCategory!=null){
           seller.setSellerCategory(sellerCategory);
         }

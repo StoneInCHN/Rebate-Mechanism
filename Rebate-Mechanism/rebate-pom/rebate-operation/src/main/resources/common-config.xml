@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<csh>
+<rebate>
 	<setting name="passwordMinlength" value="6" />
 	<setting name="passwordMaxlength" value="32" />
 	<setting name="mobilePattern" value="^1[3|4|5|8][0-9]\d{8}$" />
@@ -13,6 +13,11 @@
 	<setting name="smtpUsername" value="microctrllife@163.com" />
 	<setting name="smtpPassword" value="o123456" />
 
-
-</csh>	
+	<logConfig operation="系统管理修改角色" urlPattern="/console/role/update.jhtml" />
+	<logConfig operation="系统管理添加角色" urlPattern="/console/role/save.jhtml" />
+	<logConfig operation="系统管理删除角色" urlPattern="/console/role/delete.jhtml" />
+	<logConfig operation="系统管理添加后台用户" urlPattern="/console/admin/save.jhtml" />
+	<logConfig operation="系统管理修改后台用户" urlPattern="/console/admin/update.jhtml" />
+	<logConfig operation="系统管理删除后台用户" urlPattern="/console/admin/delete.jhtml" />
+</rebate>	
 	

@@ -20,7 +20,7 @@
 	<form id="listForm" action="list.jhtml" method="get">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerApply")}</a> </li>
-                <li class="active">${message("rebate.sellerApplication.list")}(${message("rebate.common.page.totalPages", page.total)})</li>
+                <li class="active">${message("rebate.sellerApplication.list")}(${message("rebate.common.page.totalPages", page.pageNumber)})</li>
           </ol>
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
