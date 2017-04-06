@@ -370,6 +370,7 @@ public class Seller extends BaseEntity {
     this.area = area;
   }
 
+  @Column(scale = 1, precision = 2)
   public BigDecimal getRateScore() {
     return rateScore;
   }
@@ -415,6 +416,7 @@ public class Seller extends BaseEntity {
     this.description = description;
   }
 
+  @Column(scale = 2, precision = 3)
   public BigDecimal getDiscount() {
     return discount;
   }
