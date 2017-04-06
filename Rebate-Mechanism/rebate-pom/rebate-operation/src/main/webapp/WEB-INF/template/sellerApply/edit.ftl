@@ -153,6 +153,14 @@ $(function() {
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerApplication.discount")}:
+								</th>
+								<td>
+									${sellerApply.discount}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									<span class="requiredField">*</span>${message("rebate.sellerApplication.applyStatus")}:
 								</th>
 								<td>

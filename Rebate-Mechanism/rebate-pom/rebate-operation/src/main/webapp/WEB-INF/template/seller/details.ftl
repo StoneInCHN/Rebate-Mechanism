@@ -112,6 +112,46 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.seller.rateScore")}:
+								</th>
+								<td>
+									${seller.rateScore}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.avgPrice")}:
+								</th>
+								<td>
+									${seller.avgPrice}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.discount")}:
+								</th>
+								<td>
+									${seller.discount}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.favoriteNum")}:
+								</th>
+								<td>
+									${seller.favoriteNum}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.totalOrderNum")}:
+								</th>
+								<td>
+									${seller.totalOrderNum}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.accountStatus")}:
 								</th>
 								<td>

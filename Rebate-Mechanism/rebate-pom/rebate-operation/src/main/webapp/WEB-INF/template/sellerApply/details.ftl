@@ -112,6 +112,14 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerApplication.discount")}:
+								</th>
+								<td>
+									${sellerApply.discount}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.sellerApplication.applyStatus")}:
 								</th>
 								<td>

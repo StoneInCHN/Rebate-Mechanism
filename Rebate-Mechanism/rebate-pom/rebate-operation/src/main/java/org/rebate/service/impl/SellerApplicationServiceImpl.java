@@ -74,6 +74,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
         seller.setStorePhone(apply.getStorePhone());
         seller.setStorePictureUrl(apply.getStorePhoto());
         seller.setName(apply.getSellerName());
+        seller.setDiscount(apply.getDiscount());
         seller.setAccountStatus(AccountStatus.ACTIVED);
         sellerDao.persist(seller);
       }
