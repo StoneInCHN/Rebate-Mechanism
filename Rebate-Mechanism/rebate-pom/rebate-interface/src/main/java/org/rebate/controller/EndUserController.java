@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,10 +26,12 @@ import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering.Direction;
@@ -49,7 +52,9 @@ import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.RebateRecordService;
 import org.rebate.service.SellerService;
+import org.rebate.service.SystemConfigService;
 import org.rebate.service.UserRecommendRelationService;
+import org.rebate.service.mapper.SellerRowMapper;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.QRCodeGenerator;
@@ -94,6 +99,9 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "sellerServiceImpl")
   private SellerService sellerService;
+
+  @Resource(name = "systemConfigServiceImpl")
+  private SystemConfigService systemConfigService;
 
   /**
    * 测试
@@ -1248,10 +1256,22 @@ public class EndUserController extends MobileBaseController {
     Page<Seller> page = sellerService.findFavoriteSellers(pageable, userId);
     String[] propertys =
         {"id", "name", "sellerCategory.categoryName", "latitude", "longitude", "rateScore",
-            "avgPrice"};
+            "avgPrice", "storePictureUrl", "address", "discount"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
+    SystemConfig rebateScore = systemConfigService.getConfigByKey(SystemConfigKey.REBATESCORE_USER);
+    SystemConfig unitConsume = systemConfigService.getConfigByKey(SystemConfigKey.UNIT_CONSUME);
+    for (Map<String, Object> map : result) {
+
+      BigDecimal unit = new BigDecimal(unitConsume.getConfigValue());
+      map.put("unitConsume", unit);
+      BigDecimal rebateUserScore =
+          unit.subtract(
+              ((BigDecimal) map.get("discount")).divide(new BigDecimal("10")).multiply(unit))
+              .multiply(new BigDecimal(rebateScore.getConfigValue()));
+      map.put("rebateScore", rebateUserScore);
+    }
     PageResponse pageInfo = new PageResponse();
     pageInfo.setPageNumber(pageNumber);
     pageInfo.setPageSize(pageSize);

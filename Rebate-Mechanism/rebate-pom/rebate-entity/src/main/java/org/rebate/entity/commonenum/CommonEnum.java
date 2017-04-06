@@ -226,7 +226,9 @@ public class CommonEnum {
     /** 店铺营业执照 */
     STORE_LICENSE,
     /** 店铺列表展示图片 */
-    STORE_SIGN
+    STORE_SIGN,
+    /** 订单评论图片 */
+    ORDER_EVALUATE
   }
 
   public enum FileType {

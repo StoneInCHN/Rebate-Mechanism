@@ -3,20 +3,27 @@ package org.rebate.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.rebate.dao.SellerDao;
+import org.rebate.dao.SystemConfigDao;
+import org.rebate.dao.UserRegReportDao;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEnvImage;
+import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.service.FileService;
 import org.rebate.service.SellerService;
+import org.rebate.service.mapper.SellerRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +36,12 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
 
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
+
+  @Resource(name = "systemConfigDaoImpl")
+  private SystemConfigDao systemConfigDao;
+
+  @Resource(name = "jdbcTemplate")
+  private JdbcTemplate jdbcTemplate;
 
   @Resource(name = "sellerDaoImpl")
   public void setBaseDao(SellerDao sellerDao) {
@@ -69,14 +82,14 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     return seller;
   }
 
-@Override
-public Page<Seller> findFavoriteSellers(Pageable pageable,Long userId) {
-	return sellerDao.findFavoriteSellers(pageable,userId);
-}
+  @Override
+  public Page<Seller> findFavoriteSellers(Pageable pageable, Long userId) {
+    return sellerDao.findFavoriteSellers(pageable, userId);
+  }
 
-@Override
-public EndUser userCollectSeller(Long userId, Long sellerId) {
-	return sellerDao.userCollectSeller(userId, sellerId);
-}
+  @Override
+  public EndUser userCollectSeller(Long userId, Long sellerId) {
+    return sellerDao.userCollectSeller(userId, sellerId);
+  }
 
 }

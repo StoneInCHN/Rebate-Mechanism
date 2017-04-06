@@ -119,44 +119,6 @@ public class OrderController extends MobileBaseController {
    * @param req
    * @return
    */
-  @RequestMapping(value = "/userEvaluate", method = RequestMethod.POST)
-  public @ResponseBody BaseResponse userEvaluate(@RequestBody SellerRequest req) {
-    BaseResponse response = new BaseResponse();
-
-    Long userId = req.getUserId();
-    String token = req.getToken();
-    Long evaluateId = req.getEntityId();
-    String reply = req.getSellerReply();
-
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
-
-    SellerEvaluate evaluate = sellerEvaluateService.find(evaluateId);
-    evaluate.setSellerReply(reply);
-    sellerEvaluateService.update(evaluate);
-    if (LogUtil.isDebugEnabled(OrderController.class)) {
-      LogUtil.debug(OrderController.class, "sellerReply",
-          "seller reply user evaluate. evaluateId: %s,reply: %s", evaluateId, reply);
-    }
-
-    response.setCode(CommonAttributes.SUCCESS);
-    String newtoken = TokenGenerator.generateToken(req.getToken());
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
-    return response;
-  }
-
-  /**
-   * 商家回复用户评价
-   *
-   * @param req
-   * @return
-   */
   @RequestMapping(value = "/sellerReply", method = RequestMethod.POST)
   public @ResponseBody BaseResponse sellerReply(@RequestBody SellerRequest req) {
     BaseResponse response = new BaseResponse();
@@ -196,7 +158,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/userEvaluateOrder", method = RequestMethod.POST)
-  public @ResponseBody BaseResponse userEvaluateOrder(@RequestBody UserEvaluateOrderRequest req) {
+  public @ResponseBody BaseResponse userEvaluateOrder(UserEvaluateOrderRequest req) {
     BaseResponse response = new BaseResponse();
 
     Long userId = req.getUserId();
@@ -223,7 +185,7 @@ public class OrderController extends MobileBaseController {
     if (req.getEvaluateImage() != null && req.getEvaluateImage().size() > 0) {
       for (MultipartFile file : req.getEvaluateImage()) {
         SellerEvaluateImage image = new SellerEvaluateImage();
-        image.setSource(fileService.saveImage(file, ImageType.STORE_ENV));
+        image.setSource(fileService.saveImage(file, ImageType.ORDER_EVALUATE));
         sellerEvaluateImages.add(image);
       }
     }
@@ -422,7 +384,8 @@ public class OrderController extends MobileBaseController {
     Page<Order> orderPage = orderService.findPage(pageable);
     String[] propertys =
         {"id", "sn", "seller.name", "userScore", "amount", "createDate", "remark",
-            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl"};
+            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
+            "seller.address"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
