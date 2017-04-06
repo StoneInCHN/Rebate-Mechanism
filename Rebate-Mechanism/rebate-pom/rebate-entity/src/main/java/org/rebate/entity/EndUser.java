@@ -234,6 +234,44 @@ public class EndUser extends BaseEntity {
    */
   private Boolean isLimitRecommend;
 
+  /**
+   * 商户名称
+   */
+  private String sellerName;
+
+  /**
+   * 商户图片
+   */
+  private String sellerPicUrl;
+
+
+  @Transient
+  public String getSellerName() {
+    if (this.getSellers() != null) {
+      for (Seller seller : this.getSellers()) {
+        return seller.getName();
+      }
+    }
+    return sellerName;
+  }
+
+  public void setSellerName(String sellerName) {
+    this.sellerName = sellerName;
+  }
+
+  @Transient
+  public String getSellerPicUrl() {
+    if (this.getSellers() != null) {
+      for (Seller seller : this.getSellers()) {
+        return seller.getStorePictureUrl();
+      }
+    }
+    return sellerPicUrl;
+  }
+
+  public void setSellerPicUrl(String sellerPicUrl) {
+    this.sellerPicUrl = sellerPicUrl;
+  }
 
   @Transient
   public Boolean getIsLimitRecommend() {
