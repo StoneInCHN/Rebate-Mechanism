@@ -128,32 +128,18 @@ public class FileServiceImpl implements FileService {
       subPath = File.separator + "storePicture";
     } else if (imageType == ImageType.ADVERTISEMENT) {
       subPath = File.separator + "advertisement";
-    } else if (imageType == ImageType.VEHICLEICON) {
-      subPath = File.separator + "vehicleIcon";
-    } else if (imageType == ImageType.NEWS) {
-      subPath = File.separator + "news";
-    }else if (imageType == ImageType.NEWSGCATEGORY) {
-      subPath = File.separator + "newsCagetory";
-    }else if (imageType == ImageType.Coupon) {
-      subPath = File.separator + "coupon";
-    }else if (imageType == ImageType.BrandLogo) {
-      subPath = File.separator + "logo";
-    }
+    } 
 
     imgUploadPath = uploadPath + subPath;
 
     String sourcePath =
         imgUploadPath + File.separator + date + File.separator + "src_" + uuid + "."
             + FilenameUtils.getExtension(multiFile.getOriginalFilename());
-    if (imageType == ImageType.NEWS) {
-      webPath =
-          projectUploadPath + subPath + File.separator + date + File.separator + "src_" + uuid
-              + "." + FilenameUtils.getExtension(multiFile.getOriginalFilename());
-    } else {
+
       webPath =
           File.separator + "upload" + subPath + File.separator + date + File.separator + "src_"
               + uuid + "." + FilenameUtils.getExtension(multiFile.getOriginalFilename());
-    }
+    
 
     String storePath =
         imgUploadPath + File.separator + date + File.separator + uuid + "." + DEST_EXTENSION;;
@@ -193,16 +179,6 @@ public class FileServiceImpl implements FileService {
       subPath = File.separator + "storePicture";
     } else if (imageType == ImageType.ADVERTISEMENT) {
       subPath = File.separator + "advertisement";
-    } else if (imageType == ImageType.VEHICLEICON) {
-      subPath = File.separator + "vehicleIcon";
-    } else if (imageType == ImageType.NEWS) {
-      subPath = File.separator + "news";
-    }else if (imageType == ImageType.NEWSGCATEGORY) {
-      subPath = File.separator + "newsCagetory";
-    }else if (imageType == ImageType.Coupon) {
-      subPath = File.separator + "coupon";
-    }else if (imageType == ImageType.BrandLogo) {
-      subPath = File.separator + "logo";
     }
 
     imgUploadPath = uploadPath + subPath;

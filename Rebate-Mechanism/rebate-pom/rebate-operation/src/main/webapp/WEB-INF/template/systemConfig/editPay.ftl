@@ -18,7 +18,7 @@ $(function() {
 	// 表单验证
 	$inputForm.validate({
 		rules: {
-			configValue:{
+			configOrder: {
 				required:true,
 				number:true
 			},
@@ -54,7 +54,15 @@ $(function() {
 									${message("rebate.systemConfig.configValue")}:
 								</th>
 								<td>
-									<input type="text" name="configValue" value="${systemConfig.configValue}" class="text" maxlength="20" />
+									${systemConfig.configValue}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.systemConfig.configOrder")}:
+								</th>
+								<td>
+									<input type="text" name="configOrder" value="${systemConfig.configOrder}" class="text" maxlength="20" />
 								</td>
 							</tr>
 							<tr>

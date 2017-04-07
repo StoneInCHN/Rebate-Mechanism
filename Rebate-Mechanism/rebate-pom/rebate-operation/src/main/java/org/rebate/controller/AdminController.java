@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.rebate.beans.Message;
-import org.rebate.beans.Setting;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Admin;
 import org.rebate.entity.Role;
@@ -20,7 +19,6 @@ import org.rebate.framework.filter.Filter;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.service.AdminService;
 import org.rebate.service.RoleService;
-import org.rebate.utils.SettingUtils;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -64,8 +62,7 @@ public class AdminController extends BaseController {
   @RequestMapping(value = "/add", method = RequestMethod.GET)
   public String add(ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
-    Setting setting = SettingUtils.get();
-    filters.add(Filter.ne("id", setting.getDefaultDistributorRoleId()));
+    filters.add(Filter.ne("", ""));
     model.addAttribute("roles", roleService.findList(null, filters, null));
     model.addAttribute("adminStatusTypes", AdminStatus.values());
     return "/admin/add";
@@ -94,10 +91,7 @@ public class AdminController extends BaseController {
    */
   @RequestMapping(value = "/edit", method = RequestMethod.GET)
   public String edit(Long id, ModelMap model) {
-    List<Filter> filters = new ArrayList<Filter>();
-    Setting setting = SettingUtils.get();
-    filters.add(Filter.ne("id", setting.getDefaultDistributorRoleId()));
-    model.addAttribute("roles", roleService.findList(null, filters, null));
+    model.addAttribute("roles", roleService.findAll());
     model.addAttribute("admin", adminService.find(id));
     model.addAttribute("adminStatusTypes", AdminStatus.values());
     return "/admin/edit";
@@ -130,31 +124,31 @@ public class AdminController extends BaseController {
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(Pageable pageable,String username,String name,String email,
-      Date loginDate,AdminStatus adminStatus,ModelMap model) {
+  public String list(Pageable pageable, String username, String name, String email, Date loginDate,
+      AdminStatus adminStatus, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
-    if(username!=null){
+    if (username != null) {
       filters.add(Filter.like("username", username));
-      model.addAttribute("username",username);
+      model.addAttribute("username", username);
     }
-    if(name!=null){
+    if (name != null) {
       filters.add(Filter.like("name", name));
-      model.addAttribute("name",name);
+      model.addAttribute("name", name);
     }
-    if(email!=null){
+    if (email != null) {
       filters.add(Filter.like("email", email));
-      model.addAttribute("email",email);
+      model.addAttribute("email", email);
     }
-    if(loginDate!=null){
+    if (loginDate != null) {
       Date formDate = TimeUtils.formatDate2Day(loginDate);
       Date toDate = TimeUtils.addDays(1, loginDate);
       filters.add(Filter.ge("loginDate", formDate));
       filters.add(Filter.le("loginDate", toDate));
-      model.addAttribute("loginDate",loginDate);
+      model.addAttribute("loginDate", loginDate);
     }
-    if(adminStatus!=null){
+    if (adminStatus != null) {
       filters.add(Filter.eq("adminStatus", adminStatus));
-      model.addAttribute("adminStatus",adminStatus);
+      model.addAttribute("adminStatus", adminStatus);
     }
     pageable.setFilters(filters);
     model.addAttribute("page", adminService.findPage(pageable));

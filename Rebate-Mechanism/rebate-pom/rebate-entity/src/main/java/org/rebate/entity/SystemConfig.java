@@ -45,7 +45,12 @@ public class SystemConfig extends BaseEntity {
    */
   private Boolean isEnabled;
 
-
+  /**
+   * 描述
+   */
+  private String remark;
+  
+  
   public SystemConfigKey getConfigKey() {
     return configKey;
   }
@@ -81,4 +86,14 @@ public class SystemConfig extends BaseEntity {
     this.configValue = configValue;
   }
 
+  @Column(length = 200)
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
+  
+  
 }

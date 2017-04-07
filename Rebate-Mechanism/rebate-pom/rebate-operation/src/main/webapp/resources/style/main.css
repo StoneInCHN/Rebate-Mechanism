@@ -1,4 +1,4 @@
-body,div,ul,li,a,span{
+body,div,ul,li,a,span,p,label{
     margin: 0;
     padding: 0;
     border: 0;
@@ -254,4 +254,20 @@ a.btn,a.btn:hover , .queryFiled .btn , .queryFiled .btn:hover{
 }
 .footer p{
 	text-align: center;
+}
+.setting-tab .nav{
+	margin-left:0
+}
+.nav-tabs > li > a {
+    margin: 0;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-bottom-color: #1fb5ac;
+    border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+	color: #555;
+    background-color: #fff;
+    border: 1px solid #1fb5ac;
+    border-bottom-color: transparent
 }

@@ -201,7 +201,7 @@ public class CommonController extends BaseController {
     for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
       try {
         MultipartFile mf = entity.getValue();
-        String displayPath = fileService.saveImage(mf, ImageType.NEWS);
+        String displayPath = fileService.saveImage(mf, ImageType.ADVERTISEMENT);
         map.put("url", displayPath);
         map.put("error", 0);
         String result = JsonUtil.getJsonString4JavaPOJO(map);

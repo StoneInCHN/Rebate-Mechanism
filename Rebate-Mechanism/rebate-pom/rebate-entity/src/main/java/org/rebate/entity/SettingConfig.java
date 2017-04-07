@@ -43,6 +43,10 @@ public class SettingConfig extends BaseEntity {
    */
   private Boolean isEnabled;
 
+  /**
+   * 描述
+   */
+  private String remark;
 
   public SettingConfigKey getConfigKey() {
     return configKey;
@@ -79,4 +83,13 @@ public class SettingConfig extends BaseEntity {
     this.configValue = configValue;
   }
 
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
+  
+  
 }

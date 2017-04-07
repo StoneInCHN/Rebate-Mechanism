@@ -37,10 +37,6 @@ public class Setting implements Serializable {
 
   public enum ImageType {
     /**
-     * Distributor
-     */
-    DISTRIBUTOR,
-    /**
      * 营业执照
      */
     LICENSE,
@@ -51,27 +47,7 @@ public class Setting implements Serializable {
     /**
      * 广告
      */
-    ADVERTISEMENT,
-    /**
-     * 车辆品牌图标
-     */
-    VEHICLEICON,
-    /**
-     * 新闻图片
-     */
-    NEWS,
-    /**
-     * 新闻类型
-     */
-   NEWSGCATEGORY,
-    /**
-     * 优惠券
-     */
-    Coupon,
-   /**
-    * 品牌logo
-    */
-    BrandLogo
+    ADVERTISEMENT
   }
 
 
@@ -98,26 +74,8 @@ public class Setting implements Serializable {
   /** 验证码类型 */
   private CaptchaType[] captchaTypes;
 
-  /**
-   * 租户组织机构码起始数
-   */
-  private Long identifierLastvalue4OrgCode;
-  /**
-   * 租户组织机构码长度
-   */
-  private Integer identifierLength4OrgCode; 
-  
-  /**
-   * 今日油价百度API
-   */
-  private String vehicleOilAPIHttpUrl;
-  
-  /**
-   * 今日油价百度APIKey
-   */
-  private String vehicleOilAPIKey;
-  
-  
+
+
   /** 网站名称 */
   private String siteName;
 
@@ -135,17 +93,17 @@ public class Setting implements Serializable {
 
   /** SMTP密码 */
   private String smtpPassword;
-  
+
   private String fileUploadPath;
-  
+
   /** 允许上传文件扩展名 */
   private String uploadFileExtension;
-  
+
   /**
    * 允许上传图片扩展名
    */
   private String uploadImageExtension;
-  
+
   /** 短信验证码过期时间 */
   private Integer smsCodeTimeOut;
 
@@ -166,7 +124,7 @@ public class Setting implements Serializable {
 
   /** 短信平台验证码短信模板 */
   private String ucpaasTemplate;
-  
+
   /** 短信平台商家账户短信模板 */
   private String ucpaasAccountTemplate;
 
@@ -176,43 +134,27 @@ public class Setting implements Serializable {
    * 短信平台审核失败短信模板ID
    */
   private String applyFailureTemplate;
-  
+
 
   /** 短信平台语音回拨号码 */
   private String ucpaasCallDisplay;
-  /**
-   * 商家平台登录地址
-   */
-  private String tenantLoginUrl;
-  
-  /**
-   * 分销商角色默认Id
-   */
-  private Long defaultDistributorRoleId;
-  
+
+
   private Long imageMaxSize;
   /**
    * 消息推送
    */
   private String msgPushUrl;
-  /**
-   * 新闻推送
-   */
-  private String newsPushUrl;
-  
-  /**
-   * 新闻详情URL
-   */
-  private String newsDetailsUrl;
-  
+
+
   /**
    * 下载时apk的名字
    */
   private String apkName;
-  
-  
-  
-  //微信的配置参数
+
+
+
+  // 微信的配置参数
   /**
    * 秘钥
    */
@@ -232,9 +174,9 @@ public class Setting implements Serializable {
    * 微信申请退款接口
    */
   private String wechatRefundUrl;
-  
-  
-  //支付宝的配置参数
+
+
+  // 支付宝的配置参数
   /**
    * 支付宝服务URL
    */
@@ -243,20 +185,13 @@ public class Setting implements Serializable {
    * 支付宝appId
    */
   private String alipayAppid;
-  /**
-   * 商户的私钥
-   */
-  private String alipayPrivateKey;
+
   /**
    * 支付宝的公钥，无需修改该值
    */
-  private String alipayPublicKey ;
-  
-  /**
-   * odb 接口 url
-   */
-  private String obdServiceUrl;
-  
+  private String alipayPublicKey;
+
+
   public Integer getPasswordMaxlength() {
     return passwordMaxlength;
   }
@@ -287,38 +222,6 @@ public class Setting implements Serializable {
 
   public void setCaptchaTypes(CaptchaType[] captchaTypes) {
     this.captchaTypes = captchaTypes;
-  }
-
-  public Long getIdentifierLastvalue4OrgCode() {
-    return identifierLastvalue4OrgCode;
-  }
-
-  public void setIdentifierLastvalue4OrgCode(Long identifierLastvalue4OrgCode) {
-    this.identifierLastvalue4OrgCode = identifierLastvalue4OrgCode;
-  }
-
-  public Integer getIdentifierLength4OrgCode() {
-    return identifierLength4OrgCode;
-  }
-
-  public void setIdentifierLength4OrgCode(Integer identifierLength4OrgCode) {
-    this.identifierLength4OrgCode = identifierLength4OrgCode;
-  }
-
-  public String getVehicleOilAPIHttpUrl() {
-    return vehicleOilAPIHttpUrl;
-  }
-
-  public void setVehicleOilAPIHttpUrl(String vehicleOilAPIHttpUrl) {
-    this.vehicleOilAPIHttpUrl = vehicleOilAPIHttpUrl;
-  }
-
-  public String getVehicleOilAPIKey() {
-    return vehicleOilAPIKey;
-  }
-
-  public void setVehicleOilAPIKey(String vehicleOilAPIKey) {
-    this.vehicleOilAPIKey = vehicleOilAPIKey;
   }
 
   public String getSiteName() {
@@ -384,47 +287,50 @@ public class Setting implements Serializable {
    */
   @Length(max = 200)
   public String getUploadFileExtension() {
-      return uploadFileExtension;
+    return uploadFileExtension;
   }
 
   /**
    * 设置允许上传文件扩展名
    * 
-   * @param uploadFileExtension
-   *            允许上传文件扩展名
+   * @param uploadFileExtension 允许上传文件扩展名
    */
   public void setUploadFileExtension(String uploadFileExtension) {
-      if (uploadFileExtension != null) {
-          uploadFileExtension = uploadFileExtension.replaceAll("[,\\s]*,[,\\s]*", ",").replaceAll("^,|,$", "").toLowerCase();
-      }
-      this.uploadFileExtension = uploadFileExtension;
+    if (uploadFileExtension != null) {
+      uploadFileExtension =
+          uploadFileExtension.replaceAll("[,\\s]*,[,\\s]*", ",").replaceAll("^,|,$", "")
+              .toLowerCase();
+    }
+    this.uploadFileExtension = uploadFileExtension;
   }
-  
+
   /**
    * 获取允许上传文件扩展名
    * 
    * @return 允许上传文件扩展名
    */
   public String[] getUploadFileExtensions() {
-      return StringUtils.split(uploadFileExtension, SEPARATOR);
+    return StringUtils.split(uploadFileExtension, SEPARATOR);
   }
-  
+
   public void setUploadImageExtension(String uploadImageExtension) {
-      if (uploadImageExtension != null) {
-    	  uploadImageExtension = uploadImageExtension.replaceAll("[,\\s]*,[,\\s]*", ",").replaceAll("^,|,$", "").toLowerCase();
-      }
-      this.uploadImageExtension = uploadImageExtension;
+    if (uploadImageExtension != null) {
+      uploadImageExtension =
+          uploadImageExtension.replaceAll("[,\\s]*,[,\\s]*", ",").replaceAll("^,|,$", "")
+              .toLowerCase();
+    }
+    this.uploadImageExtension = uploadImageExtension;
   }
 
-	 public String getUploadImageExtension() {
-		return uploadImageExtension;
-	}
-	
-	 public String[] getUploadImageExtensions() {
-	      return StringUtils.split(uploadImageExtension, SEPARATOR);
-	  }
+  public String getUploadImageExtension() {
+    return uploadImageExtension;
+  }
 
-public Integer getSmsCodeTimeOut() {
+  public String[] getUploadImageExtensions() {
+    return StringUtils.split(uploadImageExtension, SEPARATOR);
+  }
+
+  public Integer getSmsCodeTimeOut() {
     return smsCodeTimeOut;
   }
 
@@ -504,33 +410,18 @@ public Integer getSmsCodeTimeOut() {
     this.ucpaasAccountTemplate = ucpaasAccountTemplate;
   }
 
-  public String getTenantLoginUrl() {
-    return tenantLoginUrl;
+  public Long getImageMaxSize() {
+    return imageMaxSize;
   }
 
-  public void setTenantLoginUrl(String tenantLoginUrl) {
-    this.tenantLoginUrl = tenantLoginUrl;
+  public void setImageMaxSize(Long imageMaxSize) {
+    this.imageMaxSize = imageMaxSize;
   }
-
-  public Long getDefaultDistributorRoleId() {
-    return defaultDistributorRoleId;
-  }
-
-  public void setDefaultDistributorRoleId(Long defaultDistributorRoleId) {
-    this.defaultDistributorRoleId = defaultDistributorRoleId;
-  }
-
-	public Long getImageMaxSize() {
-		return imageMaxSize;
-	}
-	
-	public void setImageMaxSize(Long imageMaxSize) {
-		this.imageMaxSize = imageMaxSize;
-	}
 
   public String getMsgPushUrl() {
     return msgPushUrl;
   }
+
   public void setMsgPushUrl(String msgPushUrl) {
     this.msgPushUrl = msgPushUrl;
   }
@@ -543,58 +434,42 @@ public Integer getSmsCodeTimeOut() {
     this.applyFailureTemplate = applyFailureTemplate;
   }
 
-  public String getNewsPushUrl() {
-    return newsPushUrl;
-  }
-
-  public void setNewsPushUrl(String newsPushUrl) {
-    this.newsPushUrl = newsPushUrl;
-  }
-
-  public String getNewsDetailsUrl() {
-    return newsDetailsUrl;
-  }
-
-  public void setNewsDetailsUrl(String newsDetailsUrl) {
-    this.newsDetailsUrl = newsDetailsUrl;
-  }
-
   public String getApkName() {
-  	return apkName;
+    return apkName;
   }
-  
+
   public void setApkName(String apkName) {
-  	this.apkName = apkName;
+    this.apkName = apkName;
   }
-  
+
   public String getWechatKey() {
     return wechatKey;
   }
-  
+
   public void setWechatKey(String wechatKey) {
     this.wechatKey = wechatKey;
   }
-  
+
   public String getWechatAppid() {
     return wechatAppid;
   }
-  
+
   public void setWechatAppid(String wechatAppid) {
     this.wechatAppid = wechatAppid;
   }
-  
+
   public String getWechatMchId() {
     return wechatMchId;
   }
-  
+
   public void setWechatMchId(String wechatMchId) {
     this.wechatMchId = wechatMchId;
   }
-  
+
   public String getWechatRefundUrl() {
     return wechatRefundUrl;
   }
-  
+
   public void setWechatRefundUrl(String wechatRefundUrl) {
     this.wechatRefundUrl = wechatRefundUrl;
   }
@@ -615,14 +490,6 @@ public Integer getSmsCodeTimeOut() {
     this.alipayAppid = alipayAppid;
   }
 
-  public String getAlipayPrivateKey() {
-    return alipayPrivateKey;
-  }
-
-  public void setAlipayPrivateKey(String alipayPrivateKey) {
-    this.alipayPrivateKey = alipayPrivateKey;
-  }
-
   public String getAlipayPublicKey() {
     return alipayPublicKey;
   }
@@ -631,12 +498,4 @@ public Integer getSmsCodeTimeOut() {
     this.alipayPublicKey = alipayPublicKey;
   }
 
-  public String getObdServiceUrl() {
-    return obdServiceUrl;
-  }
-
-  public void setObdServiceUrl(String obdServiceUrl) {
-    this.obdServiceUrl = obdServiceUrl;
-  }
-  
 }

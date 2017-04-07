@@ -358,17 +358,17 @@
 		    <version>3.1</version>
 		</dependency>
 		<!-- wechat pay -->
-		 <dependency>
+		<!--  <dependency>
 	    	<groupId>wx.pay</groupId>
 	   	    <artifactId>java</artifactId>
 	   	    <version>1.0</version>
-		</dependency>
+		</dependency> -->
 		<!--alipay-->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.alipay</groupId>
 			<artifactId>sdk-java</artifactId>
 			<version>20160810175709</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	
 	<build>
