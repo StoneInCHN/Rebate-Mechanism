@@ -62,7 +62,7 @@
 		<!-- 交易类型 -->
 		<setting name="wechatTradeType" value="APP" />
 		<!-- 通知地址 -->
-		<setting name="wechatNotifyUrl" value="http://120.27.92.247:10001/csh-interface/payNotify/notify_wechat.jhtml" />
+		<setting name="wechatNotifyUrl" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_wechat.jhtml" />
 		<!-- 微信下订单接口 -->
 		<setting name="wechatAddOrderUrl" value="https://api.mch.weixin.qq.com/pay/unifiedorder" />
 		<!-- 微信Token接口 -->

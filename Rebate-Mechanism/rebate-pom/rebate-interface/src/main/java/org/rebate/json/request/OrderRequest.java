@@ -3,7 +3,6 @@ package org.rebate.json.request;
 import java.math.BigDecimal;
 
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
-import org.rebate.entity.commonenum.CommonEnum.RequestReplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.json.base.BaseRequest;
 
@@ -13,6 +12,11 @@ public class OrderRequest extends BaseRequest {
    * 支付方式
    */
   private String payType;
+
+  /**
+   * 支付方式ID
+   */
+  private String payTypeId;
 
   /**
    * 支付金额
@@ -44,6 +48,14 @@ public class OrderRequest extends BaseRequest {
    */
   private SystemConfigKey configKey;
 
+
+  public String getPayTypeId() {
+    return payTypeId;
+  }
+
+  public void setPayTypeId(String payTypeId) {
+    this.payTypeId = payTypeId;
+  }
 
   public SystemConfigKey getConfigKey() {
     return configKey;

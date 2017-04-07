@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
@@ -37,6 +38,7 @@ import org.rebate.service.OrderService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerService;
 import org.rebate.utils.FieldFilterUtils;
+import org.rebate.utils.PayUtil;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,13 +74,15 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/pay", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> pay(@RequestBody OrderRequest req) {
+  public @ResponseBody ResponseOne<Map<String, Object>> pay(@RequestBody OrderRequest req,
+      HttpServletRequest httpReq) {
 
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
     Long userId = req.getUserId();
     String token = req.getToken();
     String payType = req.getPayType();
+    String payTypeId = req.getPayTypeId();
     BigDecimal amount = req.getAmount();
     Long sellerId = req.getSellerId();
     String remark = req.getRemark();
@@ -98,13 +102,30 @@ public class OrderController extends MobileBaseController {
           amount, sellerId, remark);
     }
 
-    if (isBeanPay) {
-      orderService.updateOrderforPayCallBack(order.getSn());
+    if ("1".equals(payTypeId)) {// 微信支付
+      try {
+        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        response =
+            PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                order.getId().toString(), weChatPrice.intValue() + "");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+    } else if ("2".equals(payTypeId)) {// 支付宝支付
+
+    } else if ("3".equals(payTypeId)) {// 翼支付
+
     }
-    Map<String, Object> map = new HashMap<String, Object>();
-    map.put("out_trade_no", order.getSn());
-    response.setMsg(map);
-    response.setCode(CommonAttributes.SUCCESS);
+
+    if (isBeanPay) {// 乐豆支付
+      orderService.updateOrderforPayCallBack(order.getSn());
+      Map<String, Object> map = new HashMap<String, Object>();
+      map.put("out_trade_no", order.getSn());
+      response.setMsg(map);
+      response.setCode(CommonAttributes.SUCCESS);
+    }
+
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
