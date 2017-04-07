@@ -135,6 +135,9 @@ public class FileServiceImpl implements FileService {
       } else if (imageType == ImageType.PHOTO) {
         imgUploadPath = uploadPath + File.separator + "profile";
         projectPath = projectUploadPath + File.separator + "profile";
+      } else if (imageType == ImageType.ORDER_EVALUATE) {
+        imgUploadPath = uploadPath + File.separator + "comments";
+        projectPath = projectUploadPath + File.separator + "comments";
       }
       // if (imageType == ImageType.AUDIO) {
       // imgUploadPath = uploadPath+ File.separator+"audio";

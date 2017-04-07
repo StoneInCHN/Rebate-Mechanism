@@ -1,9 +1,11 @@
 package org.rebate.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.rebate.entity.Order;
 import org.rebate.framework.service.BaseService;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface OrderService extends BaseService<Order, Long> {
@@ -38,4 +40,17 @@ public interface OrderService extends BaseService<Order, Long> {
    * @return
    */
   Order getOrderBySn(String orderSn);
+
+  /**
+   * 用户评价
+   * 
+   * @param order
+   * @param userId
+   * @param score
+   * @param content
+   * @param evaluateImages
+   * @return
+   */
+  Order evaluateOrder(Long orderId, Long userId, Integer score, String content,
+      List<MultipartFile> evaluateImages);
 }

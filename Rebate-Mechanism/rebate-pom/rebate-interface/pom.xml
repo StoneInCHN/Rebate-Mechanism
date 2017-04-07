@@ -426,7 +426,8 @@
   		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format> 
   	</properties> 
  	<build>
-		<finalName>rebate-interface-${maven.build.timestamp}</finalName>
+		<!-- <finalName>rebate-interface-${maven.build.timestamp}</finalName> -->
+		<finalName>rebate-interface</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>

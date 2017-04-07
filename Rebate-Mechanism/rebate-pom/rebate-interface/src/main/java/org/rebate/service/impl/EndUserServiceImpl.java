@@ -12,12 +12,14 @@ import javax.annotation.Resource;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.EndUserDao;
+import org.rebate.dao.SellerDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.dao.UserRegReportDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
@@ -50,6 +52,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "userRegReportDaoImpl")
   private UserRegReportDao userRegReportDao;
+
+  @Resource(name = "sellerDaoImpl")
+  private SellerDao sellerDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -251,6 +256,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(map.get("motivateScore")));
     endUser.setCurLeScore(endUser.getCurLeScore().subtract(map.get("avlLeScore")));
     endUserDao.merge(endUser);
+
+    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
+      for (Seller seller : endUser.getSellers()) {
+        seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeScore")));
+        sellerDao.merge(seller);
+        break;
+      }
+    }
     return endUser;
   }
 

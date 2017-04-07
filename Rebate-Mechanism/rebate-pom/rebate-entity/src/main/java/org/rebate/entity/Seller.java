@@ -97,6 +97,11 @@ public class Seller extends BaseEntity {
   private BigDecimal rateScore;
 
   /**
+   * 评价次数
+   */
+  private Integer rateCounts = 0;
+
+  /**
    * 均价
    */
   private BigDecimal avgPrice;
@@ -196,6 +201,13 @@ public class Seller extends BaseEntity {
   private BigDecimal unClearingAmount = new BigDecimal("0");
 
 
+  public Integer getRateCounts() {
+    return rateCounts;
+  }
+
+  public void setRateCounts(Integer rateCounts) {
+    this.rateCounts = rateCounts;
+  }
 
   public Integer getTotalOrderNum() {
     return totalOrderNum;

@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +17,10 @@ import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.SellerEvaluate;
+import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
 import org.rebate.entity.commonenum.CommonEnum.SortType;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
@@ -36,7 +39,9 @@ import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerJdbcService;
 import org.rebate.service.SellerService;
+import org.rebate.service.SystemConfigService;
 import org.rebate.utils.FieldFilterUtils;
+import org.rebate.utils.LatLonUtil;
 import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
@@ -68,6 +73,9 @@ public class SellerController extends MobileBaseController {
 
   @Resource(name = "sellerEvaluateServiceImpl")
   private SellerEvaluateService sellerEvaluateService;
+
+  @Resource(name = "systemConfigServiceImpl")
+  private SystemConfigService systemConfigService;
 
 
   /**
@@ -183,15 +191,19 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/detail", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> detail(@RequestBody BaseRequest req) {
+  public @ResponseBody ResponseOne<Map<String, Object>> detail(@RequestBody SellerRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
     Long userId = req.getUserId();
     Long sellerId = req.getEntityId();
-
+    String latitude = req.getLatitude();// 纬度
+    String longitude = req.getLongitude();// 经度
     Seller seller = sellerService.find(sellerId);
 
-    String[] properties = {"id", "name"};
+    String[] properties =
+        {"id", "name", "storePictureUrl", "address", "storePhone", "businessTime", "avgPrice",
+            "sellerCategory.categoryName", "latitude", "longitude", "description", "discount",
+            "favoriteNum", "featuredService"};
     List<String> envImgs = new ArrayList<String>();
     for (SellerEnvImage envImage : seller.getEnvImages()) {
       envImgs.add(envImage.getSource());
@@ -202,6 +214,16 @@ public class SellerController extends MobileBaseController {
     if (userId != null && sellerService.userCollectSeller(userId, sellerId) != null) {
       map.put("userCollected", true);
     }
+    SystemConfig rebateScore = systemConfigService.getConfigByKey(SystemConfigKey.REBATESCORE_USER);
+    SystemConfig unitConsume = systemConfigService.getConfigByKey(SystemConfigKey.UNIT_CONSUME);
+    BigDecimal unit = new BigDecimal(unitConsume.getConfigValue());
+    map.put("unitConsume", unit);
+    BigDecimal rebateUserScore =
+        unit.subtract(seller.getDiscount().divide(new BigDecimal("10")).multiply(unit)).multiply(
+            new BigDecimal(rebateScore.getConfigValue()));
+    map.put("rebateScore", rebateUserScore);
+    map.put("distance", LatLonUtil.getPointDistance(new Double(longitude), new Double(latitude),
+        new Double(seller.getLongitude().toString()), new Double(seller.getLatitude().toString())));
     response.setMsg(map);
 
     response.setCode(CommonAttributes.SUCCESS);

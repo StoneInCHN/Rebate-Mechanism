@@ -17,6 +17,19 @@ public class LatLonUtil {
   private static final Setting setting = SettingUtils.get();
 
   /**
+   * 根据坐标获取距离(KM)
+   * 
+   * @param lat
+   * @param lon
+   * @param raidus
+   * @return
+   */
+  public static String getPointDistance(double lng1, double lat1, double lng2, double lat2) {
+    Double distance = getDistance(lng1, lat1, lng2, lat2);
+    return String.format("%.2f", distance / 1000);
+  }
+
+  /**
    * @param raidus 单位米 return minLat,minLng,maxLat,maxLng
    */
   public static double[] getAround(double lat, double lon, int raidus) {

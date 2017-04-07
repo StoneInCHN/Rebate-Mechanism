@@ -43,6 +43,7 @@ import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
+import org.rebate.json.request.SellerRequest;
 import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
 import org.rebate.service.AreaService;
@@ -55,9 +56,9 @@ import org.rebate.service.RebateRecordService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.service.UserRecommendRelationService;
-import org.rebate.service.mapper.SellerRowMapper;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
+import org.rebate.utils.LatLonUtil;
 import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
@@ -1232,12 +1233,14 @@ public class EndUserController extends MobileBaseController {
    */
   @RequestMapping(value = "/favoriteSellerList", method = RequestMethod.POST)
   public @ResponseBody ResponseMultiple<Map<String, Object>> favoriteSellerList(
-      @RequestBody BaseRequest request) {
+      @RequestBody SellerRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
     Long userId = request.getUserId();
     String token = request.getToken();
+    String latitude = request.getLatitude();// 纬度
+    String longitude = request.getLongitude();// 经度
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
@@ -1280,6 +1283,11 @@ public class EndUserController extends MobileBaseController {
               ((BigDecimal) map.get("discount")).divide(new BigDecimal("10")).multiply(unit))
               .multiply(new BigDecimal(rebateScore.getConfigValue()));
       map.put("rebateScore", rebateUserScore);
+      String distance =
+          LatLonUtil.getPointDistance(new Double(longitude), new Double(latitude), new Double(map
+              .get("longitude").toString()), new Double((map.get("latitude").toString())));
+
+      map.put("distance", new Double(distance) > setting.getSearchRadius() ? null : distance);
     }
     PageResponse pageInfo = new PageResponse();
     pageInfo.setPageNumber(pageNumber);
@@ -1293,7 +1301,6 @@ public class EndUserController extends MobileBaseController {
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
-
 
   /**
    * 用户获取乐分提现信息

@@ -22,20 +22,25 @@ import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SellerEvaluate;
+import org.rebate.entity.SellerEvaluateImage;
 import org.rebate.entity.Sn.Type;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
+import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.service.FileService;
 import org.rebate.service.OrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service("orderServiceImpl")
@@ -61,6 +66,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   @Resource(name = "leScoreRecordDaoImpl")
   private LeScoreRecordDao leScoreRecordDao;
+
+  @Resource(name = "fileServiceImpl")
+  private FileService fileService;
 
   @Resource(name = "orderDaoImpl")
   public void setBaseDao(OrderDao orderDao) {
@@ -119,7 +127,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Seller seller = order.getSeller();
     EndUser sellerEndUser = seller.getEndUser();
 
-    seller.setTotalOrderNum(seller.getTotalOrderNum() + 1);
+    seller
+        .setTotalOrderNum((seller.getTotalOrderNum() != null ? seller.getTotalOrderNum() : 0) + 1);
     seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getSellerIncome()));
     seller.setUnClearingAmount(seller.getUnClearingAmount().add(order.getSellerIncome()));
     sellerDao.merge(seller);
@@ -389,5 +398,41 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Override
   public Order getOrderBySn(String orderSn) {
     return orderDao.getOrderBySn(orderSn);
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Order evaluateOrder(Long orderId, Long userId, Integer score, String content,
+      List<MultipartFile> evaluateImages) {
+    Order order = orderDao.find(orderId);
+    EndUser endUser = endUserDao.find(userId);
+    Seller seller = order.getSeller();
+    SellerEvaluate evaluate = new SellerEvaluate();
+    evaluate.setEndUser(endUser);
+    evaluate.setScore(score);
+    evaluate.setOrder(order);
+    evaluate.setContent(content);
+    evaluate.setSeller(seller);
+
+    List<SellerEvaluateImage> sellerEvaluateImages = new ArrayList<SellerEvaluateImage>();
+    if (!CollectionUtils.isEmpty(evaluateImages)) {
+      for (MultipartFile file : evaluateImages) {
+        SellerEvaluateImage image = new SellerEvaluateImage();
+        image.setSource(fileService.saveImage(file, ImageType.ORDER_EVALUATE));
+        sellerEvaluateImages.add(image);
+      }
+      evaluate.setEvaluateImages(sellerEvaluateImages);
+    }
+
+    order.setEvaluate(evaluate);
+    order.setStatus(OrderStatus.FINISHED);
+    orderDao.merge(order);
+
+    Integer rateCounts = (seller.getRateCounts() != null ? seller.getRateCounts() : 0) + 1;
+    BigDecimal totalScore = seller.getRateScore().add(new BigDecimal(score));
+    BigDecimal rateScore = totalScore.divide(new BigDecimal(rateCounts));
+    seller.setRateCounts(rateCounts);
+    seller.setRateScore(rateScore);
+    sellerDao.merge(seller);
+    return order;
   }
 }

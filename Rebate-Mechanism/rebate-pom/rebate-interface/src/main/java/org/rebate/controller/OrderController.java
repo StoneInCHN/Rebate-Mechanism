@@ -17,7 +17,6 @@ import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SellerEvaluateImage;
-import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -44,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller - 订单
@@ -173,29 +171,12 @@ public class OrderController extends MobileBaseController {
       return response;
     }
 
-    Order order = orderService.find(orderId);
-    EndUser endUser = endUserService.find(userId);
-    SellerEvaluate evaluate = new SellerEvaluate();
-    evaluate.setEndUser(endUser);
-    evaluate.setScore(req.getScore());
-    evaluate.setOrder(order);
-    evaluate.setContent(req.getContent());
-
-    List<SellerEvaluateImage> sellerEvaluateImages = new ArrayList<SellerEvaluateImage>();
-    if (req.getEvaluateImage() != null && req.getEvaluateImage().size() > 0) {
-      for (MultipartFile file : req.getEvaluateImage()) {
-        SellerEvaluateImage image = new SellerEvaluateImage();
-        image.setSource(fileService.saveImage(file, ImageType.ORDER_EVALUATE));
-        sellerEvaluateImages.add(image);
-      }
-    }
-
-    order.setEvaluate(evaluate);
-    order.setStatus(OrderStatus.FINISHED);
-    orderService.update(order);
+    orderService.evaluateOrder(orderId, userId, req.getScore(), req.getContent(),
+        req.getEvaluateImage());
     if (LogUtil.isDebugEnabled(OrderController.class)) {
       LogUtil.debug(OrderController.class, "User evaluate",
-          "user evaluate for order %s,content: %s", orderId, req.getContent());
+          "user evaluate for orderId: %s,score: %s,content: %s", orderId, req.getScore(),
+          req.getContent());
     }
 
     response.setCode(CommonAttributes.SUCCESS);
@@ -389,7 +370,7 @@ public class OrderController extends MobileBaseController {
 
     Page<Order> orderPage = orderService.findPage(pageable);
     String[] propertys =
-        {"id", "sn", "seller.name", "userScore", "amount", "createDate", "remark",
+        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
             "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
             "seller.address"};
     List<Map<String, Object>> result =
