@@ -1,7 +1,6 @@
 package org.rebate.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -48,7 +47,7 @@ public class Agent extends BaseEntity {
     this.endUser = endUser;
   }
 
-  @ManyToOne
+  @OneToOne
   public Area getArea() {
     return area;
   }

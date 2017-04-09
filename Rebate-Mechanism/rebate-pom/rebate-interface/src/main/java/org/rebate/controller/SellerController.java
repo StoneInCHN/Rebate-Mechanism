@@ -203,7 +203,7 @@ public class SellerController extends MobileBaseController {
     String[] properties =
         {"id", "name", "storePictureUrl", "address", "storePhone", "businessTime", "avgPrice",
             "sellerCategory.categoryName", "latitude", "longitude", "description", "discount",
-            "favoriteNum", "featuredService"};
+            "favoriteNum", "featuredService", "rateScore"};
     List<String> envImgs = new ArrayList<String>();
     for (SellerEnvImage envImage : seller.getEnvImages()) {
       envImgs.add(envImage.getSource());

@@ -122,6 +122,7 @@ public class OrderController extends MobileBaseController {
       orderService.updateOrderforPayCallBack(order.getSn());
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("out_trade_no", order.getSn());
+      map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
       response.setMsg(map);
       response.setCode(CommonAttributes.SUCCESS);
     }

@@ -117,10 +117,8 @@ public class CommonEnum {
     PROVINCE,
     /** 市 */
     CITY,
-    /** 县 */
-    COUNTY,
-    /** 镇 */
-    TOWN
+    /** 区,县 */
+    COUNTY
 
   }
 
@@ -150,8 +148,8 @@ public class CommonEnum {
     RECOMMEND_INDIRECT_USER,
     /** 消费商户的推荐人收益百分比 9 */
     RECOMMEND_SELLER,
-    /** 代理商提成百分比 10 */
-    AGENT_COMMISSION,
+    /** 公益金额百分比 10 */
+    PUBLIC_BENEFIT,
     /** 激励乐分提现最低金额限制 11 */
     WITHDRAW_MINIMUM_LIMIT,
     /** 每日分红总金额占平台每日总收益的比例 12 */

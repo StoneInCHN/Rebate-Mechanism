@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.rebate.dao.AgentCommissionConfigDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeScoreRecordDao;
 import org.rebate.dao.OrderDao;
@@ -14,6 +15,7 @@ import org.rebate.dao.SellerDao;
 import org.rebate.dao.SnDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
+import org.rebate.entity.AgentCommissionConfig;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
@@ -69,6 +71,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
+
+  @Resource(name = "agentCommissionConfigDaoImpl")
+  private AgentCommissionConfigDao agentCommissionConfigDao;
 
   @Resource(name = "orderDaoImpl")
   public void setBaseDao(OrderDao orderDao) {
@@ -317,34 +322,41 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     /**
      * 分销商提成
      */
-    SystemConfig agentCommissionConfig =
-        systemConfigDao.getConfigByKey(SystemConfigKey.AGENT_COMMISSION);
-    if (agentCommissionConfig != null && agentCommissionConfig.getConfigValue() != null) {
-      BigDecimal agentAmount =
-          rebateAmount.add(new BigDecimal(agentCommissionConfig.getConfigValue()));
-      List<EndUser> agents = agentCommissionIncome(agentAmount, seller.getArea());
+    List<EndUser> agents = agentCommissionIncome(rebateAmount, seller.getArea());
+    if (!CollectionUtils.isEmpty(agents)) {
       endUserDao.merge(agents);
     }
+
 
     orderDao.merge(order);
     return order;
   }
 
-  private List<EndUser> agentCommissionIncome(BigDecimal agentAmount, Area area) {
+  private List<EndUser> agentCommissionIncome(BigDecimal rebateAmount, Area area) {
     List<EndUser> records = new ArrayList<EndUser>();
     if (area != null) {
       EndUser agent = endUserDao.getAgentByArea(area);
-      LeScoreRecord leScoreRecord = new LeScoreRecord();
-      leScoreRecord.setEndUser(agent);
-      leScoreRecord.setLeScoreType(LeScoreType.AGENT);
-      leScoreRecord.setAmount(agentAmount);
-      leScoreRecord.setUserCurLeScore(agent.getCurLeScore().add(leScoreRecord.getAmount()));
-      agent.setIncomeLeScore(agent.getIncomeLeScore().add(agentAmount));
-      agent.setCurLeScore(agent.getCurLeScore().add(agentAmount));
-      agent.setTotalLeScore(agent.getTotalLeScore().add(agentAmount));
-      agent.getLeScoreRecords().add(leScoreRecord);
-      records.add(agent);
-      records.addAll(agentCommissionIncome(agentAmount, area.getParent()));
+
+      if (agent != null) {
+        AgentCommissionConfig agentCommissionConfig =
+            agentCommissionConfigDao.getConfigByArea(area);
+        if (agentCommissionConfig != null && agentCommissionConfig.getCommissionRate() != null) {
+          LeScoreRecord leScoreRecord = new LeScoreRecord();
+          leScoreRecord.setEndUser(agent);
+          leScoreRecord.setLeScoreType(LeScoreType.AGENT);
+          BigDecimal agentAmount = rebateAmount.multiply(agentCommissionConfig.getCommissionRate());
+          leScoreRecord.setAmount(agentAmount);
+          leScoreRecord.setUserCurLeScore(agent.getCurLeScore().add(leScoreRecord.getAmount()));
+          agent.setIncomeLeScore(agent.getIncomeLeScore().add(agentAmount));
+          agent.setCurLeScore(agent.getCurLeScore().add(agentAmount));
+          agent.setTotalLeScore(agent.getTotalLeScore().add(agentAmount));
+          agent.getLeScoreRecords().add(leScoreRecord);
+          records.add(agent);
+        }
+
+      }
+
+      records.addAll(agentCommissionIncome(rebateAmount, area.getParent()));
     }
     return records;
 
