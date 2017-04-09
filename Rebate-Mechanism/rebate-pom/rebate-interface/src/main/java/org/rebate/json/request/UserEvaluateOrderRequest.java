@@ -1,6 +1,5 @@
 package org.rebate.json.request;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.rebate.json.base.BaseRequest;

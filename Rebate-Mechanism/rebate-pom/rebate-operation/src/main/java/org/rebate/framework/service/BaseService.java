@@ -156,4 +156,9 @@ public interface BaseService<T, ID extends Serializable> {
    */
   void update(List<T> entities);
 
+  /**
+   * 调用存储过程
+   * @param procName
+   */
+  void callProcedure (String procName, Object... param);
 }

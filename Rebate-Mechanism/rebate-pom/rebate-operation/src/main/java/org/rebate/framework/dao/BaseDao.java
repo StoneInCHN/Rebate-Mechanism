@@ -148,4 +148,9 @@ public interface BaseDao<T, ID extends Serializable> {
    */
   void merge(List<T> entities);
 
+  /**
+   * 调用存储过程
+   */
+  void callProcedure(String procName, Object... args);
+
 }

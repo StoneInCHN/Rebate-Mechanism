@@ -195,4 +195,9 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
   public void update(List<T> entities) {
     baseDao.merge(entities);
   }
+
+  @Override
+  public void callProcedure(String procName, Object... args) {
+    baseDao.callProcedure(procName, args);
+  }
 }

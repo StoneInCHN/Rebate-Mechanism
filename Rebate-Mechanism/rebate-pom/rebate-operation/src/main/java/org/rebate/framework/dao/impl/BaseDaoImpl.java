@@ -13,7 +13,9 @@ import java.util.Map.Entry;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -34,6 +36,7 @@ import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.utils.LogUtil;
 import org.springframework.util.Assert;
+
 
 
 public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
@@ -633,6 +636,13 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
     for (T entity : entities) {
       entityManager.merge(entity);
     }
+  }
+  @Override
+  public void callProcedure(String procName, Object... args) {
+    StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(procName);
+    storedProcedure.registerStoredProcedureParameter(0, String.class, ParameterMode.IN);
+    storedProcedure.setParameter(0, args[0]);
+    storedProcedure.executeUpdate();
   }
 
 }
