@@ -18,5 +18,4 @@ public class JobRun implements Job {
   public void execute(JobExecutionContext context) throws JobExecutionException {
     endUserService.callProcedure("pr_user_bonus_report");
   }
-
 }

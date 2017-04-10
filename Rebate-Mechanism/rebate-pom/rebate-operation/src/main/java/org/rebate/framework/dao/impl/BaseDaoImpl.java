@@ -637,12 +637,18 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
       entityManager.merge(entity);
     }
   }
+
   @Override
   public void callProcedure(String procName, Object... args) {
     StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(procName);
-    storedProcedure.registerStoredProcedureParameter(0, String.class, ParameterMode.IN);
-    storedProcedure.setParameter(0, args[0]);
-    storedProcedure.executeUpdate();
+
+    if (args != null && args.length > 0) {
+      for (int i = 0; i < args.length; i++) {
+        storedProcedure.registerStoredProcedureParameter(i, String.class, ParameterMode.IN);
+        storedProcedure.setParameter(i, args[i]);
+      }
+    }
+    storedProcedure.execute();
   }
 
 }
