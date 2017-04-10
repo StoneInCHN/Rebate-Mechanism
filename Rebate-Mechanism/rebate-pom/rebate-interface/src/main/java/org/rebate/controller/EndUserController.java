@@ -892,6 +892,7 @@ public class EndUserController extends MobileBaseController {
 
     String[] properties = {"qrImage"};
     map = FieldFilterUtils.filterEntityMap(properties, endUser);
+    map.put("recommendUrl", setting.getRecommendUrl());
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());

@@ -452,7 +452,6 @@ public class SellerController extends MobileBaseController {
 
     String[] properties = {"id", "name", "storePictureUrl", "area.fullName", "qrImage"};
     map = FieldFilterUtils.filterEntityMap(properties, seller);
-    map.put("recommendUrl", setting.getRecommendUrl());
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());
