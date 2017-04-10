@@ -57,7 +57,7 @@ public class BannerController extends MobileBaseController {
     orders.add(ordering);
 
     List<TopBanner> topBanners = topBannerService.findList(null, filters, orders);
-    String[] propertys = {"id", "bannerName", "bannerUrl", "linkUrl"};
+    String[] propertys = {"id", "bannerName", "bannerUrl", "createDate", "title", "content"};
     List<Map<String, Object>> result = FieldFilterUtils.filterCollectionMap(propertys, topBanners);
 
     response.setMsg(result);

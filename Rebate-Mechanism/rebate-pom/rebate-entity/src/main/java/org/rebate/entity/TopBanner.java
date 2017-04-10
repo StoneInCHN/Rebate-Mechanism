@@ -44,6 +44,16 @@ public class TopBanner extends BaseEntity {
   private Integer bannerOrder;
 
   /**
+   * 标题
+   */
+  private String title;
+
+  /**
+   * 内容
+   */
+  private String content;
+
+  /**
    * 是否生效
    */
   private Boolean isActive;
@@ -53,6 +63,25 @@ public class TopBanner extends BaseEntity {
    */
   private MultipartFile bannerPicture;
 
+
+
+  @Column(length = 100)
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  @Column(length = 5000)
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
+  }
 
   @Column(length = 200)
   public String getLinkUrl() {

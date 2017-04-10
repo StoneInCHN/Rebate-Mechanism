@@ -166,8 +166,8 @@ public class CommonEnum {
   public enum SettingConfigKey {
     /** 软件许可协议 1 */
     LICENSE_AGREEMENT,
-    /** 帮助 2 */
-    HELP,
+    /** 客户电话 2 */
+    CUSTOMER_PHONE,
     /** 关于 3 */
     ABOUT_US
   }

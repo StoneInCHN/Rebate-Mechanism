@@ -439,8 +439,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setStatus(OrderStatus.FINISHED);
     orderDao.merge(order);
 
-    Integer rateCounts = (seller.getRateCounts() != null ? seller.getRateCounts() : 0) + 1;
-    BigDecimal totalScore = seller.getRateScore().add(new BigDecimal(score));
+    Integer rateCounts = seller.getRateCounts() + 1;
+    BigDecimal totalScore =
+        (seller.getRateScore() != null ? seller.getRateScore() : new BigDecimal(0)
+            .multiply(new BigDecimal(seller.getRateCounts()))).add(new BigDecimal(score));
     BigDecimal rateScore = totalScore.divide(new BigDecimal(rateCounts));
     seller.setRateCounts(rateCounts);
     seller.setRateScore(rateScore);
