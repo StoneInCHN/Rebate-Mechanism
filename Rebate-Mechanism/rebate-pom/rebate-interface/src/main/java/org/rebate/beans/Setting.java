@@ -271,9 +271,9 @@ public class Setting implements Serializable {
   private Integer orderCompleteTimeOut;
 
   /**
-   * 租户app url
+   * 推荐url
    */
-  private String tenantAppUrl;
+  private String recommendUrl;
 
   /**
    * 短信后缀
@@ -330,14 +330,13 @@ public class Setting implements Serializable {
     this.smsPwd = smsPwd;
   }
 
-  public String getTenantAppUrl() {
-    return tenantAppUrl;
+  public String getRecommendUrl() {
+    return recommendUrl;
   }
 
-  public void setTenantAppUrl(String tenantAppUrl) {
-    this.tenantAppUrl = tenantAppUrl;
+  public void setRecommendUrl(String recommendUrl) {
+    this.recommendUrl = recommendUrl;
   }
-
 
   public Integer getOrderReceiveTimeOut() {
     return orderReceiveTimeOut;

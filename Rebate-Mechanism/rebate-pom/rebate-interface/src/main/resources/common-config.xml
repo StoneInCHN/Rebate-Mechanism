@@ -39,8 +39,8 @@
 		<setting name="obdServerUrl" value="http://139.129.5.114:20001/obd-data" />
 		<setting name="intfApiKey" value="8fe0c292c2e64a10a556a10bb9f8942b" />
 		
-		<!-- tenantapp url -->
-		<setting name="tenantAppUrl" value="http://localhost:8088/csh-tenantapp/message/pushMsgForTenant.jhtml" />
+		<!-- recommend url -->
+		<setting name="recommendUrl" value="http://www.yxsh.org/xx/xx/recommendUrl.html" />
 		<!-- 新闻资讯URL -->
 		<setting name="newsDetailsUrl" value="http://120.27.27.99:8080/console/news/details.jhtml" />
    		<!-- <setting name="newsDetailsUrl" value="http://carlife.chcws.com:8080/console/news/details.jhtml" /> -->
