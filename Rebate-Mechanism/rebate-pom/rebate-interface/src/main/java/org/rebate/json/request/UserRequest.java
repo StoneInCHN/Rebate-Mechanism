@@ -63,6 +63,19 @@ public class UserRequest extends BaseRequest {
    */
   private String remark;
 
+  /**
+   * 微信授权openid
+   */
+  private String openId;
+
+
+  public String getOpenId() {
+    return openId;
+  }
+
+  public void setOpenId(String openId) {
+    this.openId = openId;
+  }
 
   public String getRemark() {
     return remark;

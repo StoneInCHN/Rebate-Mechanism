@@ -222,7 +222,12 @@ public class EndUser extends BaseEntity {
   /**
    * 是否绑定微信
    */
-  private Boolean isBindWeChat = false;
+  private Boolean isBindWeChat;
+
+  /**
+   * 微信openid
+   */
+  private String wechatOpenid;
 
   /**
    * 消息
@@ -244,6 +249,14 @@ public class EndUser extends BaseEntity {
    */
   private String sellerPicUrl;
 
+  @Column(length = 50)
+  public String getWechatOpenid() {
+    return wechatOpenid;
+  }
+
+  public void setWechatOpenid(String wechatOpenid) {
+    this.wechatOpenid = wechatOpenid;
+  }
 
   @Transient
   public String getSellerName() {
@@ -318,8 +331,12 @@ public class EndUser extends BaseEntity {
     this.rebateRecords = rebateRecords;
   }
 
+  @Transient
   public Boolean getIsBindWeChat() {
-    return isBindWeChat;
+    if (getWechatOpenid() != null) {
+      return true;
+    }
+    return false;
   }
 
   public void setIsBindWeChat(Boolean isBindWeChat) {

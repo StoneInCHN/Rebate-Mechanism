@@ -1400,4 +1400,72 @@ public class EndUserController extends MobileBaseController {
     response.setToken(newtoken);
     return response;
   }
+
+
+  /**
+   * 微信授权获取openid
+   * 
+   * @param request
+   * @return
+   */
+  @RequestMapping(value = "/doAuthByWechat", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse doAuthByWechat(@RequestBody UserRequest request) {
+    BaseResponse response = new BaseResponse();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    String openId = request.getOpenId();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    endUser.setWechatOpenid(openId);
+    endUserService.update(endUser);
+
+    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+      LogUtil.debug(EndUserController.class, "doAuthByWechat",
+          "wechat openid auth. userId: %s, openId: %s", userId, openId);
+    }
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setToken(newtoken);
+    return response;
+  }
+
+
+  /**
+   * 微信解除授权清空openid
+   * 
+   * @param request
+   * @return
+   */
+  @RequestMapping(value = "/cancelAuthByWechat", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse cancelAuthByWechat(@RequestBody BaseRequest request) {
+    BaseResponse response = new BaseResponse();
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+    EndUser endUser = endUserService.find(userId);
+    endUser.setWechatOpenid(null);
+    endUserService.update(endUser);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setToken(newtoken);
+    return response;
+  }
 }
