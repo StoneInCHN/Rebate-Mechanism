@@ -7,7 +7,9 @@ import javax.annotation.Resource;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Area;
+import org.rebate.entity.HotCity;
 import org.rebate.service.AreaService;
+import org.rebate.service.HotCityService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,9 @@ public class AreaController extends BaseController {
 
   @Resource(name = "areaServiceImpl")
   private AreaService areaService;
+  
+  @Resource(name="hotCityServiceImpl")
+  private HotCityService hotCityService;
 
   /**
    * 添加
@@ -88,6 +93,7 @@ public class AreaController extends BaseController {
     } else {
       model.addAttribute("areas", areaService.findRoots());
     }
+    model.addAttribute("hotCitys", hotCityService.findAll());
     return "/area/list";
   }
 
@@ -99,5 +105,40 @@ public class AreaController extends BaseController {
     areaService.delete(id);
     return SUCCESS_MESSAGE;
   }
+  
+  /**
+   * 添加
+   */
+  @RequestMapping(value = "/addHotCity", method = RequestMethod.GET)
+  public String addHotCity(Long parentId, ModelMap model) {
+    return "/area/addHotCity";
+  }
+  
+  /**
+   * 添加
+   */
+  @RequestMapping(value = "/saveHotCity", method = RequestMethod.POST)
+  public @ResponseBody Message saveHotCity(Long areaId, HotCity hotCity) {
+    if(areaId!=null){
+      Area area = areaService.find(areaId);
+      if(area!=null){
+        hotCity.setCityId(areaId);
+        hotCity.setCityName(area.getName());
+        hotCityService.save(hotCity);
+        return SUCCESS_MESSAGE;
+      }
+    }
+   return ERROR_MESSAGE;
+  }
+  
+  /**
+   * 删除
+   */
+  @RequestMapping(value = "/deleteHotCity", method = RequestMethod.POST)
+  public @ResponseBody Message deleteHotCity(Long id) {
+    hotCityService.delete(id);
+    return SUCCESS_MESSAGE;
+  }
+  
 
 }

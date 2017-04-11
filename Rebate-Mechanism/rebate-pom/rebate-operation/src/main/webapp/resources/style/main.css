@@ -271,3 +271,30 @@ a.btn,a.btn:hover , .queryFiled .btn , .queryFiled .btn:hover{
     border: 1px solid #1fb5ac;
     border-bottom-color: transparent
 }
+
+ul.hot-city li{
+	float:left;
+	margin: 5px 10px;
+}
+ul.hot-city li a{
+	position: relative;
+}
+ul.hot-city li a i{
+	position: absolute;
+    top: -10px;
+    right: -10px;
+    color: red;
+    cursor:pointer;
+    display:none;
+}
+#addHotCity{
+	margin: 0;
+    height: 25px;
+    line-height: 25px;
+    width: 40px !important;
+}
+#addHotCity i{
+	position: static;
+	color: #1fb5ac;
+	 display:block;
+}

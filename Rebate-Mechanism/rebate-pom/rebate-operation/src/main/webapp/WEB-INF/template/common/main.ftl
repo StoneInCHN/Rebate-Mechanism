@@ -79,6 +79,16 @@
 		                               <a href="../topBanner/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.topBanner")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
+		                             [@shiro.hasPermission name="rebate:area"]
+		                           <li>
+		                               <a href="../area/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.area")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+ 								[@shiro.hasPermission name="rebate:userHelp"]
+		                           <li>
+		                               <a href="../userHelp/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.userHelp")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
 		                       </ul>
 		                   </div>
 						   	[#break /]

@@ -62,7 +62,7 @@
              </div>
          </div>
  		 <div class="button-group">
-              <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
+              <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>${message("rebate.common.refresh")}</span></a>
          </div>
          <div>
         <table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
