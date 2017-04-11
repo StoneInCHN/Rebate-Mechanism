@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.rebate.controller.base.BaseController;
 import org.rebate.entity.SettingConfig;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller("systemConfigController")
 @RequestMapping("/console/systemConfig")
-public class SystemConfigController {
+public class SystemConfigController extends BaseController{
 
   @Resource(name = "systemConfigServiceImpl")
   private SystemConfigService systemConfigService;
@@ -83,8 +84,6 @@ public class SystemConfigController {
       for (SettingConfig settingConfig : settingConfigs) {
         if(SettingConfigKey.ABOUT_US == settingConfig.getConfigKey()){
           model.addAttribute("about",settingConfig);
-        }else if (SettingConfigKey.HELP == settingConfig.getConfigKey()) {
-          model.addAttribute("help",settingConfig);
         }else if (SettingConfigKey.LICENSE_AGREEMENT == settingConfig.getConfigKey()) {
           model.addAttribute("license",settingConfig);
         }

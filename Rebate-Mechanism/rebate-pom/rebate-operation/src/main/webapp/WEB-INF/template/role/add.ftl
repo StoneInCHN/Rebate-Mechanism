@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/style.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
@@ -56,37 +55,20 @@ $().ready(function() {
 				maxlength:200
 			}
 		}
-	
 	});
 	
 });
 </script>
 </head>
 <body>
-		<div class="mainbar">
-		<div class="page-head">
-			<div class="bread-crumb">
-				<a ><i class="fa fa-user"></i> ${message("rebate.main.role")}</a> 
-				<span class="divider">/</span> 
-				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("rebate.role.list")}</a>
-				<span class="divider">/</span> 
-				<span  class="bread-current"><i class="fa fa-plus"></i>${message("rebate.role.add")}</span>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="matter">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="widget wgreen">
-                <div class="widget-head">
-                  <div class="pull-left"><i class="fa fa-plus"></i>${message("rebate.role.add")}</div>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="widget-content">
-                  <div class="padd">
-          				<form id="inputForm" action="save.jhtml" method="post">
-							<table class="input">
+ <div class="content">
+          <ol class="breadcrumb">
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.role")}</a> </li>
+                <li><a href="#">${message("rebate.role.list")}</a></li>
+                <li class="active">${message("rebate.role.add")}</li>
+          </ol>
+		 <form id="inputForm" action="save.jhtml" method="post" class="form-horizontal" role="form">
+                     	<table class="input">
 								<tr>
 									<th>
 										<span class="requiredField">*</span>${message("rebate.role.name")}:
@@ -124,13 +106,16 @@ $().ready(function() {
 												<input type="checkbox" name="authorities" value="rebate:account" /><span>${message("rebate.account.settingGroup")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="rebate:apply" /><span>${message("rebate.main.apply")}</span>
+												<input type="checkbox" name="authorities" value="rebate:sellerApply" /><span>${message("rebate.main.sellerApply")}</span>
 											</label>
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:area" /><span>${message("rebate.main.area")}</span>
 											</label>
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:advertisement" /><span>${message("rebate.main.advertisement")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:operationLog" /><span>${message("rebate.main.operation.log")}</span>
 											</label>
 										</span>
 									</td>
@@ -144,16 +129,8 @@ $().ready(function() {
 										<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 									</td>
 								</tr>
-							</table>
-						</form>
-                  </div>
-                </div>
-              </div>  
-            </div>
-          </div>
-        </div>
-	   </div>
-	</div>
-	<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
+				</table>                         
+           </form>
+     </div>
 </body>
 </html>

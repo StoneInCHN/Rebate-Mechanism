@@ -13,6 +13,13 @@
 	<setting name="smtpUsername" value="microctrllife@163.com" />
 	<setting name="smtpPassword" value="o123456" />
 
+	<!-- 允许上传文件后缀名 -->
+	<setting name="uploadFileExtension" value="apk" />
+	<!-- 允许上传图片后缀名 -->
+	<setting name="uploadImageExtension" value="png,jepg,gif,jpg" />
+	<!-- 图片上传最大限制-->
+	<setting name="imageMaxSize" value="412000" />
+
 	<logConfig operation="系统管理修改角色" urlPattern="/console/role/update.jhtml" />
 	<logConfig operation="系统管理添加角色" urlPattern="/console/role/save.jhtml" />
 	<logConfig operation="系统管理删除角色" urlPattern="/console/role/delete.jhtml" />

@@ -191,7 +191,6 @@ public class Setting implements Serializable {
    */
   private String alipayPublicKey;
 
-
   public Integer getPasswordMaxlength() {
     return passwordMaxlength;
   }

@@ -29,7 +29,6 @@
 		    <li role="presentation" class="active"><a href="#setting" aria-controls="setting" role="tab" data-toggle="tab">基础数据配置</a></li>
 		    <li role="presentation"><a href="#paymenttype" aria-controls="paymenttype" role="tab" data-toggle="tab">支付方式</a></li>
 		    <li role="presentation"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">关于</a></li>
-		    <li role="presentation"><a href="#help" aria-controls="help" role="tab" data-toggle="tab">帮助</a></li>
 		    <li role="presentation"><a href="#license" aria-controls="license" role="tab" data-toggle="tab">许可协议</a></li>
 		  </ul>
 		  <!-- Tab panes -->
@@ -136,9 +135,6 @@
 		    </div>
 		    <div role="tabpanel" class="tab-pane" id="about">
 				  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-		    </div>
-		    <div role="tabpanel" class="tab-pane" id="help">
-		    	<p>...</p>
 		    </div>
 		    <div role="tabpanel" class="tab-pane" id="license">
 			   <p>

@@ -454,17 +454,35 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
           continue;
         }
         if (filter.getOperator() == Operator.eq && filter.getValue() != null) {
-          if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
-              && filter.getValue() instanceof String) {
-            restrictions =
-                criteriaBuilder.and(restrictions, criteriaBuilder.equal(
-                    criteriaBuilder.lower(root.<String>get(filter.getProperty())),
-                    ((String) filter.getValue()).toLowerCase()));
-          } else {
-            restrictions =
-                criteriaBuilder.and(restrictions,
-                    criteriaBuilder.equal(root.get(filter.getProperty()), filter.getValue()));
+          if(filter.getProperty().contains("&")){
+            String[] propetys = filter.getProperty().split("&");
+            if (propetys != null && propetys.length == 2) {
+              if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
+                  && filter.getValue() instanceof String) {
+                restrictions =
+                    criteriaBuilder.and(restrictions, criteriaBuilder.equal(
+                        criteriaBuilder.lower(root.<String>get(propetys[0]).get(propetys[1])),
+                        ((String) filter.getValue()).toLowerCase()));
+              } else {
+                restrictions =
+                    criteriaBuilder.and(restrictions,
+                        criteriaBuilder.equal(root.<String>get(propetys[0]).get(propetys[1]), filter.getValue()));
+              }
+            }
+          }else{
+            if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
+                && filter.getValue() instanceof String) {
+              restrictions =
+                  criteriaBuilder.and(restrictions, criteriaBuilder.equal(
+                      criteriaBuilder.lower(root.<String>get(filter.getProperty())),
+                      ((String) filter.getValue()).toLowerCase()));
+            } else {
+              restrictions =
+                  criteriaBuilder.and(restrictions,
+                      criteriaBuilder.equal(root.get(filter.getProperty()), filter.getValue()));
+            }
           }
+         
         } else if (filter.getOperator() == Operator.ne && filter.getValue() != null) {
           if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
               && filter.getValue() instanceof String) {
@@ -516,11 +534,24 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
           }
         } else if (filter.getOperator() == Operator.like && filter.getValue() != null
             && filter.getValue() instanceof String) {
-          restrictions =
-              criteriaBuilder.and(
-                  restrictions,
-                  criteriaBuilder.like(root.<String>get(filter.getProperty()),
-                      (String) filter.getValue()));
+          
+          if(filter.getProperty().contains("&")){
+            String[] propetys = filter.getProperty().split("&");
+            if (propetys != null && propetys.length == 2) {
+              restrictions =
+                  criteriaBuilder.and(
+                      restrictions,
+                      criteriaBuilder.like(root.<String>get(propetys[0]).get(propetys[1]),
+                          (String) filter.getValue()));
+            }
+          }else{
+            restrictions =
+                criteriaBuilder.and(
+                    restrictions,
+                    criteriaBuilder.like(root.<String>get(filter.getProperty()),
+                        (String) filter.getValue()));
+          }
+        
         } else if (filter.getOperator() == Operator.in && filter.getValue() != null) {
           restrictions =
               criteriaBuilder.and(restrictions, root.get(filter.getProperty())

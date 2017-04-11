@@ -202,7 +202,7 @@ public class CommonController extends BaseController {
       try {
         MultipartFile mf = entity.getValue();
         String displayPath = fileService.saveImage(mf, ImageType.ADVERTISEMENT);
-        map.put("url", displayPath);
+        map.put("url",displayPath);
         map.put("error", 0);
         String result = JsonUtil.getJsonString4JavaPOJO(map);
         String callback = request.getParameter("callback");

@@ -1,13 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>${message("rebate.role.edit")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/style.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
@@ -64,32 +62,16 @@ $().ready(function() {
 </script>
 </head>
 <body>
-	<div class="mainbar">
-		<div class="page-head">
-			<div class="bread-crumb">
-				<a><i class="fa fa-user"></i> ${message("rebate.main.role")}</a> 
-				<span class="divider">/</span> 
-				<a href="list.jhtml" ><i class="fa fa-list"></i>${message("rebate.role.list")}</a>
-				<span class="divider">/</span> 
-				<a class="bread-current"><i class="fa fa-pencil-square-o"></i>${message("rebate.role.edit")}</a>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="matter">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="widget wgreen">
-                <div class="widget-head">
-                  <div class="pull-left">${message("rebate.role.edit")}</div>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="widget-content">
-                  <div class="padd">
-                  		<form id="inputForm" action="update.jhtml" method="post">
-							<input type="hidden" name="id" value="${role.id}" />
-							<input type="hidden" id="isSystem" value="${role.isSystem}" />
-							<table class="input">
+	 <div class="content">
+          <ol class="breadcrumb">
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.role")}</a> </li>
+                <li><a href="#">${message("rebate.role.list")}</a></li>
+                <li class="active">${message("rebate.role.edit")}</li>
+          </ol>
+		 <form id="inputForm" action="update.jhtml" method="post">
+						<input type="hidden" name="id" value="${role.id}" />
+						<input type="hidden" id="isSystem" value="${role.isSystem}" />
+						<table class="input">
 								<tr>
 									<th>
 										<span class="requiredField">*</span>${message("rebate.role.name")}:
@@ -118,19 +100,19 @@ $().ready(function() {
 									<td>
 										<span class="fieldSet">
 											<label>
-												<input type="checkbox" name="authorities" value="admin:admin"[#if role.authorities?seq_contains("admin:admin")] checked="checked"[/#if] /><span>${message("rebate.role.admin")}</span>
+												<input type="checkbox" name="authorities" value="rebate:admin"[#if role.authorities?seq_contains("rebate:admin")] checked="checked"[/#if] /><span>${message("rebate.role.admin")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:role"[#if role.authorities?seq_contains("admin:role")] checked="checked"[/#if] /><span>${message("rebate.role.role")}</span>
+												<input type="checkbox" name="authorities" value="rebate:role"[#if role.authorities?seq_contains("rebate:role")] checked="checked"[/#if] /><span>${message("rebate.role.role")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:account" [#if role.authorities?seq_contains("admin:account")] checked="checked"[/#if]/><span>${message("rebate.account.settingGroup")}</span>
+												<input type="checkbox" name="authorities" value="rebate:account" [#if role.authorities?seq_contains("rebate:account")] checked="checked"[/#if]/><span>${message("rebate.account.settingGroup")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:apply" [#if role.authorities?seq_contains("admin:apply")] checked="checked"[/#if] /><span>${message("rebate.main.apply")}</span>
+												<input type="checkbox" name="authorities" value="rebate:sellerApply" [#if role.authorities?seq_contains("admin:sellerApply")] checked="checked"[/#if] /><span>${message("rebate.main.sellerApply")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="admin:area" [#if role.authorities?seq_contains("admin:area")] checked="checked"[/#if]/><span>${message("rebate.main.area")}</span>
+												<input type="checkbox" name="authorities" value="rebate:area" [#if role.authorities?seq_contains("rebate:area")] checked="checked"[/#if]/><span>${message("rebate.main.area")}</span>
 											</label>
 									
 										</span>
@@ -156,24 +138,7 @@ $().ready(function() {
 									</td>
 								</tr>
 							</table>
-						</form>
-                  </div>
-                </div>
-              </div>  
-            </div>
-          </div>
-        </div>
-	   </div>
-	</div>
-<script type="text/javascript" src="${base}/resources/js/custom.js"></script>
-<script type="text/javascript" >
-	$(function(){
-		var $isSystem =  $("#isSystem");
-		if($isSystem.val() =="true"){
-			$(':input').attr("disabled","disabled");	
-			$("#backBtn").attr("disabled",false);
-		}
-	})
-</script>
+					</form>
+     </div>
 </body>
 </html>
