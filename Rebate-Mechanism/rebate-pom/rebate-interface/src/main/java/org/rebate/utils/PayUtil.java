@@ -1,5 +1,8 @@
 package org.rebate.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +15,9 @@ import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.beans.Setting;
 import org.rebate.json.base.ResponseOne;
+import org.rebate.utils.alipay.config.AlipayConfig;
+import org.rebate.utils.alipay.sign.RSA;
+import org.rebate.utils.alipay.util.AlipayCore;
 import org.rebate.utils.wechat.WeixinUtil;
 
 import com.tencent.common.MD5;
@@ -38,18 +44,48 @@ public class PayUtil {
 
 
   /**
-   * 支付宝支付接口 生成系统交易流水号。返回APP
+   * 支付宝支付接口
    * 
    * @return
+   * @throws UnsupportedEncodingException
+   * @throws AlipayApiException
    */
-  // public Map<String, Object> alipay(String order_sn) {
-  // Map<String, Object> data = new HashMap<String, Object>();
-  // // 2：在线支付
-  // data.put("type", "2");
-  // data.put("channel", "alipay");
-  // data.put("out_trade_no", order_sn);
-  // return data;
-  // }
+  public static String alipay(String order_sn, String product_name, String product_detail,
+      String total_fee) throws Exception {
+
+    Map<String, String> paramMap = new HashMap<String, String>();
+    // 签约合作者身份ID
+    paramMap.put("partner", AlipayConfig.partner);
+    // 签约卖家支付宝账号
+    paramMap.put("seller_id", AlipayConfig.sellerId);
+    // 商户网站唯一订单号
+    paramMap.put("out_trade_no", order_sn);
+    // 商品名称
+    paramMap.put("subject", product_name);
+    // 商品详情
+    paramMap.put("body", product_detail);
+    // 商品金额
+    paramMap.put("total_fee", total_fee);
+    // 服务器异步通知地址
+    paramMap.put("notify_url", AlipayConfig.ali_notify_url);
+    // 服务接口名称， 固定值mobile.securitypay.pay
+    paramMap.put("service", "mobile.securitypay.pay");
+    // 支付类型， 固定值 1
+    paramMap.put("payment_type", "1");
+    // 参数编码， 固定值utf-8
+    paramMap.put("_input_charset", "utf-8");
+    // 固定值2d
+    paramMap.put("it_b_pay", "2d");
+    String data = AlipayCore.createLinkString(paramMap);
+    // String rsa_sign =
+    // AlipaySignature.rsaSign(paramMap, AlipayConfig.private_key, AlipayConfig.input_charset);
+    String rsa_sign =
+        URLEncoder.encode(RSA.sign(data, AlipayConfig.private_key, AlipayConfig.input_charset),
+            AlipayConfig.input_charset);
+    // 把签名得到的sign和签名类型sign_type拼接在待签名字符串后面。
+    data = data + "&sign=\"" + rsa_sign + "\"&sign_type=\"" + AlipayConfig.sign_type + "\"";
+    return data;
+  }
 
 
 
@@ -114,8 +150,12 @@ public class PayUtil {
         data.put("out_trade_no", order_sn);
         data.put("sign", sign);
         // type 1:红包余额支付；2：在线支付
-        data.put("type", "2");
-        data.put("channel", "wx");
+        // data.put("type", "2");
+        // data.put("channel", "wx");
+        data.put("appId", wechat_appid);
+        data.put("partnerId", wechat_mch_id);
+        data.put("package", "Sign=WXPay");
+        data.put("timeStamp", TimeUtils.format("MMddHHmmss", new Date().getTime()));
         response.setCode(CommonAttributes.SUCCESS);
         response.setMsg(data);
       } else {

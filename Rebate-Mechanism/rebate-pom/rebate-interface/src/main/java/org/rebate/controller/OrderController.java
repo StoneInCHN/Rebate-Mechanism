@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
@@ -38,9 +39,12 @@ import org.rebate.service.OrderService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerService;
 import org.rebate.utils.FieldFilterUtils;
+import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.PayUtil;
+import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -87,6 +91,7 @@ public class OrderController extends MobileBaseController {
     Long sellerId = req.getSellerId();
     String remark = req.getRemark();
     Boolean isBeanPay = req.getIsBeanPay();
+    String password = req.getPayPwd();
 
     // 验证登录token
     String userToken = endUserService.getEndUserToken(userId);
@@ -95,28 +100,75 @@ public class OrderController extends MobileBaseController {
       response.setDesc(Message.error("rebate.user.token.timeout").getContent());
       return response;
     }
-    Order order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
-    if (LogUtil.isDebugEnabled(OrderController.class)) {
-      LogUtil.debug(OrderController.class, "pay",
-          "pay order. userId: %s,payType: %s,amount: %s,sellerId: %s,remark: %s", userId, payType,
-          amount, sellerId, remark);
-    }
 
-    if ("1".equals(payTypeId)) {// 微信支付
+    if (isBeanPay) {// 乐豆支付需要验证支付密码
+      String serverPrivateKey = setting.getServerPrivateKey();
+      EndUser endUser = endUserService.find(userId);
+      // 密码非空验证
+      if (StringUtils.isEmpty(password)) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.pwd.null.error").getContent());
+        return response;
+      }
+      // 支付密码未设置
+      if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
+        return response;
+      }
       try {
-        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
-        response =
-            PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
-                order.getId().toString(), weChatPrice.intValue() + "");
+        password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
       } catch (Exception e) {
         e.printStackTrace();
       }
 
-    } else if ("2".equals(payTypeId)) {// 支付宝支付
+      // 密码长度验证
+      if (password.length() < setting.getPasswordMinlength()) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
+            .getContent());
+        return response;
+      }
 
-    } else if ("3".equals(payTypeId)) {// 翼支付
-
+      if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.payPwd.error").getContent());
+        return response;
+      }
     }
+
+    Order order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
+    if (LogUtil.isDebugEnabled(OrderController.class)) {
+      LogUtil
+          .debug(
+              OrderController.class,
+              "pay",
+              "pay order. userId: %s,payType: %s,payTypeId: %s,amount: %s,sellerId: %s,remark: %s,isBeanPay: %s",
+              userId, payType, payTypeId, amount, sellerId, remark, isBeanPay);
+    }
+
+    try {
+      if ("1".equals(payTypeId)) {// 微信支付
+        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        response =
+            PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                order.getId().toString(), weChatPrice.intValue() + "");
+
+      } else if ("2".equals(payTypeId)) {// 支付宝支付
+        Map<String, Object> map = new HashMap<String, Object>();
+        String orderStr =
+            PayUtil.alipay(order.getSn(), order.getId().toString(), order.getSeller().getName(),
+                amount.toString());
+        map.put("orderStr", orderStr);
+        map.put("out_trade_no", order.getSn());
+        response.setMsg(map);
+      } else if ("3".equals(payTypeId)) {// 翼支付
+
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
 
     if (isBeanPay) {// 乐豆支付
       orderService.updateOrderforPayCallBack(order.getSn());

@@ -46,10 +46,9 @@
    		<!-- <setting name="newsDetailsUrl" value="http://carlife.chcws.com:8080/console/news/details.jhtml" /> -->
 		
 		<!-- 极光推送Key -->
-		<!-- <setting name="appKey" value="eb1ec435f9a7e7305c51621a" />
-		<setting name="masterSecret" value="e658c652b6b824afd582ab26" /> -->
-		<setting name="appKey" value="37ada1a7a6d7a3b77cde69b8" />
-		<setting name="masterSecret" value="d1c392c79307278acfdbb69e" />
+		<setting name="appKey" value="eb1ec435f9a7e7305c51621a" />
+		<setting name="masterSecret" value="e658c652b6b824afd582ab26" />
+		
 		
 		 
 		<!-- 微信支付平台 -->
@@ -68,17 +67,18 @@
 		<!-- 微信Token接口 -->
 		<setting name="wechatTokenUrl" value="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&amp;appid=APPID&amp;secret=APPSECRET" />
 		
+		<!-- 支付宝平台 -->
+		<!-- 合作身份者ID，以2088开头由16位纯数字组成的字符串 -->
+		<setting name="alipayPartner" value="2088021552530780" />
+		<!-- 签约卖家支付宝账号 -->
+		<setting name="alipaySellerId" value="chcws@chcws.com" />
+		<!-- 商户的私钥 -->
+		<setting name="alipayPrivateKey" value="MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL4Lx8cgCyPVKxjdr3IBch3JG+/AreSbjhLqN0pM4HlPEkQGmoihzptSVe+o1ywALgkul/1e5fUljqAGAbtyhmxk9dRs3QddKposOzStoX9ReTWmMJPtC5cNXbclg7QbYKrzw25sUkxGHMP9KInZV7qAnhwFg5TDmk87Lab5JrmPAgMBAAECgYBJ0uWuEmKBbuMo66Slkq4zp9W0UpK6RTrxWg5UTHy+YtrjlfUdsk1BxMAhMuMy8nbvlivwfpaxnf9DZlHx8NEKSY+vpj/jZyir1Nscf9Dya7ak5EgvBPBE/5KtJqpx7WD1qJjAoaumTh0ljy9B5G88RcLFNA2U27NjchCO9SjmIQJBAPn/g8omfRGHJoBJHXsIBYripnCld7J1V/Ekyjb8r4rQtH8bS/NK30CR1ToPD0gjcEDTgYkLkONqUUmJ9EWBwOcCQQDCm80BkFTt0TxjxqLSpyEJcsZdp7dHFVUDaHEci/WVVwldcaPdw9THkHybB3KvwzIVzuClq2QYvRptZ+qN6qUZAkA+sHYp0PD33j4nWS5NVbueEivOf4++bnJ5A9K5ay/RzXgVj5DCF3pYRLmFb5VTb5+Mgf0vknjorhZoLHHWpCztAkEAosXuEwDGCKSZGlet0lpKJmIxPoAUXtmIFOftWzjKegqoqhbLmpoUTtBfmtVxu6A7Bl9BjSM3i7N+eMFWzAQJAIfUnYgTQ8RKBZ0gkK98FuGcsYU6aPvKzyGaPeczKdsp4xZgEdlppCzwxn/Kd9kKRrL2PKkgBzQ5Vaygvu8dqNg==" />
+		<!-- 支付宝的公钥，无需修改该值 -->
+		<setting name="alipayPublicKey" value="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB" />
 		<!-- 支付宝回调接口 -->
-		<!-- <setting name="alipayNotifyUrl" value="http://120.27.92.247:10001/csh-interface/payNotify/notify_alipay.jhtml" /> -->
+		<setting name="alipayNotifyUrl" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_alipay.jhtml" />
 		
-		<!-- 违章查询 -->
-		<setting name="illegalSearchPeriod" value="7"/>
-		<setting name="illegalSearchURL" value="http://api.jisuapi.com/illegal/query"/>
-		<setting name="illegalSearchAppKey" value="76ee56b0fec1c4e2"/>
-		
-		<setting name="serviceCateMaintain" value="1"/>
-		<setting name="serviceCateWash" value="2"/>
-		<setting name="serviceCateBeautify" value="5"/>
 		
 		<!-- 百度API:GPS坐标转百度坐标 -->
 		<setting name="convertMapUrl" value="http://api.map.baidu.com/ag/coord/convert"/>
@@ -102,9 +102,5 @@
 		<!-- 百度API Store api 汉字转拼音 -->
 		<setting name="bdApiStoreHz2PyUrl" value="http://apis.baidu.com/sillystudio/service/topy"/>
 		
-		<!-- 兑吧-->
-		<setting name="duibaAppKey" value="2Q3avyPZ3krtR9yTjphyfhoGabvP"/>
-		<setting name="duibaAppSecret" value="gFxZ77QXSSDqBNgQZEFbN6VpLEA"/>
-		<setting name="duibaLoginUrl" value="http://www.duiba.com.cn/autoLogin/autologin?"/>
 	</rebate>	
 	

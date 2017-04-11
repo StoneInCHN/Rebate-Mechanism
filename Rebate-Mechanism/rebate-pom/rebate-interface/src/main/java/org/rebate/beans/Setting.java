@@ -135,40 +135,7 @@ public class Setting implements Serializable {
    */
   private String wechatTokenUrl;
 
-  /**
-   * obd服务器url
-   */
-  private String obdServerUrl;
 
-  /**
-   * 违章查询周期
-   */
-  private String illegalSearchPeriod;
-
-  /**
-   * 违章查询URL
-   */
-  private String illegalSearchURL;
-
-  /**
-   * 违章查询app key
-   */
-  private String illegalSearchAppKey;
-
-  /**
-   * 服务类别ID:保养
-   */
-  private Long serviceCateMaintain;
-
-  /**
-   * 服务类别ID:洗车
-   */
-  private Long serviceCateWash;
-
-  /**
-   * 服务类别ID:美容
-   */
-  private Long serviceCateBeautify;
 
   /**
    * 百度API坐标转换
@@ -280,7 +247,71 @@ public class Setting implements Serializable {
    */
   private String smsPostfix;
 
+  /**
+   * 支付宝合作身份者ID
+   */
+  private String alipayPartner;
 
+  /**
+   * 支付宝商户的私钥
+   */
+  private String alipayPrivateKey;
+
+  /**
+   * 支付宝的公钥
+   */
+  private String alipayPublicKey;
+
+  /**
+   * 支付宝回调接口
+   */
+  private String alipayNotifyUrl;
+
+  /**
+   * 签约卖家支付宝账号
+   */
+  private String alipaySellerId;
+
+
+  public String getAlipaySellerId() {
+    return alipaySellerId;
+  }
+
+  public void setAlipaySellerId(String alipaySellerId) {
+    this.alipaySellerId = alipaySellerId;
+  }
+
+  public String getAlipayPartner() {
+    return alipayPartner;
+  }
+
+  public void setAlipayPartner(String alipayPartner) {
+    this.alipayPartner = alipayPartner;
+  }
+
+  public String getAlipayPrivateKey() {
+    return alipayPrivateKey;
+  }
+
+  public void setAlipayPrivateKey(String alipayPrivateKey) {
+    this.alipayPrivateKey = alipayPrivateKey;
+  }
+
+  public String getAlipayPublicKey() {
+    return alipayPublicKey;
+  }
+
+  public void setAlipayPublicKey(String alipayPublicKey) {
+    this.alipayPublicKey = alipayPublicKey;
+  }
+
+  public String getAlipayNotifyUrl() {
+    return alipayNotifyUrl;
+  }
+
+  public void setAlipayNotifyUrl(String alipayNotifyUrl) {
+    this.alipayNotifyUrl = alipayNotifyUrl;
+  }
 
   public String getSmsPostfix() {
     return smsPostfix;
@@ -497,38 +528,6 @@ public class Setting implements Serializable {
 
   public void setConvertMapUrl(String convertMapUrl) {
     this.convertMapUrl = convertMapUrl;
-  }
-
-  public Long getServiceCateMaintain() {
-    return serviceCateMaintain;
-  }
-
-  public void setServiceCateMaintain(Long serviceCateMaintain) {
-    this.serviceCateMaintain = serviceCateMaintain;
-  }
-
-  public Long getServiceCateWash() {
-    return serviceCateWash;
-  }
-
-  public void setServiceCateWash(Long serviceCateWash) {
-    this.serviceCateWash = serviceCateWash;
-  }
-
-  public Long getServiceCateBeautify() {
-    return serviceCateBeautify;
-  }
-
-  public void setServiceCateBeautify(Long serviceCateBeautify) {
-    this.serviceCateBeautify = serviceCateBeautify;
-  }
-
-  public String getObdServerUrl() {
-    return obdServerUrl;
-  }
-
-  public void setObdServerUrl(String obdServerUrl) {
-    this.obdServerUrl = obdServerUrl;
   }
 
   public String getWechatKey() {
@@ -802,27 +801,4 @@ public class Setting implements Serializable {
     this.siteUrl = siteUrl;
   }
 
-  public String getIllegalSearchPeriod() {
-    return illegalSearchPeriod;
-  }
-
-  public void setIllegalSearchPeriod(String illegalSearchPeriod) {
-    this.illegalSearchPeriod = illegalSearchPeriod;
-  }
-
-  public String getIllegalSearchURL() {
-    return illegalSearchURL;
-  }
-
-  public void setIllegalSearchURL(String illegalSearchURL) {
-    this.illegalSearchURL = illegalSearchURL;
-  }
-
-  public String getIllegalSearchAppKey() {
-    return illegalSearchAppKey;
-  }
-
-  public void setIllegalSearchAppKey(String illegalSearchAppKey) {
-    this.illegalSearchAppKey = illegalSearchAppKey;
-  }
 }

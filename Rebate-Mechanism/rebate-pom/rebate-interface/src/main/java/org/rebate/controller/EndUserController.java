@@ -1325,8 +1325,8 @@ public class EndUserController extends MobileBaseController {
 
     EndUser endUser = endUserService.find(userId);
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put("wxUserPhoto", "wechatUserPhoto");
-    map.put("wxNickName", "wxNickName");
+    map.put("wxNickName", endUser.getWechatNickName());
+    map.put("userPhoto", endUser.getUserPhoto());
     map.put("curLeScore", endUser.getCurLeScore());
     map.putAll(endUserService.getAvlLeScore(endUser));
     response.setMsg(map);
@@ -1403,6 +1403,70 @@ public class EndUserController extends MobileBaseController {
   }
 
 
+
+  /**
+   * 验证支付密码
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/verifyPayPwd", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse verifyPayPwd(@RequestBody UserRequest request) {
+    String serverPrivateKey = setting.getServerPrivateKey();
+    BaseResponse response = new BaseResponse();
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    String password = request.getPassword();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    // 密码非空验证
+    if (StringUtils.isEmpty(password)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.pwd.null.error").getContent());
+      return response;
+    }
+    // 支付密码未设置
+    if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
+      return response;
+    }
+    try {
+      password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // 密码长度验证
+    if (password.length() < setting.getPasswordMinlength()) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
+          .getContent());
+      return response;
+    }
+
+    if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.payPwd.error").getContent());
+      return response;
+    }
+
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setToken(newtoken);
+    return response;
+  }
+
+
   /**
    * 微信授权获取openid
    * 
@@ -1416,6 +1480,7 @@ public class EndUserController extends MobileBaseController {
     Long userId = request.getUserId();
     String token = request.getToken();
     String openId = request.getOpenId();
+    String wxNickName = request.getWxNickName();
 
     // 验证登录token
     String userToken = endUserService.getEndUserToken(userId);
@@ -1427,6 +1492,7 @@ public class EndUserController extends MobileBaseController {
 
     EndUser endUser = endUserService.find(userId);
     endUser.setWechatOpenid(openId);
+    endUser.setWechatNickName(wxNickName);
     endUserService.update(endUser);
 
     if (LogUtil.isDebugEnabled(EndUserController.class)) {
@@ -1462,6 +1528,7 @@ public class EndUserController extends MobileBaseController {
     }
     EndUser endUser = endUserService.find(userId);
     endUser.setWechatOpenid(null);
+    endUser.setWechatNickName(null);
     endUserService.update(endUser);
     String newtoken = TokenGenerator.generateToken(request.getToken());
     endUserService.createEndUserToken(newtoken, userId);

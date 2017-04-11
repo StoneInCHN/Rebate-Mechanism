@@ -230,6 +230,11 @@ public class EndUser extends BaseEntity {
   private String wechatOpenid;
 
   /**
+   * 微信账号昵称
+   */
+  private String wechatNickName;
+
+  /**
    * 消息
    */
   private Set<MsgEndUser> msgEndUsers = new HashSet<MsgEndUser>();
@@ -248,6 +253,16 @@ public class EndUser extends BaseEntity {
    * 商户图片
    */
   private String sellerPicUrl;
+
+
+  @Column(length = 50)
+  public String getWechatNickName() {
+    return wechatNickName;
+  }
+
+  public void setWechatNickName(String wechatNickName) {
+    this.wechatNickName = wechatNickName;
+  }
 
   @Column(length = 50)
   public String getWechatOpenid() {
@@ -333,10 +348,11 @@ public class EndUser extends BaseEntity {
 
   @Transient
   public Boolean getIsBindWeChat() {
+    isBindWeChat = false;
     if (getWechatOpenid() != null) {
-      return true;
+      isBindWeChat = true;
     }
-    return false;
+    return isBindWeChat;
   }
 
   public void setIsBindWeChat(Boolean isBindWeChat) {

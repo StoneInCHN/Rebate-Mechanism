@@ -68,6 +68,19 @@ public class UserRequest extends BaseRequest {
    */
   private String openId;
 
+  /**
+   * 微信账号昵称
+   */
+  private String wxNickName;
+
+
+  public String getWxNickName() {
+    return wxNickName;
+  }
+
+  public void setWxNickName(String wxNickName) {
+    this.wxNickName = wxNickName;
+  }
 
   public String getOpenId() {
     return openId;

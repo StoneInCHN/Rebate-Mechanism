@@ -48,6 +48,19 @@ public class OrderRequest extends BaseRequest {
    */
   private SystemConfigKey configKey;
 
+  /**
+   * 支付密码
+   */
+  private String payPwd;
+
+
+  public String getPayPwd() {
+    return payPwd;
+  }
+
+  public void setPayPwd(String payPwd) {
+    this.payPwd = payPwd;
+  }
 
   public String getPayTypeId() {
     return payTypeId;
