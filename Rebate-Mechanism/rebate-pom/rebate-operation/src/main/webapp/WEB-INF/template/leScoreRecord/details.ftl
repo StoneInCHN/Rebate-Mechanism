@@ -111,6 +111,14 @@
 									${leScoreRecord.remark}
 								</td>
 							</tr>
+							<tr>
+							<th>
+								&nbsp;
+							</th>
+							<td>
+								<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
+							</td>
+						</tr>
 						</table>				
 </body>
 </html>

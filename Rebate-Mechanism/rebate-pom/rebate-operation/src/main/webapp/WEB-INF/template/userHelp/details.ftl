@@ -13,7 +13,7 @@
 	 <div class="content">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.userHelp")}</a> </li>
-                <li><a href="#">${message("rebate.userHelp.list")}</a></li>
+                <li><a href="list.jhtml">${message("rebate.userHelp.list")}</a></li>
                 <li class="active">${message("rebate.userHelp.edit")}</li>
           </ol>
 			<table class="input tabContent">
@@ -61,6 +61,14 @@
 								</th>
 								<td>
 									${userHelp.remark}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
 						</table>  

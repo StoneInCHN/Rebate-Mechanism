@@ -84,12 +84,15 @@
 						<a href="javascript:;" class="sort" name="ip">${message("rebate.operationLog.ip")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
+					</th>
+					<th>
 						<span>${message("rebate.common.handle")}</span>
 					</th>
 				</tr>
 			</thead>
 			<tbody>
-				[#list operationLogs as operationLog]
+				[#list page.content as operationLog]
 				<tr>
 					<td>
 						${message(operationLog.operation)}
@@ -121,7 +124,10 @@
 						
 					</td>
 					<td>
-						<a href="view.jhtml?id=${operationLog.id}" title="${message("csh.common.details")}"><i class="fa fa-pencil-square-o"></i></a>
+						<span title="${operationLog.createDate?string("yyyy-MM-dd HH:mm:ss")}">${operationLog.createDate}</span>
+					</td>
+					<td>
+						<a href="view.jhtml?id=${operationLog.id}" title="${message("csh.common.details")}"><i class="fa fa-eye"></i></a>
 					</td>
 				</tr>
 				[/#list]

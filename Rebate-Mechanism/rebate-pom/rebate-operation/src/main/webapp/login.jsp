@@ -51,7 +51,7 @@ if (applicationContext != null) {
 	String loginFailure = (String) request.getAttribute(attrName);
 	if (loginFailure != null) {
 		if (loginFailure.equals("org.apache.shiro.authc.pam.UnsupportedTokenException")) {
-			message = "rebate.captcha.invalid";
+			message = "rebate.login.captcha.invalid";
 		} else if (loginFailure.equals("org.apache.shiro.authc.UnknownAccountException")) {
 			message = "rebate.login.unknownAccount";
 		} else if (loginFailure.equals("org.apache.shiro.authc.DisabledAccountException")) {

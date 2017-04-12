@@ -67,7 +67,7 @@ public class OperationLogInterceptor extends HandlerInterceptorAdapter {
                 String[] parameterValues = entry.getValue();
                 if (parameterValues != null) {
                   for (String parameterValue : parameterValues) {
-                    parameter.append(parameterName + " = " + parameterValue + "\n");
+                    parameter.append(parameterName + " = " + parameterValue + "&");
                   }
                 }
               }

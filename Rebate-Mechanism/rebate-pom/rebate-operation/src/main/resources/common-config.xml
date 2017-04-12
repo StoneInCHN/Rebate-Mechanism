@@ -26,5 +26,8 @@
 	<logConfig operation="系统管理添加后台用户" urlPattern="/console/admin/save.jhtml" />
 	<logConfig operation="系统管理修改后台用户" urlPattern="/console/admin/update.jhtml" />
 	<logConfig operation="系统管理删除后台用户" urlPattern="/console/admin/delete.jhtml" />
+	<logConfig operation="系统管理添加地区" urlPattern="/console/area/save.jhtml" />
+	<logConfig operation="系统管理修改地区" urlPattern="/console/area/update.jhtml" />
+	<logConfig operation="系统管理删除地区" urlPattern="/console/area/delete.jhtml" />
 </rebate>	
 	

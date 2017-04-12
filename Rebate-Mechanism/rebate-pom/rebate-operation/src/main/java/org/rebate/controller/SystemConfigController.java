@@ -51,9 +51,12 @@ public class SystemConfigController extends BaseController{
   @RequestMapping(value = "/updatePay", method = RequestMethod.POST)
   public String updatePay(SystemConfig config) {
     SystemConfig temp = systemConfigService.find(config.getId());
-    temp.setIsEnabled(config.getIsEnabled());
-    temp.setRemark(config.getRemark());
-    systemConfigService.update(temp);
+    if(temp.getConfigKey().equals(SystemConfigKey.PAYMENTTYPE)){
+      temp.setIsEnabled(config.getIsEnabled());
+      temp.setRemark(config.getRemark());
+      temp.setConfigOrder(config.getConfigOrder());
+      systemConfigService.update(temp);
+    }
     return "redirect:list.jhtml";
   }
   /**
@@ -61,7 +64,13 @@ public class SystemConfigController extends BaseController{
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String update(SystemConfig config) {
-    systemConfigService.update(config, "configKey", "createDate");
+    SystemConfig temp = systemConfigService.find(config.getId());
+    if(!temp.getConfigKey().equals(SystemConfigKey.PAYMENTTYPE)){
+      temp.setIsEnabled(config.getIsEnabled());
+      temp.setRemark(config.getRemark());
+      temp.setConfigValue(config.getConfigValue());
+      systemConfigService.update(temp);
+    }
     return "redirect:list.jhtml";
   }
 

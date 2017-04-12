@@ -142,6 +142,14 @@
 									${sellerApply.notes}
 								</td>
 							</tr>
+							<tr>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
+								</td>
+							</tr>
 						</table>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>

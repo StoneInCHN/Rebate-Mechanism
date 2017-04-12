@@ -51,22 +51,22 @@
 							<input type="checkbox" id="selectAll" />
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="categoryName">${message("rebate.sellerCategory.categoryName")}</a>
+							${message("rebate.sellerCategory.categoryName")}
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="categoryPicUrl">${message("rebate.sellerCategory.categoryPic")}</a>
+							${message("rebate.sellerCategory.categoryPic")}
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="categorOrder">${message("rebate.sellerCategory.categorOrder")}</a>
+							${message("rebate.sellerCategory.categorOrder")}
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="isActive">${message("rebate.sellerCategory.isActive")}</a>
+							${message("rebate.sellerCategory.isActive")}
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
+							${message("rebate.common.createDate")}
 						</th>
 						<th>
-							<span>${message("rebate.common.handle")}</span>
+							${message("rebate.common.handle")}
 						</th>
 					</tr>
 				</thead>

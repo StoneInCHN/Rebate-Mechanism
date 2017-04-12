@@ -21,9 +21,6 @@ $(function() {
 			configValue:{
 				required:true,
 				number:true
-			},
-			remark:{
-				required:true
 			}
 		}
 	});
@@ -73,9 +70,7 @@ $(function() {
 									${message("rebate.systemConfig.remark")}:
 								</th>
 								<td>
-									<textarea name="remark" cols="50" rows="5">
-										${systemConfig.remark}
-									</textarea>
+									<textarea name="remark" cols="50" rows="5">${systemConfig.remark}</textarea>
 								</td>
 							</tr>
 							<tr>

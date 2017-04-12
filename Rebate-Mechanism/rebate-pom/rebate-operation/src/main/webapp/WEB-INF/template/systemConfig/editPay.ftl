@@ -20,11 +20,9 @@ $(function() {
 		rules: {
 			configOrder: {
 				required:true,
-				number:true
-			},
-			remark:{
-				required:true
+				digits:true
 			}
+
 		}
 	});
 
@@ -38,7 +36,7 @@ $(function() {
                 <li><a href="#">${message("rebate.systemConfig.list")}</a></li>
                 <li class="active">${message("rebate.systemConfig.edit")}</li>
           </ol>
-		  <form id="inputForm" action="update.jhtml" method="post">
+		  <form id="inputForm" action="updatePay.jhtml" method="post">
 						<input type="hidden" name="id" value="${systemConfig.id}" />
 						<table class="input">
 							<tr>
@@ -81,9 +79,7 @@ $(function() {
 									${message("rebate.systemConfig.remark")}:
 								</th>
 								<td>
-									<textarea name="remark" cols="50" rows="5">
-										${systemConfig.remark}
-									</textarea>
+									<textarea name="remark" cols="50" rows="5">${systemConfig.remark}</textarea>
 								</td>
 							</tr>
 							<tr>

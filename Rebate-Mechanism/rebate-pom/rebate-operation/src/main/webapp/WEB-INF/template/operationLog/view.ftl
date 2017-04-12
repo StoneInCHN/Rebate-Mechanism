@@ -12,9 +12,9 @@
 </head>
 <body>
 	  <ol class="breadcrumb">
-          <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerManager")}</a> </li>
+          <li><a ><i class="fa fa-user"></i> ${message("rebate.main.operationLog")}</a> </li>
           <li><a href="list.jhtml">${message("rebate.operationLog.list")}</a></li>
-          <li class="active">${message("rebate.operationLog.details")}</li>
+          <li class="active">${message("rebate.operationLog.view")}</li>
       </ol>
 	<table class="input">
 						<tr>
@@ -61,7 +61,7 @@
 						</tr>
 						<tr>
 							<th>
-								${message("lb.common.createDate")}
+								${message("rebate.common.createDate")}
 							</th>
 							<td>
 								${log.createDate?string("yyyy-MM-dd HH:mm:ss")}
@@ -72,7 +72,7 @@
 								&nbsp;
 							</th>
 							<td>
-								<input type="button" class="btn btn-primary" value="${message("lb.common.back")}" onclick="location.href='list.jhtml'" />
+								<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 							</td>
 						</tr>
 					</table>

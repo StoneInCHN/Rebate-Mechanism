@@ -89,7 +89,6 @@ public class OperationLog extends BaseEntity{
    * @return 内容
    */
   @Column(length = 3000, updatable = false)
-  @JsonProperty
   public String getContent() {
     return content;
   }
@@ -108,8 +107,7 @@ public class OperationLog extends BaseEntity{
    * 
    * @return 请求参数
    */
-  @Lob
-  @Column(updatable = false)
+  @Column(length = 3000, updatable = false)
   public String getParameter() {
     return parameter;
   }
@@ -129,7 +127,6 @@ public class OperationLog extends BaseEntity{
    * @return IP
    */
   @Column(nullable = false, updatable = false)
-  @JsonProperty
   public String getIp() {
     return ip;
   }

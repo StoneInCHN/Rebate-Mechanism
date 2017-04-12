@@ -10,9 +10,9 @@
 	<div class="wrap">
 		<div class="error">
 			<dl>
-				<dt>${message("admin.unauthorized.message")}</dt>
+				<dt>${message("rebate.unauthorized.message")}</dt>
 				<dd>
-					<a href="javascript:;" onclick="window.history.back(); return false;">${message("admin.unauthorized.back")}</a>
+					<a href="javascript:;" onclick="window.history.back(); return false;">${message("rebate.unauthorized.back")}</a>
 				</dd>
 			</dl>
 		</div>
