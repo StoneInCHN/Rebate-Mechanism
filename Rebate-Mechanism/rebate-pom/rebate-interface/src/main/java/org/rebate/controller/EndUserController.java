@@ -27,10 +27,12 @@ import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SettingConfig;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -54,6 +56,7 @@ import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.RebateRecordService;
 import org.rebate.service.SellerService;
+import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
@@ -104,6 +107,9 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "systemConfigServiceImpl")
   private SystemConfigService systemConfigService;
+
+  @Resource(name = "settingConfigServiceImpl")
+  private SettingConfigService settingConfigService;
 
   /**
    * 测试
@@ -839,7 +845,8 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
+            "wechatNickName"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
     map.put("isSetLoginPwd", false);
@@ -1000,6 +1007,9 @@ public class EndUserController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
+
+    SystemConfig systemConfig = systemConfigService.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
+    response.setDesc(systemConfig != null ? systemConfig.getConfigValue() : null);
     String newtoken = TokenGenerator.generateToken(request.getToken());
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
@@ -1309,7 +1319,8 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getWithdrawInfo", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> withdrawReq(@RequestBody UserRequest request) {
+  public @ResponseBody ResponseOne<Map<String, Object>> getWithdrawInfo(
+      @RequestBody UserRequest request) {
 
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = request.getUserId();
@@ -1329,6 +1340,10 @@ public class EndUserController extends MobileBaseController {
     map.put("userPhoto", endUser.getUserPhoto());
     map.put("curLeScore", endUser.getCurLeScore());
     map.putAll(endUserService.getAvlLeScore(endUser));
+
+    SettingConfig settingConfig =
+        settingConfigService.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE);
+    map.put("withDrawRule", settingConfig != null ? settingConfig.getConfigValue() : null);
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(request.getToken());
@@ -1502,6 +1517,7 @@ public class EndUserController extends MobileBaseController {
 
     String newtoken = TokenGenerator.generateToken(request.getToken());
     endUserService.createEndUserToken(newtoken, userId);
+    response.setDesc(wxNickName);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
     return response;

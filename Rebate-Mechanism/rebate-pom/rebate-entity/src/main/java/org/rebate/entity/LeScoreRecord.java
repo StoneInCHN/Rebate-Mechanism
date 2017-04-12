@@ -69,6 +69,36 @@ public class LeScoreRecord extends BaseEntity {
    */
   private ApplyStatus withdrawStatus;
 
+  /**
+   * 提现的激励乐分(包括乐心分红乐分，推荐获得乐分)
+   */
+  private BigDecimal motivateLeScore;
+
+  /**
+   * 提现的直接收入乐分(包括商家收益乐分，代理商提成乐分)
+   */
+  private BigDecimal incomeLeScore;
+
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getMotivateLeScore() {
+    return motivateLeScore;
+  }
+
+  public void setMotivateLeScore(BigDecimal motivateLeScore) {
+    this.motivateLeScore = motivateLeScore;
+  }
+
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getIncomeLeScore() {
+    return incomeLeScore;
+  }
+
+  public void setIncomeLeScore(BigDecimal incomeLeScore) {
+    this.incomeLeScore = incomeLeScore;
+  }
+
 
   public ApplyStatus getWithdrawStatus() {
     return withdrawStatus;

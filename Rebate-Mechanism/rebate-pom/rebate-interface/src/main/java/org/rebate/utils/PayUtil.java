@@ -1,6 +1,5 @@
 package org.rebate.utils;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +16,6 @@ import org.rebate.beans.Setting;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
-import org.rebate.utils.alipay.util.AlipayCore;
 import org.rebate.utils.wechat.WeixinUtil;
 
 import com.tencent.common.MD5;
@@ -42,43 +40,95 @@ public class PayUtil {
   public static final String wechat_AddOrderUrl = setting.getWechatAddOrderUrl();
 
 
+  /**
+   * create the order info for alipay. 创建订单信息
+   */
+  public static String getOrderInfo(String subject, String order_sn, String body, String price) {
+    StringBuffer stringBuffer = new StringBuffer();
+
+    // 签约合作者身份ID
+    stringBuffer.append("partner=" + "\"" + AlipayConfig.partner + "\"");
+
+    // 签约卖家支付宝账号
+    stringBuffer.append("&seller_id=" + "\"" + AlipayConfig.sellerId + "\"");
+
+    // 商户网站唯一订单号
+    stringBuffer.append("&out_trade_no=" + "\"" + order_sn + "\"");
+
+    // 商品名称
+    stringBuffer.append("&subject=" + "\"" + subject + "\"");
+
+    // 商品详情
+    stringBuffer.append("&body=" + "\"" + body + "\"");
+
+    // 商品金额
+    stringBuffer.append("&total_fee=" + "\"" + price + "\"");
+
+    // 服务器异步通知页面路径
+    stringBuffer.append("&notify_url=" + "\"" + AlipayConfig.ali_notify_url + "\"");
+
+    // 服务接口名称， 固定值 mobile.securitypay.pay
+    stringBuffer.append("&service=\"mobile.securitypay.pay\"");
+
+    // 支付类型， 固定值 1
+    stringBuffer.append("&payment_type=\"1\"");
+
+    // 参数编码， 固定值 utf-8
+    stringBuffer.append("&_input_charset=\"utf-8\"");
+
+    // 设置未付款交易的超时时间
+    // 默认30分钟，一旦超时，该笔交易就会自动被关闭。
+    // 取值范围：1m～15d。
+    // m-分钟，h-小时，d-天，1c-当天（无论交易何时创建，都在0点关闭）。
+    // 该参数数值不接受小数点，如1.5h，可转换为90m。
+    // orderInfo += "&it_b_pay=\"30m\"";
+    stringBuffer.append("&it_b_pay=\"2d\"");
+
+    // extern_token为经过快登授权获取到的alipay_open_id,带上此参数用户将使用授权的账户进行支付
+    // orderInfo += "&extern_token=" + "\"" + extern_token + "\"";
+
+    // 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
+    // orderInfo += "&return_url=\"m.alipay.com\"";
+
+    // 调用银行卡支付，需配置此参数，参与签名， 固定值 （需要签约《无线银行卡快捷支付》才能使用）
+    // orderInfo += "&paymethod=\"expressGateway\"";
+
+    return stringBuffer.toString();
+  }
 
   /**
    * 支付宝支付接口
    * 
    * @return
-   * @throws UnsupportedEncodingException
-   * @throws AlipayApiException
+   * @throws Exception
    */
   public static String alipay(String order_sn, String product_name, String product_detail,
       String total_fee) throws Exception {
 
-    Map<String, String> paramMap = new HashMap<String, String>();
-    // 签约合作者身份ID
-    paramMap.put("partner", AlipayConfig.partner);
-    // 签约卖家支付宝账号
-    paramMap.put("seller_id", AlipayConfig.sellerId);
-    // 商户网站唯一订单号
-    paramMap.put("out_trade_no", order_sn);
-    // 商品名称
-    paramMap.put("subject", product_name);
-    // 商品详情
-    paramMap.put("body", product_detail);
-    // 商品金额
-    paramMap.put("total_fee", total_fee);
-    // 服务器异步通知地址
-    paramMap.put("notify_url", AlipayConfig.ali_notify_url);
-    // 服务接口名称， 固定值mobile.securitypay.pay
-    paramMap.put("service", "mobile.securitypay.pay");
-    // 支付类型， 固定值 1
-    paramMap.put("payment_type", "1");
-    // 参数编码， 固定值utf-8
-    paramMap.put("_input_charset", "utf-8");
-    // 固定值2d
-    paramMap.put("it_b_pay", "2d");
-    String data = AlipayCore.createLinkString(paramMap);
-    // String rsa_sign =
-    // AlipaySignature.rsaSign(paramMap, AlipayConfig.private_key, AlipayConfig.input_charset);
+    // Map<String, String> paramMap = new HashMap<String, String>();
+    // // 签约合作者身份ID
+    // paramMap.put("partner", AlipayConfig.partner);
+    // // 签约卖家支付宝账号
+    // paramMap.put("seller_id", AlipayConfig.sellerId);
+    // // 商户网站唯一订单号
+    // paramMap.put("out_trade_no", order_sn);
+    // // 商品名称
+    // paramMap.put("subject", product_name);
+    // // 商品详情
+    // paramMap.put("body", product_detail);
+    // // 商品金额
+    // paramMap.put("total_fee", total_fee);
+    // // 服务器异步通知地址
+    // paramMap.put("notify_url", AlipayConfig.ali_notify_url);
+    // // 服务接口名称， 固定值mobile.securitypay.pay
+    // paramMap.put("service", "mobile.securitypay.pay");
+    // // 支付类型， 固定值 1
+    // paramMap.put("payment_type", "1");
+    // // 参数编码， 固定值utf-8
+    // paramMap.put("_input_charset", "utf-8");
+    // // 固定值2d
+    // paramMap.put("it_b_pay", "2d");
+    String data = getOrderInfo(product_name, order_sn, product_detail, total_fee);
     String rsa_sign =
         URLEncoder.encode(RSA.sign(data, AlipayConfig.private_key, AlipayConfig.input_charset),
             AlipayConfig.input_charset);
@@ -86,7 +136,6 @@ public class PayUtil {
     data = data + "&sign=\"" + rsa_sign + "\"&sign_type=\"" + AlipayConfig.sign_type + "\"";
     return data;
   }
-
 
 
   /**
@@ -132,6 +181,7 @@ public class PayUtil {
             + "</total_fee>" + "<trade_type>APP</trade_type>" + "<sign>" + sign + "</sign>"
             + "</xml>";
     // 调接口
+    System.out.println(xml);
     String xmlString = WeixinUtil.httpsRequest(wechat_AddOrderUrl, "POST", xml);
     // 解析xml
     String prepay_id = null;
@@ -146,9 +196,9 @@ public class PayUtil {
         prepay_id = root.elementText("prepay_id");
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("prepay_id", prepay_id);
-        data.put("nonce_str", nonce_str);
+        data.put("nonce_str", root.elementText("nonce_str"));
         data.put("out_trade_no", order_sn);
-        data.put("sign", sign);
+        data.put("sign", root.elementText("sign"));
         // type 1:红包余额支付；2：在线支付
         // data.put("type", "2");
         // data.put("channel", "wx");

@@ -177,7 +177,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
         BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
-        BigDecimal mind = endUser.getCurLeScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+        BigDecimal mind = endUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
         if (mind.compareTo(new BigDecimal(1)) >= 0) {
           LeMindRecord leMindRecord = new LeMindRecord();
           leMindRecord.setEndUser(endUser);
@@ -218,8 +218,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
         BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
-        BigDecimal mind =
-            sellerEndUser.getCurLeScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+        BigDecimal mind = sellerEndUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
         if (mind.compareTo(new BigDecimal(1)) >= 0) {
           LeMindRecord leMindRecord = new LeMindRecord();
           leMindRecord.setEndUser(sellerEndUser);

@@ -240,6 +240,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public EndUser userWithdraw(Long userId, String remark) {
     EndUser endUser = endUserDao.find(userId);
     Map<String, BigDecimal> map = getAvlLeScore(endUser);
@@ -249,6 +250,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     leScoreRecord.setLeScoreType(LeScoreType.WITHDRAW);
     leScoreRecord.setWithdrawStatus(ApplyStatus.AUDIT_WAITING);
     leScoreRecord.setAmount(map.get("avlLeScore").negate());
+    leScoreRecord.setMotivateLeScore(map.get("motivateScore"));
+    leScoreRecord.setIncomeLeScore(map.get("incomeScore"));
     leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
     endUser.getLeScoreRecords().add(leScoreRecord);
 

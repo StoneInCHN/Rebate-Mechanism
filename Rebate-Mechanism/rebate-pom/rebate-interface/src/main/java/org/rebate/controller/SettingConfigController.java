@@ -64,6 +64,7 @@ public class SettingConfigController extends MobileBaseController {
     String[] propertys = {"id", "configValue"};
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, config);
 
+    response.setDesc(config != null ? config.getRemark() : null);
     response.setMsg(result);
     response.setCode(CommonAttributes.SUCCESS);
     return response;

@@ -157,11 +157,12 @@ public class OrderController extends MobileBaseController {
       } else if ("2".equals(payTypeId)) {// 支付宝支付
         Map<String, Object> map = new HashMap<String, Object>();
         String orderStr =
-            PayUtil.alipay(order.getSn(), order.getId().toString(), order.getSeller().getName(),
+            PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller().getName(),
                 amount.toString());
         map.put("orderStr", orderStr);
         map.put("out_trade_no", order.getSn());
         response.setMsg(map);
+        response.setCode(CommonAttributes.SUCCESS);
       } else if ("3".equals(payTypeId)) {// 翼支付
 
       }
@@ -169,9 +170,9 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-
+    orderService.updateOrderforPayCallBack(order.getSn());
     if (isBeanPay) {// 乐豆支付
-      orderService.updateOrderforPayCallBack(order.getSn());
+      // orderService.updateOrderforPayCallBack(order.getSn());
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("out_trade_no", order.getSn());
       map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
