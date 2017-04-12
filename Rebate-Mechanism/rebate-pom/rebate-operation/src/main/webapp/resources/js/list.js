@@ -5,6 +5,7 @@ $().ready( function() {
 	var $pageTotal = $("#pageTotal");
 	var $addButton = $("#addButton");
 	var $deleteButton = $("#deleteButton");
+	var $lockedButton = $("#lockedButton");
 	var $refreshButton = $("#refreshButton");
 	var $moreOperation = $("#moreOperation");
 	var $searchPropertyOption = $("#searchPropertyOption li");
@@ -67,6 +68,41 @@ $().ready( function() {
 	});
 	
 	
+	// 删除
+	$lockedButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		$.dialog({
+			type: "warn",
+			content: message("admin.dialog.lockedConfirm"),
+			ok: message("admin.dialog.ok"),
+			cancel: message("admin.dialog.cancel"),
+			onOk: function() {
+				$.ajax({
+					url: "locked.jhtml",
+					type: "POST",
+					data: $checkedIds.serialize(),
+					dataType: "json",
+					cache: false,
+					success: function(message) {
+						$.message(message);
+						if (message.type == "success") {
+							setTimeout(function() {
+								location.reload();
+							}, 1000);							
+						}
+						$lockedButton.addClass("disabled");
+						$selectAll.prop("checked", false);
+						$checkedIds.prop("checked", false);
+					}
+				});
+			}
+		});
+	});
+	
 	// 刷新
 	$refreshButton.click( function() {
 		location.reload(true);
@@ -124,14 +160,17 @@ $().ready( function() {
 			$enabledIds.prop("checked", true);
 			if ($enabledIds.filter(":checked").size() > 0) {
 				$deleteButton.removeClass("disabled");
+				$lockedButton.removeClass("disabled");
 				$promptButton.removeClass("disabled");
 				$contentRow.addClass("selected");
 			} else {
 				$deleteButton.addClass("disabled");
+				$lockedButton.addClass("disabled");
 			}
 		} else {
 			$enabledIds.prop("checked", false);
 			$deleteButton.addClass("disabled");
+			$lockedButton.addClass("disabled");
 			$contentRow.removeClass("selected");
 		}
 	});
@@ -142,15 +181,18 @@ $().ready( function() {
 		if ($this.prop("checked")) {
 			$this.closest("tr").addClass("selected");
 			$deleteButton.removeClass("disabled");
+			$lockedButton.removeClass("disabled");
 			$promptButton.removeClass("disabled");
 		
 		} else {
 			$this.closest("tr").removeClass("selected");
 			if ($("#listTable input[name='ids']:enabled:checked").size() > 0) {
 				$deleteButton.removeClass("disabled");
+				$lockedButton.removeClass("disabled");
 				$promptButton.removeClass("disabled");
 			} else {
 				$deleteButton.addClass("disabled");
+				$lockedButton.addClass("disabled");
 				$promptButton.addClass("disabled");
 			}
 		}

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.topBanner.list")}</title>
+<title>${message("rebate.sellerCategory.list")}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -10,6 +10,12 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	.viewer-images li {
+    float: inherit;
+}
+</style>
   <!-- HTML5 Support for IE -->
   <!--[if lt IE 9]>
   <script src="${base}/resources/js/html5shim.js"></script>
@@ -18,16 +24,16 @@
 <body>
 	<form id="listForm" action="list.jhtml" method="get">
           <ol class="breadcrumb">
-                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.topBanner")}</a> </li>
-                <li class="active">${message("rebate.topBanner.list")}</li>
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerCategory")}</a> </li>
+                <li class="active">${message("rebate.sellerCategory.list")}</li>
           </ol>
 		  <div class="content-search accordion-group">
-             <div class="accordion-heading" topBanner="tab" id="headingOne">
-                  <a class="accordion-toggle" topBanner="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+             <div class="accordion-heading" sellerCategory="tab" id="headingOne">
+                  <a class="accordion-toggle" sellerCategory="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                       	  查询条件
                   </a>
              </div>
-             <div id="collapseOne" class="accordion-body in collapse" topBanner="tabpanel" aria-labelledby="headingOne">
+             <div id="collapseOne" class="accordion-body in collapse" sellerCategory="tabpanel" aria-labelledby="headingOne">
                   <div class="accordion-inner">
                   </div>
              </div>
@@ -45,19 +51,16 @@
 							<input type="checkbox" id="selectAll" />
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="bannerName">${message("rebate.topBanner.bannerName")}</a>
+							<a href="javascript:;" class="sort" name="categoryName">${message("rebate.sellerCategory.categoryName")}</a>
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="linkUrl">${message("rebate.topBanner.linkUrl")}</a>
+							<a href="javascript:;" class="sort" name="categoryPicUrl">${message("rebate.sellerCategory.categoryPic")}</a>
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="bannerOrder">${message("rebate.topBanner.bannerOrder")}</a>
+							<a href="javascript:;" class="sort" name="categorOrder">${message("rebate.sellerCategory.categorOrder")}</a>
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="title">${message("rebate.topBanner.title")}</a>
-						</th>
-						<th>
-							<a href="javascript:;" class="sort" name="isActive">${message("rebate.topBanner.isActive")}</a>
+							<a href="javascript:;" class="sort" name="isActive">${message("rebate.sellerCategory.isActive")}</a>
 						</th>
 						<th>
 							<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
@@ -68,31 +71,34 @@
 					</tr>
 				</thead>
 				<tbody>
-					[#list page.content as topBanner]
+					[#list page.content as sellerCategory]
 						<tr>
 							<td>
-								<input type="checkbox" name="ids" value="${topBanner.id}"/>
+								<input type="checkbox" name="ids" value="${sellerCategory.id}"/>
 							</td>
 							<td>
-								${topBanner.bannerName}
+								${sellerCategory.categoryName}
 							</td>
 							<td>
-								${topBanner.linkUrl}
+								[#if  sellerCategory.categoryPicUrl ??]
+									<ul  class="viewer-images clearfix">
+										<li><img class="img-list img-rounded img-lazy" data-original="${sellerCategory.categoryPicUrl}" alt="${message("rebate.sellerCategory.categoryPic")}"></li>
+								    </ul>
+								[#else]
+									--
+								[/#if]	
 							</td>
 							<td>
-								${topBanner.bannerOrder}
+								${sellerCategory.categorOrder}
 							</td>
 							<td>
-								${topBanner.title}
+								${message(sellerCategory.isActive?string('rebate.common.true', 'rebate.common.false'))}
 							</td>
 							<td>
-								${message(topBanner.isActive?string('rebate.common.true', 'rebate.common.false'))}
+								<span title="${sellerCategory.createDate?string("yyyy-MM-dd HH:mm:ss")}">${sellerCategory.createDate}</span>
 							</td>
 							<td>
-								<span title="${topBanner.createDate?string("yyyy-MM-dd HH:mm:ss")}">${topBanner.createDate}</span>
-							</td>
-							<td>
-								<a href="edit.jhtml?id=${topBanner.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+								<a href="edit.jhtml?id=${sellerCategory.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
 							</td>
 						</tr>
 					[/#list]
@@ -104,5 +110,16 @@
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$('.viewer-images').viewer();
+	//图片懒加载
+	$('.img-lazy').lazyload();
+	
+})
+</script>
 </body>
 </html>

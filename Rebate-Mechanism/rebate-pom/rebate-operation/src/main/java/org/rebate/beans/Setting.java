@@ -47,7 +47,11 @@ public class Setting implements Serializable {
     /**
      * 广告
      */
-    ADVERTISEMENT
+    ADVERTISEMENT,
+    /**
+     * 商家类型
+     */
+    SELLERCATEGORY
   }
 
 

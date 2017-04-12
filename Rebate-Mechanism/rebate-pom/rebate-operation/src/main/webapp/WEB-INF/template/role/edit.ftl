@@ -109,7 +109,7 @@ $().ready(function() {
 												<input type="checkbox" name="authorities" value="rebate:account" [#if role.authorities?seq_contains("rebate:account")] checked="checked"[/#if]/><span>${message("rebate.account.settingGroup")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="rebate:sellerApply" [#if role.authorities?seq_contains("admin:sellerApply")] checked="checked"[/#if] /><span>${message("rebate.main.sellerApply")}</span>
+												<input type="checkbox" name="authorities" value="rebate:sellerApply" [#if role.authorities?seq_contains("rebate:sellerApply")] checked="checked"[/#if] /><span>${message("rebate.main.sellerApply")}</span>
 											</label>
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:area" [#if role.authorities?seq_contains("rebate:area")] checked="checked"[/#if]/><span>${message("rebate.main.area")}</span>

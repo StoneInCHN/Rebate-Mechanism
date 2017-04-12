@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Seller;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller("sellerController")
 @RequestMapping("/console/seller")
@@ -89,5 +91,40 @@ public class SellerController extends BaseController {
     model.addAttribute("seller", seller);
     model.addAttribute("envImages", seller.getEnvImages());
     return "/seller/details";
+  }
+  
+  /**
+   * 删除
+   */
+  @RequestMapping(value = "/delete", method = RequestMethod.POST)
+  public @ResponseBody Message delete(Long[] ids) {
+    List<Seller> sellers = new ArrayList<Seller>();
+     if(ids!=null && ids.length >0){
+       for (Long id : ids) {
+         Seller seller = sellerService.find(id);
+         seller.setAccountStatus(AccountStatus.DELETE);
+         sellers.add(seller);
+      }
+     }
+    sellerService.update(sellers);
+    return SUCCESS_MESSAGE;
+  }
+  
+
+  /**
+   * 删除
+   */
+  @RequestMapping(value = "/locked", method = RequestMethod.POST)
+  public @ResponseBody Message locked(Long[] ids) {
+    List<Seller> sellers = new ArrayList<Seller>();
+     if(ids!=null && ids.length >0){
+       for (Long id : ids) {
+         Seller seller = sellerService.find(id);
+         seller.setAccountStatus(AccountStatus.LOCKED);
+         sellers.add(seller);
+      }
+     }
+    sellerService.update(sellers);
+    return SUCCESS_MESSAGE;
   }
 }

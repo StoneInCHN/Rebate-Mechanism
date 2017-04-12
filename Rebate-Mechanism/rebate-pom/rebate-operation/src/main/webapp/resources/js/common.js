@@ -18,7 +18,7 @@ var messages = {
 	"admin.dialog.ok": "确&nbsp;&nbsp;定",
 	"admin.dialog.cancel": "取&nbsp;&nbsp;消",
 	"admin.dialog.deleteConfirm": "您确定要删除吗？",
-	"admin.dialog.deleteDeviceConfirm": "如果此设备已被绑定会影响服务网站用户使用,且会丢失所有历史轨迹.您确定要删除吗？",
+	"admin.dialog.lockedConfirm": "您确定要禁用吗？",
 	"admin.browser.title": "选择文件",
 	"admin.browser.upload": "本地上传",
 	"admin.browser.parent": "上级目录",

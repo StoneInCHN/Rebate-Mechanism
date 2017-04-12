@@ -24,7 +24,6 @@ $().ready(function() {
 		rules: {
 			name: "required",
 			pyName:"required",
-			isCity:"required",
 			order: "digits"
 		}
 	});
@@ -66,7 +65,7 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.area.pyName")}:
 								</th>
 								<td>
-									<input type="text" name="pyName" class="text" maxlength="9" />
+									<input type="text" name="pyName" class="text" maxlength="200" />
 								</td>
 							</tr>
 							<tr>

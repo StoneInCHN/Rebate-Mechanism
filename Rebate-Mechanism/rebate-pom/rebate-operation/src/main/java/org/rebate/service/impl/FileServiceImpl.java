@@ -128,6 +128,8 @@ public class FileServiceImpl implements FileService {
       subPath = File.separator + "storePicture";
     } else if (imageType == ImageType.ADVERTISEMENT) {
       subPath = File.separator + "advertisement";
+    } else if (imageType == ImageType.SELLERCATEGORY) {
+      subPath = File.separator + "sellercategory";
     } 
 
     imgUploadPath = uploadPath + subPath;
@@ -179,7 +181,9 @@ public class FileServiceImpl implements FileService {
       subPath = File.separator + "storePicture";
     } else if (imageType == ImageType.ADVERTISEMENT) {
       subPath = File.separator + "advertisement";
-    }
+    }else if (imageType == ImageType.SELLERCATEGORY) {
+      subPath = File.separator + "sellercategory";
+    } 
 
     imgUploadPath = uploadPath + subPath;
 

@@ -101,7 +101,6 @@
              </div>
          </div>
  		 <div class="button-group">
-              <a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
          <div>

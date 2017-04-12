@@ -112,9 +112,6 @@ $().ready(function() {
 												<input type="checkbox" name="authorities" value="rebate:area" /><span>${message("rebate.main.area")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="rebate:advertisement" /><span>${message("rebate.main.advertisement")}</span>
-											</label>
-											<label>
 												<input type="checkbox" name="authorities" value="rebate:operationLog" /><span>${message("rebate.main.operation.log")}</span>
 											</label>
 										</span>

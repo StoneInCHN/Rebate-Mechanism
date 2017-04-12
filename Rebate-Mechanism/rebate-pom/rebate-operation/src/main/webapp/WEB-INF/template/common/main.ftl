@@ -34,7 +34,7 @@
       <div class="main">
           <div class="sidebar">
               <div class="sidebar-content">
-              	  [#list ["rebate:admin", "rebate:role","rebate:area","rebate:account"] as permission]
+              	  [#list ["rebate:admin", "rebate:role","rebate:area","rebate:account","rebate:systemConfig","rebate:settingConfig","rebate:operationLog","rebate:topBanner","rebate:userHelp"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -94,7 +94,7 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-				 [#list ["rebate:sellerApply","rebate:seller"] as permission]
+				 [#list ["rebate:sellerCategory","rebate:sellerApply","rebate:seller"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -104,6 +104,11 @@
 		                           </a>
 		                       </div>
 		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
+		                       	  [@shiro.hasPermission name="rebate:sellerCategory"]
+		                           <li>
+		                               <a href="../sellerCategory/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.sellerCategory")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
 		                     	  [@shiro.hasPermission name="rebate:sellerApply"]
 		                           <li>
 		                               <a href="../sellerApply/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.sellerApply")}</span></a>
