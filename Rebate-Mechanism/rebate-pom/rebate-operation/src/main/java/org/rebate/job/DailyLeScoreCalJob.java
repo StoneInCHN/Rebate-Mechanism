@@ -42,10 +42,10 @@ public class DailyLeScoreCalJob {
     endTime.set(Calendar.MILLISECOND, 999);
 
     LogUtil.debug(DailyLeScoreCalJob.class, "dailyLeScoreCalculate",
-        "daily user leScore calculate start! Date:" + startTime + "-" + endTime);
+        "daily user leScore calculate start! Time Period:" + startTime + "-" + endTime);
 
     endUserService.dailyBonusCalJob(startTime.getTime(), endTime.getTime());
     LogUtil.debug(DailyLeScoreCalJob.class, "dailyLeScoreCalculate",
-        "daily user leScore calculate end! Date:" + startTime + "-" + endTime);
+        "daily user leScore calculate end! Time Period:" + startTime + "-" + endTime);
   }
 }

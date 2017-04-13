@@ -66,7 +66,8 @@ public class MailServiceImpl implements MailService {
       mimeMessageHelper.setFrom(MimeUtility.encodeWord(setting.getSiteName()) + " <" + smtpFromMail
           + ">");
       mimeMessageHelper.setSubject(subject);
-      mimeMessageHelper.setTo(toMail);
+      String[] toMails = toMail.split(",");
+      mimeMessageHelper.setTo(toMails);
       mimeMessageHelper.setText(message);
       if (async) {
         addSendTask(mimeMessage);

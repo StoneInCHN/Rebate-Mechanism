@@ -58,7 +58,7 @@
 		appenders -->
 	<!-- ===================================================================================== -->
 
-	<logger name="com.rebate" level="debug">
+	<logger name="org.rebate" level="debug">
 		<appender-ref ref="stdout" />
 		<appender-ref ref="rolling_file_appender" />
 	</logger>
@@ -88,6 +88,7 @@
 
 	<root level="debug">
 		<appender-ref ref="stdout" />
+		<appender-ref ref="rolling_file_appender"/>
 	</root>
 
 </configuration>
