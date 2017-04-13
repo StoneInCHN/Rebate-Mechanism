@@ -121,7 +121,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       /**
        * 当天乐心换算乐分的value(当天总收益的分红金额/当天消费乐心大于等于1的用户人数)
        */
-      BigDecimal value = totalBonus.divide(new BigDecimal(endUsers.size()));
+      BigDecimal value =
+          totalBonus.divide(new BigDecimal(endUsers.size()), 2, BigDecimal.ROUND_HALF_UP);
 
       List<Filter> mindFilters = new ArrayList<Filter>();
       Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
@@ -185,7 +186,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
     } catch (Exception e) {
       mailService.send("464709367@qq.com,sj_msc@163.com", "yxsh:daily bonus calculate job failed!",
-          e.getCause() + "====" + e.getMessage());
+          e.getMessage());
     }
 
 
