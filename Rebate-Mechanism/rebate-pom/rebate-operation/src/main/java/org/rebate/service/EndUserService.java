@@ -67,7 +67,7 @@ public interface EndUserService extends BaseService<EndUser, Long> {
   /**
    * 用户每日乐分分红计算
    */
-  void dailyBonusCalJob();
+  void dailyBonusCalJob(Date startTime, Date endTime);
 
   /**
    * 根据时间获取每日产生大于等于1个乐心的用户

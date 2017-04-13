@@ -2,7 +2,6 @@ package org.rebate.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,23 +56,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
 
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public void dailyBonusCalJob() {
+  public void dailyBonusCalJob(Date startTime, Date endTime) {
     try {
-      Calendar startTime = Calendar.getInstance();
-      startTime.setTime(new Date());
-      startTime.add(Calendar.DATE, -1);
-      startTime.set(Calendar.HOUR_OF_DAY, 0);
-      startTime.set(Calendar.MINUTE, 0);
-      startTime.set(Calendar.SECOND, 0);
-      startTime.set(Calendar.MILLISECOND, 0);
-
-      Calendar endTime = Calendar.getInstance();
-      endTime.setTime(new Date());
-      endTime.add(Calendar.DATE, -1);
-      endTime.set(Calendar.HOUR_OF_DAY, 23);
-      endTime.set(Calendar.MINUTE, 59);
-      endTime.set(Calendar.SECOND, 59);
-      endTime.set(Calendar.MILLISECOND, 999);
 
       SystemConfig totalBonusPerConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.TOTAL_BONUS_PERCENTAGE);
@@ -124,7 +108,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       /**
        * 计算每日乐心大于等于1的用户
        */
-      List<EndUser> endUsers = endUserDao.getMindUsersByDay(startTime.getTime(), endTime.getTime());
+      List<EndUser> endUsers = endUserDao.getMindUsersByDay(startTime, endTime);
       if (CollectionUtils.isEmpty(endUsers)) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
@@ -170,7 +154,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
         BonusByMindPerDay bonusByMindPerDay = new BonusByMindPerDay();
         bonusByMindPerDay.setLeMindRecord(leMindRecord);
-        bonusByMindPerDay.setBonusDate(startTime.getTime());
+        bonusByMindPerDay.setBonusDate(startTime);
         bonusByMindPerDay.setBonusAmount(curBonus);
         leMindRecord.getBonusByDays().add(bonusByMindPerDay);
 

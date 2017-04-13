@@ -442,7 +442,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     BigDecimal totalScore =
         (seller.getRateScore() != null ? seller.getRateScore() : new BigDecimal(0)
             .multiply(new BigDecimal(seller.getRateCounts()))).add(new BigDecimal(score));
-    BigDecimal rateScore = totalScore.divide(new BigDecimal(rateCounts));
+    BigDecimal rateScore =
+        totalScore.divide(new BigDecimal(rateCounts), 1, BigDecimal.ROUND_HALF_UP);
     seller.setRateCounts(rateCounts);
     seller.setRateScore(rateScore);
     sellerDao.merge(seller);
