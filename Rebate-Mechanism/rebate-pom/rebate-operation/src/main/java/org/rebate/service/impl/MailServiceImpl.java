@@ -61,6 +61,14 @@ public class MailServiceImpl implements MailService {
       javaMailSender.setPort(smtpPort);
       javaMailSender.setUsername(smtpUsername);
       javaMailSender.setPassword(smtpPassword);
+
+      // Properties pro = System.getProperties();
+      // // 登录SMTP服务器,需要获得授权，网易163邮箱新近注册的邮箱均不能授权。
+      // // 测试 sohu 的邮箱可以获得授权
+      // pro.put("mail.smtp.auth", "true");
+      // pro.put("mail.smtp.socketFactory.port", "25");
+      // pro.put("mail.smtp.socketFactory.fallback", "false");
+      // javaMailSender.setJavaMailProperties(pro);
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
       MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "utf-8");
       mimeMessageHelper.setFrom(MimeUtility.encodeWord(setting.getSiteName()) + " <" + smtpFromMail

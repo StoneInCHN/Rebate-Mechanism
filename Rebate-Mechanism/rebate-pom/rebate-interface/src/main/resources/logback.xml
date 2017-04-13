@@ -24,7 +24,7 @@
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<!-- **** File name must match SAPILOGNAME value in Install.properties 
 			**** -->
-		<File>${LOG_PATH}/csh-interfaces-console.log</File>
+		<File>${LOG_PATH}/rebate-interface-console.log</File>
 		<Append>true</Append>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<!-- <pattern>%d | [%.-1level] | %c | %X{DisplayUserName} | %X{userName} 
@@ -34,7 +34,7 @@
 		</encoder>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<maxHistory>30</maxHistory>    
-			<FileNamePattern>${LOG_PATH}/csh-interfaces-console-%d{yyyy-MM-dd}.log.%i</FileNamePattern>
+			<FileNamePattern>${LOG_PATH}/rebate-interface-console-%d{yyyy-MM-dd}.log.%i</FileNamePattern>
 			<TimeBasedFileNamingAndTriggeringPolicy class= "ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<MaxFileSize>10MB</MaxFileSize>
 			</TimeBasedFileNamingAndTriggeringPolicy >

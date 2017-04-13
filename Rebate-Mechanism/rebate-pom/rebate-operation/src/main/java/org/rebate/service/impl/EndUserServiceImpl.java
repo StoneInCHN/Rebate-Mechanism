@@ -184,6 +184,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
                 "daily Bonus calculate Job--Update User LeScore Info==========end=========. Timer Period: %s",
                 startTime + "-" + endTime);
       }
+      mailService.send("464709367@qq.com,sj_msc@163.com",
+          "yxsh:daily bonus calculate job successfully!", "日期:" + startTime + "\n当日平台用于分红的总金额："
+              + totalBonus + "\n当日消费产生乐心大于等于1的用户数量：" + endUsers.size() + "\n当日平台分红参数value值："
+              + value);
     } catch (Exception e) {
       mailService.send("464709367@qq.com,sj_msc@163.com", "yxsh:daily bonus calculate job failed!",
           e.getMessage());

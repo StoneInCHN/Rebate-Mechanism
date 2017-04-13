@@ -7,11 +7,11 @@
 		value="adminLogin,adminApply,findPassword,resetPassword,other" />
 
 	<setting name="siteName" value="rebate" />
-	<setting name="smtpFromMail" value="sujinxuan123@163.com" />
+	<setting name="smtpFromMail" value="yxsh_rebate@163.com" />
 	<setting name="smtpHost" value="smtp.163.com" />
 	<setting name="smtpPort" value="25" />
-	<setting name="smtpUsername" value="sujinxuan123@163.com" />
-	<setting name="smtpPassword" value="sjx_3035790" />
+	<setting name="smtpUsername" value="yxsh_rebate@163.com" />
+	<setting name="smtpPassword" value="yxshrebate123" />
 
 	<!-- 允许上传文件后缀名 -->
 	<setting name="uploadFileExtension" value="apk" />
