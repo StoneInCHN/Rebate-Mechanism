@@ -32,7 +32,11 @@ public class SellerRowMapper implements RowMapper<Map<String, Object>> {
     sellerInfo.put("sellerId", rs.getLong("id"));
     sellerInfo.put("sellerName", rs.getString("name"));
     sellerInfo.put("storePhone", rs.getString("store_phone"));
-    sellerInfo.put("distance", String.format("%.2f", rs.getDouble("distance") / 1000));
+    if (isExistColumn(rs, "distance")) {
+      sellerInfo.put("distance", String.format("%.2f", rs.getDouble("distance") / 1000));
+    } else {
+      sellerInfo.put("distance", null);
+    }
     sellerInfo.put("latitude", rs.getBigDecimal("latitude"));
     sellerInfo.put("longitude", rs.getBigDecimal("longitude"));
     sellerInfo.put("rateScore", rs.getBigDecimal("rate_score"));
@@ -59,5 +63,26 @@ public class SellerRowMapper implements RowMapper<Map<String, Object>> {
     // sellerInfo.put("promotion_price", rs.getBigDecimal("promotion_price"));
     return sellerInfo;
   }
+
+
+  /**
+   * 判断查询结果集中是否存在某列
+   * 
+   * @param rs 查询结果集
+   * @param columnName 列名
+   * @return true 存在; false 不存咋
+   */
+  public boolean isExistColumn(ResultSet rs, String columnName) {
+    try {
+      if (rs.findColumn(columnName) > 0) {
+        return true;
+      }
+    } catch (SQLException e) {
+      return false;
+    }
+
+    return false;
+  }
+
 
 }
