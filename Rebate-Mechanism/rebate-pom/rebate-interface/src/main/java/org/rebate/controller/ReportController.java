@@ -1,52 +1,28 @@
 package org.rebate.controller;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.rebate.aspect.UserParam.CheckUserType;
+import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
-import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.NationBonusReport;
-import org.rebate.entity.Seller;
-import org.rebate.entity.SellerCategory;
-import org.rebate.entity.SellerEnvImage;
-import org.rebate.entity.SellerEvaluate;
-import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserBonusReport;
-import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
-import org.rebate.entity.commonenum.CommonEnum.SortType;
-import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.ordering.Ordering.Direction;
-import org.rebate.framework.paging.Page;
-import org.rebate.framework.paging.Pageable;
 import org.rebate.json.base.BaseRequest;
-import org.rebate.json.base.BaseResponse;
-import org.rebate.json.base.PageResponse;
-import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
-import org.rebate.json.request.SellerRequest;
 import org.rebate.service.EndUserService;
 import org.rebate.service.NationBonusReportService;
-import org.rebate.service.SellerApplicationService;
-import org.rebate.service.SellerCategoryService;
-import org.rebate.service.SellerEvaluateService;
-import org.rebate.service.SellerJdbcService;
-import org.rebate.service.SellerService;
-import org.rebate.service.SystemConfigService;
 import org.rebate.service.UserBonusReportService;
 import org.rebate.utils.FieldFilterUtils;
-import org.rebate.utils.LatLonUtil;
-import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,6 +50,7 @@ public class ReportController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getUserBonusReport", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getUserBonusReport(
       @RequestBody BaseRequest request) {
 
@@ -119,6 +96,7 @@ public class ReportController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getNationBonusReport", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getNationBonusReport(
       @RequestBody BaseRequest request) {
 

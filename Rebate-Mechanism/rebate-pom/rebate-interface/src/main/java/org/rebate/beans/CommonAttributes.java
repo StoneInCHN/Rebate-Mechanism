@@ -92,10 +92,7 @@ public final class CommonAttributes {
   /** 操作失败 */
   public static final String FAIL_COMMON = "1000"; // 操作失败
 
-  // /** 没有取得任何信息 */
-  // public static final String FAIL_NO_INFO = "2000";// 没有取得任何信息
-  //
-  // public static final String USER_INVALID = "3000";// 用户非法（禁用）
+  public static final String USER_INVALID = "3000";// 用户非法（禁用）
 
   /**
    * 不可实例化

@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.rebate.aspect.UserParam.CheckUserType;
+import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
@@ -301,6 +303,7 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/apply", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse apply(SellerRequest req) {
     BaseResponse response = new BaseResponse();
 
@@ -342,6 +345,7 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getSellerInfo", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseOne<Map<String, Object>> getSellerInfo(@RequestBody BaseRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
@@ -385,6 +389,7 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/editInfo", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody BaseResponse editInfo(SellerRequest req) {
 
     BaseResponse response = new BaseResponse();
@@ -426,6 +431,7 @@ public class SellerController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getQrCode", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseOne<Map<String, Object>> getQrCode(@RequestBody BaseRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();

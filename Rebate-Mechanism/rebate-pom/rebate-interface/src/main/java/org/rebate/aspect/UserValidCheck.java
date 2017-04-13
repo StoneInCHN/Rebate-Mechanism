@@ -6,9 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.rebate.aspect.UserParam.CheckUserType;
+
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface UserValidCheck {
 
+  CheckUserType userType();
 }

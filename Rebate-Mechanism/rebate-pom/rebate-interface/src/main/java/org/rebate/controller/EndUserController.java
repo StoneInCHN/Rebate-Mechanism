@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
@@ -337,6 +338,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/resetPwd", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse resetPwd(HttpServletRequest request,
       @RequestBody UserRequest resetPwdReq) {
     BaseResponse response = new BaseResponse();
@@ -616,6 +618,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/editUserInfo", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> editUserInfo(@RequestBody UserRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
@@ -668,6 +671,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse updatePwd(HttpServletRequest request,
       @RequestBody UserRequest req) {
     BaseResponse response = new BaseResponse();
@@ -779,6 +783,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/editUserPhoto", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> editUserPhoto(UserRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
@@ -826,7 +831,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
-  @UserValidCheck
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getUserInfo(@RequestBody BaseRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
@@ -873,6 +878,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getQrCode", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getQrCode(@RequestBody BaseRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     Long userId = req.getUserId();
@@ -915,6 +921,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getRecommendRec", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> getRecommendRec(
       @RequestBody BaseRequest request) {
 
@@ -964,6 +971,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/scoreRec", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> scoreRec(
       @RequestBody BaseRequest request) {
 
@@ -1023,6 +1031,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/leMindRec", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> leMindRec(
       @RequestBody BaseRequest request) {
 
@@ -1077,6 +1086,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/leScoreRec", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> leScoreRec(
       @RequestBody BaseRequest request) {
 
@@ -1133,6 +1143,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/leBeanRec", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> leBeanRec(
       @RequestBody BaseRequest request) {
 
@@ -1188,6 +1199,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/favoriteSeller", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse favoriteSeller(@RequestBody UserRequest request) {
 
     BaseResponse response = new BaseResponse();
@@ -1243,6 +1255,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/favoriteSellerList", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> favoriteSellerList(
       @RequestBody SellerRequest request) {
 
@@ -1319,6 +1332,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getWithdrawInfo", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getWithdrawInfo(
       @RequestBody UserRequest request) {
 
@@ -1359,6 +1373,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/withdrawConfirm", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse withdrawConfirm(@RequestBody UserRequest request) {
     String serverPrivateKey = setting.getServerPrivateKey();
     BaseResponse response = new BaseResponse();
@@ -1425,6 +1440,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/verifyPayPwd", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse verifyPayPwd(@RequestBody UserRequest request) {
     String serverPrivateKey = setting.getServerPrivateKey();
     BaseResponse response = new BaseResponse();
@@ -1489,6 +1505,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/doAuthByWechat", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse doAuthByWechat(@RequestBody UserRequest request) {
     BaseResponse response = new BaseResponse();
 
@@ -1531,6 +1548,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/cancelAuthByWechat", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse cancelAuthByWechat(@RequestBody BaseRequest request) {
     BaseResponse response = new BaseResponse();
     Long userId = request.getUserId();

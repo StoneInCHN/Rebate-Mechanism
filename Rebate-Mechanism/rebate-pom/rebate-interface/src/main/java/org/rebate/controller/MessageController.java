@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
@@ -62,7 +63,7 @@ public class MessageController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getMsgList", method = RequestMethod.POST)
-  @UserValidCheck
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> getMsgList(@RequestBody BaseRequest req) {
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
     Integer pageSize = req.getPageSize();
@@ -125,7 +126,7 @@ public class MessageController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/readMessage", method = RequestMethod.POST)
-  @UserValidCheck
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse readMessage(@RequestBody MsgRequest req) {
     BaseResponse response = new BaseResponse();
     String token = req.getToken();
@@ -160,7 +161,7 @@ public class MessageController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/deleteMsgs", method = RequestMethod.POST)
-  @UserValidCheck
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse deleteMsgs(@RequestBody MsgRequest req) {
     BaseResponse response = new BaseResponse();
 

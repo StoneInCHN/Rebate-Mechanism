@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.rebate.aspect.UserParam.CheckUserType;
+import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
@@ -78,6 +80,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/pay", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> pay(@RequestBody OrderRequest req,
       HttpServletRequest httpReq) {
 
@@ -193,6 +196,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/sellerReply", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody BaseResponse sellerReply(@RequestBody SellerRequest req) {
     BaseResponse response = new BaseResponse();
 
@@ -231,6 +235,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/userEvaluateOrder", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse userEvaluateOrder(UserEvaluateOrderRequest req) {
     BaseResponse response = new BaseResponse();
 
@@ -261,44 +266,46 @@ public class OrderController extends MobileBaseController {
     return response;
   }
 
-  /**
-   * 用户评价订单
-   *
-   * @param req
-   * @return
-   */
-  @RequestMapping(value = "/evaluateDetail", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> evaluateDetail(@RequestBody BaseRequest req) {
-    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
-
-    Long userId = req.getUserId();
-    String token = req.getToken();
-    Long orderId = req.getEntityId();
-
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
-
-    Order order = orderService.find(orderId);
-
-    SellerEvaluate evaluate = order.getEvaluate();
-
-    String[] propertys =
-        {"id", "endUser.userName", "score", "content", "sellerReply", "evaluateImages.source"};
-    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, evaluate);
-
-    response.setMsg(result);
-
-    response.setCode(CommonAttributes.SUCCESS);
-    String newtoken = TokenGenerator.generateToken(req.getToken());
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
-    return response;
-  }
+  // /**
+  // * 用户订单评价详情
+  // *
+  // * @param req
+  // * @return
+  // */
+  // @RequestMapping(value = "/evaluateDetail", method = RequestMethod.POST)
+  // @UserValidCheck(userType = CheckUserType.ENDUSER)
+  // public @ResponseBody ResponseOne<Map<String, Object>> evaluateDetail(@RequestBody BaseRequest
+  // req) {
+  // ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+  //
+  // Long userId = req.getUserId();
+  // String token = req.getToken();
+  // Long orderId = req.getEntityId();
+  //
+  // // 验证登录token
+  // String userToken = endUserService.getEndUserToken(userId);
+  // if (!TokenGenerator.isValiableToken(token, userToken)) {
+  // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+  // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+  // return response;
+  // }
+  //
+  // Order order = orderService.find(orderId);
+  //
+  // SellerEvaluate evaluate = order.getEvaluate();
+  //
+  // String[] propertys =
+  // {"id", "endUser.userName", "score", "content", "sellerReply", "evaluateImages.source"};
+  // Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, evaluate);
+  //
+  // response.setMsg(result);
+  //
+  // response.setCode(CommonAttributes.SUCCESS);
+  // String newtoken = TokenGenerator.generateToken(req.getToken());
+  // endUserService.createEndUserToken(newtoken, userId);
+  // response.setToken(newtoken);
+  // return response;
+  // }
 
   /**
    * 获取商户订单
@@ -306,6 +313,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getOrderUnderSeller", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderSeller(
       @RequestBody BaseRequest request) {
 
@@ -363,6 +371,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getEvaluateByOrder", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getEvaluateByOrder(
       @RequestBody BaseRequest request) {
 
@@ -405,6 +414,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getOrderUnderUser", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderUser(
       @RequestBody OrderRequest request) {
 
@@ -472,6 +482,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/orderDetail", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> orderDetail(@RequestBody BaseRequest request) {
 
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
@@ -493,9 +504,9 @@ public class OrderController extends MobileBaseController {
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
 
     response.setMsg(result);
-    // String newtoken = TokenGenerator.generateToken(request.getToken());
-    // endUserService.createEndUserToken(newtoken, userId);
-    // response.setToken(newtoken);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }

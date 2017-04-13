@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
@@ -51,7 +52,7 @@ public class CommonController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/setJpushId", method = RequestMethod.POST)
-  @UserValidCheck
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> setRegId(
       @RequestBody SettingConfigRequest req) {
 
@@ -110,7 +111,6 @@ public class CommonController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getAppVersion", method = RequestMethod.POST)
-  @UserValidCheck
   public @ResponseBody ResponseOne<Map<String, Object>> getAppVersion(
       @RequestBody SettingConfigRequest req) {
 
