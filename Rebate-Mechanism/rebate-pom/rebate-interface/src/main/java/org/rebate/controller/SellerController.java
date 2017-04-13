@@ -224,8 +224,15 @@ public class SellerController extends MobileBaseController {
         unit.subtract(seller.getDiscount().divide(new BigDecimal("10")).multiply(unit)).multiply(
             new BigDecimal(rebateScore.getConfigValue()));
     map.put("rebateScore", rebateUserScore);
-    map.put("distance", LatLonUtil.getPointDistance(new Double(longitude), new Double(latitude),
-        new Double(seller.getLongitude().toString()), new Double(seller.getLatitude().toString())));
+
+    if (longitude != null && latitude != null) {
+      map.put("distance", LatLonUtil
+          .getPointDistance(new Double(longitude), new Double(latitude), new Double(seller
+              .getLongitude().toString()), new Double(seller.getLatitude().toString())));
+    } else {
+      map.put("distance", null);
+    }
+
     response.setMsg(map);
 
     response.setCode(CommonAttributes.SUCCESS);

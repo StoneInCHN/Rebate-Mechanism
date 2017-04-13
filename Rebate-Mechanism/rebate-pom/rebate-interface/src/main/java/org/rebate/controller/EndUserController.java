@@ -1307,12 +1307,18 @@ public class EndUserController extends MobileBaseController {
               ((BigDecimal) map.get("discount")).divide(new BigDecimal("10")).multiply(unit))
               .multiply(new BigDecimal(rebateScore.getConfigValue()));
       map.put("rebateScore", rebateUserScore);
-      String distance =
-          LatLonUtil.getPointDistance(new Double(longitude), new Double(latitude), new Double(map
-              .get("longitude").toString()), new Double((map.get("latitude").toString())));
 
-      map.put("distance", new Double(distance) > setting.getSearchRadius() ? null : distance);
+      if (longitude != null && latitude != null) {
+        String distance =
+            LatLonUtil.getPointDistance(new Double(longitude), new Double(latitude), new Double(map
+                .get("longitude").toString()), new Double((map.get("latitude").toString())));
+
+        map.put("distance", new Double(distance) > setting.getSearchRadius() ? null : distance);
+      } else {
+        map.put("distance", null);
+      }
     }
+
     PageResponse pageInfo = new PageResponse();
     pageInfo.setPageNumber(pageNumber);
     pageInfo.setPageSize(pageSize);
