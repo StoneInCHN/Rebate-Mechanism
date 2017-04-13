@@ -71,13 +71,18 @@ public class AreaController extends BaseController {
    * 更新
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
-  public String update(Area area, RedirectAttributes redirectAttributes) {
+  public String update(Area area) {
     if (!isValid(area)) {
       return ERROR_VIEW;
     }
-    areaService.update(area, "fullName", "treePath", "parent", "children", "members", "receivers",
-        "orders", "deliveryCenters");
-    // addFlashMessage(redirectAttributes, SUCCESS_MESSAGE);
+    Area temp = areaService.find(area.getId());
+    if(temp!=null){
+      temp.setName(area.getName());
+      temp.setPyName(area.getPyName());
+      temp.setOrder(area.getOrder());
+      temp.setIsCity(area.getIsCity());
+      areaService.update(temp);
+    }
     return "redirect:list.jhtml";
   }
 

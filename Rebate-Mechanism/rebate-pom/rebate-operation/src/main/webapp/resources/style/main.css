@@ -298,3 +298,6 @@ ul.hot-city li a i{
 	color: #1fb5ac;
 	 display:block;
 }
+#editLicense , #editAbout{
+	float:inherit;
+}

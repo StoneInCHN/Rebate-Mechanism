@@ -112,6 +112,9 @@
 						<a href="javascript:;" class="sort" name="contactCellPhone">${message("rebate.seller.contactCellPhone")}</a>
 					</th>
 					<th>
+						申请人手机号
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="area">${message("rebate.seller.area")}</a>
 					</th>
 					<th>
@@ -155,6 +158,13 @@
 					</td>
 					<td>
 						${seller.contactCellPhone}
+					</td>
+					<td>
+						[#if  seller.endUser??]
+							${seller.endUser.cellPhoneNum}
+						[#else]
+							--
+						[/#if]
 					</td>
 					<td>
 						${seller.area}

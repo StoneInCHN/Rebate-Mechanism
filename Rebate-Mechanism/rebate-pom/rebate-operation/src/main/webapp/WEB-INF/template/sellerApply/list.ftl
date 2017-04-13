@@ -141,6 +141,9 @@
 						<a href="javascript:;" class="sort" name="storePhone">${message("rebate.sellerApplication.storePhone")}</a>
 					</th>
 					<th>
+						申请人手机号
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="discount">${message("rebate.sellerApplication.discount")}</a>
 					</th>
 					<th>
@@ -205,6 +208,13 @@
 					</td>
 					<td>
 						${sellerApplication.storePhone}
+					</td>
+					<td>
+						[#if  sellerApplication.endUser??]
+							${sellerApplication.endUser.cellPhoneNum}
+						[#else]
+							--
+						[/#if]
 					</td>
 					<td>
 						${sellerApplication.discount}

@@ -89,6 +89,16 @@
 		                               <a href="../userHelp/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.userHelp")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:agentCommission"]
+		                           <li>
+		                               <a href="../agentCommission/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agentCommission")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:agent"]
+		                           <li>
+		                               <a href="../agent/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agent")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
 		                       </ul>
 		                   </div>
 						   	[#break /]

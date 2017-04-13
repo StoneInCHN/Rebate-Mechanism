@@ -67,7 +67,7 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="radio" value="true" [#if area.isCity] checked="checked" [/#if] name="isCity" />${message("rebate.common.true")}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="radio" value="false" [#if area.isCity] checked="checked" [/#if] name="isCity" />${message("rebate.common.false")}
+									<input type="radio" value="false" [#if !area.isCity] checked="checked" [/#if] name="isCity" />${message("rebate.common.false")}
 								</td>
 							</tr>
 							<tr>
