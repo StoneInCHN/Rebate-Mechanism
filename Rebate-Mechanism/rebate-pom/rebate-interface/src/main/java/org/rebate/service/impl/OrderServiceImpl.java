@@ -156,8 +156,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     // endUserDao.merge(sellerEndUser);
 
 
+    if (order.getIsBeanPay()) {// 乐豆支付
+      LeBeanRecord leBeanRecord = new LeBeanRecord();
+      leBeanRecord.setAmount(order.getAmount().negate());
+      leBeanRecord.setEndUser(endUser);
+      leBeanRecord.setType(LeBeanChangeType.CONSUME);
+      leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+      endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+      endUser.getLeBeanRecords().add(leBeanRecord);
+      endUserDao.merge(endUser);
+    }
+
     SystemConfig mindDivideConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
     SystemConfig maxBonusPerConfig = systemConfigDao.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
+
+
 
     /**
      * 消费后用户积分返利 (乐豆消费无积分返利)
@@ -331,7 +344,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       }
     }
 
-
     /**
      * 分销商提成
      */
@@ -339,7 +351,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     if (!CollectionUtils.isEmpty(agents)) {
       endUserDao.merge(agents);
     }
-
 
     orderDao.merge(order);
     return order;

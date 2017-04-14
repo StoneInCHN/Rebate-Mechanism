@@ -14,11 +14,15 @@ import org.rebate.dao.OrderDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.entity.BonusByMindPerDay;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
+import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
+import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -59,8 +63,17 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public void dailyBonusCalJob(Date startTime, Date endTime) {
+    Setting setting = SettingUtils.get();
+    String subject =
+        "yxsh:daily bonus calculate job notice email(server ip:" + setting.getServerIp() + ")";
+    String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
+    // String emailTo = "sujinxuan123@163.com";
+    String msg = "";
     try {
 
+      /**
+       * 每日分红总金额占平台每日总收益的比例
+       */
       SystemConfig totalBonusPerConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.TOTAL_BONUS_PERCENTAGE);
       if (totalBonusPerConfig == null || totalBonusPerConfig.getConfigValue() == null) {
@@ -69,11 +82,31 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               .debug(
                   EndUserServiceImpl.class,
                   "dailyBonusCalJob",
-                  "daily Bonus calculate Job. Timer Period: %s, total bonus percentage config no exist!",
+                  "daily Bonus calculate job failed! Timer Period: %s, total bonus percentage config no exist!",
                   startTime + "-" + endTime);
         }
+        msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
         return;
       }
+
+      /**
+       * 收益后乐分乐豆比例
+       */
+      SystemConfig leScorePerConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
+      if (leScorePerConfig == null || leScorePerConfig.getConfigValue() == null) {
+        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+          LogUtil
+              .debug(
+                  EndUserServiceImpl.class,
+                  "dailyBonusCalJob",
+                  "daily Bonus calculate job failed! Timer Period: %s, bonus leScore percentage config no exist!",
+                  startTime + "-" + endTime);
+        }
+        msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
+        return;
+      }
+
 
       List<Filter> filters = new ArrayList<Filter>();
       Filter start = new Filter("createDate", Operator.ge, startTime);
@@ -84,9 +117,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (CollectionUtils.isEmpty(orders)) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate Job. Timer Period: %s, search orders no exist!", startTime
-                  + "-" + endTime);
+              "daily Bonus calculate job failed! Timer Period: %s, search orders no exist!",
+              startTime + "-" + endTime);
         }
+        msg = "Job Failed!\n当日平台未产生订单，无法计算分红";
         return;
       }
 
@@ -97,15 +131,18 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (totalBonus.compareTo(new BigDecimal("0")) <= 0) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate Job. Timer Period: %s, search orders no exist", startTime
-                  + "-" + endTime);
+              "daily Bonus calculate job failed! Timer Period: %s, the platform total income<=0",
+              startTime + "-" + endTime);
         }
+        msg = "Job Failed!\n当日平台总收益金额为" + totalBonus.toString() + "元,无法计算分红";
         return;
       }
       /**
        * 每日分红的金额
        */
-      totalBonus = totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue()));
+      totalBonus =
+          totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(2,
+              BigDecimal.ROUND_HALF_UP);
 
       /**
        * 计算每日乐心大于等于1的用户
@@ -114,9 +151,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (CollectionUtils.isEmpty(endUsers)) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate Job. Timer Period: %s, no users exchange leMind", startTime
-                  + "-" + endTime);
+              "daily Bonus calculate job failed! Timer Period: %s, no users exchange leMind",
+              startTime + "-" + endTime);
         }
+        msg = "Job Failed!\n当日平台消费产生乐心大于等于1的用户数量为0,无法计算分红";
         return;
       }
 
@@ -132,13 +170,11 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       List<LeMindRecord> leMindRecords = leMindRecordDao.findList(null, null, mindFilters, null);
       if (CollectionUtils.isEmpty(leMindRecords)) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
-          LogUtil
-              .debug(
-                  EndUserServiceImpl.class,
-                  "dailyBonusCalJob",
-                  "daily Bonus calculate Job--search leMind record. Timer Period: %s, no active leMind records",
-                  startTime + "-" + endTime);
+          LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
+              "daily Bonus calculate Job failed! Timer Period: %s, no active leMind records",
+              startTime + "-" + endTime);
         }
+        msg = "Job Failed!\n当日平台无可产生用户分红的乐心,无法计算分红";
         return;
       }
 
@@ -163,8 +199,25 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusByMindPerDay.setBonusAmount(curBonus);
         leMindRecord.getBonusByDays().add(bonusByMindPerDay);
 
-        endUser.setCurLeScore(endUser.getCurLeScore().add(curBonus));
-        endUser.setTotalLeScore(endUser.getTotalLeScore().add(curBonus));
+        BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
+
+        LeScoreRecord leScoreRecord = new LeScoreRecord();
+        leScoreRecord.setEndUser(endUser);
+        leScoreRecord.setLeScoreType(LeScoreType.BONUS);
+        leScoreRecord.setAmount(curBonus.multiply(leScorePer));
+        leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+        endUser.getLeScoreRecords().add(leScoreRecord);
+        endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+        endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+
+        LeBeanRecord leBeanRecord = new LeBeanRecord();
+        leBeanRecord.setAmount(curBonus.subtract(leScoreRecord.getAmount()));
+        leBeanRecord.setEndUser(endUser);
+        leBeanRecord.setType(LeBeanChangeType.BONUS);
+        leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+        endUser.getLeBeanRecords().add(leBeanRecord);
+        endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+        endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
 
         userList.add(endUser);
       }
@@ -174,7 +227,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
             .debug(
                 EndUserServiceImpl.class,
                 "dailyBonusCalJob",
-                "daily Bonus calculate Job--Update User LeScore Info==========start=========. Timer Period: %s,totalBonus: %s,leMindUserCounts: %s,value: %s",
+                "daily Bonus calculate job processing--Update User LeScore Info==========start=========. Timer Period: %s,totalBonus: %s,leMindUserCounts: %s,value: %s",
                 startTime + "-" + endTime, totalBonus, endUsers.size(), value);
       }
 
@@ -185,18 +238,25 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
             .debug(
                 EndUserServiceImpl.class,
                 "dailyBonusCalJob",
-                "daily Bonus calculate Job--Update User LeScore Info==========end=========. Timer Period: %s",
+                "daily Bonus calculate job processing--Update User LeScore Info==========end=========. Timer Period: %s",
                 startTime + "-" + endTime);
       }
 
-      Setting setting = SettingUtils.get();
-      mailService.send("sujinxuan123@163.com,sj_msc@163.com",
-          "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()
-              + "\n日期:" + startTime + "\n当日平台用于分红的总金额：" + totalBonus + "\n当日消费产生乐心大于等于1的用户数量："
-              + endUsers.size() + "\n当日平台分红参数value值：" + value);
+
+      msg =
+          "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:" + startTime + "\n当日平台用于分红的总金额："
+              + totalBonus + "\n当日消费产生乐心大于等于1的用户数量：" + endUsers.size() + "\n当日平台分红参数value值："
+              + value;
+      // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
+      // "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()
+      // + "\n日期:" + startTime + "\n当日平台用于分红的总金额：" + totalBonus + "\n当日消费产生乐心大于等于1的用户数量："
+      // + endUsers.size() + "\n当日平台分红参数value值：" + value);
     } catch (Exception e) {
-      mailService.send("sujinxuan123@163.com,sj_msc@163.com",
-          "yxsh:daily bonus calculate job failed!", e.getMessage());
+      msg = "Job Failed!\nRuntime Exception:" + e.getMessage();
+      // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
+      // "yxsh:daily bonus calculate job failed!", e.getMessage());
+    } finally {
+      mailService.send(emailTo, subject, msg);
     }
 
 
