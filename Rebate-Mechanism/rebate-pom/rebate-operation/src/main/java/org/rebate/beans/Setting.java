@@ -195,6 +195,20 @@ public class Setting implements Serializable {
    */
   private String alipayPublicKey;
 
+  /**
+   * 服务器地址
+   */
+  private String serverIp;
+
+
+  public String getServerIp() {
+    return serverIp;
+  }
+
+  public void setServerIp(String serverIp) {
+    this.serverIp = serverIp;
+  }
+
   public Integer getPasswordMaxlength() {
     return passwordMaxlength;
   }

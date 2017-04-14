@@ -338,9 +338,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/resetPwd", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody BaseResponse resetPwd(HttpServletRequest request,
-      @RequestBody UserRequest resetPwdReq) {
+  public @ResponseBody BaseResponse resetPwd(@RequestBody UserRequest resetPwdReq) {
     BaseResponse response = new BaseResponse();
     String serverPrivateKey = setting.getServerPrivateKey();
     String password_confirm = resetPwdReq.getPassword_confirm();
@@ -672,8 +670,7 @@ public class EndUserController extends MobileBaseController {
    */
   @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody BaseResponse updatePwd(HttpServletRequest request,
-      @RequestBody UserRequest req) {
+  public @ResponseBody BaseResponse updatePwd(@RequestBody UserRequest req) {
     BaseResponse response = new BaseResponse();
     String serverPrivateKey = setting.getServerPrivateKey();
     String password_confirm = req.getPassword_confirm();

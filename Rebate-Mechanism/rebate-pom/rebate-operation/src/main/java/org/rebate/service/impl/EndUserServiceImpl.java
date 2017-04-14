@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.rebate.beans.Setting;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeMindRecordDao;
 import org.rebate.dao.OrderDao;
@@ -25,6 +26,7 @@ import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.EndUserService;
 import org.rebate.service.MailService;
 import org.rebate.utils.LogUtil;
+import org.rebate.utils.SettingUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,12 +147,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         EndUser endUser = leMindRecord.getEndUser();
         BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
         BigDecimal totalLeScoreBonus = leMindRecord.getTotalBonus().add(curBonus);
-        leMindRecord.setTotalBonus(totalLeScoreBonus);
+
         if (totalLeScoreBonus.compareTo(leMindRecord.getMaxBonus()) >= 0) {
           curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
           leMindRecord.setTotalBonus(leMindRecord.getMaxBonus());
           leMindRecord.setStatus(CommonStatus.INACTIVE);
           endUser.setCurLeMind(endUser.getCurLeMind().subtract(leMindRecord.getAmount()));
+        } else {
+          leMindRecord.setTotalBonus(totalLeScoreBonus);
         }
 
         BonusByMindPerDay bonusByMindPerDay = new BonusByMindPerDay();
@@ -170,8 +174,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
             .debug(
                 EndUserServiceImpl.class,
                 "dailyBonusCalJob",
-                "daily Bonus calculate Job--Update User LeScore Info==========start=========. Timer Period: %s",
-                startTime + "-" + endTime);
+                "daily Bonus calculate Job--Update User LeScore Info==========start=========. Timer Period: %s,totalBonus: %s,leMindUserCounts: %s,value: %s",
+                startTime + "-" + endTime, totalBonus, endUsers.size(), value);
       }
 
       endUserDao.merge(userList);
@@ -184,13 +188,15 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
                 "daily Bonus calculate Job--Update User LeScore Info==========end=========. Timer Period: %s",
                 startTime + "-" + endTime);
       }
-      mailService.send("464709367@qq.com,sj_msc@163.com",
-          "yxsh:daily bonus calculate job successfully!", "日期:" + startTime + "\n当日平台用于分红的总金额："
-              + totalBonus + "\n当日消费产生乐心大于等于1的用户数量：" + endUsers.size() + "\n当日平台分红参数value值："
-              + value);
+
+      Setting setting = SettingUtils.get();
+      mailService.send("sujinxuan123@163.com,sj_msc@163.com",
+          "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()
+              + "\n日期:" + startTime + "\n当日平台用于分红的总金额：" + totalBonus + "\n当日消费产生乐心大于等于1的用户数量："
+              + endUsers.size() + "\n当日平台分红参数value值：" + value);
     } catch (Exception e) {
-      mailService.send("464709367@qq.com,sj_msc@163.com", "yxsh:daily bonus calculate job failed!",
-          e.getMessage());
+      mailService.send("sujinxuan123@163.com,sj_msc@163.com",
+          "yxsh:daily bonus calculate job failed!", e.getMessage());
     }
 
 

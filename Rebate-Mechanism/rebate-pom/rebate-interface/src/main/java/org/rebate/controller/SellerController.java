@@ -371,8 +371,8 @@ public class SellerController extends MobileBaseController {
 
     String[] properties =
         {"id", "name", "storePictureUrl", "address", "storePhone", "businessTime", "avgPrice",
-            "latitude", "longitude", "description", "discount", "favoriteNum", "featuredService",
-            "totalOrderNum", "totalOrderAmount", "unClearingAmount"};
+            "area.id", "latitude", "longitude", "description", "discount", "favoriteNum",
+            "featuredService", "totalOrderNum", "totalOrderAmount", "unClearingAmount"};
     List<String> envImgs = new ArrayList<String>();
     for (SellerEnvImage envImage : seller.getEnvImages()) {
       envImgs.add(envImage.getSource());
@@ -418,10 +418,10 @@ public class SellerController extends MobileBaseController {
           .debug(
               SellerController.class,
               "editInfo",
-              "Edit Seller Info. sellerId: %s,discount: %s, avgPrice: %s, businessTime: %s, storePhone: %s, sellerName: %s, address: %s, featuredService: %s,latitude: %s, longitude: %s",
-              req.getSellerId(), req.getDiscount(), req.getAvgPrice(), req.getBusinessTime(),
-              req.getStorePhone(), req.getSellerName(), req.getAddress(), req.getFeaturedService(),
-              req.getLatitude(), req.getLongitude());
+              "Edit Seller Info. sellerId: %s,discount: %s, areaId: %s,avgPrice: %s, businessTime: %s, storePhone: %s, sellerName: %s, address: %s, featuredService: %s,latitude: %s, longitude: %s",
+              req.getSellerId(), req.getDiscount(), req.getAreaId(), req.getAvgPrice(),
+              req.getBusinessTime(), req.getStorePhone(), req.getSellerName(), req.getAddress(),
+              req.getFeaturedService(), req.getLatitude(), req.getLongitude());
     }
 
     response.setCode(CommonAttributes.SUCCESS);

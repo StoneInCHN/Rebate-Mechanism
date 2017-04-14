@@ -3,26 +3,23 @@ package org.rebate.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.rebate.dao.AreaDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.dao.SystemConfigDao;
-import org.rebate.dao.UserRegReportDao;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEnvImage;
-import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
-import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.service.FileService;
 import org.rebate.service.SellerService;
-import org.rebate.service.mapper.SellerRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,6 +36,9 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
 
   @Resource(name = "systemConfigDaoImpl")
   private SystemConfigDao systemConfigDao;
+
+  @Resource(name = "areaDaoImpl")
+  private AreaDao areaDao;
 
   @Resource(name = "jdbcTemplate")
   private JdbcTemplate jdbcTemplate;
@@ -63,6 +63,8 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     seller.setBusinessTime(req.getBusinessTime());
     seller.setName(req.getSellerName());
     seller.setAddress(req.getAddress());
+    Area area = areaDao.find(req.getAreaId());
+    seller.setArea(area);
     seller.setLatitude(new BigDecimal(req.getLatitude()));
     seller.setLongitude(new BigDecimal(req.getLongitude()));
     seller.setFeaturedService(req.getFeaturedService());

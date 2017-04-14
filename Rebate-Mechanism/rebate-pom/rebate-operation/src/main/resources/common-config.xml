@@ -6,6 +6,7 @@
 	<setting name="captchaTypes"
 		value="adminLogin,adminApply,findPassword,resetPassword,other" />
 
+	<setting name="serverIp" value="118.190.83.191" />
 	<setting name="siteName" value="rebate" />
 	<setting name="smtpFromMail" value="yxsh_rebate@163.com" />
 	<setting name="smtpHost" value="smtp.163.com" />

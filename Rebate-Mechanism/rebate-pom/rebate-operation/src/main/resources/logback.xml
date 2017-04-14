@@ -87,7 +87,7 @@
 	<!-- ====================================================================================================== -->
 
 	<root level="debug">
-		<!-- <appender-ref ref="stdout" /> -->
+		<appender-ref ref="stdout" />
 		<appender-ref ref="rolling_file_appender"/>
 	</root>
 
