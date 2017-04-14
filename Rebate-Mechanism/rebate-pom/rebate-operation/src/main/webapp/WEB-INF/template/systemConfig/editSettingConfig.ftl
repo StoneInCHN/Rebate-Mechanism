@@ -10,7 +10,7 @@
 <script type="text/javascript" src="${base}/resources/js/editor/kindeditor-min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/editor/lang/zh_CN.js"></script>
 <script type="text/javascript">
-   KindEditor.ready(function(K) {
+    KindEditor.ready(function(K) {
 				K.create('textarea[name="configValue"]', {
 					autoHeightMode : true,
 					afterCreate : function() {
@@ -19,10 +19,13 @@
 					},
 					cssPath : '${base}/resources/js/editor/plugins/code/prettify.css',
 					resizeType : 1,
+					allowPreviewEmoticons : false,
+					allowImageUpload : true,
 					items : [
-						'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'source','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
 						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
-						'insertunorderedlist', '|','link','preview'],
+						'insertunorderedlist', '|', 'emoticons', 'image', 'link'],
+					uploadJson: '${base}/console/common/uploadImg.jhtml',
 					afterChange: function() {
 						this.sync();
 					}
@@ -34,18 +37,19 @@
 	<div class="content">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.systemConfig")}</a> </li>
-                <li><a href="#">${message("rebate.systemConfig.list")}</a></li>
+                <li><a href="list.jhtml">${message("rebate.systemConfig.list")}</a></li>
                 <li class="active">${message("rebate.systemConfig.edit")}</li>
           </ol>
-		  <form id="inputForm" action="updateAbout.jhtml" method="post">
-				<input type="hidden" name="id" value="${about.id}" />
+		  <form id="inputForm" action="updateSettingConfig.jhtml" method="post">
+				<input type="hidden" name="id" value="${settingConfig.id}" />
+				<input type="hidden" name="configKey" value="${configKey}" />
 				<table class="input">
 					<tr>
 						<th>
 							${message("rebate.systemConfig.configValue")}:
 						</th>
 						<td>
-							<textarea name="configValue" cols="50" rows="5">${about.configValue}</textarea>
+							<textarea name="configValue" cols="50" rows="5">${settingConfig.configValue}</textarea>
 						</td>
 					</tr>
 					<tr>
@@ -53,7 +57,7 @@
 							${message("rebate.systemConfig.remark")}:
 						</th>
 						<td>
-							<textarea name="remark" cols="50" rows="3">${about.remark}</textarea>
+							<textarea name="remark" cols="50" rows="3">${settingConfig.remark}</textarea>
 						</td>
 					</tr>
 					<tr>

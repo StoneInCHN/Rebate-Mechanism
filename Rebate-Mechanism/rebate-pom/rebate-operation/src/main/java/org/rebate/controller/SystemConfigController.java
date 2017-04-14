@@ -87,7 +87,7 @@ public class SystemConfigController extends BaseController{
     payMentTypeFilter.add(Filter.eq("configKey", SystemConfigKey.PAYMENTTYPE));
     model.addAttribute("paymentTypes",
         systemConfigService.findList(null, payMentTypeFilter, null));
-    
+    List<SettingConfig> temps = new ArrayList<SettingConfig>();
     List<SettingConfig> settingConfigs =settingConfigService.findAll();
     if(settingConfigs!=null && settingConfigs.size() >0){
       for (SettingConfig settingConfig : settingConfigs) {
@@ -95,60 +95,64 @@ public class SystemConfigController extends BaseController{
           model.addAttribute("about",settingConfig);
         }else if (SettingConfigKey.LICENSE_AGREEMENT == settingConfig.getConfigKey()) {
           model.addAttribute("license",settingConfig);
+        }else if (SettingConfigKey.WITHDRAW_RULE == settingConfig.getConfigKey()) {
+          model.addAttribute("withdrawRule",settingConfig);
+        }else {
+          temps.add(settingConfig);
         }
       }
     }
+    model.addAttribute("settingConfigs",temps);
     return "/systemConfig/list";
   }
 
+    
   /**
    * 修改许可协议
    */
-  @RequestMapping(value = "/editLicense", method = RequestMethod.GET)
-  public String editLicense(Long id ,ModelMap model) {
-    model.addAttribute("license",settingConfigService.find(id));
-    return "/systemConfig/editLicense";
+  @RequestMapping(value = "/editSettingConfig", method = RequestMethod.GET)
+  public String editSettingConfig(Long id ,SettingConfigKey configKey,ModelMap model) {
+    model.addAttribute("settingConfig",settingConfigService.find(id));
+    model.addAttribute("configKey",configKey);
+    return "/systemConfig/editSettingConfig";
   }
   
   /**
    * 更新
    */
-  @RequestMapping(value = "/updateLicense", method = RequestMethod.POST)
-  public String updateLicense(SettingConfig config) {
+  @RequestMapping(value = "/updateSettingConfig", method = RequestMethod.POST)
+  public String updateSettingConfig(SettingConfig config) {
     SettingConfig temp = settingConfigService.find(config.getId());
     if(temp!=null){
       temp.setConfigValue(config.getConfigValue());
       temp.setRemark(config.getRemark());
       settingConfigService.update(temp);
     }else{
-      config.setConfigKey(SettingConfigKey.LICENSE_AGREEMENT);
       settingConfigService.save(config);
     }
     return "redirect:list.jhtml";
   }
   
   /**
-   * 修改许可协议
+   * 编辑
    */
-  @RequestMapping(value = "/editAbout", method = RequestMethod.GET)
-  public String editAbout(Long id ,ModelMap model) {
-    model.addAttribute("about",settingConfigService.find(id));
-    return "/systemConfig/editAbout";
+  @RequestMapping(value = "/editOther", method = RequestMethod.GET)
+  public String editOther(Long id, ModelMap model) {
+    model.addAttribute("settingConfig", settingConfigService.find(id));
+    return "/systemConfig/editOther";
   }
-  
+
   /**
    * 更新
    */
-  @RequestMapping(value = "/updateAbout", method = RequestMethod.POST)
-  public String updateAbout(SettingConfig config) {
+  @RequestMapping(value = "/updateOther", method = RequestMethod.POST)
+  public String updateOther(SettingConfig config) {
     SettingConfig temp = settingConfigService.find(config.getId());
     if(temp!=null){
-      temp.setConfigValue(config.getConfigValue());
+      temp.setIsEnabled(config.getIsEnabled());
       temp.setRemark(config.getRemark());
+      temp.setConfigValue(config.getConfigValue());
       settingConfigService.update(temp);
-    }else{
-      config.setConfigKey(SettingConfigKey.ABOUT_US);
-      settingConfigService.save(config);
     }
     return "redirect:list.jhtml";
   }

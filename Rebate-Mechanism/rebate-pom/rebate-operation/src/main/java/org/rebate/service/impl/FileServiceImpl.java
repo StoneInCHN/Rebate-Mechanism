@@ -139,7 +139,7 @@ public class FileServiceImpl implements FileService {
             + FilenameUtils.getExtension(multiFile.getOriginalFilename());
 
       webPath =
-          File.separator +"upload" + subPath + File.separator + date + File.separator + "src_"
+         "/upload" + subPath + File.separator + date + File.separator + "src_"
               + uuid + "." + FilenameUtils.getExtension(multiFile.getOriginalFilename());
     
 
