@@ -91,9 +91,7 @@ public class UserHelpController extends BaseController {
    */
   @RequestMapping(value = "/delete", method = RequestMethod.POST)
   public @ResponseBody Message delete(Long[] ids) {
-    if (ids.length >= userHelpService.count()) {
-      return Message.error("rebate.common.deleteAllNotAllowed");
-    }
+
     userHelpService.delete(ids);
     return SUCCESS_MESSAGE;
   }
