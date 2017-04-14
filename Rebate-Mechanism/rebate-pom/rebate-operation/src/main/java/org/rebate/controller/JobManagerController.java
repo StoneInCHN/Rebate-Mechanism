@@ -1,7 +1,7 @@
 package org.rebate.controller;
 
+import org.quartz.Job;
 import org.rebate.controller.base.BaseController;
-import org.rebate.job.JobRun;
 import org.rebate.service.QuartzManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,10 +19,22 @@ public class JobManagerController extends BaseController {
   /**
    * 列表
    */
-  @RequestMapping(value = "/add", method = RequestMethod.GET)
-  public @ResponseBody String add() {
-    quartzManagerService.addJob("test", JobRun.class, "0/10 * * * * ?");
+  @SuppressWarnings("unchecked")
+  @RequestMapping(value = "/add", method = RequestMethod.POST)
+  public @ResponseBody String add(String name, String className, String cron) {
+    Class<Job> clazz = null;
+    try {
+      clazz = (Class<Job>) Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+    quartzManagerService.addJob(name, clazz, cron);
+    return "success";
+  }
 
+  @RequestMapping(value = "/remove", method = RequestMethod.POST)
+  public @ResponseBody String add(String name) {
+    quartzManagerService.removeJob(name);
     return "success";
   }
 }
