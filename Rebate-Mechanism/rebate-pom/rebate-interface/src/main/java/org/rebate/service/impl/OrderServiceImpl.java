@@ -191,10 +191,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
                 .getConfigValue())));
           }
+
           endUser.getLeMindRecords().add(leMindRecord);
-          endUser.setCurScore(endUser.getCurScore().subtract(mind.multiply(divideMind)));
-          endUser.setCurLeMind(endUser.getCurLeMind().add(mind));
+          endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
           endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
+
+          RebateRecord deductScore = new RebateRecord();
+          deductScore.setEndUser(endUser);
+          deductScore.setRebateScore(mind.multiply(divideMind).negate());
+          deductScore.setUserCurScore(endUser.getCurScore().add(deductScore.getRebateScore()));
+          endUser.getRebateRecords().add(deductScore);
+          endUser.setCurScore(deductScore.getUserCurScore());
         }
       }
       endUserDao.merge(endUser);
@@ -233,10 +240,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 .getConfigValue())));
           }
           sellerEndUser.getLeMindRecords().add(leMindRecord);
-          sellerEndUser
-              .setCurScore(sellerEndUser.getCurScore().subtract(mind.multiply(divideMind)));
-          sellerEndUser.setCurLeMind(sellerEndUser.getCurLeMind().add(mind));
+          sellerEndUser.setCurLeMind(leMindRecord.getUserCurLeMind());
           sellerEndUser.setTotalLeMind(sellerEndUser.getTotalLeMind().add(mind));
+
+          RebateRecord deductScore = new RebateRecord();
+          deductScore.setEndUser(sellerEndUser);
+          deductScore.setRebateScore(mind.multiply(divideMind).negate());
+          deductScore
+              .setUserCurScore(sellerEndUser.getCurScore().add(deductScore.getRebateScore()));
+          sellerEndUser.getRebateRecords().add(deductScore);
+          sellerEndUser.setCurScore(deductScore.getUserCurScore());
+
         }
       }
     }

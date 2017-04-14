@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.SMSVerificationCode;
+import org.rebate.dao.AreaDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.dao.SystemConfigDao;
@@ -29,6 +30,8 @@ import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
+import org.rebate.framework.filter.Filter;
+import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.EndUserService;
 import org.rebate.utils.TimeUtils;
@@ -55,6 +58,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "sellerDaoImpl")
   private SellerDao sellerDao;
+
+  @Resource(name = "areaDaoImpl")
+  private AreaDao areaDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -270,5 +276,28 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     return endUser;
   }
 
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public EndUser editInfo(Long userId, Long areaId, String nickName) {
+    EndUser endUser = endUserDao.find(userId);
+    List<EndUser> endUsers = new ArrayList<EndUser>();
+    if (nickName != null) {// 修改昵称
+      endUser.setNickName(nickName);
+      List<Filter> filters = new ArrayList<Filter>();
+      Filter recommendFilter = new Filter("recommenderId", Operator.eq, userId);
+      filters.add(recommendFilter);
+      List<EndUser> recommendUsers = endUserDao.findList(null, null, filters, null);
+      for (EndUser user : recommendUsers) {
+        user.setRecommender(nickName);
+      }
+      endUsers.addAll(recommendUsers);
+    }
+    if (areaId != null) {// 修改所在地区
+      Area area = areaDao.find(areaId);
+      endUser.setArea(area);
+    }
+    endUsers.add(endUser);
+    endUserDao.merge(endUsers);
+    return endUser;
+  }
 
 }

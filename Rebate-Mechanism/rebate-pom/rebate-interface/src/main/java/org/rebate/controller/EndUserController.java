@@ -21,7 +21,6 @@ import org.rebate.beans.Message;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
-import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
@@ -631,21 +630,13 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
-    EndUser endUser = endUserService.find(userId);
-
-    if (nickName != null) {// 修改昵称
-      endUser.setNickName(nickName);
-    }
-    if (areaId != null) {// 修改所在地区
-      Area area = areaService.find(areaId);
-      endUser.setArea(area);
-    }
+    EndUser endUser = endUserService.editInfo(userId, areaId, nickName);
     if (LogUtil.isDebugEnabled(EndUserController.class)) {
       LogUtil.debug(EndUserController.class, "edit user info",
           "Edit EndUser Info. NickName: %s, area: %s", endUser.getNickName(),
           endUser.getArea() != null ? endUser.getArea().getName() : null);
     }
-    endUserService.update(endUser);
+
 
     response.setCode(CommonAttributes.SUCCESS);
     String[] properties =

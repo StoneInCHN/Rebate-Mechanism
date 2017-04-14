@@ -129,4 +129,13 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   Boolean isRecommendLimited(String recommenderMobile);
+
+  /**
+   * 修改用户信息
+   * 
+   * @param userId
+   * @param remark
+   * @return
+   */
+  EndUser editInfo(Long userId, Long areaId, String nickName);
 }

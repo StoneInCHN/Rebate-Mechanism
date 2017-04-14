@@ -32,8 +32,9 @@ import org.rebate.entity.commonenum.CommonEnum.Gender;
  */
 
 @Entity
-@Table(name = "rm_end_user", indexes = {@Index(name = "cellPhoneNumIndex",
-    columnList = "cellPhoneNum")})
+@Table(name = "rm_end_user", indexes = {
+    @Index(name = "cellPhoneNumIndex", columnList = "cellPhoneNum"),
+    @Index(name = "recommenderIdIndex", columnList = "recommenderId")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_end_user_sequence")
 public class EndUser extends BaseEntity {
 
