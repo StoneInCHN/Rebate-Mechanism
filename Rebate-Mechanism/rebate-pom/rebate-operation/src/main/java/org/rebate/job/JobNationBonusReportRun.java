@@ -41,8 +41,11 @@ public class JobNationBonusReportRun implements Job {
     endTime.set(Calendar.SECOND, 59);
     endTime.set(Calendar.MILLISECOND, 999);
 
-    LogUtil.debug(JobNationBonusReportRun.class, "JobNationBonusReportRun",
-        "daily nation bonus report start! Time Period:" + startTime + "-" + endTime);
+    LogUtil.debug(
+        JobNationBonusReportRun.class,
+        "JobNationBonusReportRun",
+        "daily nation bonus report start! Time Period:" + startTime.getTime() + "-"
+            + endTime.getTime());
     try {
       endUserService.callProcedure("pr_nation_bonus_report");
     } catch (Exception e) {
@@ -50,8 +53,11 @@ public class JobNationBonusReportRun implements Job {
           "yxsh:Call pr_nation_bonus_report faild!", e.getMessage());
     }
 
-    LogUtil.debug(JobNationBonusReportRun.class, "JobNationBonusReportRun",
-        "daily nation bonus report end! Time Period:" + startTime + "-" + endTime);
+    LogUtil.debug(
+        JobNationBonusReportRun.class,
+        "JobNationBonusReportRun",
+        "daily nation bonus report end! Time Period:" + startTime.getTime() + "-"
+            + endTime.getTime());
 
   }
 }

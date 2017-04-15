@@ -74,7 +74,7 @@ public class NationBonusReport extends BaseEntity {
   private String remark;
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 2, precision = 16)
   public BigDecimal getConsumeTotalAmount() {
     return consumeTotalAmount;
   }
@@ -99,7 +99,7 @@ public class NationBonusReport extends BaseEntity {
     this.sellerNum = sellerNum;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 2, precision = 16)
   public BigDecimal getPublicTotalAmount() {
     return publicTotalAmount;
   }
@@ -108,7 +108,7 @@ public class NationBonusReport extends BaseEntity {
     this.publicTotalAmount = publicTotalAmount;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 2, precision = 16)
   public BigDecimal getLeMindByDay() {
     return leMindByDay;
   }
@@ -117,7 +117,7 @@ public class NationBonusReport extends BaseEntity {
     this.leMindByDay = leMindByDay;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 2, precision = 16)
   public BigDecimal getConsumeByDay() {
     return consumeByDay;
   }
@@ -126,7 +126,7 @@ public class NationBonusReport extends BaseEntity {
     this.consumeByDay = consumeByDay;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 2, precision = 16)
   public BigDecimal getBonusLeScoreByDay() {
     return bonusLeScoreByDay;
   }
@@ -135,7 +135,7 @@ public class NationBonusReport extends BaseEntity {
     this.bonusLeScoreByDay = bonusLeScoreByDay;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 2, precision = 16)
   public BigDecimal getPublicAmountByDay() {
     return publicAmountByDay;
   }
