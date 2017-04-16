@@ -1,6 +1,8 @@
 package org.rebate.service;
 
+import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.framework.service.BaseService;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -10,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author sujinxuan
  *
  */
-public interface FileService {
+public interface FileService extends BaseService<EndUser, Long> {
   /**
    * 批量上传图片
    * 

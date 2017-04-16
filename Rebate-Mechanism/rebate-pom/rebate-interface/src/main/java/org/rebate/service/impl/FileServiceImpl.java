@@ -6,7 +6,9 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.FileService;
 import org.rebate.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("fileServiceImpl")
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl extends BaseServiceImpl<EndUser, Long> implements FileService {
+
 
   private static final String DEST_EXTENSION = "jpg";
 

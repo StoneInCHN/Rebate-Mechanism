@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -200,7 +199,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/rsa", method = RequestMethod.POST)
-  public @ResponseBody BaseResponse rsa(HttpServletRequest request) {
+  public @ResponseBody BaseResponse rsa() {
     BaseResponse response = new BaseResponse();
     String key = setting.getServerPublicKey();
     response.setCode(CommonAttributes.SUCCESS);
@@ -215,8 +214,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> login(HttpServletRequest requesthttp,
-      @RequestBody UserRequest userLoginReq) {
+  public @ResponseBody ResponseOne<Map<String, Object>> login(@RequestBody UserRequest userLoginReq) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
     String serverPrivateKey = setting.getServerPrivateKey();
     String cellPhoneNum = userLoginReq.getCellPhoneNum();
