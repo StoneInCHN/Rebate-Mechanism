@@ -86,7 +86,7 @@ public class EndUserDaoImpl extends BaseDaoImpl<EndUser, Long> implements EndUse
     }
     try {
       String jpql =
-          "select user from EndUser user inner join user.leMindRecords userMind where userMind.createDate >= :startTime and userMind.createDate <= :endTime";
+          "select DISTINCT user from EndUser user inner join user.leMindRecords userMind where userMind.createDate >= :startTime and userMind.createDate <= :endTime";
       return entityManager.createQuery(jpql, EndUser.class).setFlushMode(FlushModeType.COMMIT)
           .setParameter("startTime", startTime).setParameter("endTime", endTime).getResultList();
     } catch (NoResultException e) {
