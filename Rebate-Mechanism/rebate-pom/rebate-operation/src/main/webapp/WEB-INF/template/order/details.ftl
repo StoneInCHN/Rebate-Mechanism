@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.seller.details")}</title>
+<title>${message("rebate.order.details")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -12,26 +12,58 @@
 </head>
 <body>
 	  <ol class="breadcrumb">
-          <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerManager")}</a> </li>
-          <li><a href="list.jhtml">${message("rebate.seller.list")}</a></li>
-          <li class="active">${message("rebate.seller.details")}</li>
+          <li><a ><i class="fa fa-user"></i> ${message("rebate.main.orderManager")}</a> </li>
+          <li><a href="list.jhtml">${message("rebate.order.list")}</a></li>
+          <li class="active">${message("rebate.order.details")}</li>
       </ol>
 	<table class="input">
 							<tr>
 								<th>
-									${message("rebate.seller.name")}:
+									${message("rebate.order.sn")}:
 								</th>
-								<td>
-									${seller.name}
+								<td width=500>
+									${order.sn}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.sellerCategory")}:
+									${message("rebate.order.endUser.cellPhoneNum")}:
 								</th>
 								<td>
-									[#if  seller.sellerCategory??]
-										${seller.sellerCategory.categoryName}
+									${order.endUser.cellPhoneNum}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.endUser.nickName")}:
+								</th>
+								<td>
+									${order.endUser.nickName}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.sellerName")}:
+								</th>
+								<td>
+									${order.seller.name}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.sellerDiscount")}:
+								</th>
+								<td>
+									${order.seller.discount}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.sellerCategory")}:
+								</th>
+								<td>
+									[#if order.seller.sellerCategory??]
+										${order.seller.sellerCategory.categoryName}
 									[#else]
 										--
 									[/#if]
@@ -39,133 +71,154 @@
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.contactPerson")}:
+									${message("rebate.order.orderTime")}:
 								</th>
 								<td>
-									${seller.contactPerson}
+									${order.createDate?string("yyyy-MM-dd HH:mm:ss")}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.contactCellPhone")}:
+									${message("rebate.order.amount")}:
 								</th>
 								<td>
-									${seller.contactCellPhone}
+									${order.amount}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.address")}:
+									${message("rebate.order.paymentType")}:
 								</th>
 								<td>
-									${seller.address}
+									${order.paymentType}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.licenseNum")}:
+									${message("rebate.order.paymentTime")}:
 								</th>
 								<td>
-									${seller.licenseNum}
+									[#if order.paymentTime]
+										${order.paymentTime?string("yyyy-MM-dd HH:mm:ss")}
+									[/#if]
+									
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.licenseImgUrl")}:
+									${message("rebate.order.status")}:
 								</th>
 								<td>
-									<ul  class="viewer-images clearfix">
-										 <li><img class="img-lazy img-rounded" data-original="${seller.licenseImgUrl}" alt="${message("rebate.seller.licenseImgUrl")}"></li>
-									  </ul>
+									[#if  order.status =="UNPAID"]
+										<span class="label label-danger">${message("rebate.orderStatus.UNPAID")}</span>
+									[#elseif order.status =="PAID"]
+										<span class="label label-warning">${message("rebate.orderStatus.PAID")}</span>
+									[#elseif order.status =="FINISHED"]
+										<span class="label label-success">${message("rebate.orderStatus.FINISHED")}</span>
+									[#else]
+										--
+									[/#if]
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.storePhoto")}:
+									${message("rebate.order.seller.income")}:
 								</th>
 								<td>
-									<ul  class="viewer-images clearfix">
-										 <li><img class="img-lazy img-rounded" data-original="${seller.storePictureUrl}" alt="${message("rebate.seller.storePhoto")}"></li>
-									  </ul>
+									${order.sellerIncome}
+								</td>
+								<th>
+									${message("rebate.order.rebateAmount")}:
+								</th>
+								<td>
+									${order.rebateAmount}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.envImages")}:
+									${message("rebate.order.userScore")}:
 								</th>
 								<td>
-									<!-- a block container is required -->
+									${order.userScore}
+								</td>	
+								<th>
+									${message("rebate.order.sellerScore")}:
+								</th>
+								<td>
+									${order.sellerScore}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.remark")}:
+								</th>
+								<td>
+									${order.remark}
+								</td>
+							</tr>
+							<br/>
+							[#if order.evaluate??]
+							<tr>
+								<th>${message("rebate.order.evaluate.info")}</th>
+								<td></td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.endUser.cellPhoneNum")}:
+								</th>
+								<td>
+									${order.endUser.cellPhoneNum}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.endUser.nickName")}:
+								</th>
+								<td>
+									${order.endUser.nickName}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.evaluate.score")}:
+								</th>
+								<td>
+									${order.evaluate.score}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.evaluate.content")}:
+								</th>
+								<td>
+									${order.evaluate.content}
+								</td>
+							</tr>
+							[#if order.evaluate.evaluateImages??]
+							<tr>
+								<th>
+									${message("rebate.order.evaluate.images")}:
+								</th>
+								<td>
 									  <ul  class="viewer-images clearfix">
-									  	[#list envImages as images]	
+									  	[#list order.evaluate.evaluateImages as images]	
 											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
 										[/#list]
 									  </ul>
 								</td>
 							</tr>
+					 	[/#if]
+							[#if order.evaluate.sellerReply??]
 							<tr>
 								<th>
-									${message("rebate.seller.area")}:
+									${message("rebate.order.evaluate.sellerReply")}:
 								</th>
 								<td>
-									${seller.area}
+									${order.evaluate.sellerReply}
 								</td>
 							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.rateScore")}:
-								</th>
-								<td>
-									${seller.rateScore}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.avgPrice")}:
-								</th>
-								<td>
-									${seller.avgPrice}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.discount")}:
-								</th>
-								<td>
-									${seller.discount}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.favoriteNum")}:
-								</th>
-								<td>
-									${seller.favoriteNum}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.totalOrderNum")}:
-								</th>
-								<td>
-									${seller.totalOrderNum}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.accountStatus")}:
-								</th>
-								<td>
-									${message("rebate.common.accountStatus."+seller.accountStatus)}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.seller.description")}:
-								</th>
-								<td>
-									${seller.description}
-								</td>
-							</tr>
+							[/#if]
+					[/#if]
 							<tr>
 								<th>
 									&nbsp;

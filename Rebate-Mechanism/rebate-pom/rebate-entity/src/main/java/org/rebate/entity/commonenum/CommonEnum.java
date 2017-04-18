@@ -171,7 +171,9 @@ public class CommonEnum {
     /** 关于 2 */
     ABOUT_US,
     /** 提现规则 3 */
-    WITHDRAW_RULE
+    WITHDRAW_RULE,
+    /** 用户分享地址 4 */
+    RECOMMEND_URL,
 
   }
 

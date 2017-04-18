@@ -33,20 +33,24 @@ public class OrderController extends BaseController {
   @RequestMapping(value = "/list", method = RequestMethod.GET)
   public String list(Pageable pageable, OrderReq request, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
+    if (StringUtils.isNotEmpty(request.getSn())) {
+      filters.add(Filter.like("sn", "%" + request.getSn() + "%"));
+      model.addAttribute("sn", request.getSn());
+    }
     if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
-      filters.add(Filter.like("cellPhoneNum", request.getCellPhoneNum()));
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
       model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
     }
+    if (StringUtils.isNotEmpty(request.getEndUserNickName())) {
+      filters.add(Filter.like("endUser&nickName", "%" + request.getEndUserNickName() + "%"));
+      model.addAttribute("endUserNickName", request.getEndUserNickName());
+    }
     if (StringUtils.isNotEmpty(request.getSellerName())) {
-      filters.add(Filter.like("sellerName", request.getSellerName()));
+      filters.add(Filter.like("seller&name", "%" + request.getSellerName() + "%"));
       model.addAttribute("sellerName", request.getSellerName());
     }
-    if (StringUtils.isNotEmpty(request.getSellerMobile())) {
-      filters.add(Filter.like("sellerMobile", request.getSellerMobile()));
-      model.addAttribute("sellerMobile", request.getSellerMobile());
-    }
     if (request.getOrderStatus() != null) {
-      filters.add(Filter.eq("orderStatus", request.getOrderStatus()));
+      filters.add(Filter.eq("status", request.getOrderStatus()));
       model.addAttribute("orderStatus", request.getOrderStatus());
     }
     if (request.getOrderDateFrom() != null) {

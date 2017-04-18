@@ -11,14 +11,19 @@ public class OrderReq {
   private String cellPhoneNum;
 
   /**
+   * 用户昵称
+   */
+  private String endUserNickName;
+
+  /**
    * 商家名称
    */
   private String sellerName;
 
-  /**
-   * 商家手机号
-   */
-  private String sellerMobile;
+  // /**
+  // * 商家手机号
+  // */
+  // private String sellerMobile;
   /**
    * 订单状态
    */
@@ -44,6 +49,16 @@ public class OrderReq {
    */
   private String paymentType;
 
+
+
+  public String getEndUserNickName() {
+    return endUserNickName;
+  }
+
+  public void setEndUserNickName(String endUserNickName) {
+    this.endUserNickName = endUserNickName;
+  }
+
   public String getCellPhoneNum() {
     return cellPhoneNum;
   }
@@ -58,14 +73,6 @@ public class OrderReq {
 
   public void setSellerName(String sellerName) {
     this.sellerName = sellerName;
-  }
-
-  public String getSellerMobile() {
-    return sellerMobile;
-  }
-
-  public void setSellerMobile(String sellerMobile) {
-    this.sellerMobile = sellerMobile;
   }
 
   public OrderStatus getOrderStatus() {
