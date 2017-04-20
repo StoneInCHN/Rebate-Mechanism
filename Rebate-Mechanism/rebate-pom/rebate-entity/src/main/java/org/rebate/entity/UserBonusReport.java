@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,19 +49,20 @@ public class UserBonusReport extends BaseEntity {
   /**
    * 用户ID
    */
-  private Long userId;
+  private EndUser userId;
 
   /**
    * 备注
    */
   private String remark;
 
-
-  public Long getUserId() {
+  
+  @ManyToOne
+  public EndUser getUserId() {
     return userId;
   }
 
-  public void setUserId(Long userId) {
+  public void setUserId(EndUser userId) {
     this.userId = userId;
   }
 
