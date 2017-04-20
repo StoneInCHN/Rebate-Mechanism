@@ -8,11 +8,13 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.rebate.beans.Setting;
+import org.rebate.dao.BonusParamPerDayDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeMindRecordDao;
 import org.rebate.dao.OrderDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.entity.BonusByMindPerDay;
+import org.rebate.entity.BonusParamPerDay;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
@@ -51,6 +53,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   @Resource(name = "orderDaoImpl")
   private OrderDao orderDao;
 
+  @Resource(name = "bonusParamPerDayDaoImpl")
+  private BonusParamPerDayDao bonusParamPerDayDao;
+
   @Resource(name = "mailServiceImpl")
   private MailService mailService;
 
@@ -66,9 +71,11 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     Setting setting = SettingUtils.get();
     String subject =
         "yxsh:daily bonus calculate job notice email(server ip:" + setting.getServerIp() + ")";
-    String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
-    // String emailTo = "sujinxuan123@163.com";
+    // String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
+    String emailTo = "sujinxuan123@163.com";
     String msg = "";
+    BonusParamPerDay bonusParamPerDay = new BonusParamPerDay();
+    bonusParamPerDay.setBonusDate(startTime);
     try {
 
       /**
@@ -86,8 +93,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
                   startTime + "-" + endTime);
         }
         msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
+        bonusParamPerDay.setRemark(msg);
         return;
       }
+      bonusParamPerDay.setTotalBonusPerConfig(totalBonusPerConfig.getConfigValue());
 
       /**
        * 收益后乐分乐豆比例
@@ -104,9 +113,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
                   startTime + "-" + endTime);
         }
         msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
+        bonusParamPerDay.setRemark(msg);
         return;
       }
-
+      bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
 
       List<Filter> filters = new ArrayList<Filter>();
       Filter start = new Filter("createDate", Operator.ge, startTime);
@@ -121,8 +131,11 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               startTime + "-" + endTime);
         }
         msg = "Job Failed!\n当日平台未产生订单，无法计算分红";
+        bonusParamPerDay.setOrderCount(0);
+        bonusParamPerDay.setRemark(msg);
         return;
       }
+      bonusParamPerDay.setOrderCount(orders.size());
 
       BigDecimal totalBonus = new BigDecimal("0");
       for (Order order : orders) {
@@ -135,14 +148,20 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               startTime + "-" + endTime);
         }
         msg = "Job Failed!\n当日平台总收益金额为" + totalBonus.toString() + "元,无法计算分红";
+        bonusParamPerDay.setRebateTotalAmount(totalBonus.toString());
+        bonusParamPerDay.setRemark(msg);
         return;
       }
+      bonusParamPerDay.setRebateTotalAmount(totalBonus.toString());
+
       /**
-       * 每日分红的金额
+       * 每日用于分红计算的总金额
        */
       totalBonus =
           totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(2,
               BigDecimal.ROUND_HALF_UP);
+
+      bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
 
       /**
        * 计算每日乐心大于等于1的用户
@@ -155,14 +174,19 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               startTime + "-" + endTime);
         }
         msg = "Job Failed!\n当日平台消费产生乐心大于等于1的用户数量为0,无法计算分红";
+        bonusParamPerDay.setRemark(msg);
+        bonusParamPerDay.setLeMindUserCount(0);
         return;
       }
+      bonusParamPerDay.setLeMindUserCount(endUsers.size());
 
       /**
        * 当天乐心换算乐分的value(当天总收益的分红金额/当天消费乐心大于等于1的用户人数)
        */
       BigDecimal value =
           totalBonus.divide(new BigDecimal(endUsers.size()), 2, BigDecimal.ROUND_HALF_UP);
+
+      bonusParamPerDay.setCalValue(value.toString());
 
       List<Filter> mindFilters = new ArrayList<Filter>();
       Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
@@ -175,9 +199,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               startTime + "-" + endTime);
         }
         msg = "Job Failed!\n当日平台无可产生用户分红的乐心,无法计算分红";
+        bonusParamPerDay.setRemark(msg);
+        bonusParamPerDay.setAvlLeMindCount(0);
         return;
       }
+      bonusParamPerDay.setAvlLeMindCount(leMindRecords.size());
 
+
+      BigDecimal totalBonusAmountByMind = new BigDecimal("0");
       List<EndUser> userList = new ArrayList<EndUser>();
       for (LeMindRecord leMindRecord : leMindRecords) {
         EndUser endUser = leMindRecord.getEndUser();
@@ -219,8 +248,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
         endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
 
+        totalBonusAmountByMind = totalBonusAmountByMind.add(curBonus);
         userList.add(endUser);
       }
+      bonusParamPerDay.setBonusAmount(totalBonusAmountByMind.toString());
 
       if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
         LogUtil
@@ -247,15 +278,18 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
           "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:" + startTime + "\n当日平台用于分红的总金额："
               + totalBonus + "\n当日消费产生乐心大于等于1的用户数量：" + endUsers.size() + "\n当日平台分红参数value值："
               + value;
+      bonusParamPerDay.setRemark("Job Success!");
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
       // "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()
       // + "\n日期:" + startTime + "\n当日平台用于分红的总金额：" + totalBonus + "\n当日消费产生乐心大于等于1的用户数量："
       // + endUsers.size() + "\n当日平台分红参数value值：" + value);
     } catch (Exception e) {
       msg = "Job Failed!\nRuntime Exception:" + e.getMessage();
+      bonusParamPerDay.setRemark(msg);
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
       // "yxsh:daily bonus calculate job failed!", e.getMessage());
     } finally {
+      bonusParamPerDayDao.persist(bonusParamPerDay);
       mailService.send(emailTo, subject, msg);
     }
 

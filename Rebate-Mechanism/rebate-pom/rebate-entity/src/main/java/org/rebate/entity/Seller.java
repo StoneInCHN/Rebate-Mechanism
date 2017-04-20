@@ -94,7 +94,7 @@ public class Seller extends BaseEntity {
   /**
    * 评分
    */
-  private BigDecimal rateScore;
+  private BigDecimal rateScore = new BigDecimal("5");
 
   /**
    * 评价次数
