@@ -211,7 +211,13 @@
 		                           </li>
 		                            <li>
 		                               <a href="../report/userBonusReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.report.userBonusReport")}</span></a>
-
+									</li>
+									[/@shiro.hasPermission]
+		                       </ul>
+		                   </div>
+						   	[#break /]
+					[/@shiro.hasPermission]
+				[/#list]
 				[#list ["rebate:bonusParam"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
