@@ -71,8 +71,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     Setting setting = SettingUtils.get();
     String subject =
         "yxsh:daily bonus calculate job notice email(server ip:" + setting.getServerIp() + ")";
-    // String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
-    String emailTo = "sujinxuan123@163.com";
+    String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
+    // String emailTo = "sujinxuan123@163.com";
     String msg = "";
     BonusParamPerDay bonusParamPerDay = new BonusParamPerDay();
     bonusParamPerDay.setBonusDate(startTime);
