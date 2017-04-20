@@ -36,6 +36,7 @@ import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
+import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.ordering.Ordering.Direction;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
@@ -985,8 +986,12 @@ public class EndUserController extends MobileBaseController {
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
     pageable.setFilters(filters);
-    pageable.setOrderDirection(Direction.desc);
-    pageable.setOrderProperty("createDate");
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.asc("orderId"));
+    pageable.setOrders(orderings);
+    // pageable.setOrderDirection(Direction.desc);
+    // pageable.setOrderProperty("createDate");
 
     Page<RebateRecord> page = rebateRecordService.findPage(pageable);
     String[] propertys =

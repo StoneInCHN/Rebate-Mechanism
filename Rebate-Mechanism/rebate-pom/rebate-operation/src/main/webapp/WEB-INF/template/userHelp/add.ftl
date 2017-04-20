@@ -28,7 +28,7 @@
 					items : [
 						'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
 						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
-						'insertunorderedlist', '|','link','preview'],
+						'insertunorderedlist', '|', 'image','link','preview'],
 					afterChange: function() {
 						this.sync();
 					}

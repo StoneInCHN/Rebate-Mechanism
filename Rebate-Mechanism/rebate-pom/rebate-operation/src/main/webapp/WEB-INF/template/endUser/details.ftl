@@ -125,7 +125,7 @@
 								<th>
 									${message("rebate.endUser.curScore")}:
 								</th>
-								<td width=100>
+								<td width=130>
 									${endUser.curScore}
 								</td>
 								<th>
