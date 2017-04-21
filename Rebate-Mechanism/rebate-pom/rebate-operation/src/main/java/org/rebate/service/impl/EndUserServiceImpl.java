@@ -203,15 +203,16 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusParamPerDay.setAvlLeMindCount(0);
         return;
       }
-      bonusParamPerDay.setAvlLeMindCount(leMindRecords.size());
 
-
+      BigDecimal leMindSize = new BigDecimal("0");
       BigDecimal totalBonusAmountByMind = new BigDecimal("0");
       List<EndUser> userList = new ArrayList<EndUser>();
       for (LeMindRecord leMindRecord : leMindRecords) {
         EndUser endUser = leMindRecord.getEndUser();
         BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
         BigDecimal totalLeScoreBonus = leMindRecord.getTotalBonus().add(curBonus);
+
+        leMindSize = leMindSize.add(leMindRecord.getAmount());
 
         if (totalLeScoreBonus.compareTo(leMindRecord.getMaxBonus()) >= 0) {
           curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
@@ -251,6 +252,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         totalBonusAmountByMind = totalBonusAmountByMind.add(curBonus);
         userList.add(endUser);
       }
+      bonusParamPerDay.setAvlLeMindCount(leMindSize.intValue());
       bonusParamPerDay.setBonusAmount(totalBonusAmountByMind.toString());
 
       if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {

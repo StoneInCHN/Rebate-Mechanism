@@ -14,7 +14,6 @@ import org.rebate.entity.base.BaseEntity;
 /**
  * 返利积分记录
  * 
- * @author Andrea
  *
  */
 @Entity

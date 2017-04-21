@@ -15,6 +15,10 @@ import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.EndUserReq;
 import org.rebate.service.EndUserService;
+import org.rebate.service.LeBeanRecordService;
+import org.rebate.service.LeMindRecordService;
+import org.rebate.service.LeScoreRecordService;
+import org.rebate.service.RebateRecordService;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -28,6 +32,18 @@ public class EndUserController extends BaseController {
 
   @Resource(name = "endUserServiceImpl")
   private EndUserService endUserService;
+
+  @Resource(name = "rebateRecordServiceImpl")
+  private RebateRecordService rebateRecordService;
+
+  @Resource(name = "leMindRecordServiceImpl")
+  private LeMindRecordService leMindRecordService;
+
+  @Resource(name = "leScoreRecordServiceImpl")
+  private LeScoreRecordService leScoreRecordService;
+
+  @Resource(name = "leBeanRecordServiceImpl")
+  private LeBeanRecordService leBeanRecordService;
 
 
   /**
@@ -109,6 +125,151 @@ public class EndUserController extends BaseController {
     }
     endUserService.update(endUsers);
     return SUCCESS_MESSAGE;
+  }
+
+
+  /**
+   * 用户积分记录
+   */
+  @RequestMapping(value = "/score/record", method = RequestMethod.GET)
+  public String scoreRecord(Pageable pageable, EndUserReq request, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
+    }
+    if (StringUtils.isNotEmpty(request.getNickName())) {
+      filters.add(Filter.like("endUser&nickName", "%" + request.getNickName() + "%"));
+      model.addAttribute("nickName", request.getNickName());
+    }
+    if (StringUtils.isNotEmpty(request.getSellerName())) {
+      filters.add(Filter.eq("seller&name", "%" + request.getSellerName() + "%"));
+      model.addAttribute("sellerName", request.getSellerName());
+    }
+    if (request.getRecordTimeFrom() != null) {
+      filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getRecordTimeFrom())));
+      model.addAttribute("recordTimeFrom", request.getRecordTimeFrom());
+    }
+    if (request.getRecordTimeTo() != null) {
+      filters.add(Filter.lt("createDate",
+          TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getRecordTimeTo()))));
+      model.addAttribute("recordTimeTo", request.getRecordTimeTo());
+    }
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    pageable.setOrders(orderings);
+    model.addAttribute("page", rebateRecordService.findPage(pageable));
+    return "/endUser/scoreRecord";
+  }
+
+  /**
+   * 用户乐心记录
+   */
+  @RequestMapping(value = "/leMind/record", method = RequestMethod.GET)
+  public String leMindRecord(Pageable pageable, EndUserReq request, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
+    }
+    if (StringUtils.isNotEmpty(request.getNickName())) {
+      filters.add(Filter.like("endUser&nickName", "%" + request.getNickName() + "%"));
+      model.addAttribute("nickName", request.getNickName());
+    }
+    if (request.getStatus() != null) {
+      filters.add(Filter.eq("status", request.getStatus()));
+      model.addAttribute("status", request.getStatus());
+    }
+    if (request.getRecordTimeFrom() != null) {
+      filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getRecordTimeFrom())));
+      model.addAttribute("recordTimeFrom", request.getRecordTimeFrom());
+    }
+    if (request.getRecordTimeTo() != null) {
+      filters.add(Filter.lt("createDate",
+          TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getRecordTimeTo()))));
+      model.addAttribute("recordTimeTo", request.getRecordTimeTo());
+    }
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    pageable.setOrders(orderings);
+    model.addAttribute("page", leMindRecordService.findPage(pageable));
+    return "/endUser/leMindRecord";
+  }
+
+  /**
+   * 用户乐分记录
+   */
+  @RequestMapping(value = "/leScore/record", method = RequestMethod.GET)
+  public String leScoreRecord(Pageable pageable, EndUserReq request, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
+    }
+    if (StringUtils.isNotEmpty(request.getNickName())) {
+      filters.add(Filter.like("endUser&nickName", "%" + request.getNickName() + "%"));
+      model.addAttribute("nickName", request.getNickName());
+    }
+    if (request.getLeScoreType() != null) {
+      filters.add(Filter.eq("leScoreType", request.getLeScoreType()));
+      model.addAttribute("leScoreType", request.getLeScoreType());
+    }
+    // if (StringUtils.isNotEmpty(request.getSellerName())) {
+    // filters.add(Filter.eq("seller&name", "%" + request.getSellerName() + "%"));
+    // model.addAttribute("sellerName", request.getSellerName());
+    // }
+    if (request.getRecordTimeFrom() != null) {
+      filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getRecordTimeFrom())));
+      model.addAttribute("recordTimeFrom", request.getRecordTimeFrom());
+    }
+    if (request.getRecordTimeTo() != null) {
+      filters.add(Filter.lt("createDate",
+          TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getRecordTimeTo()))));
+      model.addAttribute("recordTimeTo", request.getRecordTimeTo());
+    }
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    pageable.setOrders(orderings);
+    model.addAttribute("page", leScoreRecordService.findPage(pageable));
+    return "/endUser/leScoreRecord";
+  }
+
+  /**
+   * 用户乐豆记录
+   */
+  @RequestMapping(value = "/leBean/record", method = RequestMethod.GET)
+  public String leBeanRecord(Pageable pageable, EndUserReq request, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
+    }
+    if (StringUtils.isNotEmpty(request.getNickName())) {
+      filters.add(Filter.like("endUser&nickName", "%" + request.getNickName() + "%"));
+      model.addAttribute("nickName", request.getNickName());
+    }
+    if (request.getType() != null) {
+      filters.add(Filter.eq("type", request.getType()));
+      model.addAttribute("type", request.getType());
+    }
+    if (request.getRecordTimeFrom() != null) {
+      filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getRecordTimeFrom())));
+      model.addAttribute("recordTimeFrom", request.getRecordTimeFrom());
+    }
+    if (request.getRecordTimeTo() != null) {
+      filters.add(Filter.lt("createDate",
+          TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getRecordTimeTo()))));
+      model.addAttribute("recordTimeTo", request.getRecordTimeTo());
+    }
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    pageable.setOrders(orderings);
+    model.addAttribute("page", leBeanRecordService.findPage(pageable));
+    return "/endUser/leBeanRecord";
   }
 
 }
