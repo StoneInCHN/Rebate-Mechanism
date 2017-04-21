@@ -18,7 +18,8 @@
 	<form id="listForm" action="list.jhtml" method="get">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.leScoreRecord")}</a> </li>
-                <li class="active">${message("rebate.leScoreRecord.list")}</li>
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.leScoreRecord.withdraw")}</a> </li>
+                <li class="active">${message("rebate.leScoreRecord.withdraw.list")}</li>
           </ol>
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
@@ -68,10 +69,10 @@
 				<tr>
 
 					<th>
-						<span>${message("rebate.leScoreRecord.seller")}</span>
+						<span>${message("rebate.leScoreRecord.endUser.userName")}</span>
 					</th>
 					<th>
-						<span>${message("rebate.leScoreRecord.endUser")}</span>
+						<span>${message("rebate.leScoreRecord.endUser.cellPhoneNum")}</span>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="amount">${message("rebate.leScoreRecord.amount")}</a>
@@ -92,15 +93,15 @@
 				<tr>
 
 					<td>
-						[#if  leScoreRecord.seller??]
-							${leScoreRecord.seller.name}
+						[#if  leScoreRecord.endUser??]
+							${leScoreRecord.endUser.userName}
 						[#else]
 							--
 						[/#if]
 					</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
-							${leScoreRecord.endUser.userName}
+							${leScoreRecord.endUser.cellPhoneNum}
 						[#else]
 							--
 						[/#if]

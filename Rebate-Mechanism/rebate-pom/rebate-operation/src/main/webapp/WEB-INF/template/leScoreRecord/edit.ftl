@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.leScoreRecord.edit")}</title>
+<title>${message("rebate.leScoreRecord.withdraw.edit")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -49,19 +49,19 @@ $(function() {
 	 <div class="content">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.leScoreRecord")}</a> </li>
-                <li><a href="#">${message("rebate.leScoreRecord.list")}</a></li>
-                <li class="active">${message("rebate.leScoreRecord.edit")}</li>
+                <li><a href="#">${message("rebate.leScoreRecord.withdraw.list")}</a></li>
+                <li class="active">${message("rebate.leScoreRecord.withdraw.edit")}</li>
           </ol>
 		  <form id="inputForm" action="update.jhtml" method="post">
 						<input type="hidden" name="id" value="${leScoreRecord.id}" />
 						<table class="input">
 							<tr>
 								<th>
-									${message("rebate.leScoreRecord.seller")}:
+									${message("rebate.leScoreRecord.endUser.userName")}:
 								</th>
 								<td>
-									[#if  leScoreRecord.seller??]
-										${leScoreRecord.seller.name}
+									[#if  leScoreRecord.endUser??]
+										${leScoreRecord.endUser.userName}
 									[#else]
 										--
 									[/#if]
@@ -69,11 +69,11 @@ $(function() {
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.leScoreRecord.endUser")}:
+									${message("rebate.leScoreRecord.endUser.cellPhoneNum")}:
 								</th>
 								<td>
 									[#if  leScoreRecord.endUser??]
-										${leScoreRecord.endUser.userName}
+										${leScoreRecord.endUser.cellPhoneNum}
 									[#else]
 										--
 									[/#if]
