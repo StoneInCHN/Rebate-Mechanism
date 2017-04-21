@@ -158,7 +158,6 @@
 
 	<task:annotation-driven />
 	
-
 	<bean id="quartzDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${jdbc.driver}" />
@@ -196,5 +195,6 @@
 			</props>
 		</property>
 	</bean>
+	
 	
 </beans>

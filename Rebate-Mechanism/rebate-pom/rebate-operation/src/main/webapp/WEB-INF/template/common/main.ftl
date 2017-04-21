@@ -194,6 +194,30 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
+
+				[#list ["rebate:report"] as permission]
+						[@shiro.hasPermission name = permission]
+		                   <div class="sidebar-nav">
+		                       <div class="sidebar-title">
+		                           <a href="#">
+		                               <i class="fa fa-user"></i>
+		                               <span class="text-normal">${message("rebate.main.reportManager")}</span>
+		                           </a>
+		                       </div>
+		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
+		                     	  [@shiro.hasPermission name="rebate:report"]
+		                           <li>
+		                               <a href="../report/nationBonusReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.report.nationBonusReport")}</span></a>
+		                           </li>
+		                            <li>
+		                               <a href="../report/userBonusReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.report.userBonusReport")}</span></a>
+									</li>
+									[/@shiro.hasPermission]
+		                       </ul>
+		                   </div>
+						   	[#break /]
+					[/@shiro.hasPermission]
+				[/#list]
 				[#list ["rebate:bonusParam"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
@@ -207,6 +231,7 @@
 		                     	  [@shiro.hasPermission name="rebate:order"]
 		                           <li>
 		                               <a href="../bonusParam/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.bonusParam.perDay")}</span></a>
+
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>
