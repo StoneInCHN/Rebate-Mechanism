@@ -22,7 +22,9 @@ import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
  *
  */
 @Entity
-@Table(name = "rm_le_mind_record", indexes = {@Index(name = "statusIndex", columnList = "status")})
+@Table(name = "rm_le_mind_record", indexes = {
+    @Index(name = "createDateIndex", columnList = "createDate"),
+    @Index(name = "statusIndex", columnList = "status")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_le_mind_record_sequence")
 public class LeMindRecord extends BaseEntity {
 

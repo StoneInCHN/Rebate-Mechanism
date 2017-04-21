@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -32,7 +33,10 @@ import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
  *
  */
 @Entity
-@Table(name = "rm_seller")
+@Table(name = "rm_seller", indexes = {@Index(name = "nameIndex", columnList = "name"),
+    @Index(name = "contactPersonIndex", columnList = "contactPerson"),
+    @Index(name = "contactCellPhoneIndex", columnList = "contactCellPhone"),
+    @Index(name = "accountStatusIndex", columnList = "accountStatus")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_seller_sequence")
 public class Seller extends BaseEntity {
 

@@ -8,6 +8,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -26,7 +27,12 @@ import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
  *
  */
 @Entity
-@Table(name = "rm_seller_application")
+@Table(name = "rm_seller_application", indexes = {
+    @Index(name = "sellerNameIndex", columnList = "sellerName"),
+    @Index(name = "contactPersonIndex", columnList = "contactPerson"),
+    @Index(name = "contactCellPhoneIndex", columnList = "contactCellPhone"),
+    @Index(name = "createDateIndex", columnList = "createDate"),
+    @Index(name = "applyStatusIndex", columnList = "applyStatus")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_seller_application_sequence")
 public class SellerApplication extends BaseEntity {
 

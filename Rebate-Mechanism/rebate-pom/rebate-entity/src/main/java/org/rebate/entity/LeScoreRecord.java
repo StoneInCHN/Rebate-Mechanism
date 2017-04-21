@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -15,11 +16,12 @@ import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 /**
  * 乐分记录
  * 
- * @author Andrea
  *
  */
 @Entity
-@Table(name = "rm_le_score_record")
+@Table(name = "rm_le_score_record", indexes = {
+    @Index(name = "createDateIndex", columnList = "createDate"),
+    @Index(name = "leScoreTypeIndex", columnList = "leScoreType")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_le_score_record_sequence")
 public class LeScoreRecord extends BaseEntity {
 

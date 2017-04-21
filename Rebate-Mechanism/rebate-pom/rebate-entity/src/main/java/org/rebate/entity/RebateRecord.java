@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -17,7 +18,8 @@ import org.rebate.entity.base.BaseEntity;
  *
  */
 @Entity
-@Table(name = "rm_rebate_record")
+@Table(name = "rm_rebate_record", indexes = {@Index(name = "createDateIndex",
+    columnList = "createDate")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_rebate_score_sequence")
 public class RebateRecord extends BaseEntity {
 
