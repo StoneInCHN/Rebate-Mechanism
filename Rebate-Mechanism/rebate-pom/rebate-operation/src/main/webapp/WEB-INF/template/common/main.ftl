@@ -154,7 +154,7 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-				[#list ["rebate:endUser"] as permission]
+				[#list ["rebate:endUser","rebate:scoreRecord","rebate:leScoreRecord","rebate:leMindRecord","rebate:leBeanRecord"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -167,6 +167,26 @@
 		                     	  [@shiro.hasPermission name="rebate:endUser"]
 		                           <li>
 		                               <a href="../endUser/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.endUser.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:scoreRecord"]
+		                           <li>
+		                               <a href="../endUser/score/record.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.endUser.score.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:leMindRecord"]
+		                           <li>
+		                               <a href="../endUser/leMind/record.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.endUser.leMind.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:leScoreRecord"]
+		                           <li>
+		                               <a href="../endUser/leScore/record.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.endUser.leScore.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:leBeanRecord"]
+		                           <li>
+		                               <a href="../endUser/leBean/record.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.endUser.leBean.info")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>

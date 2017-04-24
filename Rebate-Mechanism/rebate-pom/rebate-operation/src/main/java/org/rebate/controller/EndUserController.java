@@ -143,7 +143,7 @@ public class EndUserController extends BaseController {
       model.addAttribute("nickName", request.getNickName());
     }
     if (StringUtils.isNotEmpty(request.getSellerName())) {
-      filters.add(Filter.eq("seller&name", "%" + request.getSellerName() + "%"));
+      filters.add(Filter.like("seller&name", "%" + request.getSellerName() + "%"));
       model.addAttribute("sellerName", request.getSellerName());
     }
     if (request.getRecordTimeFrom() != null) {

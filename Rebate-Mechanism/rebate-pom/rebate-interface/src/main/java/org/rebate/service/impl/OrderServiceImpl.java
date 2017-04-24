@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.rebate.beans.Message;
 import org.rebate.dao.AgentCommissionConfigDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeScoreRecordDao;
@@ -210,6 +211,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
 
           RebateRecord deductScore = new RebateRecord();
+          deductScore.setRemark(Message.success("rebate.endUser.score.mind", divideMind.toString())
+              .getContent());
           deductScore.setEndUser(endUser);
           deductScore.setRebateScore(mind.multiply(divideMind).negate());
           deductScore.setUserCurScore(endUser.getCurScore().add(deductScore.getRebateScore()));
@@ -257,6 +260,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           sellerEndUser.setTotalLeMind(sellerEndUser.getTotalLeMind().add(mind));
 
           RebateRecord deductScore = new RebateRecord();
+          deductScore.setRemark(Message.success("rebate.endUser.score.mind", divideMind.toString())
+              .getContent());
           deductScore.setEndUser(sellerEndUser);
           deductScore.setRebateScore(mind.multiply(divideMind).negate());
           deductScore

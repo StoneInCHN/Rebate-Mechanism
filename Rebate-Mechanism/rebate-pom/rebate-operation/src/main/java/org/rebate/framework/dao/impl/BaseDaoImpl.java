@@ -454,7 +454,7 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
           continue;
         }
         if (filter.getOperator() == Operator.eq && filter.getValue() != null) {
-          if(filter.getProperty().contains("&")){
+          if (filter.getProperty().contains("&")) {
             String[] propetys = filter.getProperty().split("&");
             if (propetys != null && propetys.length == 2) {
               if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
@@ -465,11 +465,11 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
                         ((String) filter.getValue()).toLowerCase()));
               } else {
                 restrictions =
-                    criteriaBuilder.and(restrictions,
-                        criteriaBuilder.equal(root.<String>get(propetys[0]).get(propetys[1]), filter.getValue()));
+                    criteriaBuilder.and(restrictions, criteriaBuilder.equal(
+                        root.<String>get(propetys[0]).get(propetys[1]), filter.getValue()));
               }
             }
-          }else{
+          } else {
             if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
                 && filter.getValue() instanceof String) {
               restrictions =
@@ -482,7 +482,7 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
                       criteriaBuilder.equal(root.get(filter.getProperty()), filter.getValue()));
             }
           }
-         
+
         } else if (filter.getOperator() == Operator.ne && filter.getValue() != null) {
           if (filter.getIgnoreCase() != null && filter.getIgnoreCase()
               && filter.getValue() instanceof String) {
@@ -496,17 +496,34 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
                     criteriaBuilder.notEqual(root.get(filter.getProperty()), filter.getValue()));
           }
         } else if (filter.getOperator() == Operator.gt && filter.getValue() != null) {
-          restrictions =
-              criteriaBuilder.and(
-                  restrictions,
-                  criteriaBuilder.gt(root.<Number>get(filter.getProperty()),
-                      (Number) filter.getValue()));
+          if (filter.getValue() instanceof Date) {
+            restrictions =
+                criteriaBuilder.and(
+                    restrictions,
+                    criteriaBuilder.greaterThan(root.<Date>get(filter.getProperty()),
+                        (Date) filter.getValue()));
+          } else {
+            restrictions =
+                criteriaBuilder.and(
+                    restrictions,
+                    criteriaBuilder.gt(root.<Number>get(filter.getProperty()),
+                        (Number) filter.getValue()));
+          }
+
         } else if (filter.getOperator() == Operator.lt && filter.getValue() != null) {
-          restrictions =
-              criteriaBuilder.and(
-                  restrictions,
-                  criteriaBuilder.lt(root.<Number>get(filter.getProperty()),
-                      (Number) filter.getValue()));
+          if (filter.getValue() instanceof Date) {
+            restrictions =
+                criteriaBuilder.and(
+                    restrictions,
+                    criteriaBuilder.lessThan(root.<Date>get(filter.getProperty()),
+                        (Date) filter.getValue()));
+          } else {
+            restrictions =
+                criteriaBuilder.and(
+                    restrictions,
+                    criteriaBuilder.lt(root.<Number>get(filter.getProperty()),
+                        (Number) filter.getValue()));
+          }
         } else if (filter.getOperator() == Operator.ge && filter.getValue() != null) {
           if (filter.getValue() instanceof Date) {
             restrictions =
@@ -534,24 +551,22 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
           }
         } else if (filter.getOperator() == Operator.like && filter.getValue() != null
             && filter.getValue() instanceof String) {
-          
-          if(filter.getProperty().contains("&")){
+
+          if (filter.getProperty().contains("&")) {
             String[] propetys = filter.getProperty().split("&");
             if (propetys != null && propetys.length == 2) {
               restrictions =
-                  criteriaBuilder.and(
-                      restrictions,
-                      criteriaBuilder.like(root.<String>get(propetys[0]).get(propetys[1]),
-                          (String) filter.getValue()));
+                  criteriaBuilder.and(restrictions, criteriaBuilder.like(
+                      root.<String>get(propetys[0]).get(propetys[1]), (String) filter.getValue()));
             }
-          }else{
+          } else {
             restrictions =
                 criteriaBuilder.and(
                     restrictions,
                     criteriaBuilder.like(root.<String>get(filter.getProperty()),
                         (String) filter.getValue()));
           }
-        
+
         } else if (filter.getOperator() == Operator.in && filter.getValue() != null) {
           restrictions =
               criteriaBuilder.and(restrictions, root.get(filter.getProperty())
