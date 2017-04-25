@@ -114,7 +114,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
               .getConfigValue());
 
       BigDecimal encourageAmount =
-          (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig);
+          (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
+              .setScale(2, BigDecimal.ROUND_HALF_UP);
       order.setEncourageAmount(encourageAmount);
 
       BigDecimal rebateUserScore =
