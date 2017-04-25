@@ -32,10 +32,16 @@
 						<table class="queryFiled">
 							<tr>
 								<th>
-									${message("rebate.leScoreRecord.seller")}:
+									${message("rebate.leScoreRecord.endUser.userName")}
 								</th>
 								<td>
-									<input type="text" name="sellerName" class="text" value="${sellerName}"maxlength="20" />
+									<input type="text" name="userName" class="text" value="${userName}"maxlength="20" />
+								</td>
+								<th>
+									${message("rebate.leScoreRecord.endUser.cellPhoneNum")}
+								</th>
+								<td>
+									<input type="text" name="cellPhoneNum" class="text" value="${cellPhoneNum}"maxlength="20" />
 								</td>
 								<th>
 									${message("rebate.leScoreRecord.withdrawStatus")}:
@@ -54,6 +60,20 @@
 								<td>
 									<input type="submit" class="btn " value="${message("rebate.common.submit")}" />
 									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.common.beginDate")}:
+								</th>
+								<td>
+									<input type="text" id="beginDate" name="beginDate" class="text Wdate" onclick="WdatePicker({maxDate: '#F{$dp.$D(\'endDate\')}'});" readonly [#if beginDate??]value="${beginDate?string("yyyy-MM-dd")}"[/#if] />
+								</td>
+								<th>
+									${message("rebate.common.endDate")}:
+								</th>
+								<td>
+									<input type="text" id="endDate" name="endDate" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'beginDate\')}'});" readonly [#if endDate??]value="${endDate?string("yyyy-MM-dd")}" [/#if] />
 								</td>
 							</tr>
 						</table>
@@ -82,6 +102,9 @@
 					</th>
 					<th>
 						<span>${message("rebate.leScoreRecord.remark")}</span>
+					</th>
+					<th>
+						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
 					</th>
 					<th>
 						<span>${message("rebate.common.handle")}</span>
@@ -132,6 +155,9 @@
 						[/#if]
 					</td>
 					<td>
+						<span title="${leScoreRecord.createDate?string("yyyy-MM-dd HH:mm:ss")}">${leScoreRecord.createDate}</span>
+					</td>
+					<td>
 						[#if  leScoreRecord.withdrawStatus =="AUDIT_WAITING"]
 								<a href="edit.jhtml?id=${leScoreRecord.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
 						[#else]
@@ -148,6 +174,7 @@
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
+<script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
 <script>
 	$(function () {
   $('[data-toggle="tooltip"]').tooltip();

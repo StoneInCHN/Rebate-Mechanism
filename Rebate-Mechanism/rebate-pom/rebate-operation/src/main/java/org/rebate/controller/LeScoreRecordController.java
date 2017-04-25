@@ -10,6 +10,7 @@ import org.rebate.controller.base.BaseController;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.framework.filter.Filter;
+import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.LeScoreRecordReq;
@@ -36,11 +37,22 @@ public class LeScoreRecordController extends BaseController {
   public String list(Pageable pageable, LeScoreRecordReq req, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
     filters.add(Filter.eq("leScoreType", LeScoreType.WITHDRAW));
-    if (req.getSellerName() != null) {
-      filters.add(Filter.eq("seller&name", req.getSellerName()));
+    if (req.getUserName() != null) {
+      filters.add(Filter.eq("endUser&userName", req.getUserName()));
+    }
+    if (req.getCellPhoneNum() != null) {
+      filters.add(Filter.eq("endUser&cellPhoneNum", req.getCellPhoneNum()));
     }
     if (req.getWithdrawStatus() != null) {
       filters.add(Filter.eq("withdrawStatus", req.getWithdrawStatus()));
+    }
+    if (req.getBeginDate() != null) {
+      Filter dateGeFilter = new Filter("createDate", Operator.ge, req.getBeginDate());
+      filters.add(dateGeFilter);
+    }
+    if (req.getEndDate() != null) {
+      Filter dateLeFilter = new Filter("createDate", Operator.le, req.getEndDate());
+      filters.add(dateLeFilter);
     }
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
@@ -48,7 +60,9 @@ public class LeScoreRecordController extends BaseController {
     pageable.setOrders(orderings);
     model.addAttribute("page", leScoreRecordService.findPage(pageable));
     model.addAttribute("withdrawStatus", req.getWithdrawStatus());
-    model.addAttribute("sellerName", req.getSellerName());
+    model.addAttribute("userName", req.getUserName());
+    model.addAttribute("beginDate", req.getBeginDate());
+    model.addAttribute("endDate", req.getEndDate());
     return "/leScoreRecord/list";
   }
 
