@@ -54,7 +54,7 @@ public class BonusParamPerDay extends BaseEntity {
    */
   private Integer leMindUserCount;
   /**
-   * 当天乐心换算乐分的value(当天总收益的分红金额/当天消费乐心大于等于1的用户人数)
+   * 乐心的每天的市值计算(取0.8~1.2的随机数产生，保留两位小数)
    */
   private String calValue;
   /**

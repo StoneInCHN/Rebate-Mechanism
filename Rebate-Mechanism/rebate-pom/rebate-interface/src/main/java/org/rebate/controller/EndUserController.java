@@ -20,6 +20,8 @@ import org.rebate.beans.Message;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.entity.AgentCommissionConfig;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
@@ -48,6 +50,7 @@ import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
+import org.rebate.service.AgentCommissionConfigService;
 import org.rebate.service.AreaService;
 import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
@@ -111,6 +114,9 @@ public class EndUserController extends MobileBaseController {
   @Resource(name = "settingConfigServiceImpl")
   private SettingConfigService settingConfigService;
 
+  @Resource(name = "agentCommissionConfigServiceImpl")
+  private AgentCommissionConfigService agentCommissionConfigService;
+
   /**
    * 测试
    *
@@ -163,6 +169,30 @@ public class EndUserController extends MobileBaseController {
     // System.out.println(area.getName() + "--" + pyName);
     // }
     // areaService.update(list);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter parentFilter = new Filter("parent", Operator.isNull, null);
+    filters.add(parentFilter);
+    List<Area> areas = areaService.findList(null, filters, null);
+    List<AgentCommissionConfig> configs = new ArrayList<AgentCommissionConfig>();
+    for (Area area : areas) {
+      AgentCommissionConfig commissionConfig = new AgentCommissionConfig();
+      commissionConfig.setArea(area);
+      commissionConfig.setCommissionRate(new BigDecimal("0.02"));
+      configs.add(commissionConfig);
+      for (Area area1 : area.getChildren()) {
+        AgentCommissionConfig commissionConfig1 = new AgentCommissionConfig();
+        commissionConfig1.setArea(area1);
+        commissionConfig1.setCommissionRate(new BigDecimal("0.05"));
+        configs.add(commissionConfig1);
+        for (Area area2 : area1.getChildren()) {
+          AgentCommissionConfig commissionConfig2 = new AgentCommissionConfig();
+          commissionConfig2.setArea(area2);
+          commissionConfig2.setCommissionRate(new BigDecimal("0.1"));
+          configs.add(commissionConfig2);
+        }
+      }
+    }
+    agentCommissionConfigService.save(configs);
     return response;
   }
 

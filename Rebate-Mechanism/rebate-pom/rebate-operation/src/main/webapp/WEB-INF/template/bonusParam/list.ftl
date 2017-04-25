@@ -79,9 +79,6 @@
 						<a href="javascript:;" class="sort" name="bonusCalAmount">${message("rebate.bonusParam.bonusCalAmount")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" class="sort" name="leMindUserCount">${message("rebate.bonusParam.leMindUserCount")}</a>
-					</th>
-					<th>
 						<a href="javascript:;" class="sort" name="calValue">${message("rebate.bonusParam.calValue")}</a>
 					</th>
 					<th>
@@ -89,9 +86,6 @@
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="bonusAmount">${message("rebate.bonusParam.bonusAmount")}</a>
-					</th>
-					<th>
-						<a href="javascript:;"  name="leScorePerConfig">${message("rebate.bonusParam.leScorePerConfig")}</a>
 					</th>
 					<!--<th>
 						<span>${message("rebate.common.handle")}</span>
@@ -117,10 +111,6 @@
 						${bonusParam.bonusCalAmount}
 					</td>
 					<td>
-						${bonusParam.leMindUserCount}
-					</td>
-					
-					<td>
 						${bonusParam.calValue}
 					</td>
 					<td>
@@ -128,9 +118,6 @@
 					</td>
 					<td>
 						${bonusParam.bonusAmount}
-					</td>
-					<td>
-						${bonusParam.leScorePerConfig}
 					</td>
 					<!--
 					<td>

@@ -16,11 +16,11 @@
 <script type="text/javascript">
 $().ready(function() {
 
-	var $areaId = $("#areaId");
+	//var $areaId = $("#areaId");
 	// 地区选择
-	$areaId.lSelect({
-		url: "${base}/console/common/area.jhtml"
-	});
+	//$areaId.lSelect({
+	//	url: "${base}/console/common/area.jhtml"
+	//});
 	var $inputForm = $("#inputForm");
 	// 表单验证
 	$inputForm.validate({
@@ -53,7 +53,9 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.agentCommission.area")}:
 								</th>
 								<td>
-									<input type="hidden" id="areaId"  name="areaId" value="${(agentCommission.area.id)!}" treePath="${(agentCommission.area.treePath)!}"/>
+									<!--<input type="hidden" id="areaId"  name="areaId" value="${(agentCommission.area.id)!}" treePath="${(agentCommission.area.treePath)!}"/>-->
+									<input type="hidden" id="areaId"  name="areaId" value="${(agentCommission.area.id)!}"/>
+									${agentCommission.area.fullName}
 								</td>
 							</tr>
 							<tr>

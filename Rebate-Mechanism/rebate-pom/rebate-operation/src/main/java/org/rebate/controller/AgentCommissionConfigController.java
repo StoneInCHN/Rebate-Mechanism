@@ -11,6 +11,7 @@ import org.rebate.controller.base.BaseController;
 import org.rebate.entity.AgentCommissionConfig;
 import org.rebate.entity.Area;
 import org.rebate.framework.filter.Filter;
+import org.rebate.framework.ordering.Ordering.Direction;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.service.AgentCommissionConfigService;
 import org.rebate.service.AreaService;
@@ -79,13 +80,14 @@ public class AgentCommissionConfigController extends BaseController {
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(Pageable pageable,String areaName, ModelMap model) {
+  public String list(Pageable pageable, String areaName, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
-    if(StringUtils.isNoneBlank(areaName)){
-      filters.add(Filter.like("area&fullName", areaName));
+    if (StringUtils.isNoneBlank(areaName)) {
+      filters.add(Filter.like("area&fullName", "%" + areaName + "%"));
       model.addAttribute("areaName", areaName);
     }
-    
+    pageable.setOrderProperty("area");
+    pageable.setOrderDirection(Direction.asc);
     pageable.setFilters(filters);
     model.addAttribute("page", agentCommissionConfigService.findPage(pageable));
     return "/agentCommission/list";

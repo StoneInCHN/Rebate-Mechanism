@@ -18,13 +18,11 @@ import org.rebate.entity.BonusParamPerDay;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
-import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
-import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -71,8 +69,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     Setting setting = SettingUtils.get();
     String subject =
         "yxsh:daily bonus calculate job notice email(server ip:" + setting.getServerIp() + ")";
-    String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
-    // String emailTo = "sujinxuan123@163.com";
+    // String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
+    String emailTo = "sujinxuan123@163.com";
     String msg = "";
     BonusParamPerDay bonusParamPerDay = new BonusParamPerDay();
     bonusParamPerDay.setBonusDate(startTime);
@@ -98,25 +96,25 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
       bonusParamPerDay.setTotalBonusPerConfig(totalBonusPerConfig.getConfigValue());
 
-      /**
-       * 收益后乐分乐豆比例
-       */
-      SystemConfig leScorePerConfig =
-          systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
-      if (leScorePerConfig == null || leScorePerConfig.getConfigValue() == null) {
-        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
-          LogUtil
-              .debug(
-                  EndUserServiceImpl.class,
-                  "dailyBonusCalJob",
-                  "daily Bonus calculate job failed! Timer Period: %s, bonus leScore percentage config no exist!",
-                  startTime + "-" + endTime);
-        }
-        msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
-        bonusParamPerDay.setRemark(msg);
-        return;
-      }
-      bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
+      // /**
+      // * 收益后乐分乐豆比例
+      // */
+      // SystemConfig leScorePerConfig =
+      // systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
+      // if (leScorePerConfig == null || leScorePerConfig.getConfigValue() == null) {
+      // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+      // LogUtil
+      // .debug(
+      // EndUserServiceImpl.class,
+      // "dailyBonusCalJob",
+      // "daily Bonus calculate job failed! Timer Period: %s, bonus leScore percentage config no exist!",
+      // startTime + "-" + endTime);
+      // }
+      // msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
+      // bonusParamPerDay.setRemark(msg);
+      // return;
+      // }
+      // bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
 
       List<Filter> filters = new ArrayList<Filter>();
       Filter start = new Filter("createDate", Operator.ge, startTime);
@@ -163,28 +161,31 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
       bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
 
-      /**
-       * 计算每日乐心大于等于1的用户
-       */
-      List<EndUser> endUsers = endUserDao.getMindUsersByDay(startTime, endTime);
-      if (CollectionUtils.isEmpty(endUsers)) {
-        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
-          LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate job failed! Timer Period: %s, no users exchange leMind",
-              startTime + "-" + endTime);
-        }
-        msg = "Job Failed!\n当日平台消费产生乐心大于等于1的用户数量为0,无法计算分红";
-        bonusParamPerDay.setRemark(msg);
-        bonusParamPerDay.setLeMindUserCount(0);
-        return;
-      }
-      bonusParamPerDay.setLeMindUserCount(endUsers.size());
+      // /**
+      // * 计算每日乐心大于等于1的用户
+      // */
+      // List<EndUser> endUsers = endUserDao.getMindUsersByDay(startTime, endTime);
+      // if (CollectionUtils.isEmpty(endUsers)) {
+      // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+      // LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
+      // "daily Bonus calculate job failed! Timer Period: %s, no users exchange leMind",
+      // startTime + "-" + endTime);
+      // }
+      // msg = "Job Failed!\n当日平台消费产生乐心大于等于1的用户数量为0,无法计算分红";
+      // bonusParamPerDay.setRemark(msg);
+      // bonusParamPerDay.setLeMindUserCount(0);
+      // return;
+      // }
+      // bonusParamPerDay.setLeMindUserCount(endUsers.size());
 
       /**
-       * 当天乐心换算乐分的value(当天总收益的分红金额/当天消费乐心大于等于1的用户人数)
+       * 乐心的每天的市值计算(取0.8~1.2的随机数产生，保留两位小数) [0.8,1.2)
        */
       BigDecimal value =
-          totalBonus.divide(new BigDecimal(endUsers.size()), 2, BigDecimal.ROUND_HALF_UP);
+          new BigDecimal(Math.random() * 4 + 8).divide(new BigDecimal("10"), 2,
+              BigDecimal.ROUND_HALF_UP);
+      // BigDecimal value =
+      // totalBonus.divide(new BigDecimal(endUsers.size()), 2, BigDecimal.ROUND_HALF_UP);
 
       bonusParamPerDay.setCalValue(value.toString());
 
@@ -229,19 +230,20 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusByMindPerDay.setBonusAmount(curBonus);
         leMindRecord.getBonusByDays().add(bonusByMindPerDay);
 
-        BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
+        // BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
 
-        LeScoreRecord leScoreRecord = new LeScoreRecord();
-        leScoreRecord.setEndUser(endUser);
-        leScoreRecord.setLeScoreType(LeScoreType.BONUS);
-        leScoreRecord.setAmount(curBonus.multiply(leScorePer));
-        leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
-        endUser.getLeScoreRecords().add(leScoreRecord);
-        endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
-        endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+        // LeScoreRecord leScoreRecord = new LeScoreRecord();
+        // leScoreRecord.setEndUser(endUser);
+        // leScoreRecord.setLeScoreType(LeScoreType.BONUS);
+        // leScoreRecord.setAmount(curBonus.multiply(leScorePer));
+        // leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+        // endUser.getLeScoreRecords().add(leScoreRecord);
+        // endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+        // endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
 
         LeBeanRecord leBeanRecord = new LeBeanRecord();
-        leBeanRecord.setAmount(curBonus.subtract(leScoreRecord.getAmount()));
+        // leBeanRecord.setAmount(curBonus.subtract(leScoreRecord.getAmount()));
+        leBeanRecord.setAmount(curBonus);
         leBeanRecord.setEndUser(endUser);
         leBeanRecord.setType(LeBeanChangeType.BONUS);
         leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
@@ -260,8 +262,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
             .debug(
                 EndUserServiceImpl.class,
                 "dailyBonusCalJob",
-                "daily Bonus calculate job processing--Update User LeScore Info==========start=========. Timer Period: %s,totalBonus: %s,leMindUserCounts: %s,value: %s",
-                startTime + "-" + endTime, totalBonus, endUsers.size(), value);
+                "daily Bonus calculate job processing--Update User Bonus Info==========start=========. Timer Period: %s,totalBonus: %s,value: %s",
+                startTime + "-" + endTime, totalBonus, value);
       }
 
       endUserDao.merge(userList);
@@ -271,15 +273,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
             .debug(
                 EndUserServiceImpl.class,
                 "dailyBonusCalJob",
-                "daily Bonus calculate job processing--Update User LeScore Info==========end=========. Timer Period: %s",
+                "daily Bonus calculate job processing--Update User Bonus Info==========end=========. Timer Period: %s",
                 startTime + "-" + endTime);
       }
 
 
       msg =
           "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:" + startTime + "\n当日平台用于分红的总金额："
-              + totalBonus + "\n当日消费产生乐心大于等于1的用户数量：" + endUsers.size() + "\n当日平台分红参数value值："
-              + value;
+              + totalBonus + "\n当日平台分红参数value值：" + value;
       bonusParamPerDay.setRemark("Job Success!");
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
       // "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()

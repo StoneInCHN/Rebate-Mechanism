@@ -325,6 +325,14 @@ public class SellerController extends MobileBaseController {
       return response;
     }
 
+    // 验证店铺折扣,不得低于设定的最小值
+    if (new BigDecimal(req.getDiscount()).compareTo(new BigDecimal(setting.getSellerDiscountMin())) < 0) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.apply.discountMin",
+          setting.getSellerDiscountMin()).getContent());
+      return response;
+    }
+
     sellerApplicationService.createApplication(req);
     if (LogUtil.isDebugEnabled(SellerController.class)) {
       LogUtil

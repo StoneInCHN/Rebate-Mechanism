@@ -155,7 +155,11 @@ public class CommonEnum {
     /** 每日分红总金额占平台每日总收益的比例 12 */
     TOTAL_BONUS_PERCENTAGE,
     /** 推荐用户返乐分的最大推荐层级限制 13 */
-    RECOMMEND_LEVEL_LIMIT
+    RECOMMEND_LEVEL_LIMIT,
+    /** 鼓励金占让利金额百分比 14 */
+    ENCOURAGE_CONSUME,
+    /** 商家积分返利订单百分比参数 15 */
+    REBATESCORE_SELLER_ORDER_PERCENTAGE
   }
 
   /**
@@ -183,8 +187,10 @@ public class CommonEnum {
   public enum LeScoreType {
     /** 消费直接返商户的收益 */
     CONSUME_SELLER,
-    /** 乐心（积分）产生的分红 */
-    BONUS,
+    /** 用户消费鼓励金收益 */
+    ENCOURAGE,
+    // /** 乐心（积分）产生的分红 */
+    // BONUS,
     /** 推荐好友消费返利 */
     RECOMMEND_USER,
     /** 推荐店铺收益返利 */

@@ -106,6 +106,21 @@ public class Order extends BaseEntity {
    */
   private BigDecimal rebateAmount;
 
+  /**
+   * 鼓励金额
+   */
+  private BigDecimal encourageAmount;
+
+
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getEncourageAmount() {
+    return encourageAmount;
+  }
+
+  public void setEncourageAmount(BigDecimal encourageAmount) {
+    this.encourageAmount = encourageAmount;
+  }
 
   @Transient
   public BigDecimal getRebateAmount() {
