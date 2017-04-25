@@ -156,7 +156,7 @@ public class OrderController extends MobileBaseController {
         response =
             PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
                 order.getId().toString(), weChatPrice.intValue() + "");
-
+        response.getMsg().put("encourageAmount", order.getEncourageAmount());
       } else if ("2".equals(payTypeId)) {// 支付宝支付
         Map<String, Object> map = new HashMap<String, Object>();
         String orderStr =
@@ -164,6 +164,7 @@ public class OrderController extends MobileBaseController {
                 amount.toString());
         map.put("orderStr", orderStr);
         map.put("out_trade_no", order.getSn());
+        map.put("encourageAmount", order.getEncourageAmount());
         response.setMsg(map);
         response.setCode(CommonAttributes.SUCCESS);
       } else if ("3".equals(payTypeId)) {// 翼支付
