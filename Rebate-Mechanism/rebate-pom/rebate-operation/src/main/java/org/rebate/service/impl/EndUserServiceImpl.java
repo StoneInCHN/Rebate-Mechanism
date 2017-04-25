@@ -28,9 +28,11 @@ import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.EndUserService;
+import org.rebate.service.HolidayConfigService;
 import org.rebate.service.MailService;
 import org.rebate.utils.LogUtil;
 import org.rebate.utils.SettingUtils;
+import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   @Resource(name = "bonusParamPerDayDaoImpl")
   private BonusParamPerDayDao bonusParamPerDayDao;
 
+  @Resource(name = "holidayConfigServiceImpl")
+  private HolidayConfigService holidayConfigService;
+
   @Resource(name = "mailServiceImpl")
   private MailService mailService;
 
@@ -69,13 +74,27 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     Setting setting = SettingUtils.get();
     String subject =
         "yxsh:daily bonus calculate job notice email(server ip:" + setting.getServerIp() + ")";
-    // String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
-    String emailTo = "sujinxuan123@163.com";
+    String emailTo = "sujinxuan123@163.com,sj_msc@163.com";
+    // String emailTo = "sujinxuan123@163.com";
     String msg = "";
     BonusParamPerDay bonusParamPerDay = new BonusParamPerDay();
     bonusParamPerDay.setBonusDate(startTime);
     try {
-
+      Boolean isHoliday = holidayConfigService.isHoliday(startTime);
+      if (isHoliday) {
+        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+          LogUtil
+              .debug(
+                  EndUserServiceImpl.class,
+                  "dailyBonusCalJob",
+                  "daily Bonus calculate job failed! Timer Period: %s, The date for calculating is holiday!",
+                  startTime + "-" + endTime);
+        }
+        msg =
+            "Job Failed!\n" + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "为法定节假日,不计算分红!";
+        bonusParamPerDay.setRemark(msg);
+        return;
+      }
       /**
        * 每日分红总金额占平台每日总收益的比例
        */
@@ -279,7 +298,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
 
       msg =
-          "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:" + startTime + "\n当日平台用于分红的总金额："
+          "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:"
+              + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "\n当日平台用于分红的总金额："
               + totalBonus + "\n当日平台分红参数value值：" + value;
       bonusParamPerDay.setRemark("Job Success!");
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
