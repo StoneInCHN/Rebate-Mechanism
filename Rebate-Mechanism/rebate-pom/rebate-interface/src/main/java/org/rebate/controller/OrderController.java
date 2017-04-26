@@ -178,7 +178,7 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-
+    orderService.updateOrderforPayCallBack(order.getSn());
     if (isBeanPay) {// 乐豆支付
       // orderService.updateOrderforPayCallBack(order.getSn());
       Map<String, Object> map = new HashMap<String, Object>();
@@ -188,8 +188,6 @@ public class OrderController extends MobileBaseController {
       response.setCode(CommonAttributes.SUCCESS);
     }
     response.getMsg().put("orderId", order.getId());
-
-    orderService.updateOrderforPayCallBack(order.getSn());
 
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
