@@ -55,7 +55,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * Controller - 订单
  * 
- * @author huyong
  *
  */
 @Controller("orderController")
@@ -267,46 +266,45 @@ public class OrderController extends MobileBaseController {
     return response;
   }
 
-  // /**
-  // * 用户订单评价详情
-  // *
-  // * @param req
-  // * @return
-  // */
-  // @RequestMapping(value = "/evaluateDetail", method = RequestMethod.POST)
-  // @UserValidCheck(userType = CheckUserType.ENDUSER)
-  // public @ResponseBody ResponseOne<Map<String, Object>> evaluateDetail(@RequestBody BaseRequest
-  // req) {
-  // ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
-  //
-  // Long userId = req.getUserId();
-  // String token = req.getToken();
-  // Long orderId = req.getEntityId();
-  //
-  // // 验证登录token
-  // String userToken = endUserService.getEndUserToken(userId);
-  // if (!TokenGenerator.isValiableToken(token, userToken)) {
-  // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-  // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-  // return response;
-  // }
-  //
-  // Order order = orderService.find(orderId);
-  //
-  // SellerEvaluate evaluate = order.getEvaluate();
-  //
-  // String[] propertys =
-  // {"id", "endUser.userName", "score", "content", "sellerReply", "evaluateImages.source"};
-  // Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, evaluate);
-  //
-  // response.setMsg(result);
-  //
-  // response.setCode(CommonAttributes.SUCCESS);
-  // String newtoken = TokenGenerator.generateToken(req.getToken());
-  // endUserService.createEndUserToken(newtoken, userId);
-  // response.setToken(newtoken);
-  // return response;
-  // }
+
+  /**
+   * 用户订单详情
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/detail", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> detail(@RequestBody BaseRequest req) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    Long orderId = req.getEntityId();
+
+    // 验证登录token
+    String userToken = endUserService.getEndUserToken(userId);
+    if (!TokenGenerator.isValiableToken(token, userToken)) {
+      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    Order order = orderService.find(orderId);
+
+    String[] propertys =
+        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
+            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
+            "seller.address"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
+    response.setMsg(result);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 
   /**
    * 获取商户订单
@@ -477,38 +475,4 @@ public class OrderController extends MobileBaseController {
     return response;
   }
 
-  /**
-   * 获取订单详情
-   * 
-   * @return
-   */
-  @RequestMapping(value = "/orderDetail", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseOne<Map<String, Object>> orderDetail(@RequestBody BaseRequest request) {
-
-    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
-
-    Long userId = request.getUserId();
-    String token = request.getToken();
-    Long orderId = request.getEntityId();
-
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
-
-    Order order = orderService.find(orderId);
-    String[] propertys = {"id", "seller.name", "userScore", "amount", "evaluate"};
-    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
-
-    response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
-    response.setCode(CommonAttributes.SUCCESS);
-    return response;
-  }
 }
