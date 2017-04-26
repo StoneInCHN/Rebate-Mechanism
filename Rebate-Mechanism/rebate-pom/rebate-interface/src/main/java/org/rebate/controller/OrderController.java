@@ -104,8 +104,13 @@ public class OrderController extends MobileBaseController {
     }
 
     if (isBeanPay) {// 乐豆支付需要验证支付密码
-      String serverPrivateKey = setting.getServerPrivateKey();
       EndUser endUser = endUserService.find(userId);
+      if (endUser.getCurLeBean().compareTo(amount) < 0) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.payOrder.curLeBean.insufficient").getContent());
+        return response;
+      }
+      String serverPrivateKey = setting.getServerPrivateKey();
       // 密码非空验证
       if (StringUtils.isEmpty(password)) {
         response.setCode(CommonAttributes.FAIL_COMMON);
@@ -173,7 +178,7 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-    orderService.updateOrderforPayCallBack(order.getSn());
+
     if (isBeanPay) {// 乐豆支付
       // orderService.updateOrderforPayCallBack(order.getSn());
       Map<String, Object> map = new HashMap<String, Object>();
@@ -182,6 +187,7 @@ public class OrderController extends MobileBaseController {
       response.setMsg(map);
       response.setCode(CommonAttributes.SUCCESS);
     }
+    orderService.updateOrderforPayCallBack(order.getSn());
 
     String newtoken = TokenGenerator.generateToken(req.getToken());
     endUserService.createEndUserToken(newtoken, userId);
