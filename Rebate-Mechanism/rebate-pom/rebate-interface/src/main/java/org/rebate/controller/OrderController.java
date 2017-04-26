@@ -187,6 +187,8 @@ public class OrderController extends MobileBaseController {
       response.setMsg(map);
       response.setCode(CommonAttributes.SUCCESS);
     }
+    response.getMsg().put("orderId", order.getId());
+
     orderService.updateOrderforPayCallBack(order.getSn());
 
     String newtoken = TokenGenerator.generateToken(req.getToken());
