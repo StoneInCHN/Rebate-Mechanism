@@ -11,7 +11,7 @@
 
 	<url>http://maven.apache.org</url>
 
-	<!--  
+	 
 	<repositories>
 		<repository>
 			<id>nexus</id>
@@ -26,7 +26,7 @@
 			<url>http://10.50.20.72:8081/nexus/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories> 
-	-->
+	
 	<properties>
 		<org.springframework.version>4.0.4.RELEASE</org.springframework.version>
 		<org.hibernate.version>4.3.6.Final</org.hibernate.version>

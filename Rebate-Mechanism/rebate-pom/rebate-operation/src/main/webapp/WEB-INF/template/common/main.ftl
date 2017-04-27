@@ -34,7 +34,7 @@
       <div class="main">
           <div class="sidebar">
               <div class="sidebar-content">
-              	  [#list ["rebate:admin", "rebate:role","rebate:area","rebate:account","rebate:systemConfig","rebate:settingConfig","rebate:operationLog","rebate:topBanner","rebate:userHelp"] as permission]
+              	  [#list ["rebate:admin", "rebate:role","rebate:area","rebate:account","rebate:systemConfig","rebate:settingConfig","rebate:operationLog","rebate:topBanner","rebate:userHelp", "rebate:holidayConfig"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -99,6 +99,12 @@
 		                               <a href="../agent/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agent")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:holidayConfig"]
+		                           <li>
+		                               <a href="../holidayConfig/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.holidayConfig")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                           
 		                       </ul>
 		                   </div>
 						   	[#break /]

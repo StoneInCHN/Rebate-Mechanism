@@ -87,6 +87,9 @@
 					<th>
 						<a href="javascript:;" class="sort" name="bonusAmount">${message("rebate.bonusParam.bonusAmount")}</a>
 					</th>
+					<th>
+						<a href="javascript:;" name="remark">${message("rebate.bonusParam.remark")}</a>
+					</th>
 					<!--<th>
 						<span>${message("rebate.common.handle")}</span>
 					</th>-->
@@ -118,6 +121,9 @@
 					</td>
 					<td>
 						${bonusParam.bonusAmount}
+					</td>
+					<td>
+						<span title="${bonusParam.remark}">${abbreviate(bonusParam.remark,50, "...")}</span>
 					</td>
 					<!--
 					<td>
