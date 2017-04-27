@@ -42,7 +42,7 @@ public class TestController extends BaseController {
     startTime.set(Calendar.MILLISECOND, 0);
 
     Calendar endTime = Calendar.getInstance();
-    endTime.setTime(new Date());
+    endTime.setTime(reqTime);
     endTime.set(Calendar.HOUR_OF_DAY, 23);
     endTime.set(Calendar.MINUTE, 59);
     endTime.set(Calendar.SECOND, 59);

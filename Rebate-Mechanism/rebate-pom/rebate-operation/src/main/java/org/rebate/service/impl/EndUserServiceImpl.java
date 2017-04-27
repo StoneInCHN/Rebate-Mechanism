@@ -19,11 +19,9 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.Order;
-import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
-import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
@@ -95,25 +93,25 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusParamPerDay.setRemark(msg);
         return;
       }
-      /**
-       * 每日分红总金额占平台每日总收益的比例
-       */
-      SystemConfig totalBonusPerConfig =
-          systemConfigDao.getConfigByKey(SystemConfigKey.TOTAL_BONUS_PERCENTAGE);
-      if (totalBonusPerConfig == null || totalBonusPerConfig.getConfigValue() == null) {
-        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
-          LogUtil
-              .debug(
-                  EndUserServiceImpl.class,
-                  "dailyBonusCalJob",
-                  "daily Bonus calculate job failed! Timer Period: %s, total bonus percentage config no exist!",
-                  startTime + "-" + endTime);
-        }
-        msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
-        bonusParamPerDay.setRemark(msg);
-        return;
-      }
-      bonusParamPerDay.setTotalBonusPerConfig(totalBonusPerConfig.getConfigValue());
+      // /**
+      // * 每日分红总金额占平台每日总收益的比例
+      // */
+      // SystemConfig totalBonusPerConfig =
+      // systemConfigDao.getConfigByKey(SystemConfigKey.TOTAL_BONUS_PERCENTAGE);
+      // if (totalBonusPerConfig == null || totalBonusPerConfig.getConfigValue() == null) {
+      // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+      // LogUtil
+      // .debug(
+      // EndUserServiceImpl.class,
+      // "dailyBonusCalJob",
+      // "daily Bonus calculate job failed! Timer Period: %s, total bonus percentage config no exist!",
+      // startTime + "-" + endTime);
+      // }
+      // msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
+      // bonusParamPerDay.setRemark(msg);
+      // return;
+      // }
+      // bonusParamPerDay.setTotalBonusPerConfig(totalBonusPerConfig.getConfigValue());
 
       // /**
       // * 收益后乐分乐豆比例
@@ -171,14 +169,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
       bonusParamPerDay.setRebateTotalAmount(totalBonus.toString());
 
-      /**
-       * 每日用于分红计算的总金额
-       */
-      totalBonus =
-          totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(2,
-              BigDecimal.ROUND_HALF_UP);
-
-      bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
+      // /**
+      // * 每日用于分红计算的总金额
+      // */
+      // totalBonus =
+      // totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(2,
+      // BigDecimal.ROUND_HALF_UP);
+      //
+      // bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
 
       // /**
       // * 计算每日乐心大于等于1的用户
@@ -299,8 +297,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
       msg =
           "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:"
-              + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "\n当日平台用于分红的总金额："
-              + totalBonus + "\n当日平台分红参数value值：" + value;
+              + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "\n当日平台收益总金额：" + totalBonus
+              + "\n当日平台分红参数value值：" + value + "\n当日平台分红总乐豆：" + totalBonusAmountByMind;
       bonusParamPerDay.setRemark("Job Success!");
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
       // "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()

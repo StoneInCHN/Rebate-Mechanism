@@ -73,12 +73,6 @@
 						<a href="javascript:;" class="sort" name="rebateTotalAmount">${message("rebate.bonusParam.rebateTotalAmount")}</a>
 					</th>
 					<th>
-						<a href="javascript:;"  name="totalBonusPerConfig">${message("rebate.bonusParam.totalBonusPerConfig")}</a>
-					</th>
-					<th>
-						<a href="javascript:;" class="sort" name="bonusCalAmount">${message("rebate.bonusParam.bonusCalAmount")}</a>
-					</th>
-					<th>
 						<a href="javascript:;" class="sort" name="calValue">${message("rebate.bonusParam.calValue")}</a>
 					</th>
 					<th>
@@ -106,12 +100,6 @@
 					</td>
 					<td>
 						${bonusParam.rebateTotalAmount}
-					</td>
-					<td>
-						${bonusParam.totalBonusPerConfig}
-					</td>
-					<td>
-						${bonusParam.bonusCalAmount}
 					</td>
 					<td>
 						${bonusParam.calValue}
