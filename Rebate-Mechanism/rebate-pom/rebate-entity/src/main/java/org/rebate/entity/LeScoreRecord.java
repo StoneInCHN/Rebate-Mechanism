@@ -67,7 +67,7 @@ public class LeScoreRecord extends BaseEntity {
   private String recommenderPhoto;
 
   /**
-   * 提现状态
+   * 提现审核状态
    */
   private ApplyStatus withdrawStatus;
 
@@ -81,6 +81,15 @@ public class LeScoreRecord extends BaseEntity {
    */
   private BigDecimal incomeLeScore;
 
+  /**
+   * 微信提现失败时返回的错误信息
+   */
+  private String wechatReturnMsg;
+  
+  /**
+   * 是否已提现
+   */
+  private Boolean isWithdraw;
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getMotivateLeScore() {
@@ -184,6 +193,21 @@ public class LeScoreRecord extends BaseEntity {
     this.seller = seller;
   }
 
+  @Column(length = 100)
+  public String getWechatReturnMsg() {
+    return wechatReturnMsg;
+  }
 
+  public void setWechatReturnMsg(String wechatReturnMsg) {
+    this.wechatReturnMsg = wechatReturnMsg;
+  }
+
+  public Boolean getIsWithdraw() {
+    return isWithdraw;
+  }
+
+  public void setIsWithdraw(Boolean isWithdraw) {
+    this.isWithdraw = isWithdraw;
+  }
 
 }

@@ -34,9 +34,13 @@ $(function() {
 				dataType:"json",
 				cache:false,
 				success:function(message){
-					$.message(message);
-					$submit.attr("disabled",false);
-					setTimeout("location.href='details.jhtml?id=${leScoreRecord.id}'",1000);
+					alert(message.content);
+					if(message.type == "success"){
+						setTimeout("location.href='details.jhtml?id=${leScoreRecord.id}'",1000);
+					}else{
+						$submit.attr("disabled",false);
+					}
+					
 				}
 			});
 		}
@@ -97,6 +101,22 @@ $(function() {
 								</th>
 								<td>
 									${leScoreRecord.userCurLeScore}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.leScoreRecord.motivateLeScore")}:
+								</th>
+								<td>
+									${leScoreRecord.motivateLeScore}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.leScoreRecord.incomeLeScore")}:
+								</th>
+								<td>
+									${leScoreRecord.incomeLeScore}
 								</td>
 							</tr>
 							<tr>

@@ -18,7 +18,7 @@
 	<form id="listForm" action="list.jhtml" method="get">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.operationLog")}</a> </li>
-                <li class="active">${message("rebate.operationLog.list")}</li>
+                <li class="active">${message("rebate.operationLog.list")}(${message("rebate.common.page.totalPages",page.total)})</li>
           </ol>
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
@@ -133,6 +133,9 @@
 				[/#list]
 			</tbody>
 		</table>
+		[@pagination pageNumber = page.pageNumber totalPages = page.totalPages total=page.total]
+				[#include "/include/pagination.ftl"]
+		[/@pagination]
 	<div> 
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>

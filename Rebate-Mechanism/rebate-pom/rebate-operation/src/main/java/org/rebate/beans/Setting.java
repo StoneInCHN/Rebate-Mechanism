@@ -179,6 +179,16 @@ public class Setting implements Serializable {
    */
   private String wechatRefundUrl;
 
+  /**
+   * 微信企业向个人付款接口
+   */
+  private String wechatTransfersUrl;
+
+  /**
+   * 微信Token接口
+   */
+  private String wechatTokenUrl;
+
 
   // 支付宝的配置参数
   /**
@@ -513,6 +523,22 @@ public class Setting implements Serializable {
 
   public void setAlipayPublicKey(String alipayPublicKey) {
     this.alipayPublicKey = alipayPublicKey;
+  }
+
+  public String getWechatTokenUrl() {
+    return wechatTokenUrl;
+  }
+
+  public void setWechatTokenUrl(String wechatTokenUrl) {
+    this.wechatTokenUrl = wechatTokenUrl;
+  }
+
+  public String getWechatTransfersUrl() {
+    return wechatTransfersUrl;
+  }
+
+  public void setWechatTransfersUrl(String wechatTransfersUrl) {
+    this.wechatTransfersUrl = wechatTransfersUrl;
   }
 
 }

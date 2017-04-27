@@ -2,7 +2,7 @@
 <input type="hidden" id="orderProperty" name="orderProperty" value="${page.orderProperty}" />
 <input type="hidden" id="orderDirection" name="orderDirection" value="${page.orderDirection}" />
 	<div class="clearfix">
-		<span class="pagination-info">当前第<input type="text" id="pageNumber" name="pageNumber" value="${pageNumber}"/> 页/每页展示 <input type="text" id="pageSize" name="pageSize" value="${page.pageSize}" />条 /共${page.total}条</span>
+		<span class="pagination-info">当前第<input type="text" id="pageNumber" name="pageNumber" value="${pageNumber}"/> 页/每页展示 <input type="text" id="pageSize" name="pageSize" value="${page.pageSize}" />条 /共${page.totalPages}页</span>
 		<ul class="pagination pull-right">
 		[#if isFirst]
 			 <li class="disabled"><span>首页</span></li>
@@ -45,9 +45,6 @@
 				<a  href="javascript: $.pageSkip(${lastPageNumber});">尾页</a>
 			</li>
 		[/#if]
-		<li class="pageSkip" style="display:none">
-			${message("csh.page.totalPages", totalPages)} ${message("csh.page.pageNumber", '<input id="pageNumber" name="pageNumber" value="' + pageNumber + '" maxlength="9" onpaste="return false;" />')}<button type="submit" style="display:none">GO</button>
-		</li>
 	</ul>
 </div>
 	

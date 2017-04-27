@@ -110,11 +110,10 @@ public class SellerCategoryController extends BaseController {
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(Pageable pageable, ModelMap model) {
+  public String list(ModelMap model) {
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.asc("categorOrder"));
-    pageable.setOrders(orderings);
-    model.addAttribute("page", sellerCategoryService.findPage(pageable));
+    model.addAttribute("sellerCategorys", sellerCategoryService.findList(null, null, orderings));
     return "/sellerCategory/list";
   }
 

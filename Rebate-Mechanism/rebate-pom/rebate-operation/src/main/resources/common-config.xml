@@ -20,6 +20,17 @@
 	<setting name="uploadImageExtension" value="png,jepg,gif,jpg" />
 	<!-- 图片上传最大限制-->
 	<setting name="imageMaxSize" value="412000" />
+	
+	<!-- 微信支付平台 -->
+	<!-- 秘钥 -->
+	<setting name="wechatKey" value="a09d313c915246009685239d39b3e416" />
+	<!-- 微信分配的公众账号ID(企业号corpid即为此appId) -->
+	<setting name="wechatAppid" value="wx75b0585936937e4a" />
+	<!-- 商户ID -->
+	<setting name="wechatMchId" value="1249451301" />
+	<!-- 微信企业向个人付款接口 -->
+	<setting name="wechatTransfersUrl" value="https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers" />
+		
 
 	<logConfig operation="系统管理修改角色" urlPattern="/console/role/update.jhtml" />
 	<logConfig operation="系统管理添加角色" urlPattern="/console/role/save.jhtml" />

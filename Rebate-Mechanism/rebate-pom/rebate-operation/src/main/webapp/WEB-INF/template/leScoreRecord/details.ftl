@@ -61,6 +61,22 @@
 									${leScoreRecord.userCurLeScore}
 								</td>
 							</tr>
+								<tr>
+								<th>
+									${message("rebate.leScoreRecord.motivateLeScore")}:
+								</th>
+								<td>
+									${leScoreRecord.motivateLeScore}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.leScoreRecord.incomeLeScore")}:
+								</th>
+								<td>
+									${leScoreRecord.incomeLeScore}
+								</td>
+							</tr>
 							<tr>
 								<th>
 									${message("rebate.leScoreRecord.recommender")}:

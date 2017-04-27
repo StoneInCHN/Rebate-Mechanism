@@ -71,7 +71,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					[#list page.content as sellerCategory]
+					[#list sellerCategorys as sellerCategory]
 						<tr>
 							<td>
 								<input type="checkbox" name="ids" value="${sellerCategory.id}"/>

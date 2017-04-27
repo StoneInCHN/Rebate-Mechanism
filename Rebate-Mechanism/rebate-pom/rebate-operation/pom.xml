@@ -356,6 +356,13 @@
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
 		</dependency>
+		
+		<dependency>
+	    	<groupId>wx.pay</groupId>
+	   	    <artifactId>java</artifactId>
+	   	    <version>1.0</version>
+		</dependency>
+		
 		<!-- wechat pay -->
 		<!-- <dependency> <groupId>wx.pay</groupId> <artifactId>java</artifactId> 
 			<version>1.0</version> </dependency> -->

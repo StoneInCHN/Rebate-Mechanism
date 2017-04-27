@@ -19,7 +19,7 @@
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.leScoreRecord")}</a> </li>
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.leScoreRecord.withdraw")}</a> </li>
-                <li class="active">${message("rebate.leScoreRecord.withdraw.list")}</li>
+                <li class="active">${message("rebate.leScoreRecord.withdraw.list")}(${message("rebate.common.page.totalPages", page.total)})</li>
           </ol>
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
@@ -101,6 +101,9 @@
 						<a href="javascript:;" class="sort" name="withdrawStatus">${message("rebate.leScoreRecord.withdrawStatus")}</a>
 					</th>
 					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.isWithdraw")}</span>
+					</th>
+					<th>
 						<span>${message("rebate.leScoreRecord.remark")}</span>
 					</th>
 					<th>
@@ -148,6 +151,18 @@
 						[/#if]
 					</td>
 					<td>
+						[#if  leScoreRecord.isWithdraw ?? ]
+							[#if  leScoreRecord.isWithdraw ]
+								<span class="label label-success">${message("rebate.common.true")}</span>
+							[#else]
+								<span class="label label-danger">${message("rebate.common.false")}</span>
+							[/#if]
+						[#else]
+							--
+						[/#if]
+						
+					</td>
+					<td>
 						[#if  leScoreRecord.remark??]
 						<span data-toggle="tooltip" data-placement="left" title="${leScoreRecord.remark}">${leScoreRecord.remark}</span>
 						[#else]
@@ -168,6 +183,9 @@
 				[/#list]
 			</tbody>
 		</table>
+		[@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
+			[#include "/include/pagination.ftl"]
+		[/@pagination]
 	<div> 
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>

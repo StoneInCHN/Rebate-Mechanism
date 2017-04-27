@@ -15,7 +15,6 @@ import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.LeScoreRecordReq;
 import org.rebate.service.LeScoreRecordService;
-import org.rebate.utils.LogUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,10 +37,10 @@ public class LeScoreRecordController extends BaseController {
     List<Filter> filters = new ArrayList<Filter>();
     filters.add(Filter.eq("leScoreType", LeScoreType.WITHDRAW));
     if (req.getUserName() != null) {
-      filters.add(Filter.eq("endUser&userName", req.getUserName()));
+      filters.add(Filter.like("endUser&userName", "%"+req.getUserName()+"%"));
     }
     if (req.getCellPhoneNum() != null) {
-      filters.add(Filter.eq("endUser&cellPhoneNum", req.getCellPhoneNum()));
+      filters.add(Filter.like("endUser&cellPhoneNum","%"+ req.getCellPhoneNum()+"%"));
     }
     if (req.getWithdrawStatus() != null) {
       filters.add(Filter.eq("withdrawStatus", req.getWithdrawStatus()));
@@ -77,24 +76,11 @@ public class LeScoreRecordController extends BaseController {
   }
 
   /**
-   * 更新
+   * 更新(提现审核)
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public @ResponseBody Message update(LeScoreRecord leScoreRecord) {
-    try {
-      LogUtil.debug(LeScoreRecordController.class, "update", "leScoreRecord = %s", leScoreRecord);
-      LeScoreRecord temp = leScoreRecordService.find(leScoreRecord.getId());
-      if(leScoreRecord.getWithdrawStatus()!=null){
-        temp.setWithdrawStatus(leScoreRecord.getWithdrawStatus());
-      }
-      temp.setRemark(leScoreRecord.getRemark());
-      leScoreRecordService.update(temp);
-      return SUCCESS_MESSAGE;
-    } catch (Exception e) {
-      e.printStackTrace();
-      return ERROR_MESSAGE;
-    }
-
+    return leScoreRecordService.auditWithdraw(leScoreRecord);
   }
 
   /**
