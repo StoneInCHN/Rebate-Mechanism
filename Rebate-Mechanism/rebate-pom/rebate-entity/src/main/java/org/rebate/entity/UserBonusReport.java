@@ -29,7 +29,7 @@ public class UserBonusReport extends BaseEntity {
 
 
   /**
-   * 分红乐分
+   * 分红乐分（改完乐豆）
    */
   private BigDecimal bonusLeScore;
   /**
@@ -37,7 +37,7 @@ public class UserBonusReport extends BaseEntity {
    */
   private BigDecimal consumeTotalAmount;
   /**
-   * 最高分红乐分
+   * 最高分红乐分（改完乐豆）
    */
   private BigDecimal highBonusLeScore;
 

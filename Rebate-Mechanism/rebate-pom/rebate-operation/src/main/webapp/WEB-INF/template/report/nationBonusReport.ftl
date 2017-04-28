@@ -73,6 +73,9 @@
 						<a href="javascript:;" name="consumeTotalAmount">${message("rebate.nationBonusReport.consumeTotalAmount")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="platformIncome">${message("rebate.nationBonusReport.platformIncome")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" name="sellerNum">${message("rebate.nationBonusReport.sellerNum")}</a>
 					</th>
 					<th>
@@ -106,6 +109,9 @@
 					</td>
 					<td>
 						${report.consumeTotalAmount}
+					</td>
+					<td>
+						${report.platformIncome}
 					</td>
 					<td>
 						${report.sellerNum}

@@ -54,7 +54,7 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal consumeByDay;
   /**
-   * 当日分红乐分
+   * 当日分红乐分（改完乐豆）
    */
   private BigDecimal bonusLeScoreByDay;
   /**
@@ -62,7 +62,10 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal publicAmountByDay;
 
-
+  /**
+   * 平台收益
+   */
+  private BigDecimal platformIncome;
   /**
    * 统计日期
    */
@@ -163,6 +166,13 @@ public class NationBonusReport extends BaseEntity {
     this.remark = remark;
   }
 
+  @Column(scale = 2, precision = 16)
+  public BigDecimal getPlatformIncome() {
+    return platformIncome;
+  }
 
+  public void setPlatformIncome(BigDecimal platformIncome) {
+    this.platformIncome = platformIncome;
+  }
 
 }
