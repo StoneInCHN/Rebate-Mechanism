@@ -63,11 +63,20 @@ public class ReportController extends BaseController {
    * 列表
    */
   @RequestMapping(value = "/userBonusReport", method = RequestMethod.GET)
-  public String userBonusReport(Pageable pageable, Date reportDateFrom, Date reportDateTo,
-      ModelMap model) {
+  public String userBonusReport(Pageable pageable, String nickName, String mobile,
+      Date reportDateFrom, Date reportDateTo, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
     Filter dateFrom = new Filter("reportDate", Operator.ge, reportDateFrom);
     Filter dateTo = new Filter("reportDate", Operator.le, reportDateTo);
+    if (nickName != null) {
+      Filter nickNameFilter = new Filter("userId&nickName", Operator.like, "%" + nickName + "%");
+      filters.add(nickNameFilter);
+    }
+    if (mobile != null) {
+      Filter mobileFilter = new Filter("userId&cellPhoneNum", Operator.like, "%" + mobile + "%");
+      filters.add(mobileFilter);
+    }
+
     filters.add(dateFrom);
     filters.add(dateTo);
     pageable.setFilters(filters);
@@ -76,6 +85,8 @@ public class ReportController extends BaseController {
     pageable.setOrders(orderings);
     model.addAttribute("reportDateFrom", reportDateFrom);
     model.addAttribute("reportDateTo", reportDateTo);
+    model.addAttribute("mobile", mobile);
+    model.addAttribute("nickName", nickName);
     model.addAttribute("page", userBonusReportService.findPage(pageable));
     return "/report/userBonusReport";
   }

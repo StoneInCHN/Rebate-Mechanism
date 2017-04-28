@@ -32,6 +32,20 @@
 						<table class="queryFiled">
 							<tr>
 								<th>
+									${message("rebate.endUser.mobile")}
+								</th>
+								<td>
+									<input type="text" name="mobile" class="text" value="${mobile}"maxlength="20"/>
+								</td>
+								<th>
+									${message("rebate.endUser.nickName")}
+								</th>
+								<td>
+									<input type="text" name="nickName" class="text" value="${nickName}"maxlength="20"/>
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.report.reportDate")}:
 								</th>
 								<td>
@@ -52,9 +66,10 @@
 								</td>
 							</tr>
 						</table>
-                  </div>
-             </div>
-         </div>
+	                  </div>
+	             </div>
+	         </div>
+	         
  		 <div class="button-group">
               <!--<a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>
               <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>-->
@@ -67,7 +82,10 @@
 						<input type="checkbox" id="selectAll" />
 					</th>-->
 					<th>
-						<a href="javascript:;" class="sort" name="userName">${message("rebate.endUser.userName")}</a>
+						<a href="javascript:;" class="sort" name="userName">${message("rebate.endUser.mobile")}</a>
+					</th>
+					<th>
+						<a href="javascript:;" class="sort" name="userName">${message("rebate.endUser.nickName")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="bonusLeScore">${message("rebate.userBonusReport.bonusLeScore")}</a>
@@ -86,8 +104,11 @@
 			<tbody>
 				[#list page.content as report]
 				<tr>
+				<td>
+						${report.userId.cellPhoneNum}
+					</td>
 					<td>
-						${report.userId.userName}
+						${report.userId.nickName}
 					</td>
 					<td>
 						${report.bonusLeScore}
@@ -108,7 +129,6 @@
 		[@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
 			[#include "/include/pagination.ftl"]
 		[/@pagination]
-		 
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
@@ -116,7 +136,11 @@
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${base}/resources/js/highcharts/highcharts.js"></script>
 <script type="text/javascript">
+$(function () {
+	  $('[data-toggle="tooltip"]').tooltip();
+	})
 </script>
 </body>
 </html>
