@@ -26,9 +26,15 @@ import org.rebate.beans.Setting.ImageType;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Admin;
 import org.rebate.entity.Area;
+import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
+import org.rebate.framework.filter.Filter;
+import org.rebate.framework.ordering.Ordering;
+import org.rebate.framework.paging.Pageable;
+import org.rebate.request.EndUserReq;
 import org.rebate.service.AdminService;
 import org.rebate.service.AreaService;
 import org.rebate.service.CaptchaService;
+import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
 import org.rebate.service.RSAService;
 import org.rebate.utils.JsonUtil;
@@ -59,9 +65,9 @@ public class CommonController extends BaseController {
   private AreaService areaService;
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
+  @Resource(name = "endUserServiceImpl")
+  private EndUserService endUserService;
 
-
-  
   /**
    * 验证码
    */
@@ -202,7 +208,7 @@ public class CommonController extends BaseController {
       try {
         MultipartFile mf = entity.getValue();
         String displayPath = fileService.saveImage(mf, ImageType.ADVERTISEMENT);
-        map.put("url",displayPath);
+        map.put("url", displayPath);
         map.put("error", 0);
         String result = JsonUtil.getJsonString4JavaPOJO(map);
         String callback = request.getParameter("callback");
@@ -217,5 +223,30 @@ public class CommonController extends BaseController {
       }
     }
   }
-  
+
+
+  /**
+   * 列表
+   */
+  @RequestMapping(value = "/selectedEndUser4Agent", method = RequestMethod.GET)
+  public String selectedEndUser4Agent(Pageable pageable, EndUserReq request, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
+    }
+    if (StringUtils.isNotEmpty(request.getNickName())) {
+      filters.add(Filter.like("nickName", "%" + request.getNickName() + "%"));
+      model.addAttribute("nickName", request.getNickName());
+    }
+    filters.add(Filter.eq("accountStatus", AccountStatus.ACTIVED));
+    filters.add(Filter.isNull("agent"));
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    pageable.setOrders(orderings);
+    pageable.setPageSize(5);
+    model.addAttribute("page", endUserService.findPage(pageable));
+    return "/common/selectedEndUser";
+  }
 }

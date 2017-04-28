@@ -138,14 +138,35 @@
 		    </div>
 		    <div role="tabpanel" class="tab-pane" id="about">
 				<a  id="editAbout" class="btn btn-default" href="editSettingConfig.jhtml?configKey=ABOUT_US&id=${about.id}"><i class="fa fa-edit"></i><span>修改</span></a>	
+				<p style="margin:10px">
+					[#if  about.isEnabled]
+						<span class="label label-success">${message("rebate.systemConfig.isEnabled.true")}</span>
+					[#else]
+						<span class="label label-danger">${message("rebate.systemConfig.isEnabled.false")}</span>
+					[/#if]
+				</p>
 				<p>${about.configValue}</p>
 		    </div>
 		    <div role="tabpanel" class="tab-pane" id="license">
 		       <a  id="editLicense" class="btn btn-default" href="editSettingConfig.jhtml?configKey=LICENSE_AGREEMENT&id=${license.id}"><i class="fa fa-edit"></i><span>修改</span></a>	
+				<p style="margin:10px">
+					[#if  license.isEnabled]
+						<span class="label label-success">${message("rebate.systemConfig.isEnabled.true")}</span>
+					[#else]
+						<span class="label label-danger">${message("rebate.systemConfig.isEnabled.false")}</span>
+					[/#if]
+				</p>
 				<p>${license.configValue}</p>
 		    </div>
 		     <div role="tabpanel" class="tab-pane" id="withdrawRule">
 		       <a  id="editLicense" class="btn btn-default" href="editSettingConfig.jhtml?configKey=WITHDRAW_RULE&id=${withdrawRule.id}"><i class="fa fa-edit"></i><span>修改</span></a>	
+				<p style="margin:10px">
+					[#if  withdrawRule.isEnabled]
+						<span class="label label-success">${message("rebate.systemConfig.isEnabled.true")}</span>
+					[#else]
+						<span class="label label-danger">${message("rebate.systemConfig.isEnabled.false")}</span>
+					[/#if]
+				</p>
 				<p>${withdrawRule.configValue}</p>
 		    </div>
 			 <div role="tabpanel" class="tab-pane" id="other">

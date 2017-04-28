@@ -50,7 +50,7 @@ $().ready(function() {
 			<table class="input tabContent">
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("rebate.agentCommission.area")}:
+									${message("rebate.agentCommission.area")}:
 								</th>
 								<td>
 									<!--<input type="hidden" id="areaId"  name="areaId" value="${(agentCommission.area.id)!}" treePath="${(agentCommission.area.treePath)!}"/>-->
@@ -60,7 +60,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.agentCommission.commissionRate")}:
+									<span class="requiredField">*</span>${message("rebate.agentCommission.commissionRate")}:
 								</th>
 								<td>
 									<input type="text" id="commissionRate" name="commissionRate" value="${agentCommission.commissionRate}" class="text" maxlength="20" />
