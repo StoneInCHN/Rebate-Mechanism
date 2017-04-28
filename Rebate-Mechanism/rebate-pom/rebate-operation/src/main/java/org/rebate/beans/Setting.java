@@ -51,7 +51,11 @@ public class Setting implements Serializable {
     /**
      * 商家类型
      */
-    SELLERCATEGORY
+    SELLERCATEGORY,
+    /**
+     * app版本
+     */
+    APKVERSION
   }
 
 

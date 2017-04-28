@@ -22,19 +22,17 @@ public interface FileService {
    * @param hasFullPath 是否添加全路径
    * @return
    */
-  public String saveImage(MultipartFile multiFile, ImageType imageType,Boolean hasFullPath);
-  
+  public String saveImage(MultipartFile multiFile, ImageType imageType, Boolean hasFullPath);
+
   /**
    * 文件验证
    * 
-   * @param fileType
-   *            文件类型
-   * @param multipartFile
-   *            上传文件
+   * @param fileType 文件类型
+   * @param multipartFile 上传文件
    * @return 文件验证是否通过
    */
   boolean isValid(FileType fileType, MultipartFile multipartFile);
-  
+
   /**
    * 文件上传
    * 
@@ -53,11 +51,14 @@ public interface FileService {
    * @return 访问URL
    */
   String upload(FileType fileType, MultipartFile multipartFile);
+
   /**
    * 上传APK文件
+   * 
    * @param multipartFile
    * @return
    */
   String uploadApk(MultipartFile multipartFile);
+
 
 }

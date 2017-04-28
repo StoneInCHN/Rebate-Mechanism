@@ -71,7 +71,7 @@ public class FileServiceImpl implements FileService {
             File.separator + "src_" + uuid + "."
                 + FilenameUtils.getExtension(multiFile.getOriginalFilename());
         String storePath = uploadPath + File.separator + uuid + "." + DEST_EXTENSION;;
-        
+
         if (!tempFile.getParentFile().exists()) {
           tempFile.getParentFile().mkdirs();
         }
@@ -130,7 +130,7 @@ public class FileServiceImpl implements FileService {
       subPath = File.separator + "advertisement";
     } else if (imageType == ImageType.SELLERCATEGORY) {
       subPath = File.separator + "sellercategory";
-    } 
+    }
 
     imgUploadPath = uploadPath + subPath;
 
@@ -138,10 +138,10 @@ public class FileServiceImpl implements FileService {
         imgUploadPath + File.separator + date + File.separator + "src_" + uuid + "."
             + FilenameUtils.getExtension(multiFile.getOriginalFilename());
 
-      webPath =
-         "/upload" + subPath + File.separator + date + File.separator + "src_"
-              + uuid + "." + FilenameUtils.getExtension(multiFile.getOriginalFilename());
-    
+    webPath =
+        "/upload" + subPath + File.separator + date + File.separator + "src_" + uuid + "."
+            + FilenameUtils.getExtension(multiFile.getOriginalFilename());
+
 
     String storePath =
         imgUploadPath + File.separator + date + File.separator + uuid + "." + DEST_EXTENSION;;
@@ -164,7 +164,7 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
-  public String saveImage(MultipartFile multiFile, ImageType imageType,Boolean hasFullPath) {
+  public String saveImage(MultipartFile multiFile, ImageType imageType, Boolean hasFullPath) {
     SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
     String date = sdFormat.format(new Date());
     String webPath = null;
@@ -181,9 +181,9 @@ public class FileServiceImpl implements FileService {
       subPath = File.separator + "storePicture";
     } else if (imageType == ImageType.ADVERTISEMENT) {
       subPath = File.separator + "advertisement";
-    }else if (imageType == ImageType.SELLERCATEGORY) {
+    } else if (imageType == ImageType.SELLERCATEGORY) {
       subPath = File.separator + "sellercategory";
-    } 
+    }
 
     imgUploadPath = uploadPath + subPath;
 
@@ -219,7 +219,7 @@ public class FileServiceImpl implements FileService {
     }
     return webPath;
   }
-  
+
   public boolean isValid(FileType fileType, MultipartFile multipartFile) {
     if (multipartFile == null) {
       return false;
@@ -246,8 +246,8 @@ public class FileServiceImpl implements FileService {
       return null;
     }
     if (fileType == FileType.file) {
-      fileUploadPath = uploadPath + File.separator + "apk";
-      projectPath = projectUploadPath + File.separator + "apk";
+      fileUploadPath = uploadPath + File.separator + "apkversion";
+      projectPath = projectUploadPath + File.separator + "apkversion";
     }
     try {
       String destPath = fileUploadPath + File.separator + multipartFile.getOriginalFilename();
@@ -287,8 +287,8 @@ public class FileServiceImpl implements FileService {
     Setting setting = SettingUtils.get();
     String apkName = setting.getApkName();
     String webPath = null;
-    String fileUploadPath = uploadPath + File.separator + "apk";;
-    String projectPath = projectUploadPath + File.separator + "apk";;
+    String fileUploadPath = uploadPath + File.separator + "apkversion";
+    String projectPath = projectUploadPath + File.separator + "apkversion";
     if (multipartFile == null) {
       return null;
     }

@@ -28,9 +28,8 @@ public class ApkVersion extends BaseEntity {
   /**
    * 版本序列号(用于比较是否是新版本)
    */
-  private Integer versionCode;
+  private Integer versionCode = 0;
   /**
-   * app路径
    */
   private String apkPath;
 

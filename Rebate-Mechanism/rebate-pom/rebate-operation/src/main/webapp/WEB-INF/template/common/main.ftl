@@ -280,6 +280,26 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
+				[#list ["rebate:version"] as permission]
+						[@shiro.hasPermission name = permission]
+		                   <div class="sidebar-nav">
+		                       <div class="sidebar-title">
+		                           <a href="#">
+		                               <i class="fa fa-user"></i>
+		                               <span class="text-normal">${message("rebate.main.Version")}</span>
+		                           </a>
+		                       </div>
+		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
+		                     	  [@shiro.hasPermission name="rebate:version"]
+		                           <li>
+		                               <a href="../apkVersion/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.apkVersion.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                       </ul>
+		                   </div>
+						   	[#break /]
+					[/@shiro.hasPermission]
+				[/#list]
               </div>
           </div>
           <div class="content">
