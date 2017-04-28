@@ -55,7 +55,12 @@ public class SellerRowMapper implements RowMapper<Map<String, Object>> {
       BigDecimal rebateUserScore =
           unit.subtract(rs.getBigDecimal("discount").divide(new BigDecimal("10")).multiply(unit))
               .multiply(new BigDecimal(rebateScoreUser));
-      sellerInfo.put("rebateUserScore", rebateUserScore);
+      if (unit.compareTo(rebateUserScore) < 0) {
+        sellerInfo.put("rebateUserScore", unit);
+      } else {
+        sellerInfo.put("rebateUserScore", rebateUserScore);
+      }
+
     }
 
     // sellerInfo.put("service_category_name", rs.getString("category_name"));

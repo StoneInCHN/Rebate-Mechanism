@@ -159,7 +159,9 @@ public class CommonEnum {
     /** 鼓励金占让利金额百分比 14 */
     ENCOURAGE_CONSUME,
     /** 商家积分返利订单百分比参数 15 */
-    REBATESCORE_SELLER_ORDER_PERCENTAGE
+    REBATESCORE_SELLER_ORDER_PERCENTAGE,
+    /** 平台获利占总让利百分比 16 */
+    PLATFORM_INCOME_PERCENTAGE
   }
 
   /**
