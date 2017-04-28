@@ -7,16 +7,19 @@
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.placeholder.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lSelect.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 <script type="text/javascript">
 $().ready(function() {
 
 	var $areaId = $("#areaId");
+	var $selectEndUser = $("#selectEndUser");
 	// 地区选择
 	$areaId.lSelect({
 		url: "${base}/console/common/area.jhtml"
@@ -33,7 +36,32 @@ $().ready(function() {
 			}
 		}
 	});
-
+	$selectEndUser.click(function(){
+		window.dialog({
+           id: 'selectEndUser-dialog',
+           title: '选择用户',
+           url:'${base}/console/common/selectedEndUser4Agent.jhtml',
+           quickClose: true,
+           okValue: '确定',
+		   ok: function () {
+				var $endUserFrame = $(window.frames["selectEndUser-dialog"].document);				
+				var $ids = $endUserFrame.find(':input[name="ids"]:enabled:checked');
+				if($ids && $ids.length >1){
+					alert("只能选择一个用户");
+					return false;
+				}else if($ids && $ids.length ==1){
+					var userName = $($ids[0]).parent().next().find("span").text();
+					$("#endUserId").val($($ids[0]).val());
+					$("#endUserName").val(userName);
+				}else{
+					alert("请选择一个用户");
+					return false;
+				}
+			},
+			cancelValue: '取消'
+        }).show(this);
+		return false;
+	})
 });
 </script>
 </head>
@@ -60,7 +88,9 @@ $().ready(function() {
 									${message("rebate.agent.endUser")}:
 								</th>
 								<td>
-									<input type="text" id="endUser" name="endUser" value="${agent.endUser}" class="text" maxlength="20" />
+									<input type="hidden" id="endUserId"  class="text" name="endUserId"/>
+									<input type="text" id="endUserName"   readonly value="${agent.endUser.userName}" class="text" maxlength="20" />
+									<a type="btn btn-default" id="selectEndUser">选择用户</a>
 								</td>
 							</tr>
 							<tr>

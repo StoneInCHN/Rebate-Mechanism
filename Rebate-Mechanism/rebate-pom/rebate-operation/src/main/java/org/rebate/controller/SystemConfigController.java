@@ -124,6 +124,7 @@ public class SystemConfigController extends BaseController{
   public String updateSettingConfig(SettingConfig config) {
     SettingConfig temp = settingConfigService.find(config.getId());
     if(temp!=null){
+      temp.setIsEnabled(config.getIsEnabled());
       temp.setConfigValue(config.getConfigValue());
       temp.setRemark(config.getRemark());
       settingConfigService.update(temp);

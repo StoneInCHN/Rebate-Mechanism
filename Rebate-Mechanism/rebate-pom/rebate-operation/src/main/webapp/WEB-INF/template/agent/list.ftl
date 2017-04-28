@@ -61,13 +61,16 @@
 							<input type="checkbox" id="selectAll" />
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="title">${message("rebate.agent.area")}</a>
+							${message("rebate.agent.area")}
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="commissionRate">${message("rebate.agent.endUser")}</a>
+							${message("rebate.agent.endUser")}
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="commissionRate">${message("rebate.agent.agencyLevel")}</a>
+							${message("rebate.endUser.mobile")}
+						</th>
+						<th>
+							<a href="javascript:;" class="sort" name="agencyLevel">${message("rebate.agent.agencyLevel")}</a>
 						</th>
 						<th>
 							<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
@@ -98,7 +101,14 @@
 							[/#if]	
 						</td>
 						<td>
-							${message("rebate.agent.agencyLevel" + agent.agencyLevel)}
+							[#if  agent.endUser??]
+								${agent.endUser.cellPhoneNum}
+							[#else]
+								--
+							[/#if]	
+						</td>
+						<td>
+							${message("rebate.agent.agencyLevel." + agent.agencyLevel)}
 						</td>
 						<td>
 							<span title="${agent.createDate?string("yyyy-MM-dd HH:mm:ss")}">${agent.createDate}</span>

@@ -29,6 +29,7 @@ $().ready(function() {
 				required: true
 			},
 			commissionRate: {
+				required: true,
 				number:true
 			}
 		}
@@ -56,7 +57,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.agentCommission.commissionRate")}:
+									<span class="requiredField">*</span>${message("rebate.agentCommission.commissionRate")}:
 								</th>
 								<td>
 									<input type="text" id="commissionRate" name="commissionRate" class="text" maxlength="20" />

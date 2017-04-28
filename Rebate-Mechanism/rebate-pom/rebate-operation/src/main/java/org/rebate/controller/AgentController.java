@@ -57,6 +57,8 @@ public class AgentController extends BaseController {
       agent.setArea(area);
       agent.setEndUser(endUser);
       agentService.save(agent);
+      endUser.setAgent(agent);
+      endUserService.update(endUser);
     }
     return "redirect:list.jhtml";
   }
@@ -78,13 +80,7 @@ public class AgentController extends BaseController {
     if (!isValid(agent)) {
       return ERROR_VIEW;
     }
-    Area area = areaService.find(areaId);
-    EndUser endUser = endUserService.find(endUserId);
-    if(area!=null&&endUser!=null){
-      agent.setArea(area);
-      agent.setEndUser(endUser);
-      agentService.update(agent);
-    }
+    agentService.updateAgent(areaId, endUserId, agent);
     return "redirect:list.jhtml";
   }
 
@@ -95,7 +91,7 @@ public class AgentController extends BaseController {
   public String list(Pageable pageable, String areaName, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
     if (StringUtils.isNoneBlank(areaName)) {
-      filters.add(Filter.like("area&fullName", areaName));
+      filters.add(Filter.like("area&fullName", "%" + areaName + "%"));
       model.addAttribute("areaName", areaName);
     }
     pageable.setFilters(filters);

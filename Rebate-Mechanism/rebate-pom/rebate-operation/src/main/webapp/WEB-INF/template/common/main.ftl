@@ -89,16 +89,6 @@
 		                               <a href="../userHelp/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.userHelp")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
-		                           [@shiro.hasPermission name="rebate:agentCommission"]
-		                           <li>
-		                               <a href="../agentCommission/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agentCommission")}</span></a>
-		                           </li>
-		                           [/@shiro.hasPermission]
-		                            [@shiro.hasPermission name="rebate:agent"]
-		                           <li>
-		                               <a href="../agent/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agent")}</span></a>
-		                           </li>
-		                           [/@shiro.hasPermission]
 		                           [@shiro.hasPermission name="rebate:holidayConfig"]
 		                           <li>
 		                               <a href="../holidayConfig/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.holidayConfig")}</span></a>
@@ -109,7 +99,32 @@
 		                   </div>
 						   	[#break /]
 					[/@shiro.hasPermission]
-				[/#list]
+					[/#list]
+						[#list ["rebate:agent","rebate:agentCommission"] as permission]
+							[@shiro.hasPermission name = permission]
+			                   <div class="sidebar-nav">
+			                       <div class="sidebar-title">
+			                           <a href="#">
+			                               <i class="fa fa-user"></i>
+			                               <span class="text-normal">${message("rebate.main.agentManager")}</span>
+			                           </a>
+			                       </div>
+			                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
+					                   [@shiro.hasPermission name="rebate:agentCommission"]
+				                       <li>
+				                           <a href="../agentCommission/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agentCommission")}</span></a>
+			                           </li>
+			                           [/@shiro.hasPermission]
+			                            [@shiro.hasPermission name="rebate:agent"]
+			                           <li>
+			                               <a href="../agent/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.agent")}</span></a>
+			                           </li>
+			                           [/@shiro.hasPermission]
+			                       </ul>
+			                   </div>
+							   	[#break /]
+						[/@shiro.hasPermission]
+					[/#list]
 				 [#list ["rebate:sellerCategory","rebate:sellerApply","rebate:seller"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">

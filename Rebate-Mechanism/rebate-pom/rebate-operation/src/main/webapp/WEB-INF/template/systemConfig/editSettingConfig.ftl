@@ -44,6 +44,17 @@
 				<input type="hidden" name="id" value="${settingConfig.id}" />
 				<input type="hidden" name="configKey" value="${configKey}" />
 				<table class="input">
+						<tr>
+								<th>
+									${message("rebate.systemConfig.isEnabled")}:
+								</th>
+								<td>
+									<select name="isEnabled">
+										<option [#if settingConfig.isEnabled] selected="selected" [/#if] value="true">${message("rebate.systemConfig.isEnabled.true")}</option>
+										<option [#if !settingConfig.isEnabled] selected="selected" [/#if] value="false">${message("rebate.systemConfig.isEnabled.false")}</option>
+									</select>
+								</td>
+							</tr>
 					<tr>
 						<th>
 							${message("rebate.systemConfig.configValue")}:
