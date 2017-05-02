@@ -6,26 +6,19 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
-import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
-import org.rebate.entity.Seller;
-import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
-import org.rebate.request.SellerRequest;
 import org.rebate.service.NationBonusReportService;
-import org.rebate.service.SellerCategoryService;
-import org.rebate.service.SellerService;
 import org.rebate.service.UserBonusReportService;
+import org.rebate.service.UserRegReportService;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller("reportController")
 @RequestMapping("/console/report")
@@ -36,6 +29,9 @@ public class ReportController extends BaseController {
 
   @Resource(name = "userBonusReportServiceImpl")
   private UserBonusReportService userBonusReportService;
+
+  @Resource(name = "userRegReportServiceImpl")
+  private UserRegReportService userRegReportService;
 
   /**
    * 列表
@@ -89,5 +85,27 @@ public class ReportController extends BaseController {
     model.addAttribute("nickName", nickName);
     model.addAttribute("page", userBonusReportService.findPage(pageable));
     return "/report/userBonusReport";
+  }
+
+  /**
+   * 用户注册统计列表
+   */
+  @RequestMapping(value = "/userRegReport", method = RequestMethod.GET)
+  public String list(Pageable pageable, Date reportDateFrom, Date reportDateTo, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (reportDateFrom != null) {
+      filters.add(Filter.ge("statisticsDate", TimeUtils.formatDate2Day(reportDateFrom)));
+      model.addAttribute("reportDateFrom", reportDateFrom);
+    }
+    if (reportDateTo != null) {
+      filters.add(Filter.le("statisticsDate", TimeUtils.formatDate2Day(reportDateTo)));
+      model.addAttribute("reportDateTo", reportDateTo);
+    }
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("statisticsDate"));
+    pageable.setOrders(orderings);
+    model.addAttribute("page", userRegReportService.findPage(pageable));
+    return "/report/userRegReport";
   }
 }

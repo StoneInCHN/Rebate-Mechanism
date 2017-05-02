@@ -97,7 +97,7 @@
 						<th>
 							<a href="javascript:;" class="sort" name="versionCode">${message("rebate.apkVersion.versionCode")}</a>
 						</th>
-						<th>
+						<th style="width:500px">
 							<a href="javascript:;" name="apkPath">${message("rebate.apkVersion.apkPath")}</a>
 						</th>
 						<th>
@@ -128,7 +128,7 @@
 								${version.versionCode}
 							</td>
 							<td>
-								${version.apkPath}
+								<span title="${version.apkPath}">${abbreviate(version.apkPath,200, "...")}</span>
 							</td>
 							<td>
 								${message(version.isForced?string('rebate.common.true', 'rebate.common.false'))}

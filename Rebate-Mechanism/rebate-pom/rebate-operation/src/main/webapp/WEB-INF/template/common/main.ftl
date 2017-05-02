@@ -253,6 +253,9 @@
 		                            <li>
 		                               <a href="../report/userBonusReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.report.userBonusReport")}</span></a>
 									</li>
+									<li>
+		                               <a href="../report/userRegReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.userRegReport")}</span></a>
+									</li>
 									[/@shiro.hasPermission]
 		                       </ul>
 		                   </div>
