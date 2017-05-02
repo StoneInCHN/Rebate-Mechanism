@@ -72,24 +72,39 @@ public class LeScoreRecord extends BaseEntity {
   private ApplyStatus withdrawStatus;
 
   /**
-   * 提现的激励乐分(包括乐心分红乐分，推荐获得乐分)
+   * 提现的激励乐分(包括鼓励金乐分，推荐获得乐分)
    */
   private BigDecimal motivateLeScore;
 
   /**
-   * 提现的直接收入乐分(包括商家收益乐分，代理商提成乐分)
+   * 商家直接收益乐分
    */
   private BigDecimal incomeLeScore;
+
+  /**
+   * 代理商提成乐分
+   */
+  private BigDecimal agentLeScore;
 
   /**
    * 微信提现失败时返回的错误信息
    */
   private String wechatReturnMsg;
-  
+
   /**
    * 是否已提现
    */
   private Boolean isWithdraw;
+
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getAgentLeScore() {
+    return agentLeScore;
+  }
+
+  public void setAgentLeScore(BigDecimal agentLeScore) {
+    this.agentLeScore = agentLeScore;
+  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getMotivateLeScore() {

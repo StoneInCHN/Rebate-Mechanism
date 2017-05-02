@@ -226,10 +226,15 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     SystemConfig minLimit = systemConfigDao.getConfigByKey(SystemConfigKey.WITHDRAW_MINIMUM_LIMIT);
     BigDecimal incomeScore = endUser.getIncomeLeScore();
     BigDecimal motivateScore = endUser.getMotivateLeScore();
+    BigDecimal agentScore = endUser.getAgentLeScore();
     /**
-     * 收益乐分不足1乐分无法提取
+     * 商家直接收益乐分不足1乐分无法提取
      */
     incomeScore = incomeScore.setScale(0, BigDecimal.ROUND_DOWN);
+    /**
+     * 代理商提成乐分不足1乐分无法提取
+     */
+    agentScore = agentScore.setScale(0, BigDecimal.ROUND_DOWN);
     /**
      * 激励乐分满config才能提取
      */
@@ -237,11 +242,12 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         ((motivateScore.divide(new BigDecimal(minLimit.getConfigValue()))).setScale(0,
             BigDecimal.ROUND_DOWN)).multiply(new BigDecimal(minLimit.getConfigValue()));
 
-    BigDecimal avlLeScore = incomeScore.add(motivateScore);
+    BigDecimal avlLeScore = incomeScore.add(motivateScore).add(agentScore);
     Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
     map.put("avlLeScore", avlLeScore);
-    map.put("incomeScore", incomeScore);
-    map.put("motivateScore", motivateScore);
+    map.put("agentLeScore", agentScore);
+    map.put("incomeLeScore", incomeScore);
+    map.put("motivateLeScore", motivateScore);
     return map;
   }
 
@@ -256,19 +262,21 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     leScoreRecord.setLeScoreType(LeScoreType.WITHDRAW);
     leScoreRecord.setWithdrawStatus(ApplyStatus.AUDIT_WAITING);
     leScoreRecord.setAmount(map.get("avlLeScore").negate());
-    leScoreRecord.setMotivateLeScore(map.get("motivateScore"));
-    leScoreRecord.setIncomeLeScore(map.get("incomeScore"));
+    leScoreRecord.setMotivateLeScore(map.get("motivateLeScore"));
+    leScoreRecord.setIncomeLeScore(map.get("incomeLeScore"));
+    leScoreRecord.setAgentLeScore(map.get("agentLeScore"));
     leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
     endUser.getLeScoreRecords().add(leScoreRecord);
 
-    endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(map.get("incomeScore")));
-    endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(map.get("motivateScore")));
+    endUser.setAgentLeScore(endUser.getAgentLeScore().subtract(map.get("agentLeScore")));
+    endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(map.get("incomeLeScore")));
+    endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(map.get("motivateLeScore")));
     endUser.setCurLeScore(endUser.getCurLeScore().subtract(map.get("avlLeScore")));
     endUserDao.merge(endUser);
 
     if (!CollectionUtils.isEmpty(endUser.getSellers())) {
       for (Seller seller : endUser.getSellers()) {
-        seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeScore")));
+        seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeLeScore")));
         sellerDao.merge(seller);
         break;
       }

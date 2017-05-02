@@ -48,11 +48,12 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
       if (endUser == null) {
         LogUtil.debug(LeScoreRecordServiceImpl.class, "auditWithdraw", "endUser不能为空");
         return Message.error("参数不全,用户不能为空");
-      } else if (leScoreRecord.getWithdrawStatus() == null ||temp.getWithdrawStatus()==null) {
+      } else if (leScoreRecord.getWithdrawStatus() == null || temp.getWithdrawStatus() == null) {
         LogUtil.debug(LeScoreRecordServiceImpl.class, "auditWithdraw", "auditWithdraw不能为空");
         return Message.error("审核状态不能为空");
-      }else if (ApplyStatus.AUDIT_WAITING.equals(temp.getWithdrawStatus())) {
-        LogUtil.debug(LeScoreRecordServiceImpl.class, "auditWithdraw", "auditWithdraw 不是为待审核状态，不需要审核");
+      } else if (ApplyStatus.AUDIT_WAITING.equals(temp.getWithdrawStatus())) {
+        LogUtil.debug(LeScoreRecordServiceImpl.class, "auditWithdraw",
+            "auditWithdraw 不是为待审核状态，不需要审核");
         return Message.error("审核状态错误");
       } else if (ApplyStatus.AUDIT_PASSED.equals(leScoreRecord.getWithdrawStatus())) {
         String partner_trade_no =
@@ -80,11 +81,14 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
         BigDecimal curLeScore = temp.getAmount();
         // 激励乐分(包括乐心分红乐分，推荐获得乐分)
         BigDecimal motivateLeScore = temp.getMotivateLeScore();
-        // 直接收入乐分(包括商家收益乐分，代理商提成乐分)
+        // 商家直接收益乐分
         BigDecimal incomeLeScore = temp.getIncomeLeScore();
+        // 代理商提成乐分
+        BigDecimal agentLeScore = temp.getAgentLeScore();
         endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore));
         endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore));
         endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
+        endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore));
         endUserService.update(endUser);
       }
       temp.setWithdrawStatus(leScoreRecord.getWithdrawStatus());

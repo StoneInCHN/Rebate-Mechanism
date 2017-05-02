@@ -172,24 +172,25 @@ public class EndUser extends BaseEntity {
   private BigDecimal curLeScore = new BigDecimal("0");
 
   /**
-   * 激励乐分(包括乐心分红乐分，推荐获得乐分)
+   * 激励乐分(包括消费鼓励金乐分，推荐获得乐分)
    */
   private BigDecimal motivateLeScore = new BigDecimal("0");
 
   /**
-   * 直接收入乐分(包括商家收益乐分，代理商提成乐分)
+   * 商家直接收入乐分
    */
   private BigDecimal incomeLeScore = new BigDecimal("0");
+
 
   // /**
   // * 推荐乐分
   // */
   // private BigDecimal recommendLeScore = new BigDecimal("0");
   //
-  // /**
-  // * 分销商提成乐分
-  // */
-  // private BigDecimal agentLeScore = new BigDecimal("0");
+  /**
+   * 代理商提成乐分
+   */
+  private BigDecimal agentLeScore = new BigDecimal("0");
 
   /**
    * 累计积分
@@ -256,6 +257,16 @@ public class EndUser extends BaseEntity {
    */
   private String sellerPicUrl;
 
+
+
+  @Column(scale = 2, precision = 10)
+  public BigDecimal getAgentLeScore() {
+    return agentLeScore;
+  }
+
+  public void setAgentLeScore(BigDecimal agentLeScore) {
+    this.agentLeScore = agentLeScore;
+  }
 
   @Column(length = 50)
   public String getWechatNickName() {
