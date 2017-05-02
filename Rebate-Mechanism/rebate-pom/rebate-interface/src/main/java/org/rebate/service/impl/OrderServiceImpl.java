@@ -500,7 +500,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Integer rateCounts = seller.getRateCounts() + 1;
     BigDecimal totalScore =
         (seller.getRateScore() != null ? seller.getRateScore() : new BigDecimal(0)
-            .multiply(new BigDecimal(seller.getRateCounts()))).add(new BigDecimal(score));
+            .multiply(new BigDecimal(seller.getRateCounts() + 1))).add(new BigDecimal(score));
     BigDecimal rateScore =
         totalScore.divide(new BigDecimal(rateCounts), 1, BigDecimal.ROUND_HALF_UP);
     seller.setRateCounts(rateCounts);

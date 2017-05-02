@@ -299,9 +299,9 @@ public class OrderController extends MobileBaseController {
     Order order = orderService.find(orderId);
 
     String[] propertys =
-        {"id", "sn", "seller.name", "seller.id", "sellerScore", "userScore", "amount",
-            "createDate", "remark", "evaluate.content", "evaluate.sellerReply", "status",
-            "seller.storePictureUrl", "seller.address"};
+        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
+            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
+            "seller.address"};
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
     response.setMsg(result);
 
@@ -352,8 +352,9 @@ public class OrderController extends MobileBaseController {
 
     Page<Order> page = orderService.findPage(pageable);
     String[] propertys =
-        {"id", "seller.name", "createDate", "endUser.nickName", "amount", "endUser.cellPhoneNum",
-            "endUser.userPhoto", "sn", "remark", "userScore", "status", "evaluate.sellerReply"};
+        {"id", "seller.name", "createDate", "endUser.nickName", "sellerScore", "amount",
+            "endUser.cellPhoneNum", "endUser.userPhoto", "sn", "remark", "userScore", "status",
+            "evaluate.sellerReply"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
