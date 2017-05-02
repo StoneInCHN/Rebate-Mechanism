@@ -41,7 +41,9 @@
 		<setting name="intfApiKey" value="8fe0c292c2e64a10a556a10bb9f8942b" />
 		
 		<!-- recommend url -->
-		<setting name="recommendUrl" value="http://www.yxsh.org/xx/xx/recommendUrl.html" />
+		<setting name="recommendUrl" value="http://120.27.26.85:10001/rebate-interface/share/reg.html" />
+		<!-- download url -->
+		<setting name="downloadUrl" value="http://120.27.26.85:8080/upload/apkversion/翼享生活.apk" />
 		<!-- 新闻资讯URL -->
 		<setting name="newsDetailsUrl" value="http://120.27.27.99:8080/console/news/details.jhtml" />
    		<!-- <setting name="newsDetailsUrl" value="http://carlife.chcws.com:8080/console/news/details.jhtml" /> -->

@@ -243,6 +243,11 @@ public class Setting implements Serializable {
   private String recommendUrl;
 
   /**
+   * 下载链接
+   */
+  private String downloadUrl;
+
+  /**
    * 短信后缀
    */
   private String smsPostfix;
@@ -277,6 +282,14 @@ public class Setting implements Serializable {
    */
   private String sellerDiscountMin;
 
+
+  public String getDownloadUrl() {
+    return downloadUrl;
+  }
+
+  public void setDownloadUrl(String downloadUrl) {
+    this.downloadUrl = downloadUrl;
+  }
 
   public String getSellerDiscountMin() {
     return sellerDiscountMin;

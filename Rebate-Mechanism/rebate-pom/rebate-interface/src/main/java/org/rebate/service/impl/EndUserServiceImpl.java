@@ -258,6 +258,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     Map<String, BigDecimal> map = getAvlLeScore(endUser);
 
     LeScoreRecord leScoreRecord = new LeScoreRecord();
+    leScoreRecord.setRemark(remark);
     leScoreRecord.setEndUser(endUser);
     leScoreRecord.setLeScoreType(LeScoreType.WITHDRAW);
     leScoreRecord.setWithdrawStatus(ApplyStatus.AUDIT_WAITING);

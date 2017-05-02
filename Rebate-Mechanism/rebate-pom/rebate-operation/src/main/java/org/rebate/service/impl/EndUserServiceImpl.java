@@ -236,6 +236,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
           curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
           leMindRecord.setTotalBonus(leMindRecord.getMaxBonus());
           leMindRecord.setStatus(CommonStatus.INACTIVE);
+
+          LeMindRecord inactiveRecord = new LeMindRecord();
+          inactiveRecord.setEndUser(endUser);
+          inactiveRecord.setAmount(leMindRecord.getAmount().negate());
+          inactiveRecord.setUserCurLeMind(endUser.getCurLeMind().add(leMindRecord.getAmount()));
+          inactiveRecord.setRemark("分红满限额扣除乐心");
+          endUser.getLeMindRecords().add(inactiveRecord);
+
           endUser.setCurLeMind(endUser.getCurLeMind().subtract(leMindRecord.getAmount()));
         } else {
           leMindRecord.setTotalBonus(totalLeScoreBonus);
