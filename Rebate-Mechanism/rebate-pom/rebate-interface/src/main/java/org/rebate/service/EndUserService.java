@@ -114,6 +114,14 @@ public interface EndUserService extends BaseService<EndUser, Long> {
   Map<String, BigDecimal> getAvlLeScore(EndUser endUser);
 
   /**
+   * 根据用户角色获取提现规则
+   * 
+   * @param endUser
+   * @return
+   */
+  Map<String, String> getAvlRule(EndUser endUser);
+
+  /**
    * 用户提现
    * 
    * @param userId

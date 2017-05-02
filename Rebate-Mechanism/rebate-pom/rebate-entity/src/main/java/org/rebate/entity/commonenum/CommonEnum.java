@@ -176,10 +176,12 @@ public class CommonEnum {
     CUSTOMER_PHONE,
     /** 关于 2 */
     ABOUT_US,
-    /** 提现规则 3 */
-    WITHDRAW_RULE,
-    /** 用户分享地址 4 */
-    RECOMMEND_URL,
+    /** 会员提现规则 3 */
+    WITHDRAW_RULE_ENDUSER,
+    /** 商家提现规则 4 */
+    WITHDRAW_RULE_SELLER,
+    /** 代理商提现规则 5 */
+    WITHDRAW_RULE_AGENT,
 
   }
 

@@ -14,6 +14,7 @@ import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.AreaDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.SellerDao;
+import org.rebate.dao.SettingConfigDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.dao.UserRegReportDao;
@@ -22,6 +23,7 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
+import org.rebate.entity.SettingConfig;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.UserRegReport;
@@ -29,6 +31,7 @@ import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -61,6 +64,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "areaDaoImpl")
   private AreaDao areaDao;
+
+  @Resource(name = "settingConfigDaoImpl")
+  private SettingConfigDao settingConfigDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -221,9 +227,31 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     return endUserDao.getAgentByArea(area);
   }
 
+
+  public Map<String, String> getAvlRule(EndUser endUser) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("agentRule", null);
+    map.put("incomeRule", null);
+    SettingConfig endUserRule =
+        settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_ENDUSER);
+    map.put("motivateRule", endUserRule != null ? endUserRule.getConfigValue() : null);
+    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
+      SettingConfig sellerRule =
+          settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_SELLER);
+      map.put("incomeRule", sellerRule != null ? sellerRule.getConfigValue() : null);
+    }
+    if (endUser.getAgent() != null) {
+      SettingConfig agentRule =
+          settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_AGENT);
+      map.put("agentRule", agentRule != null ? agentRule.getConfigValue() : null);
+    }
+    return map;
+  }
+
   @Override
   public Map<String, BigDecimal> getAvlLeScore(EndUser endUser) {
     SystemConfig minLimit = systemConfigDao.getConfigByKey(SystemConfigKey.WITHDRAW_MINIMUM_LIMIT);
+
     BigDecimal incomeScore = endUser.getIncomeLeScore();
     BigDecimal motivateScore = endUser.getMotivateLeScore();
     BigDecimal agentScore = endUser.getAgentLeScore();

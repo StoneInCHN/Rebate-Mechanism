@@ -28,12 +28,10 @@ import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
-import org.rebate.entity.SettingConfig;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
-import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -912,9 +910,7 @@ public class EndUserController extends MobileBaseController {
     EndUser endUser = endUserService.find(userId);
     Map<String, Object> map = new HashMap<String, Object>();
     if (endUser.getQrImage() == null) {
-      String content =
-          "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"cellPhoneNum\":\""
-              + endUser.getCellPhoneNum() + "\"}";
+      String content = setting.getRecommendUrl() + "?cellPhoneNum=" + endUser.getCellPhoneNum();
       byte[] bytes = QRCodeGenerator.generateQrImage(content);
       endUser.setQrImage(bytes);
       endUserService.update(endUser);
@@ -1383,10 +1379,7 @@ public class EndUserController extends MobileBaseController {
     map.put("userPhoto", endUser.getUserPhoto());
     map.put("curLeScore", endUser.getCurLeScore());
     map.putAll(endUserService.getAvlLeScore(endUser));
-
-    SettingConfig settingConfig =
-        settingConfigService.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE);
-    map.put("withDrawRule", settingConfig != null ? settingConfig.getConfigValue() : null);
+    map.putAll(endUserService.getAvlRule(endUser));
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(request.getToken());
