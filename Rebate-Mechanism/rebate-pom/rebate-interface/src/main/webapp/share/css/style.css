@@ -1,0 +1,56 @@
+.text-center {
+    text-align: center;
+}
+
+img{
+    max-width: 100%;
+}
+
+/*注册页面*/
+.btn-mseeage {
+    margin: .6em 1em;
+    padding: .6em 1.5em;
+    background: #e71810;
+    border: none;
+    border-radius: 7px;
+    color: white;
+}
+
+.btn-reg {
+    display: block;
+    text-align: center;
+    width: 50%;
+    background: #e71810;
+    border-radius: 50px;
+    color: white;
+    line-height: 2.5em;
+    margin: 0px auto;
+    margin-top: 2em;
+}
+
+#reg_top {
+    height: 200px;
+    text-align: center;
+    background: url("../images/login_register_bg.png");
+    background-size: 100% 100%;
+    /*background-position: left top;*/
+}
+
+#reg_top img {
+    width: 120px;
+    margin-top: 40px;
+}
+
+/*登录页面*/
+#login{
+    background:url("../images/login_bg.png");
+    background-size: 100% 100%;
+}
+
+/*app下载页面*/
+#down_app{
+    width: 100%;
+    line-height: 0em;
+    margin: 0;
+    padding: 0;
+}

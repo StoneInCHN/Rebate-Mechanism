@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jsencrypt.min.js"></script>
+</head>
+<body>
+<script>
+    //发送验证码
+    function sendsms() {
+        var cellPhoneNum = $("#cellPhoneNum").val();
+        if (cellPhoneNum.length !== 11) {
+            alert("请输入11位手机号");
+        } else {
+            var url = "http://120.27.26.85:10001/rebate-interface/endUser/getSmsCode.jhtml";
+            var data = JSON.stringify({
+                "cellPhoneNum": cellPhoneNum,
+                "smsCodeType": "REG"
+            });
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (data) {
+                    if (data.code == 0000) {
+                        $("#send").text("已发送");
+                        var step = 59;
+                        var _res = setInterval(function () {
+                            $("#send").attr("disabled", true);
+                            $("#send").text(step + 's');
+                            step -= 1;
+                            if (step <= 0) {
+                                $("#send").removeAttr("disabled");
+                                $("#send").text('发送');
+                                clearInterval(_res);
+                            }
+                        }, 1000);
+                    } else {
+                        alert(data.desc);
+                    }
+                }
+            });
+        }
+    }
+
+    //提交注册数据
+    function reg() {
+        var rsa;
+        //获取公钥
+        $.ajax({
+            type: 'POST',
+            url: "http://120.27.26.85:10001/rebate-interface/endUser/rsa.jhtml",
+            data: "",
+            async: false,
+            dataType: 'json',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (data) {
+                if (data.code == 0000) {
+                    rsa = data.desc;
+                } else {
+                    alert(data.desc);
+                }
+            }
+        });
+
+        //rsa加密
+        var cellPhoneNum = $("#cellPhoneNum").val();
+        var smsCode = $("#smsCode").val();
+        var password = $("#password").val();
+        var password_confirm = $("#password_confirm").val();
+
+
+//        var password_rsa = cryptico.encrypt(password, rsa);
+//        var password_rsa_en = password_rsa.cipher;
+        var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(rsa);
+        var encrypted = encrypt.encrypt(password);
+
+        //截取地址栏参数
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null)return unescape(r[2]);
+            return null;
+        }
+
+        var recommenderMobile = GetQueryString("cellPhoneNum");
+
+        if (cellPhoneNum.length !== 11) {
+            alert("请输入11位手机号");
+            return;
+        }
+        if (smsCode == "") {
+            alert("请输入短信验证码");
+            return;
+        }
+        if (password == "") {
+            alert("请输入密码");
+            return;
+        }
+        if (password != password_confirm) {
+            alert("两次密码输入不一致");
+            return;
+        }
+
+        //post用户注册数据
+        var url = "http://120.27.26.85:10001/rebate-interface/endUser/reg.jhtml";
+        var data = JSON.stringify({
+            "cellPhoneNum": cellPhoneNum,
+            "smsCode": smsCode,
+            "password": encrypted,
+            "password_confirm": encrypted,
+            "recommenderMobile": recommenderMobile
+        });
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            dataType: 'json',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (data) {
+                if (data.code == 0000) {
+                    alert("恭喜您注册成功！");
+                    //注册成功
+                    window.location.href = "down_app.html";
+                } else {
+                    alert(data.desc);
+                }
+            }
+        });
+
+
+    }
+</script>
+<div class="weui-flex" id="reg_top">
+    <div class="weui-flex__item">
+        <div class="placeholder">
+            <img src="images/login_logo.png" alt="">
+        </div>
+    </div>
+</div>
+<div class="weui-cells__title text-center">手机号即登陆账号，验证码将发送至此号码</div>
+<div class="weui-cell weui-cell_vcode">
+    <div class="weui-cell__hd">
+        <label class="weui-label">手&nbsp;&nbsp;机&nbsp;&nbsp;号</label>
+    </div>
+    <div class="weui-cell__bd">
+        <input class="weui-input" type="tel" id="cellPhoneNum" placeholder="手机号">
+    </div>
+    <div class="weui-cell__ft">
+        <button class="btn-mseeage" id="send" onclick="sendsms();">发送</button>
+    </div>
+</div>
+
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">验&nbsp;&nbsp;证&nbsp;&nbsp;码</label></div>
+    <div class="weui-cell__bd">
+        <input class="weui-input" type="number" id="smsCode" pattern="[0-9]*" placeholder="验证码">
+    </div>
+</div>
+
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</label>
+    </div>
+    <div class="weui-cell__bd">
+        <input class="weui-input" type="password" id="password" placeholder="密码">
+    </div>
+</div>
+
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">确认密码</label></div>
+    <div class="weui-cell__bd">
+        <input class="weui-input" type="password" id="password_confirm" placeholder="确认密码">
+    </div>
+</div>
+
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">推&nbsp;&nbsp;荐&nbsp;&nbsp;人</label></div>
+    <div class="weui-cell__bd">
+        <input class="weui-input" type="number" id="recommenderMobile" pattern="[0-9]*" placeholder="选填" disabled>
+    </div>
+</div>
+
+<div class="weui-cell"></div>
+<div class="weui-btn-area">
+    <a class="btn-reg" href="javascript:reg();" id="reg">注册</a>
+</div>
+
+<div class="weui-cells__title text-center">轻触“完成“即同意<a href="reg_protocol.html" style="color: #a60000">《软件许可及服务协议》</a></div>
+
+</body>
+</html>

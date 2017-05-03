@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>软件许可及服务协议</title>
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <!--<script type="text/javascript" src="js/cryptico.min.js"></script>-->
+</head>
+<body>
+<script>
+    //post用户注册数据
+    var url = "http://120.27.26.85:10001/rebate-interface/settingConfig/getConfigByKey.jhtml";
+    var data = JSON.stringify({
+        "configKey":"LICENSE_AGREEMENT"
+    });
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: data,
+        dataType: 'json',
+        contentType: 'application/json;charset=UTF-8',
+        success: function (data) {
+            if (data.code == 0000) {
+                $("#configValue").html(data.msg.configValue);
+            } else {
+                alert(data.desc);
+            }
+        }
+    });
+</script>
+<div class="page__bd">
+    <article class="weui-article">
+        <h1>软件许可及服务协议</h1>
+        <section>
+            <!--<h2 class="title">章标题</h2>-->
+            <section id="configValue">
+
+            </section>
+        </section>
+    </article>
+</div>
+</body>
+</html>
