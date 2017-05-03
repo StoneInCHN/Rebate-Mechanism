@@ -243,6 +243,11 @@ public class Setting implements Serializable {
   private String recommendUrl;
 
   /**
+   * 下载页面
+   */
+  private String downloadPage;
+
+  /**
    * 下载链接
    */
   private String downloadUrl;
@@ -282,6 +287,14 @@ public class Setting implements Serializable {
    */
   private String sellerDiscountMin;
 
+
+  public String getDownloadPage() {
+    return downloadPage;
+  }
+
+  public void setDownloadPage(String downloadPage) {
+    this.downloadPage = downloadPage;
+  }
 
   public String getDownloadUrl() {
     return downloadUrl;

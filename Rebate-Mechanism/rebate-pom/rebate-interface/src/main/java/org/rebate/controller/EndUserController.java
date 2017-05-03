@@ -920,7 +920,7 @@ public class EndUserController extends MobileBaseController {
     map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.put("recommendUrl",
         setting.getRecommendUrl() + "?cellPhoneNum=" + endUser.getCellPhoneNum());
-    map.put("downloadUrl", setting.getDownloadUrl());
+    map.put("downloadUrl", setting.getDownloadPage() + "?androidUrl=" + setting.getDownloadUrl());
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(req.getToken());

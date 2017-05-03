@@ -42,6 +42,8 @@
 		
 		<!-- recommend url -->
 		<setting name="recommendUrl" value="http://120.27.26.85:10001/rebate-interface/share/reg.html" />
+		<!-- download page -->
+		<setting name="downloadPage" value="http://120.27.26.85:10001/rebate-interface/share/download_app.html" />
 		<!-- download url -->
 		<setting name="downloadUrl" value="http://120.27.26.85:8080/upload/apkversion/翼享生活.apk" />
 		<!-- 新闻资讯URL -->
