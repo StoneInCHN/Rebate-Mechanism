@@ -16,7 +16,7 @@
 <script type="text/javascript" src="${base}/resources/js/editor/lang/zh_CN.js"></script>
 <script type="text/javascript">
     KindEditor.ready(function(K) {
-				K.create('textarea[name="content"]', {
+				K.create('textarea[name="messageContent"]', {
 					autoHeightMode : true,
 					afterCreate : function() {
 						var self = this;
@@ -40,17 +40,11 @@ $().ready(function() {
 	// 表单验证
 	$inputForm.validate({
 		rules: {
-			title: {
+			messageTitle: {
 				required: true,
 				maxlength: 100
 			},
-			configOrder: {
-				number:true
-			},
-			isEnabled: {
-				required: true
-			},
-			content: {
+			messageContent: {
 				required: true,
 			}
 		}
@@ -70,43 +64,18 @@ $().ready(function() {
                      	<table class="input tabContent">
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("rebate.messageInfo.title")}:
+									<span class="requiredField">*</span>${message("rebate.messageInfo.messageTitle")}:
 								</th>
 								<td>
-									<input type="text" name="title" class="text" maxlength="100" />
+									<input type="text" name="messageTitle" class="text" maxlength="100" />
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.messageInfo.configOrder")}:
+									<span class="requiredField">*</span>${message("rebate.messageInfo.messageContent")}:
 								</th>
 								<td>
-									<input type="text" id="configOrder" name="configOrder" class="text" maxlength="20" />
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.messageInfo.isEnabled")}:
-								</th>
-								<td>
-									<input type="radio" value="true" name="isEnabled" checked="checked" />${message("rebate.common.true")}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="radio" value="false" name="isEnabled" />${message("rebate.common.false")}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.messageInfo.content")}:
-								</th>
-								<td>
-									<textarea  name="content" rows="6" cols="60"></textarea>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.messageInfo.remark")}:
-								</th>
-								<td>
-									<textarea  name="remark" rows="3" cols="60"></textarea>
+									<textarea  name="messageContent" rows="6" cols="60"></textarea>
 								</td>
 							</tr>
 						</table>

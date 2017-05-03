@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.userHelp.edit")}</title>
+<title>${message("rebate.messageInfo.edit")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -17,7 +17,7 @@
 <script type="text/javascript">
 $().ready(function() {
 	   KindEditor.ready(function(K) {
-				K.create('textarea[name="content"]', {
+				K.create('textarea[name="messageContent"]', {
 					autoHeightMode : true,
 					afterCreate : function() {
 						var self = this;
@@ -39,17 +39,11 @@ $().ready(function() {
 	// 表单验证
 	$inputForm.validate({
 		rules: {
-			title: {
+			messageTitle: {
 				required: true,
 				maxlength: 100
 			},
-			configOrder: {
-				number:true
-			},
-			isEnabled: {
-				required: true
-			},
-			content: {
+			messageContent: {
 				required: true,
 			}
 		}
@@ -61,52 +55,27 @@ $().ready(function() {
 <body>
 	 <div class="content">
           <ol class="breadcrumb">
-                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.userHelp")}</a> </li>
-                <li><a href="#">${message("rebate.userHelp.list")}</a></li>
-                <li class="active">${message("rebate.userHelp.edit")}</li>
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.messageInfo")}</a> </li>
+                <li><a href="#">${message("rebate.messageInfo.list")}</a></li>
+                <li class="active">${message("rebate.messageInfo.edit")}</li>
           </ol>
 		 <form id="inputForm" action="update.jhtml" method="post">
-			<input type="hidden" name="id" value="${userHelp.id}" />
+			<input type="hidden" name="id" value="${messageInfo.id}" />
 			<table class="input tabContent">
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("rebate.userHelp.title")}:
+									<span class="requiredField">*</span>${message("rebate.messageInfo.messageTitle")}:
 								</th>
 								<td>
-									<input type="text" name="title" class="text" maxlength="100" value="${userHelp.title}"/>
+									<input type="text" name="messageTitle" class="text" maxlength="100" value="${messageInfo.messageTitle}"/>
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.userHelp.configOrder")}:
+									<span class="requiredField">*</span>${message("rebate.messageInfo.messageContent")}:
 								</th>
 								<td>
-									<input type="text" id="configOrder" name="configOrder" value="${userHelp.configOrder}" class="text" maxlength="20" />
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.userHelp.isEnabled")}:
-								</th>
-								<td>
-									<input type="radio" value="true" [#if userHelp.isEnabled] checked="checked" [/#if] name="isEnabled"  />${message("rebate.common.true")}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="radio" value="false" [#if !userHelp.isEnabled] checked="checked" [/#if]] name="isEnabled" />${message("rebate.common.false")}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.userHelp.content")}:
-								</th>
-								<td>
-									<textarea  name="content" rows="6" cols="60">${userHelp.content}</textarea>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.userHelp.remark")}:
-								</th>
-								<td>
-									<textarea  name="remark" rows="3" cols="60">${userHelp.remark}</textarea>
+									<textarea  name="messageContent" rows="6" cols="60">${messageInfo.messageContent}</textarea>
 								</td>
 							</tr>
 						</table>

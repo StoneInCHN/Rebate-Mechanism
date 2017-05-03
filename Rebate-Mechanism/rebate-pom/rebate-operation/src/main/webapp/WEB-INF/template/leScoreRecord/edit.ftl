@@ -121,6 +121,14 @@ $(function() {
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.leScoreRecord.agentLeScore")}:
+								</th>
+								<td>
+									${leScoreRecord.agentLeScore}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.leScoreRecord.recommender")}:
 								</th>
 								<td>

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -49,6 +50,7 @@ public class MessageInfo extends BaseEntity {
   }
 
   @JsonProperty
+  @Column(length = 5000)
   public String getMessageContent() {
     return messageContent;
   }

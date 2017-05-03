@@ -94,6 +94,11 @@
 		                               <a href="../holidayConfig/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.holidayConfig")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:messageInfo"]
+		                           <li>
+		                               <a href="../messageInfo/list.jhtml" target="iframe"><i class="fa fa-male"></i><span class="text-normal">${message("rebate.main.messageInfo")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
 		                           
 		                       </ul>
 		                   </div>

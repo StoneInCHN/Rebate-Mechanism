@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.userHelp.list")}</title>
+<title>${message("rebate.messageInfo.list")}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -18,8 +18,8 @@
 <body>
 	<form id="listForm" action="list.jhtml" method="get">
  		<ol class="breadcrumb">
-            <li><a href="#">${message("rebate.main.userHelp")}</a></li>
-            <li class="active">${message("rebate.userHelp.list")}(${message("rebate.common.page.totalPages",page.total)})</li>
+            <li><a href="#">${message("rebate.main.messageInfo")}</a></li>
+            <li class="active">${message("rebate.messageInfo.list")}(${message("rebate.common.page.totalPages",page.total)})</li>
         </ol>
 		<div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
@@ -32,20 +32,10 @@
 						<table class="queryFiled">
 							<tr>
 								<th>
-									${message("rebate.userHelp.title")}:
+									${message("rebate.messageInfo.messageTitle")}:
 								</th>
 								<td>
-									<input type="text" name="title" class="text" value="${title}"maxlength="20" />
-								</td>
-								<th>
-									${message("rebate.userHelp.isEnabled")}:
-								</th>
-								<td>
-									<select  name="isEnabled">
-										<option value="">${message("rebate.common.All")}</option>
-										<option [#if isEnabled] checked="checked" [/#if] value="true">${message("rebate.common.true")}</option>
-										<option [#if !isEnabled] checked="checked" [/#if] value="false">${message("rebate.common.false")}</option>
-									</select>
+									<input type="text" name="messageTitle" class="text" value="${messageTitle}"maxlength="20" />
 								</td>
 								<th>
 									&nbsp;
@@ -71,19 +61,13 @@
 							<input type="checkbox" id="selectAll" />
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="title">${message("rebate.userHelp.title")}</a>
+							<a href="javascript:;" class="sort" name="messageTitle">${message("rebate.messageInfo.messageTitle")}</a>
 						</th>
 						<th>
-							<a href="javascript:;" class="sort" name="remark">${message("rebate.userHelp.remark")}</a>
-						</th>
-						<th>
-							<a href="javascript:;" class="sort" name="configOrder">${message("rebate.userHelp.configOrder")}</a>
+							${message("rebate.messageInfo.messageContent")}
 						</th>
 						<th>
 							<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
-						</th>
-						<th>
-							<a href="javascript:;" class="sort" name="isEnabled">${message("rebate.userHelp.isEnabled")}</a>
 						</th>
 						<th>
 							<span>${message("rebate.common.handle")}</span>
@@ -91,39 +75,27 @@
 					</tr>
 				</thead>
 				<tbody>
-					[#list page.content as userHelp]
+					[#list page.content as messageInfo]
 					<tr>
 						<td>
-							<input type="checkbox"  name="ids" value="${userHelp.id}" />
+							<input type="checkbox"  name="ids" value="${messageInfo.id}" />
 						</td>
 						<td>
-							${userHelp.title}
+							${messageInfo.messageTitle}
 						</td>
 						<td>
-							[#if userHelp.remark??]
-								<span data-toggle="tooltip" data-placement="top" >${abbreviate(userHelp.remark, 50, "...")}</span>
+							[#if messageInfo.messageContent??]
+								<span data-toggle="tooltip" data-placement="top" >${abbreviate(messageInfo.messageContent, 50, "...")}</span>
 							[#else]
 								---	
 							[/#if]
 						</td>
 						<td>
-							${userHelp.configOrder}
+							<span title="${messageInfo.createDate?string("yyyy-MM-dd HH:mm:ss")}">${messageInfo.createDate}</span>
 						</td>
 						<td>
-							<span title="${userHelp.createDate?string("yyyy-MM-dd HH:mm:ss")}">${userHelp.createDate}</span>
-						</td>
-						<td>
-							[#if  userHelp.isEnabled]
-								<span class="label label-info">${message("rebate.common.true")}</span>
-							[#elseif !userHelp.isEnabled]
-								<span class="label label-success">${message("rebate.common.false")}</span>
-							[#else]
-								--
-							[/#if]
-						</td>
-						<td>
-							<a href="edit.jhtml?id=${userHelp.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
-							<a href="details.jhtml?id=${userHelp.id}" title="${message("rebate.common.details")}"><i class="fa fa-eye"></i></a>
+							<a href="edit.jhtml?id=${messageInfo.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+							<a href="details.jhtml?id=${messageInfo.id}" title="${message("rebate.common.details")}"><i class="fa fa-eye"></i></a>
 						</td>
 					</tr>
 					[/#list]

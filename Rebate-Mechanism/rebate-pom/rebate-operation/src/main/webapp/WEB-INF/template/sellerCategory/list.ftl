@@ -35,6 +35,40 @@
              </div>
              <div id="collapseOne" class="accordion-body in collapse" sellerCategory="tabpanel" aria-labelledby="headingOne">
                   <div class="accordion-inner">
+                  		<table class="queryFiled">
+                  				<tr>
+									<th>
+										${message("rebate.sellerCategory.categoryName")}:
+									</th>
+									<td>
+										<input type="text" name="categoryName" class="text" value="${categoryName}" maxlength="20" />
+									</td>
+									<th>
+										${message("rebate.sellerCategory.isActive")}:
+									</th>
+									<td>
+										<select  name="isActive">
+											[#if isActive ??]
+												<option value="">${message("rebate.common.All")}</option>
+												<option [#if isActive ] selected="selected" [/#if] value="true">${message("rebate.common.true")}</option>
+												<option [#if !isActive ] selected="selected" [/#if] value="false">${message("rebate.common.false")}</option>
+											[#else] 
+												<option  selected="selected" value="">${message("rebate.common.All")}</option>
+												<option  value="true">${message("rebate.common.true")}</option>
+												<option  value="false">${message("rebate.common.false")}</option>
+											[/#if]
+											
+										</select>
+									</td>
+									<th>
+										&nbsp;
+									</th>
+									<td>
+										<input type="submit" class="btn " value="${message("rebate.common.submit")}" />
+										<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
+									</td>
+								</tr>
+                  		</table>
                   </div>
              </div>
          </div>
@@ -71,7 +105,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					[#list sellerCategorys as sellerCategory]
+					[#list page.content as sellerCategory]
 						<tr>
 							<td>
 								<input type="checkbox" name="ids" value="${sellerCategory.id}"/>
@@ -104,6 +138,9 @@
 					[/#list]
 				</tbody>
 			</table>
+			[@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
+				[#include "/include/pagination.ftl"]
+			[/@pagination]
 		<div> 
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>

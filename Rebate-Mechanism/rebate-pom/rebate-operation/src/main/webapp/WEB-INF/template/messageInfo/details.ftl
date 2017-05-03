@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.userHelp.edit")}</title>
+<title>${message("rebate.messageInfo.edit")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -12,55 +12,25 @@
 <body>
 	 <div class="content">
           <ol class="breadcrumb">
-                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.userHelp")}</a> </li>
-                <li><a href="list.jhtml">${message("rebate.userHelp.list")}</a></li>
-                <li class="active">${message("rebate.userHelp.edit")}</li>
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.messageInfo")}</a> </li>
+                <li><a href="list.jhtml">${message("rebate.messageInfo.list")}</a></li>
+                <li class="active">${message("rebate.messageInfo.details")}</li>
           </ol>
 			<table class="input tabContent">
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("rebate.userHelp.title")}:
+									${message("rebate.messageInfo.messageTitle")}:
 								</th>
 								<td>
-									${userHelp.title}
+									${messageInfo.messageTitle}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.userHelp.configOrder")}:
+									${message("rebate.messageInfo.messageContent")}:
 								</th>
 								<td>
-									${userHelp.configOrder}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.userHelp.isEnabled")}:
-								</th>
-								<td>
-									[#if  userHelp.isEnabled]
-										<span class="label label-info">${message("rebate.common.true")}</span>
-									[#elseif !userHelp.isEnabled]
-										<span class="label label-success">${message("rebate.common.false")}</span>
-									[#else]
-										--
-									[/#if]
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.userHelp.content")}:
-								</th>
-								<td>
-									${userHelp.content}
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.userHelp.remark")}:
-								</th>
-								<td>
-									${userHelp.remark}
+									${messageInfo.messageContent}
 								</td>
 							</tr>
 							<tr>

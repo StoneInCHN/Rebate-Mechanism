@@ -16,6 +16,7 @@ import org.rebate.entity.commonenum.CommonEnum.FileType;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.request.SellerCategoryReq;
 import org.rebate.service.FileService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.utils.SettingUtils;
@@ -110,10 +111,23 @@ public class SellerCategoryController extends BaseController {
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(ModelMap model) {
+  public String list(Pageable pageable,SellerCategoryReq request,ModelMap model) {
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.asc("categorOrder"));
-    model.addAttribute("sellerCategorys", sellerCategoryService.findList(null, null, orderings));
+  
+    List<Filter> filters = new ArrayList<Filter>();
+    if(request.getCategoryName()!=null){
+      filters.add(Filter.eq("categoryName", request.getCategoryName()));
+      model.addAttribute("categoryName", request.getCategoryName());
+    }
+    if(request.getIsActive()!=null){
+      filters.add(Filter.eq("isActive", request.getIsActive()));
+      model.addAttribute("isActive", request.getIsActive());
+    }
+    pageable.setFilters(filters);
+    pageable.setOrders(orderings);
+    model.addAttribute("page", sellerCategoryService.findPage(pageable));
+    
     return "/sellerCategory/list";
   }
 

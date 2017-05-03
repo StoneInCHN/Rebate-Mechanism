@@ -31,8 +31,8 @@ $(function() {
 	 <div class="content">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.settingConfig")}</a> </li>
-                <li><a href="#">${message("rebate.settingConfig.list")}</a></li>
-                <li class="active">${message("rebate.settingConfig.edit")}</li>
+                <li><a href="#">${message("rebate.systemConfig.list")}</a></li>
+                <li class="active">${message("rebate.systemConfig.edit")}</li>
           </ol>
 		  <form id="inputForm" action="updateOther.jhtml" method="post">
 						<input type="hidden" name="id" value="${settingConfig.id}" />
@@ -50,7 +50,7 @@ $(function() {
 									${message("rebate.settingConfig.configValue")}:
 								</th>
 								<td>
-									<input type="text" name="configValue" value="${settingConfig.configValue}" class="text" maxlength="20" />
+									<textarea name="configValue" cols="50" rows="3" maxlength="200">${settingConfig.configValue}</textarea>
 								</td>
 							</tr>
 							<tr>

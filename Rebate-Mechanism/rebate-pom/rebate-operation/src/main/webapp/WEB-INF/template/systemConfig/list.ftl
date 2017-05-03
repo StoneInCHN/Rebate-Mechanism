@@ -31,7 +31,7 @@
 		    <li role="presentation"><a href="#paymenttype" aria-controls="paymenttype" role="tab" data-toggle="tab">支付方式</a></li>
 		    <li role="presentation"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">关于</a></li>
 		    <li role="presentation"><a href="#license" aria-controls="license" role="tab" data-toggle="tab">许可协议</a></li>
-		    <li role="presentation"><a href="#withdrawRule" aria-controls="withdrawRule" role="tab" data-toggle="tab">提现规则</a></li>
+		   <!-- <li role="presentation"><a href="#withdrawRule" aria-controls="withdrawRule" role="tab" data-toggle="tab">提现规则</a></li> -->
 		    <li role="presentation"><a href="#other" aria-controls="other" role="tab" data-toggle="tab">其他</a></li>
 		  </ul>
 		  <!-- Tab panes -->
@@ -158,6 +158,7 @@
 				</p>
 				<p>${license.configValue}</p>
 		    </div>
+			<!--
 		     <div role="tabpanel" class="tab-pane" id="withdrawRule">
 		       <a  id="editLicense" class="btn btn-default" href="editSettingConfig.jhtml?configKey=WITHDRAW_RULE&id=${withdrawRule.id}"><i class="fa fa-edit"></i><span>修改</span></a>	
 				<p style="margin:10px">
@@ -169,6 +170,7 @@
 				</p>
 				<p>${withdrawRule.configValue}</p>
 		    </div>
+			-->
 			 <div role="tabpanel" class="tab-pane" id="other">
 			 	<table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
 					<thead>
