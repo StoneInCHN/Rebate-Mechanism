@@ -11,6 +11,22 @@
 </head>
 <body>
 <script>
+    $(function () {
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null)return unescape(r[2]);
+            return null;
+        }
+
+        var recommenderMobile = GetQueryString("cellPhoneNum");
+
+        if (recommenderMobile){
+            $("#recommenderMobile").val(recommenderMobile);
+        }
+    })
+</script>
+<script>
     //发送验证码
     function sendsms() {
         var cellPhoneNum = $("#cellPhoneNum").val();
@@ -75,23 +91,14 @@
         var smsCode = $("#smsCode").val();
         var password = $("#password").val();
         var password_confirm = $("#password_confirm").val();
+        var recommenderMobile = $("#recommenderMobile").val();
 
 
-//        var password_rsa = cryptico.encrypt(password, rsa);
-//        var password_rsa_en = password_rsa.cipher;
         var encrypt = new JSEncrypt();
             encrypt.setPublicKey(rsa);
         var encrypted = encrypt.encrypt(password);
 
-        //截取地址栏参数
-        function GetQueryString(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-            var r = window.location.search.substr(1).match(reg);
-            if (r != null)return unescape(r[2]);
-            return null;
-        }
 
-        var recommenderMobile = GetQueryString("cellPhoneNum");
 
         if (cellPhoneNum.length !== 11) {
             alert("请输入11位手机号");
@@ -184,7 +191,7 @@
 <div class="weui-cell">
     <div class="weui-cell__hd"><label class="weui-label">推&nbsp;&nbsp;荐&nbsp;&nbsp;人</label></div>
     <div class="weui-cell__bd">
-        <input class="weui-input" type="number" id="recommenderMobile" pattern="[0-9]*" placeholder="选填" disabled>
+        <input class="weui-input" type="number" value="" id="recommenderMobile" pattern="[0-9]*" placeholder="推荐人" disabled>
     </div>
 </div>
 

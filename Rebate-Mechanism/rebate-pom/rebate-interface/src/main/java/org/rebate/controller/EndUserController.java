@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
@@ -589,12 +588,13 @@ public class EndUserController extends MobileBaseController {
           response.setDesc(Message.error("rebate.sms.token.error").getContent());
           return response;
         } else {// 短信验证码匹配成功
-          if (BooleanUtils.isTrue(endUserService.isRecommendLimited(recommenderMobile))) {// 推荐层级关系超过配置的最大层级
-            response.setCode(CommonAttributes.FAIL_REG);
-            response.setDesc(Message.error("rebate.recommend.level.limit", recommenderMobile)
-                .getContent());
-            return response;
-          }
+        // if (BooleanUtils.isTrue(endUserService.isRecommendLimited(recommenderMobile))) {//
+        // 推荐层级关系超过配置的最大层级
+        // response.setCode(CommonAttributes.FAIL_REG);
+        // response.setDesc(Message.error("rebate.recommend.level.limit", recommenderMobile)
+        // .getContent());
+        // return response;
+        // }
           endUserService.deleteSmsCode(cellPhoneNum);
         }
       } else {

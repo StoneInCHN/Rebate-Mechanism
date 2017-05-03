@@ -317,12 +317,16 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       UserRecommendRelation userRecommendRelation = userRecommendRelationDao.findByUser(endUser);
       SystemConfig directUserConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_DIRECT_USER);
-      // SystemConfig indirectUserConfig =
-      // systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_INDIRECT_USER);
-      if (directUserConfig != null && directUserConfig.getConfigValue() != null) {
+      SystemConfig indirectUserConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_INDIRECT_USER);
+      SystemConfig limitConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_LEVEL_LIMIT);
+      if (directUserConfig != null && directUserConfig.getConfigValue() != null
+          && indirectUserConfig != null && indirectUserConfig.getConfigValue() != null
+          && limitConfig != null && limitConfig.getConfigValue() != null) {
         List<EndUser> records =
-            userRecommendIncome(userRecommendRelation, directUserConfig, null, null, 0,
-                rebateAmount);
+            userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig, null,
+                0, rebateAmount, limitConfig);
         if (!CollectionUtils.isEmpty(records)) {
           endUserDao.merge(records);
         }
@@ -420,9 +424,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   private List<EndUser> userRecommendIncome(UserRecommendRelation userRecommendRelation,
       SystemConfig directUser, SystemConfig indirectUser, SystemConfig leScorePer, int i,
-      BigDecimal rebateAmount) {
+      BigDecimal rebateAmount, SystemConfig limitConfig) {
 
     List<EndUser> records = new ArrayList<EndUser>();
+    Integer limitLevel = Integer.parseInt(limitConfig.getConfigValue());
+    if (i >= limitLevel) {
+      return records;
+    }
     if (userRecommendRelation.getParent() != null) {
       LeScoreRecord leScoreRecord = new LeScoreRecord();
 
@@ -434,10 +442,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       BigDecimal income = new BigDecimal("0");
       if (i == 0) {
         income = rebateAmount.multiply(new BigDecimal(directUser.getConfigValue()));
-        i++;
       } else {
         income = rebateAmount.multiply(new BigDecimal(indirectUser.getConfigValue()));
       }
+      i++;
       // leScoreRecord.setAmount(income.multiply(new BigDecimal(leScorePer.getConfigValue())));
       leScoreRecord.setAmount(income);
       leScoreRecord.setUserCurLeScore(userRecommend.getCurLeScore().add(leScoreRecord.getAmount()));
@@ -460,7 +468,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           leScoreRecord.getAmount()));
       records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
-          indirectUser, leScorePer, i, rebateAmount));
+          indirectUser, leScorePer, i, rebateAmount, limitConfig));
     }
     return records;
   }
