@@ -117,7 +117,7 @@ public class SellerCategoryController extends BaseController {
   
     List<Filter> filters = new ArrayList<Filter>();
     if(request.getCategoryName()!=null){
-      filters.add(Filter.eq("categoryName", request.getCategoryName()));
+      filters.add(Filter.like("categoryName", "%"+request.getCategoryName()+"%"));
       model.addAttribute("categoryName", request.getCategoryName());
     }
     if(request.getIsActive()!=null){
