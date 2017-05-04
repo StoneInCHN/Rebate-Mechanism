@@ -71,8 +71,12 @@ public class MessageInfoController extends BaseController{
    * 列表
    */
   @RequestMapping(value = "/list", method = RequestMethod.GET)
-  public String list(Pageable pageable, ModelMap model) {
+  public String list(Pageable pageable,String messageTitle, ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
+    if(messageTitle!=null){
+      filters.add(Filter.like("messageTitle", "%"+messageTitle+"%"));
+      model.addAttribute("messageTitle", messageTitle);
+    }
     pageable.setFilters(filters);
     model.addAttribute("page", messageInfoService.findPage(pageable));
     return "/messageInfo/list";
