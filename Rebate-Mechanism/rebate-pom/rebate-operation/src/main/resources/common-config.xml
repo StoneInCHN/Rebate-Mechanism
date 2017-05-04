@@ -14,7 +14,7 @@
 	<setting name="smtpUsername" value="yxsh_rebate@163.com" />
 	<setting name="smtpPassword" value="yxshrebate123" />
 
-	<setting name="apkName" value="翼享生活.apk" />
+	<setting name="apkName" value="天飞翼享生活.apk" />
 	<!-- 允许上传文件后缀名 -->
 	<setting name="uploadFileExtension" value="apk" />
 	<!-- 允许上传图片后缀名 -->
