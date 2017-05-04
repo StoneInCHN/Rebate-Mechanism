@@ -13,6 +13,8 @@ import javax.persistence.TemporalType;
 
 import org.rebate.entity.base.BaseEntity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 每日用户分红统计
  * 
@@ -58,6 +60,7 @@ public class UserBonusReport extends BaseEntity {
 
   
   @ManyToOne
+  @JsonProperty
   public EndUser getUserId() {
     return userId;
   }
@@ -67,6 +70,7 @@ public class UserBonusReport extends BaseEntity {
   }
 
   @Column(scale = 2, precision = 10)
+  @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
     return consumeTotalAmount;
   }
@@ -76,6 +80,7 @@ public class UserBonusReport extends BaseEntity {
   }
 
   @Column(scale = 2, precision = 10)
+  @JsonProperty
   public BigDecimal getHighBonusLeScore() {
     return highBonusLeScore;
   }
@@ -86,6 +91,7 @@ public class UserBonusReport extends BaseEntity {
 
 
   @Column(scale = 2, precision = 10)
+  @JsonProperty
   public BigDecimal getBonusLeScore() {
     return bonusLeScore;
   }
@@ -96,6 +102,7 @@ public class UserBonusReport extends BaseEntity {
 
 
   @Temporal(TemporalType.DATE)
+  @JsonProperty
   public Date getReportDate() {
     return reportDate;
   }

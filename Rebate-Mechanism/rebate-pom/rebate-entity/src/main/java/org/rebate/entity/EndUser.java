@@ -24,6 +24,8 @@ import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.Gender;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 终端用户实体
  * 
@@ -502,6 +504,7 @@ public class EndUser extends BaseEntity {
   }
 
   @Column(length = 100)
+  @JsonProperty
   public String getNickName() {
     return nickName;
   }
@@ -554,6 +557,7 @@ public class EndUser extends BaseEntity {
   }
 
   @Column(length = 20, nullable = false)
+  @JsonProperty
   public String getCellPhoneNum() {
     return cellPhoneNum;
   }

@@ -316,6 +316,7 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
     Predicate restrictions =
         criteriaQuery.getRestriction() != null ? criteriaQuery.getRestriction() : criteriaBuilder
             .conjunction();
+        
     for (Filter filter : filters) {
       if (filter == null || StringUtils.isEmpty(filter.getProperty())) {
         continue;
@@ -399,11 +400,20 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
         }
       } else if (filter.getOperator() == Operator.like && filter.getValue() != null
           && filter.getValue() instanceof String) {
+        if (filter.getProperty().contains("&")) {
+          String[] propetys = filter.getProperty().split("&");
+          if (propetys != null && propetys.length == 2) {
+            restrictions =
+                criteriaBuilder.and(restrictions, criteriaBuilder.like(
+                    root.<String>get(propetys[0]).get(propetys[1]), (String) filter.getValue()));
+          }
+        }else{
         restrictions =
             criteriaBuilder.and(
                 restrictions,
                 criteriaBuilder.like(root.<String>get(filter.getProperty()),
                     (String) filter.getValue()));
+        }
       } else if (filter.getOperator() == Operator.in && filter.getValue() != null) {
         restrictions =
             criteriaBuilder.and(restrictions, root.get(filter.getProperty()).in(filter.getValue()));

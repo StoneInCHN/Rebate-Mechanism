@@ -3,10 +3,12 @@ package org.rebate.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.UserBonusReport;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller("reportController")
 @RequestMapping("/console/report")
@@ -85,6 +88,32 @@ public class ReportController extends BaseController {
     model.addAttribute("nickName", nickName);
     model.addAttribute("page", userBonusReportService.findPage(pageable));
     return "/report/userBonusReport";
+  }
+
+  /**
+   * 用户统计数据
+   */
+  @RequestMapping(value = "/userBonusReportData", method = RequestMethod.GET)
+  public @ResponseBody List<UserBonusReport> userBonusReport(String nickName, String mobile,
+      Date reportDateFrom, Date reportDateTo, ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter dateFrom = new Filter("reportDate", Operator.ge, reportDateFrom);
+    Filter dateTo = new Filter("reportDate", Operator.le, reportDateTo);
+    if (nickName != null) {
+      Filter nickNameFilter = new Filter("userId&cellPhoneNum", Operator.like, "%"+nickName+"%");
+      filters.add(nickNameFilter);
+    }
+    if (mobile != null) {
+      Filter mobileFilter = new Filter("userId&cellPhoneNum", Operator.like, "%" + mobile + "%");
+      filters.add(mobileFilter);
+    }
+
+    filters.add(dateFrom);
+    filters.add(dateTo);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+
+    return userBonusReportService.findList(null, filters, orderings);
   }
 
   /**
