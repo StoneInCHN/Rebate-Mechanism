@@ -204,6 +204,19 @@ public class Seller extends BaseEntity {
    */
   private BigDecimal unClearingAmount = new BigDecimal("0");
 
+  /**
+   * 备注
+   */
+  private String remark;
+
+  @Column(length = 200)
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
 
   public Integer getRateCounts() {
     return rateCounts;

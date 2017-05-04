@@ -588,13 +588,13 @@ public class EndUserController extends MobileBaseController {
           response.setDesc(Message.error("rebate.sms.token.error").getContent());
           return response;
         } else {// 短信验证码匹配成功
-        // if (BooleanUtils.isTrue(endUserService.isRecommendLimited(recommenderMobile))) {//
-        // 推荐层级关系超过配置的最大层级
-        // response.setCode(CommonAttributes.FAIL_REG);
-        // response.setDesc(Message.error("rebate.recommend.level.limit", recommenderMobile)
-        // .getContent());
-        // return response;
-        // }
+          // if (BooleanUtils.isTrue(endUserService.isRecommendLimited(recommenderMobile))) {//
+          // 推荐层级关系超过配置的最大层级
+          // response.setCode(CommonAttributes.FAIL_REG);
+          // response.setDesc(Message.error("rebate.recommend.level.limit", recommenderMobile)
+          // .getContent());
+          // return response;
+          // }
           endUserService.deleteSmsCode(cellPhoneNum);
         }
       } else {
@@ -1133,8 +1133,12 @@ public class EndUserController extends MobileBaseController {
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
     pageable.setFilters(filters);
-    pageable.setOrderDirection(Direction.desc);
-    pageable.setOrderProperty("createDate");
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.desc("userCurLeScore"));
+    pageable.setOrders(orderings);
+    // pageable.setOrderDirection(Direction.desc);
+    // pageable.setOrderProperty("createDate");
 
     Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
     String[] propertys =

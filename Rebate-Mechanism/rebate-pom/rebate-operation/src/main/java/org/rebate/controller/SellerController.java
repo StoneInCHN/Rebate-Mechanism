@@ -59,7 +59,7 @@ public class SellerController extends BaseController {
       filters.add(Filter.eq("sellerCategory", request.getSellerCategoryId()));
       model.addAttribute("sellerCategoryId", request.getSellerCategoryId());
     }
-    if (request.getAccountStatus()!= null) {
+    if (request.getAccountStatus() != null) {
       filters.add(Filter.eq("accountStatus", request.getAccountStatus()));
       model.addAttribute("accountStatus", request.getAccountStatus());
     }
@@ -92,38 +92,38 @@ public class SellerController extends BaseController {
     model.addAttribute("envImages", seller.getEnvImages());
     return "/seller/details";
   }
-  
+
   /**
    * 删除
    */
   @RequestMapping(value = "/delete", method = RequestMethod.POST)
   public @ResponseBody Message delete(Long[] ids) {
     List<Seller> sellers = new ArrayList<Seller>();
-     if(ids!=null && ids.length >0){
-       for (Long id : ids) {
-         Seller seller = sellerService.find(id);
-         seller.setAccountStatus(AccountStatus.DELETE);
-         sellers.add(seller);
+    if (ids != null && ids.length > 0) {
+      for (Long id : ids) {
+        Seller seller = sellerService.find(id);
+        seller.setAccountStatus(AccountStatus.DELETE);
+        sellers.add(seller);
       }
-     }
+    }
     sellerService.update(sellers);
     return SUCCESS_MESSAGE;
   }
-  
+
 
   /**
-   * 删除
+   * 禁用
    */
   @RequestMapping(value = "/locked", method = RequestMethod.POST)
   public @ResponseBody Message locked(Long[] ids) {
     List<Seller> sellers = new ArrayList<Seller>();
-     if(ids!=null && ids.length >0){
-       for (Long id : ids) {
-         Seller seller = sellerService.find(id);
-         seller.setAccountStatus(AccountStatus.LOCKED);
-         sellers.add(seller);
+    if (ids != null && ids.length > 0) {
+      for (Long id : ids) {
+        Seller seller = sellerService.find(id);
+        seller.setAccountStatus(AccountStatus.LOCKED);
+        sellers.add(seller);
       }
-     }
+    }
     sellerService.update(sellers);
     return SUCCESS_MESSAGE;
   }

@@ -163,7 +163,7 @@
 									${message("rebate.seller.description")}:
 								</th>
 								<td>
-									${seller.description}
+									<p>${seller.description}</p>
 								</td>
 							</tr>
 							<tr>

@@ -97,6 +97,11 @@ public class SellerApplication extends BaseEntity {
   private ApplyStatus applyStatus;
 
   /**
+   * 店铺介绍
+   */
+  private String description;
+
+  /**
    * 备注
    */
   private String notes;
@@ -125,6 +130,17 @@ public class SellerApplication extends BaseEntity {
    * 商家环境图片
    */
   private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
+
+
+  @Column(length = 1000)
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
 
   @Valid
   @ElementCollection

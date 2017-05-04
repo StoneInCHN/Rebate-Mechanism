@@ -6,15 +6,52 @@
     <title>软件许可及服务协议</title>
     <link rel="stylesheet" href="css/weui.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <!--<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>-->
-    <!--<script type="text/javascript" src="js/cryptico.min.js"></script>-->
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function () {
+            function GetQueryString(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null)return unescape(r[2]);
+                return null;
+            }
+
+
+            var android_apk_url = GetQueryString("androidUrl");
+            var android_apk_url = escape(android_apk_url);
+            var android_apk_url = decodeURIComponent(android_apk_url);
+
+
+            if (android_apk_url != "" && android_apk_url != null) {
+                $("#android").attr("href", android_apk_url);
+            }
+
+
+            var ios_apk_url = GetQueryString("iosUrl");
+            var ios_apk_url = escape(ios_apk_url);
+            var ios_apk_url = decodeURIComponent(ios_apk_url);
+
+            if (ios_apk_url != "") {
+                $("#ios").attr("href", ios_apk_url);
+            }
+            if (ios_apk_url == null) {
+                $("#ios").attr("href", "#");
+            }
+
+
+        })
+    </script>
 </head>
 <body>
 <div id="down_app">
     <img src="images/down_app_01.jpg" alt="">
-    <img src="images/down_app_02.jpg" alt="" onclick="window.location.href=''">
+    <a id="android" href="#">
+        <img src="images/down_app_02.jpg" alt="">
+    </a>
     <img src="images/down_app_03.jpg" alt="">
-    <img src="images/down_app_04.jpg" alt="">
+    <a id="ios" href="#">
+        <img src="images/down_app_04.jpg" alt="">
+    </a>
     <img src="images/down_app_05.jpg" alt="">
     <img src="images/down_app_05.jpg" alt="">
 </div>

@@ -161,6 +161,14 @@ $(function() {
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerApplication.description")}:
+								</th>
+								<td>
+									<textarea readonly="readonly" rows="6" cols="60">${sellerApply.description}</textarea>
+								</td>
+							</tr>
+							<tr>
+								<th>
 									<span class="requiredField">*</span>${message("rebate.sellerApplication.applyStatus")}:
 								</th>
 								<td>
@@ -176,7 +184,7 @@ $(function() {
 									${message("rebate.sellerApplication.notes")}:
 								</th>
 								<td>
-									<textarea  name="notes" rows="6" cols="60">${sellerApply.notes}</textarea>
+									<textarea  name="notes" rows="4" cols="40">${sellerApply.notes}</textarea>
 								</td>
 							</tr>
 							<tr>

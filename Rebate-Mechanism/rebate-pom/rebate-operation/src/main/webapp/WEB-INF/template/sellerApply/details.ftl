@@ -120,6 +120,14 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerApplication.description")}:
+								</th>
+								<td>
+									<p>${seller.description}</p>
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.sellerApplication.applyStatus")}:
 								</th>
 								<td>
