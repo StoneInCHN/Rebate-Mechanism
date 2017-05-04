@@ -5,15 +5,6 @@ package org.rebate.utils;
 public class test {
 
   public static void main(String[] args) throws Exception {
-    // TODO Auto-generated method stub
-    // Setting setting = SettingUtils.get();
-    // String serverPrivateKey = setting.getServerPrivateKey();
-    // String serverPublicKey = setting.getServerPublicKey();
-    // KeyPair keyPair = KeyGenerator.generateKeys();
-    // System.out.println(RSAHelper.getKeyString(keyPair.getPublic()));
-    // System.out.println(RSAHelper.getKeyString(keyPair.getPrivate()));
-    // String pwd = KeyGenerator.encrypt("genius77", RSAHelper.getPublicKey(serverPublicKey));
-    // System.out.println(pwd);
 
     System.out.println(ToolsUtils.createUserName());
     ToolsUtils.sendSmsMsg("17381945036", "【翼享生活】短信验证码是1256");
