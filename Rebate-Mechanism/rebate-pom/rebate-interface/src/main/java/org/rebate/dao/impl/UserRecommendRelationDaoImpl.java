@@ -40,7 +40,7 @@ public class UserRecommendRelationDaoImpl extends BaseDaoImpl<UserRecommendRelat
     }
     try {
       String jpql =
-          "select relation from UserRecommendRelation as relation inner join relation.parent as rparent where rparent.endUser.id =:userId)";
+          "select relation from UserRecommendRelation as relation inner join relation.parent as rparent where rparent.endUser.id =:userId order by relation.createDate desc";
       Map<String, Object> paramMap = new HashMap<String, Object>();
       paramMap.put("userId", userId);
       return findPageCustomized(pageable, jpql, paramMap);

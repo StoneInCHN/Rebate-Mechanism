@@ -962,8 +962,8 @@ public class EndUserController extends MobileBaseController {
     Page<UserRecommendRelation> page =
         userRecommendRelationService.getRelationsByRecommender(userId, pageable);
     String[] propertys =
-        {"id", "endUser.nickName", "endUser.totalLeScore", "endUser.userPhoto",
-            "endUser.sellerName", "endUser.sellerPicUrl"};
+        {"id", "endUser.nickName", "endUser.createDate", "endUser.totalLeScore",
+            "endUser.userPhoto", "endUser.sellerName"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
