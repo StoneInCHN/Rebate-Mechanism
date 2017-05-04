@@ -71,6 +71,8 @@ public class test {
     BigDecimal bBigDecimal = new BigDecimal("100");
     System.out.println(bBigDecimal.add(aBigDecimal).toString());
 
+    System.out.println("master");
+
   }
 
   public static void payAlipayNotify() {
