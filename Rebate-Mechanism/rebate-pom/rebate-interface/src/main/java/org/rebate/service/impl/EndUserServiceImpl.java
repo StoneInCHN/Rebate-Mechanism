@@ -151,7 +151,8 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       regUser.setLoginPwd(DigestUtils.md5Hex(password));
     }
     regUser.setAccountStatus(AccountStatus.ACTIVED);
-    regUser.setNickName(cellPhoneNum.substring(3, 7));
+    regUser.setNickName("翼享" + ToolsUtils.createNickName());
+
     UserRecommendRelation relation = new UserRecommendRelation();
     relation.setEndUser(regUser);
     // relation.setStatus(CommonStatus.ACITVE);

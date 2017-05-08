@@ -80,6 +80,32 @@ public class ToolsUtils {
     return null;
   }
 
+
+  /**
+   * 创建8位随机字符串
+   * 
+   * @return
+   */
+  public static String createNickName() {
+    String id = UUID.randomUUID().toString();
+
+    id = DEKHash(id) + "";
+
+    int diff = 12 - id.length();
+    String randStr = RandomStringUtils.randomAlphabetic(12);
+    for (int i = 0; i < diff; i++) {
+      int randIndex = (int) (Math.random() * randStr.length());
+      int index = (int) (Math.random() * id.length());
+      id = id.substring(0, index) + randStr.charAt(randIndex) + id.substring(index, id.length());
+    }
+    return id.substring(3, 11);
+  }
+
+  /**
+   * 创建12位随机字符串
+   * 
+   * @return
+   */
   public static String createUserName() {
     String id = UUID.randomUUID().toString();
 
