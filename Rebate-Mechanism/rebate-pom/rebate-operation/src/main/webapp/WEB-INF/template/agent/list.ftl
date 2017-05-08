@@ -95,7 +95,7 @@
 						</td>
 						<td>
 							[#if  agent.endUser??]
-								${agent.endUser.userName}
+								${agent.endUser.nickName}
 							[#else]
 								--
 							[/#if]	

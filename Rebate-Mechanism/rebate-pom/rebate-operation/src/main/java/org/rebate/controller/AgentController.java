@@ -11,6 +11,7 @@ import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Agent;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.commonenum.CommonEnum.AgencyLevel;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.service.AgentService;
@@ -56,6 +57,16 @@ public class AgentController extends BaseController {
     }
     
     Area area = areaService.find(areaId);
+    if(AgencyLevel.PROVINCE == agent.getAgencyLevel() && area.getParent()!=null){
+      return Message.error("rebate.agent.area.agencyLevel.not.match");
+    }else if (AgencyLevel.COUNTY == agent.getAgencyLevel() && area.getChildren()!=null) {
+      return Message.error("rebate.agent.area.agencyLevel.not.match");
+    }else{
+      if(area.getParent()==null || area.getParent()==null){
+        return Message.error("rebate.agent.area.agencyLevel.not.match");
+      }
+    }
+    
     EndUser endUser = endUserService.find(endUserId);
     if(area!=null&&endUser!=null){
       agent.setArea(area);
