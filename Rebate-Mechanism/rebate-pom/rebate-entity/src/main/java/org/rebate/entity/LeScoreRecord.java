@@ -96,6 +96,20 @@ public class LeScoreRecord extends BaseEntity {
    */
   private Boolean isWithdraw;
 
+  /**
+   * 关联orderId
+   */
+  private Long orderId;
+
+
+
+  public Long getOrderId() {
+    return orderId;
+  }
+
+  public void setOrderId(Long orderId) {
+    this.orderId = orderId;
+  }
 
   @Column(scale = 2, precision = 10)
   public BigDecimal getAgentLeScore() {

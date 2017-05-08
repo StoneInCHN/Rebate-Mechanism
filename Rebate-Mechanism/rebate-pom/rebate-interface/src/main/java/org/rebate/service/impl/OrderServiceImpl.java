@@ -143,6 +143,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setStatus(OrderStatus.PAID);
     order.setPaymentTime(new Date());
 
+    Long orderId = order.getId();
     EndUser endUser = order.getEndUser();
     Seller seller = order.getSeller();
     EndUser sellerEndUser = seller.getEndUser();
@@ -157,6 +158,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
      * 消费后商家的直接收益
      */
     LeScoreRecord scoreRecord = new LeScoreRecord();
+    scoreRecord.setOrderId(orderId);
     scoreRecord.setEndUser(sellerEndUser);
     scoreRecord.setSeller(seller);
     scoreRecord.setLeScoreType(LeScoreType.CONSUME_SELLER);
@@ -173,8 +175,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     if (order.getIsBeanPay()) {// 乐豆支付
       LeBeanRecord leBeanRecord = new LeBeanRecord();
+      leBeanRecord.setOrderId(orderId);
       leBeanRecord.setAmount(order.getAmount().negate());
       leBeanRecord.setEndUser(endUser);
+
       leBeanRecord.setType(LeBeanChangeType.CONSUME);
       leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
       endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
@@ -196,6 +200,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
        */
       if (order.getEncourageAmount() != null) {
         LeScoreRecord leScoreRecord = new LeScoreRecord();
+        leScoreRecord.setOrderId(orderId);
         leScoreRecord.setEndUser(endUser);
         leScoreRecord.setLeScoreType(LeScoreType.ENCOURAGE);
         leScoreRecord.setAmount(order.getEncourageAmount());
@@ -326,7 +331,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           && limitConfig != null && limitConfig.getConfigValue() != null) {
         List<EndUser> records =
             userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig, null,
-                0, rebateAmount, limitConfig);
+                0, rebateAmount, limitConfig, orderId);
         if (!CollectionUtils.isEmpty(records)) {
           endUserDao.merge(records);
         }
@@ -342,10 +347,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
           && sellerRecommendRelation != null && sellerRecommendRelation.getParent() != null) {
         LeScoreRecord leScoreRecord = new LeScoreRecord();
+        leScoreRecord.setOrderId(orderId);
         EndUser sellerRecommender = sellerRecommendRelation.getParent().getEndUser();
         leScoreRecord.setEndUser(sellerRecommender);
         leScoreRecord.setRecommender(sellerRecommendRelation.getEndUser().getNickName());
-        leScoreRecord.setRecommenderPhoto(userRecommendRelation.getEndUser().getUserPhoto());
+        leScoreRecord.setRecommenderPhoto(sellerRecommendRelation.getEndUser().getUserPhoto());
         leScoreRecord.setLeScoreType(LeScoreType.RECOMMEND_SELLER);
         BigDecimal income =
             rebateAmount.multiply(new BigDecimal(recommendSellerConfig.getConfigValue()));
@@ -424,7 +430,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   private List<EndUser> userRecommendIncome(UserRecommendRelation userRecommendRelation,
       SystemConfig directUser, SystemConfig indirectUser, SystemConfig leScorePer, int i,
-      BigDecimal rebateAmount, SystemConfig limitConfig) {
+      BigDecimal rebateAmount, SystemConfig limitConfig, Long orderId) {
 
     List<EndUser> records = new ArrayList<EndUser>();
     Integer limitLevel = Integer.parseInt(limitConfig.getConfigValue());
@@ -433,7 +439,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     }
     if (userRecommendRelation.getParent() != null) {
       LeScoreRecord leScoreRecord = new LeScoreRecord();
-
+      leScoreRecord.setOrderId(orderId);
       EndUser userRecommend = userRecommendRelation.getParent().getEndUser();
       leScoreRecord.setEndUser(userRecommend);
       leScoreRecord.setRecommender(userRecommendRelation.getEndUser().getNickName());
@@ -468,7 +474,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           leScoreRecord.getAmount()));
       records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
-          indirectUser, leScorePer, i, rebateAmount, limitConfig));
+          indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId));
     }
     return records;
   }

@@ -65,6 +65,21 @@ public class LeBeanRecord extends BaseEntity {
    */
   private String remark;
 
+  /**
+   * 关联orderId
+   */
+  private Long orderId;
+
+
+
+  public Long getOrderId() {
+    return orderId;
+  }
+
+  public void setOrderId(Long orderId) {
+    this.orderId = orderId;
+  }
+
 
   @Column(length = 20)
   public String getRecommender() {
