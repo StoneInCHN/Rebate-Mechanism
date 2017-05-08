@@ -7,4 +7,6 @@ public interface AgentService extends BaseService<Agent,Long>{
   
   void updateAgent(Long areaId, Long endUserId, Agent agent);
   
+  boolean areaExists(Long areaId);
+  
 }

@@ -47,10 +47,14 @@ public class AgentController extends BaseController {
    * 保存
    */
   @RequestMapping(value = "/save", method = RequestMethod.POST)
-  public String save(Long areaId, Long endUserId, Agent agent) {
+  public @ResponseBody Message save(Long areaId, Long endUserId, Agent agent) {
     if (!isValid(agent)) {
-      return ERROR_VIEW;
+      return ERROR_MESSAGE;
     }
+    if (agentService.areaExists(areaId)){
+      return Message.error("rebate.agent.area.exist");
+    }
+    
     Area area = areaService.find(areaId);
     EndUser endUser = endUserService.find(endUserId);
     if(area!=null&&endUser!=null){
@@ -60,7 +64,7 @@ public class AgentController extends BaseController {
       endUser.setAgent(agent);
       endUserService.update(endUser);
     }
-    return "redirect:list.jhtml";
+    return SUCCESS_MESSAGE;
   }
 
   /**
@@ -107,5 +111,5 @@ public class AgentController extends BaseController {
     agentService.delete(ids);
     return SUCCESS_MESSAGE;
   }
-
+ 
 }

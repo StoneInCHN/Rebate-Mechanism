@@ -28,10 +28,7 @@ $().ready(function() {
 	// 表单验证
 	$inputForm.validate({
 		rules: {
-			areaId: {
-				required: true
-			},
-			agencyLevel: {
+			id: {
 				required: true
 			}
 		}
@@ -77,15 +74,15 @@ $().ready(function() {
 			<table class="input tabContent">
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("rebate.agent.area")}:
+									${message("rebate.agent.area")}:
 								</th>
 								<td>
-									<input type="hidden" id="areaId"  name="areaId" value="${(agent.area.id)!}" treePath="${(agent.area.treePath)!}"/>
+									${agent.area}
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.agent.endUser")}:
+									<span class="requiredField">*</span>${message("rebate.agent.endUser")}:
 								</th>
 								<td>
 									<input type="hidden" id="endUserId"  class="text" name="endUserId"/>
@@ -98,11 +95,13 @@ $().ready(function() {
 									${message("rebate.agent.agencyLevel")}:
 								</th>
 								<td>
-									<select name="agencyLevel">
-										<option [#if agent.agencyLevel == 'PROVINCE' ] selected="selected" [/#if] value="PROVINCE">${message("rebate.agent.agencyLevel.PROVINCE")}</option>
-										<option [#if agent.agencyLevel == 'CITY' ] selected="selected" [/#if] value="CITY">${message("rebate.agent.agencyLevel.CITY")}</option>
-										<option [#if agent.agencyLevel == 'COUNTY' ] selected="selected" [/#if] value="COUNTY">${message("rebate.agent.agencyLevel.COUNTY")}</option>
-									</select>
+									[#if agent.agencyLevel == 'PROVINCE' ] 
+										${message("rebate.agent.agencyLevel.PROVINCE")}
+									[#elseif agent.agencyLevel == 'CITY'  ]
+										${message("rebate.agent.agencyLevel.CITY")}
+									[#elseif agent.agencyLevel == 'COUNTY' ]
+										${message("rebate.agent.agencyLevel.COUNTY")}
+									[/#if]
 								</td>
 							</tr>
 						</table>

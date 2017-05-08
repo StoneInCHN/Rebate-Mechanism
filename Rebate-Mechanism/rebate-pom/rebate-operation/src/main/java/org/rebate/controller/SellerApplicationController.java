@@ -111,4 +111,14 @@ public class SellerApplicationController extends BaseController {
     return "/sellerApply/details";
   }
 
+  /**
+   * 查看
+   */
+  @RequestMapping(value = "/viewPosition", method = RequestMethod.GET)
+  public String viewPosition(Long id, ModelMap model) {
+    SellerApplication sellerApplication = sellerApplicationService.find(id);
+    model.addAttribute("sellerApply", sellerApplication);
+    return "/sellerApply/viewPosition";
+  }
+  
 }

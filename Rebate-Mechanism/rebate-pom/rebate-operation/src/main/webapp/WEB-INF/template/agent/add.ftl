@@ -15,6 +15,7 @@
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lSelect.js"></script>
 <script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
+</script><script type="text/javascript" src="${base}/resources/js/jquery.form.js"></script>
 <script type="text/javascript">
 
 $().ready(function() {
@@ -31,11 +32,33 @@ $().ready(function() {
 			areaId: {
 				required: true
 			},
+			endUserId: {
+				required: true
+			},
 			agencyLevel: {
 				required: true
 			}
+		},
+		submitHandler:function(form){
+			$inputForm.ajaxSubmit({
+			      	dataType:"json",
+			       	beforeSubmit:function(){
+			       		$('input[type="submit"]').attr("disabled","disabled");
+			       	},
+			       	success:function(result){
+						if(result.type =="success"){
+							alert("代理商添加成功");
+							location.href="list.jhtml";
+						}else{
+							$('input[type="submit"]').attr("disabled",false);
+							alert(result.content);
+						}		       		
+			       }
+			});
 		}
 	});
+	
+	
 	$selectEndUser.click(function(){
 		window.dialog({
            id: 'selectEndUser-dialog',
@@ -94,7 +117,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.agent.agencyLevel")}:
+									<span class="requiredField">*</span>${message("rebate.agent.agencyLevel")}:
 								</th>
 								<td>
 									<select name="agencyLevel">

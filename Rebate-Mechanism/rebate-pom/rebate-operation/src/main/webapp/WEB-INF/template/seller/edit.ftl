@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>${message("rebate.seller.details")}</title>
+<title>${message("rebate.seller.edit")}</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -15,7 +15,7 @@
 	  <ol class="breadcrumb">
           <li><a ><i class="fa fa-user"></i> ${message("rebate.main.sellerManager")}</a> </li>
           <li><a href="list.jhtml">${message("rebate.seller.list")}</a></li>
-          <li class="active">${message("rebate.seller.details")}</li>
+          <li class="active">${message("rebate.seller.edit")}</li>
       </ol>
 	<table class="input">
 							<tr>
@@ -67,7 +67,7 @@
 									${message("rebate.seller.address")}:
 								</th>
 								<td>
-									<span>${seller.address}</span><span style="margin-left:20px;"><a id="viewPosition" class="btn btn-info" style="float:none;width:100px !important">查看位置点</a></span>
+									<span>${seller.address}</span><span style="margin-left:20px;"><a id="viewPosition" class="btn btn-info" style="float:none;width:120px !important">查看并编辑位置点</a></span>
 								</td>
 							</tr>
 							<tr>

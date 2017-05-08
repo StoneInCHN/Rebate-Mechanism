@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SellerApplication;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
@@ -110,6 +111,15 @@ public class SellerController extends BaseController {
     return SUCCESS_MESSAGE;
   }
 
+  /**
+   * 编辑
+   */
+  @RequestMapping(value = "/edit", method = RequestMethod.GET)
+  public String edit(Long id, ModelMap model) {
+    model.addAttribute("seller", sellerService.find(id));
+    return "/seller/edit";
+  }
+  
 
   /**
    * 禁用
@@ -126,5 +136,15 @@ public class SellerController extends BaseController {
     }
     sellerService.update(sellers);
     return SUCCESS_MESSAGE;
+  }
+  
+  /**
+   * 查看
+   */
+  @RequestMapping(value = "/viewPosition", method = RequestMethod.GET)
+  public String viewPosition(Long id, ModelMap model) {
+    Seller seller = sellerService.find(id);
+    model.addAttribute("seller", seller);
+    return "/seller/viewPosition";
   }
 }

@@ -8,12 +8,14 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -44,6 +46,16 @@ $(function() {
 			});
 		}
 	});
+	
+	$("#viewPosition").click(function(){
+			window.dialog({
+           id: 'selectEndUser-dialog',
+           title: '查看商家位置点',
+           url:'./viewPosition.jhtml?id=${sellerApply.id}',
+           quickClose: true
+        }).show(this);
+		return false;
+	})
 
 });
 </script>
@@ -104,10 +116,18 @@ $(function() {
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerApplication.area")}:
+								</th>
+								<td>
+									${sellerApply.area}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.sellerApplication.address")}:
 								</th>
 								<td>
-									${sellerApply.address}
+									<span>${sellerApply.address}</span><span style="margin-left:20px;"><a id="viewPosition" class="btn btn-info" style="float:none;width:100px !important">查看位置点</a></span>
 								</td>
 							</tr>
 							<tr>
@@ -141,14 +161,6 @@ $(function() {
 											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
 										[/#list]
 									  </ul>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									${message("rebate.sellerApplication.area")}:
-								</th>
-								<td>
-									${sellerApply.area}
 								</td>
 							</tr>
 							<tr>
