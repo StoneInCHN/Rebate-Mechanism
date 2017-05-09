@@ -56,6 +56,18 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.endUser.cellPhoneNum")}:
+								</th>
+								<td>
+									[#if  seller.endUser??]
+										${seller.endUser.cellPhoneNum}
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.area")}:
 								</th>
 								<td>
@@ -133,6 +145,14 @@
 								</th>
 								<td>
 									${seller.discount}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.businessTime")}:
+								</th>
+								<td>
+									${seller.businessTime}
 								</td>
 							</tr>
 							<tr>

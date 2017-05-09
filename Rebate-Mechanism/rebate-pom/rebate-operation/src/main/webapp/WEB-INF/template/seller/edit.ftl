@@ -58,6 +58,18 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.endUser.cellPhoneNum")}:
+								</th>
+								<td>
+									[#if  seller.endUser??]
+										${seller.endUser.cellPhoneNum}
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.area")}:
 								</th>
 								<td>
@@ -125,7 +137,7 @@
 							</tr>
 							<tr>
 								<th>
-									<span class="requiredField">*</span>${message("rebate.seller.avgPrice")}:
+									${message("rebate.seller.avgPrice")}:
 								</th>
 								<td>
 									<input type="text" name="avgPrice" class="text" maxlength="50" value="${seller.avgPrice}"/>
