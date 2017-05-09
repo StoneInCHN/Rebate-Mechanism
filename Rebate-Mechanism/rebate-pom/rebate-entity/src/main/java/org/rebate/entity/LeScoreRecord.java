@@ -111,7 +111,7 @@ public class LeScoreRecord extends BaseEntity {
     this.orderId = orderId;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAgentLeScore() {
     return agentLeScore;
   }
@@ -120,7 +120,7 @@ public class LeScoreRecord extends BaseEntity {
     this.agentLeScore = agentLeScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getMotivateLeScore() {
     return motivateLeScore;
   }
@@ -130,7 +130,7 @@ public class LeScoreRecord extends BaseEntity {
   }
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getIncomeLeScore() {
     return incomeLeScore;
   }
@@ -174,7 +174,7 @@ public class LeScoreRecord extends BaseEntity {
     this.leScoreType = leScoreType;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getUserCurLeScore() {
     return userCurLeScore;
   }
@@ -183,7 +183,7 @@ public class LeScoreRecord extends BaseEntity {
     this.userCurLeScore = userCurLeScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAmount() {
     return amount;
   }

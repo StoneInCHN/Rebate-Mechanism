@@ -19,6 +19,7 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.service.EndUserService;
+import org.rebate.utils.TokenGenerator;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -96,6 +97,32 @@ public class UserValidCheckAspect {
       return response;
     }
 
+    /**
+     * 验证登录token：是否登录超时
+     */
+    String userToken = endUserService.getEndUserToken(userParam.getUserId());
+    if (!TokenGenerator.isTokenTimeout(userParam.getToken(), userToken)) {
+      Class returnTypeClass = (Class) userParam.getReturnType();
+      Object response = returnTypeClass.newInstance();
+      BeanMap beanMap = BeanMap.create(response);
+      beanMap.put("code", CommonAttributes.FAIL_TOKEN_TIMEOUT);
+      beanMap.put("desc", Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    /**
+     * 验证登录token：账号是否在其它设备登录
+     * 
+     */
+    if (!TokenGenerator.isTokenAuth(userParam.getToken(), userToken)) {
+      Class returnTypeClass = (Class) userParam.getReturnType();
+      Object response = returnTypeClass.newInstance();
+      BeanMap beanMap = BeanMap.create(response);
+      beanMap.put("code", CommonAttributes.FAIL_TOKEN_AUTH);
+      beanMap.put("desc", Message.error("rebate.user.token.auth").getContent());
+      return response;
+    }
+
     return joinPoint.proceed();
 
   }
@@ -134,8 +161,10 @@ public class UserValidCheckAspect {
 
             BeanMap beanMap = BeanMap.create(arguments[0]);
             Long userId = (Long) beanMap.get("userId");
+            String token = (String) beanMap.get("token");
             params.setUserId(userId);
             params.setUserType(userType);
+            params.setToken(token);
           }
           break;
         }

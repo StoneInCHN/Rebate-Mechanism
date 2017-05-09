@@ -947,13 +947,13 @@ public class EndUserController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
@@ -962,7 +962,7 @@ public class EndUserController extends MobileBaseController {
     Page<UserRecommendRelation> page =
         userRecommendRelationService.getRelationsByRecommender(userId, pageable);
     String[] propertys =
-        {"id", "endUser.nickName", "endUser.createDate", "endUser.totalLeScore",
+        {"id", "endUser.nickName", "endUser.createDate", "totalRecommendLeScore",
             "endUser.userPhoto", "endUser.sellerName"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
@@ -973,7 +973,7 @@ public class EndUserController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);

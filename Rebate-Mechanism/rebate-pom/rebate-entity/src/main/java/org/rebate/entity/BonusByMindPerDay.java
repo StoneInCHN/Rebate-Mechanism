@@ -59,7 +59,7 @@ public class BonusByMindPerDay extends BaseEntity {
     this.leMindRecord = leMindRecord;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getBonusAmount() {
     return bonusAmount;
   }

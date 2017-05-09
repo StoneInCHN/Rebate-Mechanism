@@ -191,8 +191,8 @@ public class CommonEnum {
   public enum LeScoreType {
     /** 消费直接返商户的收益 */
     CONSUME_SELLER,
-    /** 用户消费鼓励金收益 */
-    ENCOURAGE,
+    // /** 用户消费鼓励金收益 */
+    // ENCOURAGE,
     // /** 乐心（积分）产生的分红 */
     // BONUS,
     /** 推荐好友消费返利 */
@@ -228,7 +228,9 @@ public class CommonEnum {
     /** 推荐店铺收益送乐豆 */
     RECOMMEND_SELLER,
     /** 消费 */
-    CONSUME
+    CONSUME,
+    /** 用户消费鼓励金收益 */
+    ENCOURAGE,
   }
 
   public enum ImageType {

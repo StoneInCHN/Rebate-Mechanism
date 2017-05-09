@@ -234,7 +234,7 @@ public class Seller extends BaseEntity {
     this.totalOrderNum = totalOrderNum;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getTotalOrderAmount() {
     return totalOrderAmount;
   }
@@ -243,7 +243,7 @@ public class Seller extends BaseEntity {
     this.totalOrderAmount = totalOrderAmount;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getUnClearingAmount() {
     return unClearingAmount;
   }
@@ -408,7 +408,7 @@ public class Seller extends BaseEntity {
     this.rateScore = rateScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAvgPrice() {
     return avgPrice;
   }

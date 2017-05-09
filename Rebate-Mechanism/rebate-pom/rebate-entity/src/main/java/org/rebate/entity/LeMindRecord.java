@@ -85,7 +85,7 @@ public class LeMindRecord extends BaseEntity {
     this.status = status;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getTotalBonus() {
     return totalBonus;
   }
@@ -94,7 +94,7 @@ public class LeMindRecord extends BaseEntity {
     this.totalBonus = totalBonus;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getMaxBonus() {
     return maxBonus;
   }
@@ -112,7 +112,7 @@ public class LeMindRecord extends BaseEntity {
     this.bonusByDays = bonusByDays;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getScore() {
     return score;
   }
@@ -121,7 +121,7 @@ public class LeMindRecord extends BaseEntity {
     this.score = score;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getUserCurLeMind() {
     return userCurLeMind;
   }
@@ -130,7 +130,7 @@ public class LeMindRecord extends BaseEntity {
     this.userCurLeMind = userCurLeMind;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAmount() {
     return amount;
   }

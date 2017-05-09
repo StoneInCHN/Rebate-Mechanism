@@ -35,6 +35,11 @@ public class LeBeanRecord extends BaseEntity {
   private EndUser endUser;
 
   /**
+   * 消费的商家
+   */
+  private Seller seller;
+
+  /**
    * 乐豆变化类型
    */
   private LeBeanChangeType type;
@@ -71,6 +76,14 @@ public class LeBeanRecord extends BaseEntity {
   private Long orderId;
 
 
+  @ManyToOne
+  public Seller getSeller() {
+    return seller;
+  }
+
+  public void setSeller(Seller seller) {
+    this.seller = seller;
+  }
 
   public Long getOrderId() {
     return orderId;
@@ -107,7 +120,7 @@ public class LeBeanRecord extends BaseEntity {
     this.type = type;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getUserCurLeBean() {
     return userCurLeBean;
   }
@@ -116,7 +129,7 @@ public class LeBeanRecord extends BaseEntity {
     this.userCurLeBean = userCurLeBean;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAmount() {
     return amount;
   }

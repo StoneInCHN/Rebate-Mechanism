@@ -25,6 +25,16 @@ public class UserParam {
 
   private Type returnType;
 
+  private String token;
+
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
+  }
 
   public CheckUserType getUserType() {
     return userType;

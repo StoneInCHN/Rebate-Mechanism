@@ -28,6 +28,9 @@ $().ready(function() {
 					cache: false
 				}
 			},
+			versionCode:{
+				required: true
+			},
 			isForced:{
 				required: true
 			},
@@ -75,6 +78,14 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="file" name="file"/>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span class="requiredField">*</span>${message("rebate.apkVersion.code")}:
+								</th>
+								<td>
+									<input type="text" name="versionCode" class="text" maxlength="20" />
 								</td>
 							</tr>
 							<tr>

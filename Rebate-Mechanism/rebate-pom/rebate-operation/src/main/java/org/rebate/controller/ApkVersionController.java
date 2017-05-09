@@ -104,10 +104,11 @@ public class ApkVersionController extends BaseController {
       } else {
         String apkPath = fileService.uploadApk(apkVersion.getFile());
         apkVersion.setApkPath(apkPath);
-        ApkVersion cuApkVersion = apkVersionService.getCurNewApkVersion();
-        if (cuApkVersion != null) {
-          apkVersion.setVersionCode(cuApkVersion.getVersionCode() + 1);
-        }
+        apkVersion.setVersionCode(apkVersion.getVersionCode());
+        // ApkVersion cuApkVersion = apkVersionService.getCurNewApkVersion();
+        // if (cuApkVersion != null) {
+        // apkVersion.setVersionCode(cuApkVersion.getVersionCode() + 1);
+        // }
         apkVersion.setAppPlatform(AppPlatform.ANDROID);
         apkVersionService.save(apkVersion);
         return "redirect:list.jhtml";

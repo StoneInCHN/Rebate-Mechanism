@@ -115,7 +115,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       BigDecimal encourageAmount =
           (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(4, BigDecimal.ROUND_HALF_UP);
       order.setEncourageAmount(encourageAmount);
 
       BigDecimal rebateUserScore =
@@ -178,6 +178,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       leBeanRecord.setOrderId(orderId);
       leBeanRecord.setAmount(order.getAmount().negate());
       leBeanRecord.setEndUser(endUser);
+      leBeanRecord.setSeller(seller);
 
       leBeanRecord.setType(LeBeanChangeType.CONSUME);
       leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
@@ -196,21 +197,32 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
      */
     if (order.getUserScore() != null) {
       /**
-       * 鼓励金收益,直接转化为乐分
+       * 鼓励金收益,直接转化为乐豆
        */
       if (order.getEncourageAmount() != null) {
-        LeScoreRecord leScoreRecord = new LeScoreRecord();
-        leScoreRecord.setOrderId(orderId);
-        leScoreRecord.setEndUser(endUser);
-        leScoreRecord.setLeScoreType(LeScoreType.ENCOURAGE);
-        leScoreRecord.setAmount(order.getEncourageAmount());
-        leScoreRecord.setSeller(seller);
-        leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
-        endUser.getLeScoreRecords().add(leScoreRecord);
-        endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
-        endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
-        endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
+        // LeScoreRecord leScoreRecord = new LeScoreRecord();
+        // leScoreRecord.setOrderId(orderId);
+        // leScoreRecord.setEndUser(endUser);
+        // leScoreRecord.setLeScoreType(LeScoreType.ENCOURAGE);
+        // leScoreRecord.setAmount(order.getEncourageAmount());
+        // leScoreRecord.setSeller(seller);
+        // leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+        // endUser.getLeScoreRecords().add(leScoreRecord);
+        // endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+        // endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+        // endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
+        LeBeanRecord leBeanRecord = new LeBeanRecord();
+        leBeanRecord.setOrderId(orderId);
+        leBeanRecord.setEndUser(endUser);
+        leBeanRecord.setType(LeBeanChangeType.ENCOURAGE);
+        leBeanRecord.setAmount(order.getEncourageAmount());
+        leBeanRecord.setSeller(seller);
+        leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+        endUser.getLeBeanRecords().add(leBeanRecord);
+        endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+        endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
       }
+
       endUser.setCurScore(endUser.getCurScore().add(order.getUserScore()));
       endUser.setTotalScore(endUser.getTotalScore().add(order.getUserScore()));
       RebateRecord rebateRecord = new RebateRecord();
@@ -382,6 +394,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             leScoreRecord.getAmount()));
         sellerRecommender.getLeScoreRecords().add(leScoreRecord);
         endUserDao.merge(sellerRecommender);
+
+        userRecommendRelation.setTotalRecommendLeScore(sellerRecommendRelation
+            .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
+        userRecommendRelationDao.merge(sellerRecommendRelation);
       }
     }
 
@@ -472,6 +488,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       userRecommend.getLeScoreRecords().add(leScoreRecord);
       userRecommend.setMotivateLeScore(userRecommend.getMotivateLeScore().add(
           leScoreRecord.getAmount()));
+
+      userRecommendRelation.setTotalRecommendLeScore(userRecommendRelation
+          .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
+      userRecommendRelationDao.merge(userRecommendRelation);
+
       records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
           indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId));

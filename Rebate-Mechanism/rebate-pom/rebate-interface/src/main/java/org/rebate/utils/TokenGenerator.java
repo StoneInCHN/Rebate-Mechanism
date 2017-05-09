@@ -77,4 +77,54 @@ public class TokenGenerator {
     return true;
   }
 
+
+  /**
+   * 验证登录token：是否登录超时
+   * 
+   * @param token 手机端的token
+   * @param userToken redis中存放的token
+   * @return
+   */
+  public static boolean isTokenTimeout(String token, String userToken) {
+
+    if (StringUtils.isEmpty(token) || StringUtils.isEmpty(userToken)) {
+      return false;
+    }
+
+    Integer timeout = SettingUtils.get().getTokenTimeOut();
+    String tokenFromClient = token.split("__")[0];
+    String tokenFromServer = userToken.split("__")[0];
+
+    if (StringUtils.isEmpty(tokenFromServer) || StringUtils.isEmpty(tokenFromClient)
+        || tokenTimeOut(userToken, timeout)) {
+      return false;
+    }
+    return true;
+  }
+
+
+  /**
+   * 验证登录token：账号是否在其它设备登录
+   * 
+   * @param token 手机端的token
+   * @param userToken redis中存放的token
+   * @return
+   */
+  public static boolean isTokenAuth(String token, String userToken) {
+
+    if (StringUtils.isEmpty(token) || StringUtils.isEmpty(userToken)) {
+      return false;
+    }
+
+    // Integer timeout = SettingUtils.get().getTokenTimeOut();
+    String tokenFromClient = token.split("__")[0];
+    String tokenFromServer = userToken.split("__")[0];
+
+    if (StringUtils.isEmpty(tokenFromServer) || StringUtils.isEmpty(tokenFromClient)
+        || !tokenFromClient.equals(tokenFromServer)) {
+      return false;
+    }
+    return true;
+  }
+
 }
