@@ -113,7 +113,7 @@ public class Order extends BaseEntity {
 
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getEncourageAmount() {
     return encourageAmount;
   }
@@ -151,7 +151,7 @@ public class Order extends BaseEntity {
     this.isBeanPay = isBeanPay;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getSellerIncome() {
     return sellerIncome;
   }
@@ -203,7 +203,7 @@ public class Order extends BaseEntity {
   }
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAmount() {
     return amount;
   }
@@ -213,7 +213,7 @@ public class Order extends BaseEntity {
     this.amount = amount;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getUserScore() {
     return userScore;
   }
@@ -222,7 +222,7 @@ public class Order extends BaseEntity {
     this.userScore = userScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getSellerScore() {
     return sellerScore;
   }

@@ -178,7 +178,7 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-    // orderService.updateOrderforPayCallBack(order.getSn());
+    orderService.updateOrderforPayCallBack(order.getSn());
     if (isBeanPay) {// 乐豆支付
       orderService.updateOrderforPayCallBack(order.getSn());
       Map<String, Object> map = new HashMap<String, Object>();

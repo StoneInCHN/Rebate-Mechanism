@@ -28,28 +28,15 @@
 		<setting name="smsPostfix" value="，如非本人操作请忽略。" />
 		
 		<setting name="siteName" value="翼享生活App" />
-		<setting name="siteUrl" value="http://120.27.92.247:10001/csh-interface" />
-		<setting name="smtpFromMail" value="tankboo@163.com" />
-		<setting name="smtpHost" value="smtp.163.com" />
-		<setting name="smtpPort" value="25" />
-		<setting name="smtpUsername" value="tankboo@163.com" />
-		<setting name="smtpPassword" value="676397876." />
 		<setting name="defaultPageSize" value="5" />
-		<setting name="insuranceId" value="6" />
-		<!-- <setting name="obdServerUrl" value="http://10.45.153.26:20001/obd-data" /> -->
-		<setting name="obdServerUrl" value="http://139.129.5.114:20001/obd-data" />
-		<setting name="intfApiKey" value="8fe0c292c2e64a10a556a10bb9f8942b" />
 		
 		<!-- recommend url -->
 		<setting name="recommendUrl" value="http://120.27.26.85:10001/rebate-interface/share/reg.html" />
 		<!-- download page -->
 		<setting name="downloadPage" value="http://120.27.26.85:10001/rebate-interface/share/down_app.html" />
 		<!-- download url -->
-		<setting name="downloadUrl" value="http://120.27.26.85:8080/upload/apkversion/翼享生活.apk" />
-		<!-- 新闻资讯URL -->
-		<setting name="newsDetailsUrl" value="http://120.27.27.99:8080/console/news/details.jhtml" />
-   		<!-- <setting name="newsDetailsUrl" value="http://carlife.chcws.com:8080/console/news/details.jhtml" /> -->
-		
+		<setting name="downloadUrl" value="http://120.27.26.85:8080/upload/apkversion/天飞翼享生活.apk" />
+
 		<!-- 极光推送Key -->
 		<setting name="appKey" value="eb1ec435f9a7e7305c51621a" />
 		<setting name="masterSecret" value="e658c652b6b824afd582ab26" />

@@ -50,8 +50,8 @@ public final class CommonAttributes {
   public static final String MISSING_REQUIRE_PARAM = "0006";// 缺失必要参数
 
   public static final String FAIL_USER_WITHDRAW = "0007";// 用户提现
-  // /** 绑定OBD设备失败 */
-  // public static final String FAIL_BIND_DEVICE = "0008";// 绑定OBD设备失败
+  /** 账号在其它设备上登录 */
+  public static final String FAIL_TOKEN_AUTH = "0008";// 账号在其它设备上登录
   // /** OBD设备不存在 */
   // public static final String FAIL_DEVICE_NOEXIST = "0009";// OBD设备不存在
   //

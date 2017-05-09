@@ -78,7 +78,7 @@ public class RebateRecord extends BaseEntity {
   }
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getUserCurScore() {
     return userCurScore;
   }
@@ -95,7 +95,7 @@ public class RebateRecord extends BaseEntity {
     this.orderId = orderId;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getRebateScore() {
     return rebateScore;
   }
@@ -105,7 +105,7 @@ public class RebateRecord extends BaseEntity {
   }
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAmount() {
     return amount;
   }

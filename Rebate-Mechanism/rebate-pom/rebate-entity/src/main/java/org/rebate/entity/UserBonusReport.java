@@ -69,7 +69,7 @@ public class UserBonusReport extends BaseEntity {
     this.userId = userId;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
     return consumeTotalAmount;
@@ -79,7 +79,7 @@ public class UserBonusReport extends BaseEntity {
     this.consumeTotalAmount = consumeTotalAmount;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   @JsonProperty
   public BigDecimal getHighBonusLeScore() {
     return highBonusLeScore;
@@ -90,7 +90,7 @@ public class UserBonusReport extends BaseEntity {
   }
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   @JsonProperty
   public BigDecimal getBonusLeScore() {
     return bonusLeScore;

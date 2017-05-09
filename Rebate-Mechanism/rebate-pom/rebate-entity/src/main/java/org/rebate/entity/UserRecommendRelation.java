@@ -1,9 +1,11 @@
 package org.rebate.entity;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -64,6 +66,20 @@ public class UserRecommendRelation extends BaseEntity {
   // public void setStatus(CommonStatus status) {
   // this.status = status;
   // }
+
+  /**
+   * 该用户给父级推荐用户带来的乐分收益
+   */
+  private BigDecimal totalRecommendLeScore = new BigDecimal("0");
+
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getTotalRecommendLeScore() {
+    return totalRecommendLeScore;
+  }
+
+  public void setTotalRecommendLeScore(BigDecimal totalRecommendLeScore) {
+    this.totalRecommendLeScore = totalRecommendLeScore;
+  }
 
   @OneToOne
   public EndUser getEndUser() {

@@ -110,9 +110,9 @@
 							<a href="javascript:;" class="sort" name="createDate">${message("rebate.apkVersion.uploadTime")}</a>
 						</th>
 						</th>
-						<th>
+						<!--<th>
 							${message("rebate.common.handle")}
-						</th>
+						</th>-->
 					</tr>
 				</thead>
 				<tbody>
@@ -137,11 +137,11 @@
 								<span title="${version.updateContent}">${abbreviate(version.updateContent,50, "...")}</span>
 							</td>
 							<td>
-								<span title="${version.createDate?string("yyyy-MM-dd HH:mm:ss")}">${version.createDate}</span>
+								${version.createDate?string("yyyy-MM-dd HH:mm:ss")}
 							</td>
-							<td>
+							<!--<td>
 								<a href="edit.jhtml?id=${version.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
-							</td>
+							</td>-->
 						</tr>
 					[/#list]
 				</tbody>

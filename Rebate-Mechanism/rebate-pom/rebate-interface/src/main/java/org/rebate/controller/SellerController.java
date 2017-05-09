@@ -223,7 +223,11 @@ public class SellerController extends MobileBaseController {
     BigDecimal rebateUserScore =
         unit.subtract(seller.getDiscount().divide(new BigDecimal("10")).multiply(unit)).multiply(
             new BigDecimal(rebateScore.getConfigValue()));
-    map.put("rebateScore", rebateUserScore);
+    if (unit.compareTo(rebateUserScore) < 0) {
+      map.put("rebateUserScore", unit);
+    } else {
+      map.put("rebateUserScore", rebateUserScore);
+    }
 
     if (longitude != null && latitude != null) {
       map.put("distance", LatLonUtil

@@ -260,8 +260,7 @@ public class EndUser extends BaseEntity {
   private String sellerPicUrl;
 
 
-
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getAgentLeScore() {
     return agentLeScore;
   }
@@ -392,7 +391,7 @@ public class EndUser extends BaseEntity {
     this.agent = agent;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getMotivateLeScore() {
     return motivateLeScore;
   }
@@ -402,7 +401,7 @@ public class EndUser extends BaseEntity {
   }
 
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getIncomeLeScore() {
     return incomeLeScore;
   }
@@ -411,7 +410,7 @@ public class EndUser extends BaseEntity {
     this.incomeLeScore = incomeLeScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getCurLeBean() {
     return curLeBean;
   }
@@ -420,7 +419,7 @@ public class EndUser extends BaseEntity {
     this.curLeBean = curLeBean;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getTotalLeBean() {
     return totalLeBean;
   }
@@ -601,7 +600,7 @@ public class EndUser extends BaseEntity {
     this.recommenderId = recommenderId;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getCurScore() {
     return curScore;
   }
@@ -610,7 +609,7 @@ public class EndUser extends BaseEntity {
     this.curScore = curScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getCurLeMind() {
     return curLeMind;
   }
@@ -619,7 +618,7 @@ public class EndUser extends BaseEntity {
     this.curLeMind = curLeMind;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getCurLeScore() {
     return curLeScore;
   }
@@ -628,7 +627,7 @@ public class EndUser extends BaseEntity {
     this.curLeScore = curLeScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getTotalScore() {
     return totalScore;
   }
@@ -637,7 +636,7 @@ public class EndUser extends BaseEntity {
     this.totalScore = totalScore;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getTotalLeMind() {
     return totalLeMind;
   }
@@ -646,7 +645,7 @@ public class EndUser extends BaseEntity {
     this.totalLeMind = totalLeMind;
   }
 
-  @Column(scale = 2, precision = 10)
+  @Column(scale = 4, precision = 12)
   public BigDecimal getTotalLeScore() {
     return totalLeScore;
   }
