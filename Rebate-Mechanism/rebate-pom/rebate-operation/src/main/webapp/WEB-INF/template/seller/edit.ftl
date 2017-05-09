@@ -70,6 +70,18 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.endUser.nickName")}:
+								</th>
+								<td>
+									[#if  seller.endUser??]
+										${seller.endUser.nickName}
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.area")}:
 								</th>
 								<td>
