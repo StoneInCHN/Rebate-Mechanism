@@ -43,16 +43,23 @@ public class JobUserBonusReportRun implements Job {
     endTime.set(Calendar.SECOND, 59);
     endTime.set(Calendar.MILLISECOND, 999);
 
-    LogUtil.debug(JobUserBonusReportRun.class, "JobUserBonusReportRun",
-        "daily user bonus report start! Time Period:" + startTime + "-" + endTime);
+    LogUtil.debug(
+        JobUserBonusReportRun.class,
+        "JobUserBonusReportRun",
+        "daily user bonus report start! Time Period:" + startTime.getTime() + "-"
+            + endTime.getTime());
     try {
       endUserService.callProcedure("pr_nation_bonus_report");
     } catch (Exception e) {
-      mailService.send("464709367@qq.com,sj_msc@163.com",
+      mailService.send("sujinxuan123@163.com,sj_msc@163.com",
           "yxsh:Call pr_nation_bonus_report faild!", e.getMessage());
     }
 
-    LogUtil.debug(JobUserBonusReportRun.class, "JobUserBonusReportRun",
-        "daily user bonus report end! Time Period:" + startTime + "-" + endTime);
+    LogUtil
+        .debug(
+            JobUserBonusReportRun.class,
+            "JobUserBonusReportRun",
+            "daily user bonus report end! Time Period:" + startTime.getTime() + "-"
+                + endTime.getTime());
   }
 }
