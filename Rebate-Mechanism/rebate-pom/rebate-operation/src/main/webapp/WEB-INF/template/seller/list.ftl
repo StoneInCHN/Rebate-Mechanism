@@ -50,6 +50,7 @@
 								<td>
 									<input type="text" name="contactCellPhone" class="text" value="${contactCellPhone}" maxlength="200" />
 								</td>
+							
 								<th>
 									&nbsp;
 								</th>
@@ -59,6 +60,12 @@
 								</td>
 							</tr>
 							<tr>
+								<th>
+									${message("rebate.endUser.cellPhoneNum")}:
+								</th>
+								<td>
+									<input type="text" name="cellPhoneNum" class="text" value="${cellPhoneNum}" maxlength="200" />
+								</td>
 								<th>
 									${message("rebate.seller.accountStatus")}:
 								</th>
@@ -112,7 +119,7 @@
 						<a href="javascript:;" class="sort" name="contactCellPhone">${message("rebate.seller.contactCellPhone")}</a>
 					</th>
 					<th>
-						申请人手机号
+						${message("rebate.endUser.cellPhoneNum")}
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="area">${message("rebate.seller.area")}</a>
@@ -196,9 +203,7 @@
 						[/#if]
 					</td>
 					<td>
-					<!--
 						<a href="edit.jhtml?id=${seller.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
-					-->
 						<a href="details.jhtml?id=${seller.id}" title="${message("csh.common.details")}"><i class="fa fa-eye"></i></a>
 					</td>
 				</tr>

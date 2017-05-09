@@ -15,12 +15,12 @@
 <div id="allmap"></div>
 <script type="text/javascript">
 	var map = new BMap.Map("allmap");    // 创建Map实例
-	map.centerAndZoom(new BMap.Point(${sellerApply.latitude}, ${sellerApply.longitude}), 15);  // 初始化地图,设置中心点坐标和地图级别
+	map.centerAndZoom(new BMap.Point(${sellerApply.longitude}, ${sellerApply.latitude}), 15);  // 初始化地图,设置中心点坐标和地图级别
 	map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
 	map.setCurrentCity("${sellerApply.area}");          // 设置地图显示的城市 此项是必须设置的
 	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 	
-	var marker = new BMap.Marker(new BMap.Point(${sellerApply.latitude}, ${sellerApply.longitude})); // 创建点
+	var marker = new BMap.Marker(new BMap.Point(${sellerApply.longitude}, ${sellerApply.latitude})); // 创建点
 	map.addOverlay(marker);    //增加点
 
 </script>  

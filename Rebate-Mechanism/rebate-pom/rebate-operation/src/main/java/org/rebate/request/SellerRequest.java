@@ -20,6 +20,11 @@ public class SellerRequest {
    */
   private String contactCellPhone;
   
+  /**
+   * 申请人手机号
+   */
+  private String cellPhoneNum;
+  
   /** 地区 */
   private Long areaId;
   
@@ -114,6 +119,14 @@ public class SellerRequest {
 
   public void setApplyToDate(Date applyToDate) {
     this.applyToDate = applyToDate;
+  }
+
+  public String getCellPhoneNum() {
+    return cellPhoneNum;
+  }
+
+  public void setCellPhoneNum(String cellPhoneNum) {
+    this.cellPhoneNum = cellPhoneNum;
   }
   
 }

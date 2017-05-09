@@ -8,13 +8,14 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.Area;
 import org.rebate.entity.Seller;
-import org.rebate.entity.SellerApplication;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.SellerRequest;
+import org.rebate.service.AreaService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerService;
 import org.rebate.utils.TimeUtils;
@@ -34,6 +35,9 @@ public class SellerController extends BaseController {
   @Resource(name = "sellerCategoryServiceImpl")
   private SellerCategoryService sellerCategoryService;
 
+  @Resource(name = "areaServiceImpl")
+  private AreaService areaService;
+  
   /**
    * 列表
    */
@@ -47,6 +51,10 @@ public class SellerController extends BaseController {
     if (StringUtils.isNotEmpty(request.getContactCellPhone())) {
       filters.add(Filter.like("contactCellPhone", request.getContactCellPhone()));
       model.addAttribute("contactCellPhone", request.getContactCellPhone());
+    }
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
     }
     if (StringUtils.isNotEmpty(request.getContactPerson())) {
       filters.add(Filter.like("contactPerson", request.getContactPerson()));
@@ -82,6 +90,33 @@ public class SellerController extends BaseController {
     model.addAttribute("page", sellerService.findPage(pageable));
     return "/seller/list";
   }
+
+
+  /**
+   * 更新
+   */
+  @RequestMapping(value = "/update", method = RequestMethod.POST)
+  public String update(Seller seller,Long areaId) {
+    Seller temp = sellerService.find(seller.getId());
+    temp.setAccountStatus(seller.getAccountStatus());
+    temp.setAddress(seller.getAddress());
+    if(areaId!=null){
+      Area area = areaService.find(areaId);
+      if(area!=null){
+        temp.setArea(area);
+      }
+    }
+    temp.setAvgPrice(seller.getAvgPrice());
+    temp.setDescription(seller.getDescription());
+    temp.setDiscount(seller.getDiscount());
+    temp.setLongitude(seller.getLongitude());
+    temp.setLatitude(seller.getLatitude());
+    temp.setBusinessTime(seller.getBusinessTime());
+    temp.setRemark(seller.getRemark());
+    sellerService.update(temp);
+    return "redirect:list.jhtml";
+  }
+
 
   /**
    * 查看
@@ -119,7 +154,7 @@ public class SellerController extends BaseController {
     model.addAttribute("seller", sellerService.find(id));
     return "/seller/edit";
   }
-  
+
 
   /**
    * 禁用
@@ -137,14 +172,24 @@ public class SellerController extends BaseController {
     sellerService.update(sellers);
     return SUCCESS_MESSAGE;
   }
-  
+
   /**
-   * 查看
+   * 查看商家在百度地图中的位置点
    */
   @RequestMapping(value = "/viewPosition", method = RequestMethod.GET)
   public String viewPosition(Long id, ModelMap model) {
     Seller seller = sellerService.find(id);
     model.addAttribute("seller", seller);
     return "/seller/viewPosition";
+  }
+
+  /**
+   * 编辑商家在百度地图中的位置点
+   */
+  @RequestMapping(value = "/editPosition", method = RequestMethod.GET)
+  public String editPosition(Long id, ModelMap model) {
+    Seller seller = sellerService.find(id);
+    model.addAttribute("seller", seller);
+    return "/seller/editPosition";
   }
 }

@@ -17,7 +17,9 @@
           <li><a href="list.jhtml">${message("rebate.seller.list")}</a></li>
           <li class="active">${message("rebate.seller.edit")}</li>
       </ol>
-	<table class="input">
+       <form id="inputForm" action="update.jhtml" method="post">
+       	    <input type="hidden" name="id" value="${seller.id}" />
+			<table class="input">
 							<tr>
 								<th>
 									${message("rebate.seller.name")}:
@@ -59,15 +61,17 @@
 									${message("rebate.seller.area")}:
 								</th>
 								<td>
-									${seller.area}
+									<input type="hidden" id="areaId"  name="areaId" value="${(seller.area.id)!}" treePath="${(seller.area.treePath)!}"/>
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.address")}:
+									<span class="requiredField">*</span>${message("rebate.seller.address")}:
 								</th>
 								<td>
-									<span>${seller.address}</span><span style="margin-left:20px;"><a id="viewPosition" class="btn btn-info" style="float:none;width:120px !important">查看并编辑位置点</a></span>
+									<span><input type="text" class="text" style="width:400px" name="address"  value="${seller.address}"/></span><span style="margin-left:20px;"><a id="editPosition" class="btn btn-info" style="float:none;width:120px !important">查看并编辑位置点</a></span>
+									<input type="hidden" id="latitude" name="latitude"  value="${seller.latitude}"/>
+									<input type="hidden" id="longitude" name="longitude" value="${seller.longitude}"/>
 								</td>
 							</tr>
 							<tr>
@@ -121,18 +125,26 @@
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.avgPrice")}:
+									<span class="requiredField">*</span>${message("rebate.seller.avgPrice")}:
 								</th>
 								<td>
-									${seller.avgPrice}
+									<input type="text" name="avgPrice" class="text" maxlength="50" value="${seller.avgPrice}"/>
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.discount")}:
+									<span class="requiredField">*</span>${message("rebate.seller.discount")}:
 								</th>
 								<td>
-									${seller.discount}
+									<input type="text" name="discount" class="text" maxlength="50" value="${seller.discount}"/>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.businessTime")}:
+								</th>
+								<td>
+									<input type="text" name="businessTime" class="text" maxlength="50" value="${seller.businessTime}"/>
 								</td>
 							</tr>
 							<tr>
@@ -153,46 +165,105 @@
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.accountStatus")}:
+									<span class="requiredField">*</span>${message("rebate.seller.accountStatus")}:
 								</th>
 								<td>
-									${message("rebate.common.accountStatus."+seller.accountStatus)}
+									<select  name="accountStatus">
+										<option [#if seller.accountStatus =="ACTIVED"] selected="selected" [/#if]  value="ACTIVED">${message("rebate.common.accountStatus.ACTIVED")}</option>
+										<option [#if seller.accountStatus =="LOCKED"] selected="selected" [/#if] value="LOCKED">${message("rebate.common.accountStatus.LOCKED")}</option>
+									</select>
 								</td>
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.description")}:
+									<span class="requiredField">*</span>${message("rebate.seller.description")}:
 								</th>
 								<td>
-									<p>${seller.description}</p>
+									<textarea  name="description" rows="3" cols="60">${seller.description}</textarea>
 								</td>
 							</tr>
+							<tr>
+								<th>
+									${message("rebate.seller.remark")}:
+								</th>
+								<td>
+									<textarea  name="remark" rows="3" cols="60">${seller.remark}</textarea>
+								</td>
+							</tr>
+						</table>
+						<table class="input">
 							<tr>
 								<th>
 									&nbsp;
 								</th>
 								<td>
-									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
+									<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
-						</table>	
+						</table>  	
+</form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
+<script type="text/javascript" src="${base}/resources/js/common.js"></script>
+<script type="text/javascript" src="${base}/resources/js/input.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lSelect.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$('.viewer-images').viewer();
 		$('.img-lazy').lazyload();
-		$("#viewPosition").click(function(){
+
+		var $inputForm = $("#inputForm");
+		// 表单验证
+		$inputForm.validate({
+			rules: {
+				areaId: {
+					required: true
+				},
+				discount:{
+					required: true,
+					number:true
+				},
+				avgPrice:{
+					number:true
+				},
+				description: {
+					required: true,
+				}
+			}
+		});		
+		
+		var $areaId = $("#areaId");
+			// 地区选择
+			$areaId.lSelect({
+				url: "${base}/console/common/area.jhtml"
+		});
+
+		$("#editPosition").click(function(){
 			window.dialog({
-	           id: 'selectEndUser-dialog',
-	           title: '查看商家位置点',
-	           url:'./viewPosition.jhtml?id=${seller.id}',
-          	   quickClose: true
+	           id: 'editPosition-dialog',
+	           title: '查看并修改商家位置点',
+	           url:'./editPosition.jhtml?id=${seller.id}',
+          	   quickClose: true,
+          	   okValue: '确定',
+			   ok: function () {
+					var $editPositionFrame = $(window.frames["editPosition-dialog"].document);				
+					var $latitude = $editPositionFrame.find('#latitude');
+					var $longitude = $editPositionFrame.find('#longitude');
+					if($latitude.val()){
+						$("#latitude").val($latitude.val())
+					}
+					if($longitude.val()){
+						$("#longitude").val($longitude.val())
+					}
+			   },
+			   cancelValue: '取消'
        		 }).show(this);
 			return false;
-		})
+		});
 	})
 </script>	
 </body>
