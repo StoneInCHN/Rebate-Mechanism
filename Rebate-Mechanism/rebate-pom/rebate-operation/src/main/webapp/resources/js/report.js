@@ -40,7 +40,7 @@ function() {
 							tooltip : {
 								headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
 								pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
-										+ '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+										+ '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
 								footerFormat : '</table>',
 								shared : true,
 								useHTML : true
@@ -68,4 +68,172 @@ function() {
 			}
 		});
 	});
-});
+	
+	$("a[href='#nation_charts']").click(function (e) {
+		nationChartDate();
+	});
+
+	//用户注册统计
+	$("#user_reg_report_search").click(function(){
+		$.ajax({
+			url : "../report/userRegReportData.jhtml",
+			type : "get",
+			data:$("#charts_report_search_form").serialize(),
+			success : function(result, response, status) {
+				var _categories=new Array();
+				var userRegData=new Array();
+				for(var i=0;i<result.length;i++){
+					_categories.push(result[i].statisticsDate);
+					
+					userRegData.push(result[i].regNum);
+				}
+				$('#userRegReportDivId')
+				.highcharts(
+						{
+							chart : {
+								type : 'column'
+							},
+							title : {
+								text : '注册统计'
+							},
+							xAxis : {
+								categories : _categories,
+								crosshair : true
+							},
+							yAxis : {
+								min : 0,
+								title : {
+									text : '人数'
+								}
+							},
+							tooltip : {
+								headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+								pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+										+ '<td style="padding:0"><b>{point.y} 个</b></td></tr>',
+								footerFormat : '</table>',
+								shared : true,
+								useHTML : true
+							},
+							plotOptions : {
+								column : {
+									pointPadding : 0.2,
+									borderWidth : 0
+								}
+							},
+							series : [
+									{
+										name : '注册人数',
+										data : userRegData
+									}
+									]
+						});
+			}
+		});
+	});
+})
+function nationChartDate(){
+	$.ajax({
+		url : "../report/nationBonusReportData.jhtml",
+		type : "get",
+//		data:$("#charts_report_search_form").serialize(),
+		success : function(result, response, status) {
+			if(result.length==0){
+				alert('只能查询一个用户的信息')
+			}
+			
+			var _categories=new Array();
+			var consumeTotalAmountData=new Array();
+			var consumePeopleNumData=new Array();
+			var sellerNumData=new Array();
+			var publicTotalAmountData=new Array();
+			var leMindByDayData=new Array();
+			var consumeByDayData=new Array();
+			var bonusLeScoreByDayData=new Array();
+			var publicAmountByDayData=new Array();
+			var platformIncomeData=new Array();
+			for(var i=0;i<result.length;i++){
+				_categories.push(result[i].reportDate);
+				consumeTotalAmountData.push(result[i].consumeTotalAmount/1000);
+				consumePeopleNumData.push(result[i].consumePeopleNum);
+				sellerNumData.push(result[i].sellerNum);
+				publicTotalAmountData.push(result[i].publicTotalAmount/1000);
+				leMindByDayData.push(result[i].leMindByDay);
+				consumeByDayData.push(result[i].consumeByDay);
+				bonusLeScoreByDayData.push(result[i].bonusLeScoreByDay/1000);
+				publicAmountByDayData.push(result[i].publicAmountByDay);
+				platformIncomeData.push(result[i].platformIncome);
+			}
+			$('#nationBonusReportDivId')
+			.highcharts(
+					{
+						chart : {
+							type : 'column'
+						},
+						title : {
+							text : '分红统计'
+						},
+						xAxis : {
+							categories : _categories,
+							crosshair : true
+						},
+						yAxis : {
+							min : 0,
+							title : {
+								text : '金额'
+							}
+						},
+						tooltip : {
+							headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+							pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+									+ '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+							footerFormat : '</table>',
+							shared : true,
+							useHTML : true
+						},
+						plotOptions : {
+							column : {
+								pointPadding : 0.2,
+								borderWidth : 0
+							}
+						},
+						series : [
+								{
+									name : '全国消费总额(k)',
+									data : consumeTotalAmountData
+								},
+								{
+									name : '全国消费人数',
+									data : consumePeopleNumData
+								},
+								{
+									name : '全国公益商家',
+									data : sellerNumData
+								} ,
+								{
+									name : '公益总金额(k)',
+									data : publicTotalAmountData
+								},
+								{
+									name : '当日累计分红乐心',
+									data : leMindByDayData
+								},
+								{
+									name : '当日累计消费',
+									data : consumeByDayData
+								},
+								{
+									name : '当日分红乐豆(k)',
+									data : bonusLeScoreByDayData
+								},
+								{
+									name : '公益金额',
+									data : publicAmountByDayData
+								},
+								{
+									name : '平台收益',
+									data : platformIncomeData
+								}]
+					});
+		}
+	});
+}

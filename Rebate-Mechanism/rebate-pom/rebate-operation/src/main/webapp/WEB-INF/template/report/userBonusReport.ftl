@@ -21,11 +21,11 @@
         <li class="active">${message("rebate.report.list")}(${message("rebate.common.page.totalPages", page.total)})</li>
   </ol>
 	<ul class="nav nav-tabs" role="tablist">
-		    <li role="presentation" class="active"><a href="#table_list" aria-controls="setting" role="tab" data-toggle="tab">列表数据</a></li>
-		    <li role="presentation"><a href="#charts" aria-controls="paymenttype" role="tab" data-toggle="tab">图表数据</a></li>
-		  </ul>
+	    <li role="presentation" class="active"><a href="#user_table_list" aria-controls="setting" role="tab" data-toggle="tab">列表数据</a></li>
+	    <li role="presentation"><a href="#user_charts" aria-controls="paymenttype" role="tab" data-toggle="tab">图表数据</a></li>
+	  </ul>
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="table_list">
+    <div role="tabpanel" class="tab-pane active" id="user_table_list">
 	<form id="listForm" action="userBonusReport.jhtml" method="get">
           
 		  <div class="content-search accordion-group">
@@ -138,15 +138,15 @@
 		[/@pagination]
     </form>
    </div>
-   <div role="tabpanel" class="tab-pane active" id="charts">
-   <form id="charts_report_search_form">
+   <div role="tabpanel" class="tab-pane" id="user_charts">
+   	<form id="charts_report_search_form">
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
-                  <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                       	  查询条件
                   </a>
              </div>
-             <div id="collapseOne" class="accordion-body in collapse" role="tabpanel" aria-labelledby="headingOne">
+             <div id="collapseTwo" class="accordion-body in collapse" role="tabpanel" aria-labelledby="headingTwo">
                   <div class="accordion-inner">
 						<table class="queryFiled">
 							<tr>
@@ -194,8 +194,10 @@
               <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>-->
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
-   	<div id="userBonusReportDivId" style="height:400px;width:99%;"></div>
+   		<div id="userBonusReportDivId" style="height:400px;width:99%;"></div>
+   		
    </div>
+   </form>
  </div>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>

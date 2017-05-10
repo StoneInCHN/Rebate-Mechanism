@@ -12,6 +12,8 @@ import javax.persistence.TemporalType;
 
 import org.rebate.entity.base.BaseEntity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 每日全国分红统计
  * 
@@ -78,6 +80,7 @@ public class NationBonusReport extends BaseEntity {
 
 
   @Column(scale = 4, precision = 18)
+  @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
     return consumeTotalAmount;
   }
@@ -86,6 +89,7 @@ public class NationBonusReport extends BaseEntity {
     this.consumeTotalAmount = consumeTotalAmount;
   }
 
+  @JsonProperty
   public Integer getConsumePeopleNum() {
     return consumePeopleNum;
   }
@@ -94,6 +98,7 @@ public class NationBonusReport extends BaseEntity {
     this.consumePeopleNum = consumePeopleNum;
   }
 
+  @JsonProperty
   public Integer getSellerNum() {
     return sellerNum;
   }
@@ -102,6 +107,7 @@ public class NationBonusReport extends BaseEntity {
     this.sellerNum = sellerNum;
   }
 
+  @JsonProperty
   @Column(scale = 4, precision = 18)
   public BigDecimal getPublicTotalAmount() {
     return publicTotalAmount;
@@ -111,6 +117,7 @@ public class NationBonusReport extends BaseEntity {
     this.publicTotalAmount = publicTotalAmount;
   }
 
+  @JsonProperty
   @Column(scale = 4, precision = 18)
   public BigDecimal getLeMindByDay() {
     return leMindByDay;
@@ -120,6 +127,7 @@ public class NationBonusReport extends BaseEntity {
     this.leMindByDay = leMindByDay;
   }
 
+  @JsonProperty
   @Column(scale = 4, precision = 18)
   public BigDecimal getConsumeByDay() {
     return consumeByDay;
@@ -129,6 +137,7 @@ public class NationBonusReport extends BaseEntity {
     this.consumeByDay = consumeByDay;
   }
 
+  @JsonProperty
   @Column(scale = 4, precision = 18)
   public BigDecimal getBonusLeScoreByDay() {
     return bonusLeScoreByDay;
@@ -138,6 +147,7 @@ public class NationBonusReport extends BaseEntity {
     this.bonusLeScoreByDay = bonusLeScoreByDay;
   }
 
+  @JsonProperty
   @Column(scale = 4, precision = 18)
   public BigDecimal getPublicAmountByDay() {
     return publicAmountByDay;
@@ -147,6 +157,7 @@ public class NationBonusReport extends BaseEntity {
     this.publicAmountByDay = publicAmountByDay;
   }
 
+  @JsonProperty
   @Temporal(TemporalType.DATE)
   public Date getReportDate() {
     return reportDate;
@@ -166,6 +177,7 @@ public class NationBonusReport extends BaseEntity {
     this.remark = remark;
   }
 
+  @JsonProperty
   @Column(scale = 4, precision = 18)
   public BigDecimal getPlatformIncome() {
     return platformIncome;

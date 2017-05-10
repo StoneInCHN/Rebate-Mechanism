@@ -11,6 +11,8 @@ import javax.persistence.TemporalType;
 
 import org.rebate.entity.base.BaseEntity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 /**
  * 手机app注册用户统计
@@ -37,6 +39,7 @@ public class UserRegReport extends BaseEntity {
   private Date statisticsDate;
 
 
+  @JsonProperty
   public Integer getRegNum() {
     return regNum;
   }
@@ -46,6 +49,7 @@ public class UserRegReport extends BaseEntity {
   }
 
   @Temporal(TemporalType.DATE)
+  @JsonProperty
   public Date getStatisticsDate() {
     return statisticsDate;
   }

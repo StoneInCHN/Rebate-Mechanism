@@ -120,7 +120,8 @@ ul.nav li>a{
     margin-bottom: 5px;
 }
 
-#headingOne a{
+
+#headingOne a {
     display: block;
     text-align: center;
     background: rgba(31,181,171,0.1);

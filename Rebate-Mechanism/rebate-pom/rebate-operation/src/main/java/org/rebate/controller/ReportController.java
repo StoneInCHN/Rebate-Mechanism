@@ -3,16 +3,19 @@ package org.rebate.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.EndUser;
+import org.rebate.entity.NationBonusReport;
 import org.rebate.entity.UserBonusReport;
+import org.rebate.entity.UserRegReport;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.service.EndUserService;
 import org.rebate.service.NationBonusReportService;
 import org.rebate.service.UserBonusReportService;
 import org.rebate.service.UserRegReportService;
@@ -35,6 +38,9 @@ public class ReportController extends BaseController {
 
   @Resource(name = "userRegReportServiceImpl")
   private UserRegReportService userRegReportService;
+
+  @Resource(name = "endUserServiceImpl")
+  EndUserService endUserService;
 
   /**
    * 列表
@@ -96,24 +102,60 @@ public class ReportController extends BaseController {
   @RequestMapping(value = "/userBonusReportData", method = RequestMethod.GET)
   public @ResponseBody List<UserBonusReport> userBonusReport(String nickName, String mobile,
       Date reportDateFrom, Date reportDateTo, ModelMap model) {
+    List<Filter> endUserFilters = new ArrayList<Filter>();
     List<Filter> filters = new ArrayList<Filter>();
     Filter dateFrom = new Filter("reportDate", Operator.ge, reportDateFrom);
     Filter dateTo = new Filter("reportDate", Operator.le, reportDateTo);
     if (nickName != null) {
-      Filter nickNameFilter = new Filter("userId&cellPhoneNum", Operator.like, "%"+nickName+"%");
-      filters.add(nickNameFilter);
+      Filter nickNameFilter = new Filter("nickName", Operator.like, "%" + nickName + "%");
+      endUserFilters.add(nickNameFilter);
     }
     if (mobile != null) {
-      Filter mobileFilter = new Filter("userId&cellPhoneNum", Operator.like, "%" + mobile + "%");
-      filters.add(mobileFilter);
+      Filter mobileFilter = new Filter("cellPhoneNum", Operator.like, "%" + mobile + "%");
+      endUserFilters.add(mobileFilter);
     }
 
-    filters.add(dateFrom);
-    filters.add(dateTo);
+    List<EndUser> endUsers = endUserService.findList(null, endUserFilters, null);
+
+    if (endUsers != null && endUsers.size() == 1) {
+      Filter endFilter = new Filter("userId", Operator.eq, endUsers.get(0));
+
+      filters.add(endFilter);
+      endUserFilters.add(dateFrom);
+      endUserFilters.add(dateTo);
+      List<Ordering> orderings = new ArrayList<Ordering>();
+      orderings.add(Ordering.desc("createDate"));
+
+      return userBonusReportService.findList(null, filters, orderings);
+    } else {
+      return new ArrayList<UserBonusReport>();
+    }
+
+
+  }
+
+
+  /**
+   * 全国分红统计
+   */
+  @RequestMapping(value = "/nationBonusReportData", method = RequestMethod.GET)
+  public @ResponseBody List<NationBonusReport> nationBonusReport(Date reportDateFrom,
+      Date reportDateTo, ModelMap model) {
+
+    List<Filter> filters = new ArrayList<Filter>();
+    if (reportDateFrom != null) {
+      Filter dateFrom = new Filter("reportDate", Operator.ge, reportDateFrom);
+      filters.add(dateFrom);
+    }
+    if (reportDateTo != null) {
+      Filter dateTo = new Filter("reportDate", Operator.le, reportDateTo);
+      filters.add(dateTo);
+    }
+
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
+    return nationBonusReportService.findList(null, filters, orderings);
 
-    return userBonusReportService.findList(null, filters, orderings);
   }
 
   /**
@@ -136,5 +178,27 @@ public class ReportController extends BaseController {
     pageable.setOrders(orderings);
     model.addAttribute("page", userRegReportService.findPage(pageable));
     return "/report/userRegReport";
+  }
+
+  /**
+   * 用戶注册统计图表数据
+   */
+  @RequestMapping(value = "/userRegReportData", method = RequestMethod.GET)
+  public @ResponseBody List<UserRegReport> userRegReportReport(Date reportDateFrom,
+      Date reportDateTo, ModelMap model) {
+
+    List<Filter> filters = new ArrayList<Filter>();
+    if (reportDateFrom != null) {
+      Filter dateFrom = new Filter("statisticsDate", Operator.ge, reportDateFrom);
+      filters.add(dateFrom);
+    }
+    if (reportDateTo != null) {
+      Filter dateTo = new Filter("statisticsDate", Operator.le, reportDateTo);
+      filters.add(dateTo);
+    }
+
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    return userRegReportService.findList(null, filters, orderings);
   }
 }

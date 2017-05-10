@@ -60,6 +60,12 @@
               <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>-->
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
+         <ul class="nav nav-tabs" role="tablist">
+	    <li role="presentation" class="active"><a href="#nation_table_list" aria-controls="table_list" role="tab" data-toggle="tab">列表数据</a></li>
+	    <li role="presentation"><a href="#nation_charts" aria-controls="charts" role="tab" data-toggle="tab">图表数据</a></li>
+	  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="nation_table_list">
         <table id="listTable" class="table table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
@@ -141,6 +147,11 @@
 		[@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
 			[#include "/include/pagination.ftl"]
 		[/@pagination]
+		</div>
+		 <div role="tabpanel" class="tab-pane active" id="nation_charts">
+		 	<div id="nationBonusReportDivId" style="height:400px;width:99%;"></div>
+		 </div>
+	</div>
 		 
     </form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
@@ -149,6 +160,8 @@
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${base}/resources/js/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="${base}/resources/js/report.js"></script>
 <script type="text/javascript">
 </script>
 </body>
