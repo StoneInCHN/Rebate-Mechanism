@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
-import org.rebate.beans.Message;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.NationBonusReport;
 import org.rebate.entity.UserBonusReport;
@@ -59,13 +58,13 @@ public class ReportController extends MobileBaseController {
     Long userId = request.getUserId();
     String token = request.getToken();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter userFilter = new Filter("userId", Operator.eq, userId);
@@ -83,7 +82,7 @@ public class ReportController extends MobileBaseController {
       response.setMsg(result);
     }
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -105,13 +104,13 @@ public class ReportController extends MobileBaseController {
     Long userId = request.getUserId();
     String token = request.getToken();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     List<Filter> filters = new ArrayList<Filter>();
 
@@ -128,7 +127,7 @@ public class ReportController extends MobileBaseController {
       response.setMsg(result);
     }
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);

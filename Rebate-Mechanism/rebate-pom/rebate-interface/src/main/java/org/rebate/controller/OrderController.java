@@ -95,13 +95,13 @@ public class OrderController extends MobileBaseController {
     Boolean isBeanPay = req.getIsBeanPay();
     String password = req.getPayPwd();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     if (isBeanPay) {// 乐豆支付需要验证支付密码
       EndUser endUser = endUserService.find(userId);
@@ -189,7 +189,7 @@ public class OrderController extends MobileBaseController {
     }
     response.getMsg().put("orderId", order.getId());
 
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     return response;
@@ -211,13 +211,13 @@ public class OrderController extends MobileBaseController {
     Long evaluateId = req.getEntityId();
     String reply = req.getSellerReply();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     SellerEvaluate evaluate = sellerEvaluateService.find(evaluateId);
     evaluate.setSellerReply(reply);
@@ -228,7 +228,7 @@ public class OrderController extends MobileBaseController {
     }
 
     response.setCode(CommonAttributes.SUCCESS);
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     return response;
@@ -249,13 +249,13 @@ public class OrderController extends MobileBaseController {
     String token = req.getToken();
     Long orderId = req.getEntityId();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     orderService.evaluateOrder(orderId, userId, req.getScore(), req.getContent(),
         req.getEvaluateImage());
@@ -266,7 +266,7 @@ public class OrderController extends MobileBaseController {
     }
 
     response.setCode(CommonAttributes.SUCCESS);
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     return response;
@@ -288,13 +288,13 @@ public class OrderController extends MobileBaseController {
     String token = req.getToken();
     Long orderId = req.getEntityId();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     Order order = orderService.find(orderId);
 
@@ -306,7 +306,7 @@ public class OrderController extends MobileBaseController {
     response.setMsg(result);
 
     response.setCode(CommonAttributes.SUCCESS);
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     return response;
@@ -330,13 +330,13 @@ public class OrderController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     Seller seller = sellerService.find(entityId);
     List<Filter> filters = new ArrayList<Filter>();
@@ -364,7 +364,7 @@ public class OrderController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -387,13 +387,13 @@ public class OrderController extends MobileBaseController {
     String token = request.getToken();
     Long orderId = request.getEntityId();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     SellerEvaluate evaluate = sellerEvaluateService.getEvaluateByOrder(orderId);
     String[] propertys =
@@ -407,7 +407,7 @@ public class OrderController extends MobileBaseController {
     result.put("evaluateImages", evaluateImgs);
     response.setMsg(result);
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -436,13 +436,13 @@ public class OrderController extends MobileBaseController {
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
@@ -468,7 +468,7 @@ public class OrderController extends MobileBaseController {
         FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
 

@@ -649,13 +649,13 @@ public class EndUserController extends MobileBaseController {
     String token = req.getToken();
     String nickName = req.getNickName();
     Long areaId = req.getAreaId();
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.editInfo(userId, areaId, nickName);
     if (LogUtil.isDebugEnabled(EndUserController.class)) {
@@ -673,7 +673,7 @@ public class EndUserController extends MobileBaseController {
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     response.setMsg(map);
 
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     return response;
@@ -699,13 +699,13 @@ public class EndUserController extends MobileBaseController {
     String token = req.getToken();
     Long userId = req.getUserId();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
       response.setCode(CommonAttributes.FAIL_RESET_PWD);
@@ -783,7 +783,7 @@ public class EndUserController extends MobileBaseController {
           "EndUser Update Password. CellPhone: %s,Type: %s", cellPhoneNum, smsCodeType.toString());
     }
 
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -806,13 +806,13 @@ public class EndUserController extends MobileBaseController {
     String token = req.getToken();
     MultipartFile photo = req.getPhoto();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
 
@@ -833,7 +833,7 @@ public class EndUserController extends MobileBaseController {
 
     response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     return response;
@@ -852,13 +852,13 @@ public class EndUserController extends MobileBaseController {
     Long userId = req.getUserId();
     String token = req.getToken();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
 
@@ -879,7 +879,7 @@ public class EndUserController extends MobileBaseController {
     }
     response.setMsg(map);
 
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -899,13 +899,13 @@ public class EndUserController extends MobileBaseController {
     Long userId = req.getUserId();
     String token = req.getToken();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     Map<String, Object> map = new HashMap<String, Object>();
@@ -923,7 +923,7 @@ public class EndUserController extends MobileBaseController {
     map.put("downloadUrl", setting.getDownloadPage() + "?androidUrl=" + setting.getDownloadUrl());
     response.setMsg(map);
 
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -997,13 +997,13 @@ public class EndUserController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
@@ -1037,7 +1037,7 @@ public class EndUserController extends MobileBaseController {
 
     SystemConfig systemConfig = systemConfigService.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
     response.setDesc(systemConfig != null ? systemConfig.getConfigValue() : null);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -1061,13 +1061,13 @@ public class EndUserController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
@@ -1092,7 +1092,7 @@ public class EndUserController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -1116,13 +1116,13 @@ public class EndUserController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
@@ -1153,7 +1153,7 @@ public class EndUserController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -1177,13 +1177,13 @@ public class EndUserController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
@@ -1209,7 +1209,7 @@ public class EndUserController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -1230,13 +1230,13 @@ public class EndUserController extends MobileBaseController {
     String token = request.getToken();
     Long sellerId = request.getEntityId();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     Seller seller = sellerService.find(sellerId);
@@ -1265,7 +1265,7 @@ public class EndUserController extends MobileBaseController {
       }
     }
     endUserService.update(endUser);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
@@ -1291,13 +1291,13 @@ public class EndUserController extends MobileBaseController {
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
 
@@ -1348,7 +1348,7 @@ public class EndUserController extends MobileBaseController {
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -1369,13 +1369,13 @@ public class EndUserController extends MobileBaseController {
     Long userId = request.getUserId();
     String token = request.getToken();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     Map<String, Object> map = new HashMap<String, Object>();
@@ -1386,7 +1386,7 @@ public class EndUserController extends MobileBaseController {
     map.putAll(endUserService.getAvlRule(endUser));
     response.setMsg(map);
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
@@ -1408,13 +1408,13 @@ public class EndUserController extends MobileBaseController {
     String password = request.getPassword();
     String remark = request.getRemark();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     // 密码非空验证
@@ -1451,7 +1451,7 @@ public class EndUserController extends MobileBaseController {
 
     endUserService.userWithdraw(userId, remark);
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
@@ -1474,13 +1474,13 @@ public class EndUserController extends MobileBaseController {
     String token = request.getToken();
     String password = request.getPassword();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     // 密码非空验证
@@ -1516,7 +1516,7 @@ public class EndUserController extends MobileBaseController {
     }
 
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
@@ -1540,13 +1540,13 @@ public class EndUserController extends MobileBaseController {
     String openId = request.getOpenId();
     String wxNickName = request.getWxNickName();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     endUser.setWechatOpenid(openId);
@@ -1558,7 +1558,7 @@ public class EndUserController extends MobileBaseController {
           "wechat openid auth. userId: %s, openId: %s", userId, openId);
     }
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setDesc(wxNickName);
     response.setCode(CommonAttributes.SUCCESS);
@@ -1579,18 +1579,18 @@ public class EndUserController extends MobileBaseController {
     BaseResponse response = new BaseResponse();
     Long userId = request.getUserId();
     String token = request.getToken();
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
     EndUser endUser = endUserService.find(userId);
     endUser.setWechatOpenid(null);
     endUser.setWechatNickName(null);
     endUserService.update(endUser);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);

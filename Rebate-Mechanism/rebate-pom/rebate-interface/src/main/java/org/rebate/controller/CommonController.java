@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
-import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.ApkVersion;
@@ -62,13 +61,13 @@ public class CommonController extends MobileBaseController {
     String jPushRegId = req.getJpushRegId();
     AppPlatform appPlatform = req.getAppPlatform();
 
-    // 验证登录token
-    String userToken = endUserService.getEndUserToken(userId);
-    if (!TokenGenerator.isValiableToken(token, userToken)) {
-      response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-      return response;
-    }
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
 
     EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
