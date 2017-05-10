@@ -57,12 +57,12 @@ public class AgentController extends BaseController {
     }
     
     Area area = areaService.find(areaId);
-    if(AgencyLevel.PROVINCE == agent.getAgencyLevel() && area.getParent()!=null){
+    if(AgencyLevel.PROVINCE.ordinal() == agent.getAgencyLevel().ordinal() && area.getParent()!=null){
       return Message.error("rebate.agent.area.agencyLevel.not.match");
-    }else if (AgencyLevel.COUNTY == agent.getAgencyLevel() && area.getChildren()!=null) {
+    }else if (AgencyLevel.COUNTY.ordinal() == agent.getAgencyLevel().ordinal() && area.getChildren()!=null) {
       return Message.error("rebate.agent.area.agencyLevel.not.match");
-    }else{
-      if(area.getParent()==null || area.getParent()==null){
+    }else if(AgencyLevel.CITY.ordinal() == agent.getAgencyLevel().ordinal()){
+      if(area.getParent()==null || area.getChildren()==null){
         return Message.error("rebate.agent.area.agencyLevel.not.match");
       }
     }
