@@ -224,9 +224,9 @@ public class SellerController extends MobileBaseController {
         unit.subtract(seller.getDiscount().divide(new BigDecimal("10")).multiply(unit)).multiply(
             new BigDecimal(rebateScore.getConfigValue()));
     if (unit.compareTo(rebateUserScore) < 0) {
-      map.put("rebateUserScore", unit);
+      map.put("rebateScore", unit);
     } else {
-      map.put("rebateUserScore", rebateUserScore);
+      map.put("rebateScore", rebateUserScore);
     }
 
     if (longitude != null && latitude != null) {
@@ -288,7 +288,7 @@ public class SellerController extends MobileBaseController {
     Page<SellerEvaluate> page = sellerEvaluateService.findPage(pageable);
     String[] propertys =
         {"id", "endUser.userPhoto", "endUser.nickName", "createDate", "content", "evaluateImages",
-            "sellerReply"};
+            "sellerReply", "score"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 

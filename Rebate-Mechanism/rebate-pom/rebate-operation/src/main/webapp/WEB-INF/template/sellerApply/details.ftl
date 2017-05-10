@@ -124,7 +124,7 @@
 									${message("rebate.sellerApplication.description")}:
 								</th>
 								<td>
-									<p>${seller.description}</p>
+									<p>${sellerApply.description}</p>
 								</td>
 							</tr>
 							<tr>

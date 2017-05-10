@@ -343,7 +343,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           && limitConfig != null && limitConfig.getConfigValue() != null) {
         List<EndUser> records =
             userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig, null,
-                0, rebateAmount, limitConfig, orderId);
+                0, rebateAmount, limitConfig, orderId, endUser);
         if (!CollectionUtils.isEmpty(records)) {
           endUserDao.merge(records);
         }
@@ -446,7 +446,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   private List<EndUser> userRecommendIncome(UserRecommendRelation userRecommendRelation,
       SystemConfig directUser, SystemConfig indirectUser, SystemConfig leScorePer, int i,
-      BigDecimal rebateAmount, SystemConfig limitConfig, Long orderId) {
+      BigDecimal rebateAmount, SystemConfig limitConfig, Long orderId, EndUser consumeUser) {
 
     List<EndUser> records = new ArrayList<EndUser>();
     Integer limitLevel = Integer.parseInt(limitConfig.getConfigValue());
@@ -458,8 +458,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       leScoreRecord.setOrderId(orderId);
       EndUser userRecommend = userRecommendRelation.getParent().getEndUser();
       leScoreRecord.setEndUser(userRecommend);
-      leScoreRecord.setRecommender(userRecommendRelation.getEndUser().getNickName());
-      leScoreRecord.setRecommenderPhoto(userRecommendRelation.getEndUser().getUserPhoto());
+      leScoreRecord.setRecommender(consumeUser.getNickName());
+      leScoreRecord.setRecommenderPhoto(consumeUser.getUserPhoto());
       leScoreRecord.setLeScoreType(LeScoreType.RECOMMEND_USER);
       BigDecimal income = new BigDecimal("0");
       if (i == 0) {
@@ -495,7 +495,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
-          indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId));
+          indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId, consumeUser));
     }
     return records;
   }
@@ -535,7 +535,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Integer rateCounts = seller.getRateCounts() + 1;
     BigDecimal totalScore =
         (seller.getRateScore() != null ? seller.getRateScore() : new BigDecimal(0)
-            .multiply(new BigDecimal(seller.getRateCounts() + 1))).add(new BigDecimal(score));
+            .multiply(new BigDecimal(seller.getRateCounts()))).add(new BigDecimal(score));
     BigDecimal rateScore =
         totalScore.divide(new BigDecimal(rateCounts), 1, BigDecimal.ROUND_HALF_UP);
     seller.setRateCounts(rateCounts);
