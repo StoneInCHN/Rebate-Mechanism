@@ -205,9 +205,23 @@ public class Seller extends BaseEntity {
   private BigDecimal unClearingAmount = new BigDecimal("0");
 
   /**
+   * 每日营业额上限
+   */
+  private BigDecimal limitAmountByDay;
+
+  /**
    * 备注
    */
   private String remark;
+
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getLimitAmountByDay() {
+    return limitAmountByDay;
+  }
+
+  public void setLimitAmountByDay(BigDecimal limitAmountByDay) {
+    this.limitAmountByDay = limitAmountByDay;
+  }
 
   @Column(length = 200)
   public String getRemark() {

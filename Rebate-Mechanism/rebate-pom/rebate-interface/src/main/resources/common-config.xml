@@ -45,11 +45,11 @@
 		 
 		<!-- 微信支付平台 -->
 		<!-- 秘钥 -->
-		<setting name="wechatKey" value="a09d313c915246009685239d39b3e416" />
+		<setting name="wechatKey" value="ikkuppsey34wmjpej0n4pwaonv0qlygy" />
 		<!-- 微信分配的公众账号ID(企业号corpid即为此appId) -->
-		<setting name="wechatAppid" value="wx75b0585936937e4a" />
+		<setting name="wechatAppid" value="wxf120b070d4d9567a" />
 		<!-- 商户ID -->
-		<setting name="wechatMchId" value="1249451301" />
+		<setting name="wechatMchId" value="1465116102" />
 		<!-- 交易类型 -->
 		<setting name="wechatTradeType" value="APP" />
 		<!-- 通知地址 -->
