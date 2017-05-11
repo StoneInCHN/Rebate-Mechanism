@@ -16,6 +16,12 @@
   <![endif]-->
 </head>
 <body>
+  <ul class="nav nav-tabs" role="tablist">
+	    <li role="presentation" class="active"><a href="#nation_table_list" aria-controls="table_list" role="tab" data-toggle="tab">列表数据</a></li>
+	    <li role="presentation"><a href="#nation_charts" aria-controls="charts" role="tab" data-toggle="tab">图表数据</a></li>
+	  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="nation_table_list">
 	<form id="listForm" action="nationBonusReport.jhtml" method="get">
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.orderManager")}</a> </li>
@@ -60,12 +66,6 @@
               <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>-->
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
-         <ul class="nav nav-tabs" role="tablist">
-	    <li role="presentation" class="active"><a href="#nation_table_list" aria-controls="table_list" role="tab" data-toggle="tab">列表数据</a></li>
-	    <li role="presentation"><a href="#nation_charts" aria-controls="charts" role="tab" data-toggle="tab">图表数据</a></li>
-	  </ul>
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="nation_table_list">
         <table id="listTable" class="table table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
@@ -147,13 +147,54 @@
 		[@pagination pageNumber = page.pageNumber totalPages = page.totalPages]
 			[#include "/include/pagination.ftl"]
 		[/@pagination]
-		</div>
-		 <div role="tabpanel" class="tab-pane active" id="nation_charts">
+    </form>
+    </div>
+   	 
+	    <div role="tabpanel" class="tab-pane active" id="nation_charts">
+	    <form id="chartsForm" action="nationBonusReport.jhtml" method="get">
+   	 <ol class="breadcrumb">
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.orderManager")}</a> </li>
+                <li class="active">${message("rebate.order.list")}(${message("rebate.common.page.totalPages", page.total)})</li>
+          </ol>
+		  <div class="content-search accordion-group">
+             <div class="accordion-heading" role="tab" id="headingOne">
+                  <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTWO" aria-expanded="true" aria-controls="collapseTWO">
+                      	  查询条件
+                  </a>
+             </div>
+             <div id="collapseTWO" class="accordion-body in collapse" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="accordion-inner">
+						<table class="queryFiled">
+							<tr>
+								<th>
+									${message("rebate.report.reportDate")}:
+								</th>
+								<td>
+									<input type="text" id="reportDateFrom" name="reportDateFrom" class="text Wdate" onclick="WdatePicker({maxDate: '#F{$dp.$D(\'reportDateTo\')}'});" readonly [#if reportDateFrom??]value="${reportDateFrom?string("yyyy-MM-dd")}"[/#if] />
+								</td>
+								<th class="dateRange">
+									---
+								</th>
+								<td>
+									<input type="text" id="reportDateTo" name="reportDateTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'reportDateFrom\')}'});" readonly [#if reportDateTo??]value="${reportDateTo?string("yyyy-MM-dd")}" [/#if]/>
+								</td>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<input id="nationBonusReport_search" type="button" class="btn " value="${message("rebate.common.submit")}" />
+									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='nationBonusReport.jhtml'" />
+								</td>
+							</tr>
+						</table>
+                  </div>
+              </div>
+         </div>
 		 	<div id="nationBonusReportDivId" style="height:400px;width:99%;"></div>
 		 </div>
-	</div>
-		 
-    </form>
+	</form
+   </div>
+     
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>

@@ -124,7 +124,7 @@ public class ReportController extends BaseController {
       endUserFilters.add(dateFrom);
       endUserFilters.add(dateTo);
       List<Ordering> orderings = new ArrayList<Ordering>();
-      orderings.add(Ordering.desc("createDate"));
+      orderings.add(Ordering.asc("createDate"));
 
       return userBonusReportService.findList(null, filters, orderings);
     } else {
@@ -153,7 +153,7 @@ public class ReportController extends BaseController {
     }
 
     List<Ordering> orderings = new ArrayList<Ordering>();
-    orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.asc("createDate"));
     return nationBonusReportService.findList(null, filters, orderings);
 
   }
@@ -198,7 +198,7 @@ public class ReportController extends BaseController {
     }
 
     List<Ordering> orderings = new ArrayList<Ordering>();
-    orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.asc("createDate"));
     return userRegReportService.findList(null, filters, orderings);
   }
 }

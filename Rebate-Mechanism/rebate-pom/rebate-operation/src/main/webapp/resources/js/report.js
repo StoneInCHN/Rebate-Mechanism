@@ -69,76 +69,95 @@ function() {
 		});
 	});
 	
+	var isNationChartsShown = false;
+	var isRegChartsShown = false;
 	$("a[href='#nation_charts']").click(function (e) {
-		nationChartDate();
+		if(!isNationChartsShown){
+			isNationChartsShown=true;
+			nationChartDate('listForm');
+		}
 	});
-
+	$("#nationBonusReport_search").click(function(){
+		nationChartDate('chartsForm');
+	});
 	//用户注册统计
 	$("#user_reg_report_search").click(function(){
-		$.ajax({
-			url : "../report/userRegReportData.jhtml",
-			type : "get",
-			data:$("#charts_report_search_form").serialize(),
-			success : function(result, response, status) {
-				var _categories=new Array();
-				var userRegData=new Array();
-				for(var i=0;i<result.length;i++){
-					_categories.push(result[i].statisticsDate);
-					
-					userRegData.push(result[i].regNum);
-				}
-				$('#userRegReportDivId')
-				.highcharts(
-						{
-							chart : {
-								type : 'column'
-							},
-							title : {
-								text : '注册统计'
-							},
-							xAxis : {
-								categories : _categories,
-								crosshair : true
-							},
-							yAxis : {
-								min : 0,
-								title : {
-									text : '人数'
-								}
-							},
-							tooltip : {
-								headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
-								pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
-										+ '<td style="padding:0"><b>{point.y} 个</b></td></tr>',
-								footerFormat : '</table>',
-								shared : true,
-								useHTML : true
-							},
-							plotOptions : {
-								column : {
-									pointPadding : 0.2,
-									borderWidth : 0
-								}
-							},
-							series : [
-									{
-										name : '注册人数',
-										data : userRegData
-									}
-									]
-						});
-			}
-		});
+		userRegChartDate("charts_report_search_form")
+	});
+	$("a[href='#uerReg_charts']").click(function (e) {
+		if(!isRegChartsShown){
+			isRegChartsShown=true;
+			userRegChartDate('listForm');
+		}
 	});
 })
-function nationChartDate(){
+function userRegChartDate(formId){
+	$.ajax({
+		url : "../report/userRegReportData.jhtml",
+		type : "get",
+		data:$("#"+formId).serialize(),
+		success : function(result, response, status) {
+			var _categories=new Array();
+			var userRegData=new Array();
+			for(var i=0;i<result.length;i++){
+				_categories.push(result[i].statisticsDate);
+				
+				userRegData.push(result[i].regNum);
+			}
+			$('#userRegReportDivId')
+			.highcharts(
+					{
+						chart : {
+							type : 'column'
+						},
+						title : {
+							text : '注册统计'
+						},
+						xAxis : {
+							categories : _categories,
+							crosshair : true
+						},
+						yAxis : {
+							min : 0,
+							title : {
+								text : '人数'
+							}
+						},
+						tooltip : {
+							headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+							pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+									+ '<td style="padding:0"><b>{point.y} 个</b></td></tr>',
+							footerFormat : '</table>',
+							shared : true,
+							useHTML : true
+						},
+						plotOptions : {
+							column : {
+								pointPadding : 0.2,
+								borderWidth : 0
+							}
+						},
+						series : [
+								{
+									name : '注册人数',
+									data : userRegData
+								}
+								]
+					});
+		}
+	});
+
+}
+
+//全国统计数据方法
+function nationChartDate(formId){
 	$.ajax({
 		url : "../report/nationBonusReportData.jhtml",
 		type : "get",
-//		data:$("#charts_report_search_form").serialize(),
+		data:$("#"+formId).serialize(),
 		success : function(result, response, status) {
 			if(result.length==0){
-				alert('只能查询一个用户的信息')
+				alert('只能展示单一用户统计信息')
 			}
 			
 			var _categories=new Array();
