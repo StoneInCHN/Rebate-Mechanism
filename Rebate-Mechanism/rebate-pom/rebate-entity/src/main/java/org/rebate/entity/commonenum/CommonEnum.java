@@ -186,7 +186,10 @@ public class CommonEnum {
     WITHDRAW_RULE_SELLER,
     /** 代理商提现规则 5 */
     WITHDRAW_RULE_AGENT,
-
+    /** 安卓下载地址 6 */
+    ANDROID_DOWNLOAD_URL,
+    /** IOS下载地址 7 */
+    IOS_DOWNLOAD_URL
   }
 
   /**
