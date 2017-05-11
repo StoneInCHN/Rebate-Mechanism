@@ -161,7 +161,11 @@ public class CommonEnum {
     /** 商家积分返利订单百分比参数 15 */
     REBATESCORE_SELLER_ORDER_PERCENTAGE,
     /** 平台获利占总让利百分比 16 */
-    PLATFORM_INCOME_PERCENTAGE
+    PLATFORM_INCOME_PERCENTAGE,
+    /** 创业基金占总让利百分比 17 */
+    VENTURE_FUND_PERCENTAGE,
+    /** 奖池占总让利百分比 18 */
+    AWARD_PERCENTAGE
   }
 
   /**

@@ -3,7 +3,11 @@ package org.rebate.utils;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.dom4j.Document;
@@ -195,17 +199,20 @@ public class PayUtil {
         // 预支付交易会话标识
         prepay_id = root.elementText("prepay_id");
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("prepay_id", prepay_id);
-        data.put("nonce_str", root.elementText("nonce_str"));
+        data.put("prepayid", prepay_id);
+        data.put("noncestr", UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
         data.put("out_trade_no", order_sn);
-        data.put("sign", root.elementText("sign"));
+        // data.put("sign", sign);
+        // data.put("sign", root.elementText("sign"));
         // type 1:红包余额支付；2：在线支付
         // data.put("type", "2");
         // data.put("channel", "wx");
-        data.put("appId", wechat_appid);
-        data.put("partnerId", wechat_mch_id);
+        data.put("appid", wechat_appid);
+        data.put("partnerid", wechat_mch_id);
         data.put("package", "Sign=WXPay");
-        data.put("timeStamp", TimeUtils.format("MMddHHmmss", new Date().getTime()));
+        data.put("timestamp", TimeUtils.format("MMddHHmmss", new Date().getTime()));
+
+        data.put("sign", createSign(data));
         response.setCode(CommonAttributes.SUCCESS);
         response.setMsg(data);
       } else {
@@ -219,5 +226,26 @@ public class PayUtil {
           + Message.success("rebate.payOrder.create.fail").getContent());
     }
     return response;
+  }
+
+  private static String createSign(Map<String, Object> map) {
+    SortedMap<String, Object> parameters = new TreeMap<String, Object>();
+    parameters.putAll(map);
+    StringBuffer sb = new StringBuffer();
+    Set es = parameters.entrySet();// 所有参与传参的参数按照accsii排序（升序）
+    Iterator it = es.iterator();
+    while (it.hasNext()) {
+      Map.Entry entry = (Map.Entry) it.next();
+      String k = (String) entry.getKey();
+      Object v = entry.getValue();
+      if (null != v && !"".equals(v) && !"out_trade_no".equals(k)) {
+        sb.append(k + "=" + v + "&");
+      }
+    }
+    sb.append("key=" + wechat_Key);
+    System.out.println(sb.toString());
+    String sign = MD5.MD5Encode(sb.toString()).toUpperCase();
+    return sign;
+
   }
 }
