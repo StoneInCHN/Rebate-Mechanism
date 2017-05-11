@@ -62,7 +62,7 @@ public class AgentController extends BaseController {
     }else if (AgencyLevel.COUNTY.ordinal() == agent.getAgencyLevel().ordinal() && area.getChildren()!=null) {
       return Message.error("rebate.agent.area.agencyLevel.not.match");
     }else if(AgencyLevel.CITY.ordinal() == agent.getAgencyLevel().ordinal()){
-      if(area.getParent()==null || area.getChildren()==null){
+      if(area.getParent()==null || area.getChildren().size()==0){
         return Message.error("rebate.agent.area.agencyLevel.not.match");
       }
     }
