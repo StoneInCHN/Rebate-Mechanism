@@ -27,8 +27,16 @@ $(function() {
 	// 表单验证
 	$inputForm.validate({
 		rules: {
-			applyStatus: "required",
-			notes: "required"
+			applyStatus: {
+				required:true
+			},
+			notes: {
+				required:true
+			},
+			limitAmountByDay:{
+				required:true,
+				number:true
+			}
 		},
 		submitHandler:function(form){
 			$submit.attr("disabled",true);
@@ -169,6 +177,14 @@ $(function() {
 								</th>
 								<td>
 									${sellerApply.discount}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.sellerApplication.limitAmountByDay")}:
+								</th>
+								<td>
+									<input type="text" name="limitAmountByDay" class="text" maxlength="50" value="${sellerApply.limitAmountByDay}"/>
 								</td>
 							</tr>
 							<tr>

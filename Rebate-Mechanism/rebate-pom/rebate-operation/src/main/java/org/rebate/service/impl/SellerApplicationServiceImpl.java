@@ -43,6 +43,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     try {
       apply.setApplyStatus(sellerApply.getApplyStatus());
       apply.setNotes(sellerApply.getNotes());
+      apply.setLimitAmountByDay(sellerApply.getLimitAmountByDay());
       if (ApplyStatus.AUDIT_PASSED == sellerApply.getApplyStatus()) {
         Seller seller = new Seller();
         SellerCategory sellerCategory = apply.getSellerCategory();
@@ -74,6 +75,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
         seller.setStorePhone(apply.getStorePhone());
         seller.setStorePictureUrl(apply.getStorePhoto());
         seller.setName(apply.getSellerName());
+        seller.setLimitAmountByDay(apply.getLimitAmountByDay());
         seller.setDiscount(apply.getDiscount());
         seller.setDescription(apply.getDescription());
         seller.setAccountStatus(AccountStatus.ACTIVED);

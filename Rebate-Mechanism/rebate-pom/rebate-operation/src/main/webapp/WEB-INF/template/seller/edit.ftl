@@ -165,6 +165,14 @@
 							</tr>
 							<tr>
 								<th>
+									<span class="requiredField">*</span>${message("rebate.seller.limitAmountByDay")}:
+								</th>
+								<td>
+									<input type="text" name="limitAmountByDay" class="text" maxlength="50" value="${seller.limitAmountByDay}"/>
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.businessTime")}:
 								</th>
 								<td>
@@ -248,6 +256,10 @@
 					required: true
 				},
 				discount:{
+					required: true,
+					number:true
+				},
+				limitAmountByDay:{
 					required: true,
 					number:true
 				},

@@ -131,6 +131,9 @@
 						<a href="javascript:;" class="sort" name="discount">${message("rebate.seller.discount")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="limitAmountByDay">${message("rebate.seller.limitAmountByDay")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
 					</th>
 					<th>
@@ -187,6 +190,9 @@
 					</td>
 					<td>
 						${seller.discount}
+					</td>
+					<td>
+						${seller.limitAmountByDay}
 					</td>
 					<td>
 						<span title="${seller.createDate?string("yyyy-MM-dd HH:mm:ss")}">${seller.createDate}</span>

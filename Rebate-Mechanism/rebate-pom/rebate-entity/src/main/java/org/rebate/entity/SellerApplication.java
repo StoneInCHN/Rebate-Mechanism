@@ -125,6 +125,11 @@ public class SellerApplication extends BaseEntity {
    * 折扣
    */
   private BigDecimal discount;
+  
+  /**
+   * 每日营业额上限
+   */
+  private BigDecimal limitAmountByDay;
 
   /**
    * 商家环境图片
@@ -306,4 +311,13 @@ public class SellerApplication extends BaseEntity {
     this.endUser = endUser;
   }
 
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getLimitAmountByDay() {
+    return limitAmountByDay;
+  }
+
+  public void setLimitAmountByDay(BigDecimal limitAmountByDay) {
+    this.limitAmountByDay = limitAmountByDay;
+  }
+  
 }

@@ -113,6 +113,7 @@ public class SellerController extends BaseController {
     temp.setLatitude(seller.getLatitude());
     temp.setBusinessTime(seller.getBusinessTime());
     temp.setRemark(seller.getRemark());
+    temp.setLimitAmountByDay(seller.getLimitAmountByDay());
     sellerService.update(temp);
     return "redirect:list.jhtml";
   }

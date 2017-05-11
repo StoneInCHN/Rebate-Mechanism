@@ -121,6 +121,14 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerApplication.limitAmountByDay")}:
+								</th>
+								<td>
+									${sellerApply.limitAmountByDay}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.sellerApplication.description")}:
 								</th>
 								<td>

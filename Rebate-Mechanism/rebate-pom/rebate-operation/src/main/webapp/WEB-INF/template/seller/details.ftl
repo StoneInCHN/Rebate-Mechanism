@@ -161,6 +161,14 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.seller.limitAmountByDay")}:
+								</th>
+								<td>
+									${seller.limitAmountByDay}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.businessTime")}:
 								</th>
 								<td>
