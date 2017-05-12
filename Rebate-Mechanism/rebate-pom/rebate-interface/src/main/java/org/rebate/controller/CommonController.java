@@ -14,13 +14,17 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.ApkVersion;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.SettingConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
+import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
+import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SettingConfigRequest;
 import org.rebate.service.ApkVersionService;
 import org.rebate.service.EndUserService;
+import org.rebate.service.SettingConfigService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
@@ -42,6 +46,9 @@ public class CommonController extends MobileBaseController {
 
   @Resource(name = "apkVersionServiceImpl")
   private ApkVersionService apkVersionService;
+
+  @Resource(name = "settingConfigServiceImpl")
+  private SettingConfigService settingConfigService;
 
 
   /**
@@ -95,7 +102,7 @@ public class CommonController extends MobileBaseController {
           appPlatform);
     }
 
-    String newtoken = TokenGenerator.generateToken(req.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
@@ -136,6 +143,34 @@ public class CommonController extends MobileBaseController {
           version != null ? version.getAppPlatform() : null);
     }
 
+    response.setMsg(map);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 获取app版本下载路径
+   * 
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/getAppDownUrl", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> getAppDownUrl(@RequestBody BaseRequest req) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Map<String, Object> map = new HashMap<String, Object>();
+    List<SettingConfigKey> settingConfigs = new ArrayList<SettingConfigKey>();
+    settingConfigs.add(SettingConfigKey.ANDROID_DOWNLOAD_URL);
+    settingConfigs.add(SettingConfigKey.IOS_DOWNLOAD_URL);
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("isEnabled", true));
+    filters.add(Filter.in("configKey", settingConfigs));
+    List<SettingConfig> configs = settingConfigService.findList(null, filters, null);
+    for (SettingConfig settingConfig : configs) {
+      map.put(settingConfig.getConfigKey().toString(), settingConfig.getConfigValue());
+    }
     response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     return response;

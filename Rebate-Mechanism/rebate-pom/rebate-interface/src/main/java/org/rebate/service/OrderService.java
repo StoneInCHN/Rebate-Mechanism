@@ -53,4 +53,13 @@ public interface OrderService extends BaseService<Order, Long> {
    */
   Order evaluateOrder(Long orderId, Long userId, Integer score, String content,
       List<MultipartFile> evaluateImages);
+
+  /**
+   * 验证商家当天营业额是否超过规定的营业额度
+   * 
+   * @param seller
+   * @param amount
+   * @return
+   */
+  Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount);
 }

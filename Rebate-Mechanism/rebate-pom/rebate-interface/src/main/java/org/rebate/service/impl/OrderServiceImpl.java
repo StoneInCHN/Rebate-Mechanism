@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.rebate.beans.Message;
+import org.rebate.common.log.LogUtil;
 import org.rebate.dao.AgentCommissionConfigDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeScoreRecordDao;
@@ -36,9 +37,12 @@ import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
+import org.rebate.framework.filter.Filter;
+import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.FileService;
 import org.rebate.service.OrderService;
+import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -542,5 +546,52 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     sellerDao.merge(seller);
     orderDao.merge(order);
     return order;
+  }
+
+  @Override
+  public Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount) {
+    Seller seller = sellerDao.find(sellerId);
+    BigDecimal limitAmount = seller.getLimitAmountByDay();
+    if (limitAmount == null) {
+      return false;
+    }
+
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter start = new Filter("paymentTime", Operator.ge, startTime);
+    Filter end = new Filter("paymentTime", Operator.le, endTime);
+    Filter status = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    filters.add(status);
+    filters.add(start);
+    filters.add(end);
+    List<Order> orders = orderDao.findList(null, null, filters, null);
+    BigDecimal curTotalOrderAmount = new BigDecimal("0");
+    try {
+      if (CollectionUtils.isEmpty(orders)) {
+        return false;
+      }
+      for (Order order : orders) {
+        curTotalOrderAmount = curTotalOrderAmount.add(order.getAmount());
+      }
+      BigDecimal totalAmount = curTotalOrderAmount.add(amount);
+      if (totalAmount.compareTo(limitAmount) > 0) {
+        return true;
+      }
+      return false;
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      LogUtil
+          .debug(
+              OrderServiceImpl.class,
+              "isOverSellerLimitAmount",
+              "check seller total order amount over limit amount by day. sellerId: %s,sellerName: %s,curTotalOrderAmount: %s,curOrderAmount: %s,limitAmount: %s,period:%s",
+              seller.getId(), seller.getName(), curTotalOrderAmount.toString(), amount,
+              limitAmount.toString(), startTime + "-" + endTime);
+    }
+    return null;
+
   }
 }

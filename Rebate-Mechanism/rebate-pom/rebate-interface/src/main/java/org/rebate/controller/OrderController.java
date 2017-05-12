@@ -103,6 +103,12 @@ public class OrderController extends MobileBaseController {
     // return response;
     // }
 
+    if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
+      return response;
+    }
+
     if (isBeanPay) {// 乐豆支付需要验证支付密码
       EndUser endUser = endUserService.find(userId);
       if (endUser.getCurLeBean().compareTo(amount) < 0) {

@@ -172,7 +172,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     endUserDao.persist(regUser);
     userRecommendRelationDao.persist(relation);
 
-    Date cur = TimeUtils.formatDate2Day(new Date());
+    Date cur = TimeUtils.formatDate2Day0(new Date());
     UserRegReport report = userRegReportDao.getRegReportByDate(cur);
     if (report != null) {
       report.setRegNum(report.getRegNum() + 1);

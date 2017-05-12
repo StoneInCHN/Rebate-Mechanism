@@ -22,6 +22,7 @@ import org.rebate.entity.Order;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
@@ -134,8 +135,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       // bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
 
       List<Filter> filters = new ArrayList<Filter>();
-      Filter start = new Filter("createDate", Operator.ge, startTime);
-      Filter end = new Filter("createDate", Operator.le, endTime);
+      Filter start = new Filter("paymentTime", Operator.ge, startTime);
+      Filter end = new Filter("paymentTime", Operator.le, endTime);
+      Filter status = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+      filters.add(status);
       filters.add(start);
       filters.add(end);
       List<Order> orders = orderDao.findList(null, null, filters, null);
@@ -145,7 +148,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               "daily Bonus calculate job failed! Timer Period: %s, search orders no exist!",
               startTime + "-" + endTime);
         }
-        msg = "Job Failed!\n当日平台未产生订单，无法计算分红";
+        msg = "Job Failed!\n当日平台未产生有效的支付订单，无法计算分红";
         bonusParamPerDay.setOrderCount(0);
         bonusParamPerDay.setRemark(msg);
         return;
