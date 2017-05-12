@@ -1,13 +1,10 @@
 package org.rebate.utils;
 
 import java.net.URLEncoder;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import org.dom4j.Document;
@@ -198,10 +195,10 @@ public class PayUtil {
 
         // 预支付交易会话标识
         prepay_id = root.elementText("prepay_id");
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, String> data = new HashMap<String, String>();
         data.put("prepayid", prepay_id);
         data.put("noncestr", UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
-        data.put("out_trade_no", order_sn);
+
         // data.put("sign", sign);
         // data.put("sign", root.elementText("sign"));
         // type 1:红包余额支付；2：在线支付
@@ -210,11 +207,14 @@ public class PayUtil {
         data.put("appid", wechat_appid);
         data.put("partnerid", wechat_mch_id);
         data.put("package", "Sign=WXPay");
-        data.put("timestamp", TimeUtils.format("MMddHHmmss", new Date().getTime()));
+        data.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
 
-        data.put("sign", createSign(data));
+        data.put("sign", getSign(data));
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("out_trade_no", order_sn);
+        res.putAll(data);
         response.setCode(CommonAttributes.SUCCESS);
-        response.setMsg(data);
+        response.setMsg(res);
       } else {
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(root.elementText("err_code_des")
@@ -228,24 +228,48 @@ public class PayUtil {
     return response;
   }
 
-  private static String createSign(Map<String, Object> map) {
-    SortedMap<String, Object> parameters = new TreeMap<String, Object>();
-    parameters.putAll(map);
-    StringBuffer sb = new StringBuffer();
-    Set es = parameters.entrySet();// 所有参与传参的参数按照accsii排序（升序）
-    Iterator it = es.iterator();
-    while (it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
-      String k = (String) entry.getKey();
-      Object v = entry.getValue();
-      if (null != v && !"".equals(v) && !"out_trade_no".equals(k)) {
-        sb.append(k + "=" + v + "&");
+
+  public static String getSign(Map<String, String> map) {
+    ArrayList<String> list = new ArrayList<String>();
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      if (!"sign".equals(entry.getKey()) && null != entry.getValue()
+          && !"".equals(entry.getValue())) {
+        list.add(entry.getKey() + "=" + entry.getValue() + "&");
       }
     }
-    sb.append("key=" + wechat_Key);
-    System.out.println(sb.toString());
-    String sign = MD5.MD5Encode(sb.toString()).toUpperCase();
-    return sign;
+    int size = list.size();
+    String[] arrayToSort = list.toArray(new String[size]);
+    Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < size; i++) {
+      sb.append(arrayToSort[i]);
+    }
+    String result = sb.toString();
+    result += "key=" + wechat_Key;
+    System.out.println(result);
+    result = MD5.MD5Encode(result).toUpperCase();
 
+    return result;
   }
+
+  // private static String createSign(Map<String, Object> map) {
+  // SortedMap<String, Object> parameters = new TreeMap<String, Object>();
+  // parameters.putAll(map);
+  // StringBuffer sb = new StringBuffer();
+  // Set es = parameters.entrySet();// 所有参与传参的参数按照accsii排序（升序）
+  // Iterator it = es.iterator();
+  // while (it.hasNext()) {
+  // Map.Entry entry = (Map.Entry) it.next();
+  // String k = (String) entry.getKey();
+  // Object v = entry.getValue();
+  // if (null != v && !"".equals(v) && !"out_trade_no".equals(k)) {
+  // sb.append(k + "=" + v + "&");
+  // }
+  // }
+  // sb.append("key=" + wechat_Key);
+  // System.out.println(sb.toString());
+  // String sign = MD5Util.MD5Encode(sb.toString()).toUpperCase();
+  // return sign;
+  //
+  // }
 }

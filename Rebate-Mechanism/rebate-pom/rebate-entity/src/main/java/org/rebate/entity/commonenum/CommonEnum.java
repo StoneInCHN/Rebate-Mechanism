@@ -165,7 +165,13 @@ public class CommonEnum {
     /** 创业基金占总让利百分比 17 */
     VENTURE_FUND_PERCENTAGE,
     /** 奖池占总让利百分比 18 */
-    AWARD_PERCENTAGE
+    AWARD_PERCENTAGE,
+    /** 代理商提成占总让利百分比 19 */
+    AGENT_COMMISSION_PERCENTAGE,
+    /** 用户推荐提成占总让利百分比 20 */
+    USER_RECOMMEND_COMMISSION_PERCENTAGE,
+    /** 商家联盟提成占总让利百分比 21 */
+    SELLER_RECOMMEND_COMMISSION_PERCENTAGE,
   }
 
   /**

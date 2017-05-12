@@ -45,7 +45,7 @@
 		 
 		<!-- 微信支付平台 -->
 		<!-- 秘钥 -->
-		<setting name="wechatKey" value="ikkuppsey34wmjpej0n4pwaonv0qlygy" />
+		<setting name="wechatKey" value="0xtkBKi7PXCeTZBoUB0Zkr1BCE3rYlcU" />
 		<!-- 微信分配的公众账号ID(企业号corpid即为此appId) -->
 		<setting name="wechatAppid" value="wxf120b070d4d9567a" />
 		<!-- 商户ID -->
