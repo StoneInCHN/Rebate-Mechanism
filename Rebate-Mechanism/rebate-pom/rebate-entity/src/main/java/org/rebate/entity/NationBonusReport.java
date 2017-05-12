@@ -78,7 +78,15 @@ public class NationBonusReport extends BaseEntity {
    */
   private String remark;
 
-
+  /**
+   * 创业基金
+   */
+  private BigDecimal ventureFund;
+  
+  /**
+   * 奖池
+   */
+  private BigDecimal award;
   @Column(scale = 4, precision = 18)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
@@ -187,4 +195,25 @@ public class NationBonusReport extends BaseEntity {
     this.platformIncome = platformIncome;
   }
 
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getVentureFund() {
+    return ventureFund;
+  }
+
+  public void setVentureFund(BigDecimal ventureFund) {
+    this.ventureFund = ventureFund;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getAward() {
+    return award;
+  }
+
+  public void setAward(BigDecimal award) {
+    this.award = award;
+  }
+
+  
 }

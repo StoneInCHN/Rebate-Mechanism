@@ -100,8 +100,15 @@
 						<a href="javascript:;" name="publicAmountByDay">${message("rebate.nationBonusReport.publicAmountByDay")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="award">${message("rebate.nationBonusReport.award")}</a>
+					</th>
+					<th>
+						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.ventureFund")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" name="reportDate">${message("rebate.report.reportDate")}</a>
 					</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -138,6 +145,12 @@
 						${report.publicAmountByDay}
 					</td>
 					<td>
+						${report.award}
+					</td>
+					<td>
+						${report.ventureFund}
+					</td>
+					<td>
 						${report.reportDate}
 					</td>
 				</tr>
@@ -150,7 +163,7 @@
     </form>
     </div>
    	 
-	    <div role="tabpanel" class="tab-pane active" id="nation_charts">
+	    <div role="tabpanel" class="tab-pane" id="nation_charts">
 	    <form id="chartsForm" action="nationBonusReport.jhtml" method="get">
    	 <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.orderManager")}</a> </li>

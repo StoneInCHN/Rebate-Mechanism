@@ -170,6 +170,8 @@ function nationChartDate(formId){
 			var bonusLeScoreByDayData=new Array();
 			var publicAmountByDayData=new Array();
 			var platformIncomeData=new Array();
+			var awardData=new Array();
+			var ventureFundData = new Array();
 			for(var i=0;i<result.length;i++){
 				_categories.push(result[i].reportDate);
 				consumeTotalAmountData.push(result[i].consumeTotalAmount/1000);
@@ -181,6 +183,8 @@ function nationChartDate(formId){
 				bonusLeScoreByDayData.push(result[i].bonusLeScoreByDay/1000);
 				publicAmountByDayData.push(result[i].publicAmountByDay);
 				platformIncomeData.push(result[i].platformIncome);
+				awardData.push(result[i].award)
+				ventureFundData.push(result[i].ventureFund)
 			}
 			$('#nationBonusReportDivId')
 			.highcharts(
@@ -251,7 +255,16 @@ function nationChartDate(formId){
 								{
 									name : '平台收益',
 									data : platformIncomeData
-								}]
+								},
+								{
+									name : '奖池',
+									data : awardData
+								},
+								{
+									name : '创业基金',
+									data : ventureFundData
+								}
+								]
 					});
 		}
 	});
