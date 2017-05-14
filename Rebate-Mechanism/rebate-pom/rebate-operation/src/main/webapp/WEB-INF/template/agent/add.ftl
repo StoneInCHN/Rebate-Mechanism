@@ -60,6 +60,7 @@ $().ready(function() {
 	
 	
 	$selectEndUser.click(function(){
+		$(".content").nextAll().remove();
 		window.dialog({
            id: 'selectEndUser-dialog',
            title: '选择用户',
@@ -82,7 +83,7 @@ $().ready(function() {
 				}
 			},
 			cancelValue: '取消'
-        }).show(this);
+        }).show();
 		return false;
 	})
 });

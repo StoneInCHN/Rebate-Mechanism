@@ -34,6 +34,7 @@ $().ready(function() {
 		}
 	});
 	$selectEndUser.click(function(){
+		$(".content").nextAll().remove();
 		window.dialog({
            id: 'selectEndUser-dialog',
            title: '选择用户',
