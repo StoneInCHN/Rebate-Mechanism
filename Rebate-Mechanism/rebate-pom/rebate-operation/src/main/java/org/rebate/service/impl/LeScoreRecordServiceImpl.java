@@ -72,7 +72,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
         } else {
           // 提现失败
           temp.setIsWithdraw(false);
-          temp.setWechatReturnMsg(response.getDesc());
+          temp.setWithdrawMsg(response.getDesc());
         }
 
       } else if (ApplyStatus.AUDIT_FAILED.equals(leScoreRecord.getWithdrawStatus())) {
