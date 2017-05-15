@@ -37,10 +37,10 @@ public class LeScoreRecordController extends BaseController {
     List<Filter> filters = new ArrayList<Filter>();
     filters.add(Filter.eq("leScoreType", LeScoreType.WITHDRAW));
     if (req.getUserName() != null) {
-      filters.add(Filter.like("endUser&userName", "%"+req.getUserName()+"%"));
+      filters.add(Filter.like("endUser&userName", "%" + req.getUserName() + "%"));
     }
     if (req.getCellPhoneNum() != null) {
-      filters.add(Filter.like("endUser&cellPhoneNum","%"+ req.getCellPhoneNum()+"%"));
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + req.getCellPhoneNum() + "%"));
     }
     if (req.getWithdrawStatus() != null) {
       filters.add(Filter.eq("withdrawStatus", req.getWithdrawStatus()));
@@ -91,5 +91,13 @@ public class LeScoreRecordController extends BaseController {
     LeScoreRecord leScoreRecord = leScoreRecordService.find(id);
     model.addAttribute("leScoreRecord", leScoreRecord);
     return "/leScoreRecord/details";
+  }
+
+  /**
+   * 删除
+   */
+  @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+  public @ResponseBody Message withdraw(Long[] ids) {
+    return SUCCESS_MESSAGE;
   }
 }

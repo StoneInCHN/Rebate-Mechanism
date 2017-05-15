@@ -19,6 +19,7 @@ var messages = {
 	"admin.dialog.cancel": "取&nbsp;&nbsp;消",
 	"admin.dialog.deleteConfirm": "您确定要删除吗？",
 	"admin.dialog.lockedConfirm": "您确定要禁用吗？",
+	"admin.dialog.withdrawConfirm":"确定要执行批量提现吗",
 	"admin.browser.title": "选择文件",
 	"admin.browser.upload": "本地上传",
 	"admin.browser.parent": "上级目录",

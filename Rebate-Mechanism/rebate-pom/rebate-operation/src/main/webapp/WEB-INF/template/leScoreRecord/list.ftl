@@ -81,13 +81,16 @@
              </div>
          </div>
  		 <div class="button-group">
+              <a  id="withdrawButton" class="btn btn-default"> <i class="fa fa-money"></i><span>提现</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
          <div>
         <table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
-
+					<th class="check">
+							<input type="checkbox" id="selectAll" />
+						</th>
 					<th>
 						<span>${message("rebate.leScoreRecord.endUser.userName")}</span>
 					</th>
@@ -117,7 +120,9 @@
 			<tbody>
 				[#list page.content as leScoreRecord]
 				<tr>
-
+						<td>
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" />
+						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
 							${leScoreRecord.endUser.userName}
