@@ -144,6 +144,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Order updateOrderforPayCallBack(String orderSn) {
     Order order = orderDao.getOrderBySn(orderSn);
+    if (!OrderStatus.UNPAID.equals(order.getStatus())) {
+      if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
+        LogUtil.debug(OrderServiceImpl.class, "updateOrderforPayCallBack",
+            "The order already deal with. orderSn: %s, orderStatus: %s", order.getStatus());
+      }
+      return order;
+    }
     order.setStatus(OrderStatus.PAID);
     order.setPaymentTime(new Date());
 
