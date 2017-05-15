@@ -1,16 +1,18 @@
 package org.rebate.service;
 
 import org.rebate.entity.SellerEvaluate;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.framework.service.BaseService;
 
 public interface SellerEvaluateService extends BaseService<SellerEvaluate, Long> {
 
 
-  // /**
-  // * 更改商家评价状态
-  // *
-  // * @param orderId
-  // * @return
-  // */
-  // SellerEvaluate changeEvaluateStatus(Long Id);
+  /**
+   * 更改商家评价状态 oprStatus=ACITVE：启用评价 oprStatus=INACTIVE：禁用评价
+   * 
+   * @param Ids
+   * @param oprStatus
+   * @return
+   */
+  Boolean changeEvaluateStatus(Long[] Ids, CommonStatus oprStatus);
 }
