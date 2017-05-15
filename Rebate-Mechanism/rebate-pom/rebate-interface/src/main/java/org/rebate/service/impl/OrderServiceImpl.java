@@ -88,7 +88,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
-      Boolean isBeanPay) {
+      Boolean isBeanPay, Boolean isSallerOrder) {
+
     Order order = new Order();
     EndUser endUser = endUserDao.find(userId);
     Seller seller = sellerDao.find(sellerId);
@@ -103,6 +104,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setSn(snDao.generate(Type.ORDER));
     order.setIsBeanPay(isBeanPay);
 
+    if (isSallerOrder) {
+      order.setIsSallerOrder(true);
+      order.setStatus(OrderStatus.PAID);
+      order.setPaymentTime(new Date());
+    }
     if (!isBeanPay) {
       BigDecimal rebateUserScoreConfig =
           new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER)
@@ -139,6 +145,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     orderDao.persist(order);
     return order;
+
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
+      Boolean isBeanPay) {
+    return create(userId, payType, amount, sellerId, remark, isBeanPay, false);
   }
 
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)

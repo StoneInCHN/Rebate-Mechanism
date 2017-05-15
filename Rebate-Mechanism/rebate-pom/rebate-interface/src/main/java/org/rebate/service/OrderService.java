@@ -62,4 +62,8 @@ public interface OrderService extends BaseService<Order, Long> {
    * @return
    */
   Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount);
+
+
+  Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
+      Boolean isBeanPay, Boolean isSallerOrder);
 }

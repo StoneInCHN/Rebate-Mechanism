@@ -111,7 +111,7 @@ public class Order extends BaseEntity {
    */
   private BigDecimal encourageAmount;
 
-
+  private Boolean isSallerOrder;
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getEncourageAmount() {
@@ -271,6 +271,14 @@ public class Order extends BaseEntity {
 
   public void setSeller(Seller seller) {
     this.seller = seller;
+  }
+
+  public Boolean getIsSallerOrder() {
+    return isSallerOrder;
+  }
+
+  public void setIsSallerOrder(Boolean isSallerOrder) {
+    this.isSallerOrder = isSallerOrder;
   }
 
 

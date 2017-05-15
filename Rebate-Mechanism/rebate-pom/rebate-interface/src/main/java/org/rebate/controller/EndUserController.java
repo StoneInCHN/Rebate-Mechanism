@@ -25,6 +25,8 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.MessageInfo;
+import org.rebate.entity.MsgEndUser;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SystemConfig;
@@ -1594,6 +1596,64 @@ public class EndUserController extends MobileBaseController {
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
+    return response;
+  }
+
+
+  /**
+   * 微信解除授权清空openid
+   * 
+   * @param request
+   * @return
+   */
+  @RequestMapping(value = "/fetchEndUser", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> fetchEndUser(
+      @RequestBody BaseRequest request) {
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+
+    String cellPhoneNum = request.getCellPhoneNum();
+    String token = request.getToken();
+    int pageNumber = request.getPageNumber();
+    int pageSize = request.getPageSize();
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
+
+    List<Filter> filters = new ArrayList<>();
+    if (cellPhoneNum != null) {
+      Filter cellPhoneFillter = new Filter("cellPhoneNum", Operator.like, "%" + cellPhoneNum + "%");
+      filters.add(cellPhoneFillter);
+    }
+
+    pageable.setFilters(filters);
+
+    Page<EndUser> endUserPage = endUserService.findPage(pageable);
+    response.setCode(CommonAttributes.SUCCESS);
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) endUserPage.getTotal());
+
+    String[] propertys = {"id", "userName", "cellPhoneNum", "nickName"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, endUserPage.getContent());
+    response.setMsg(result);
+    response.setPage(pageInfo);
+    // String newtoken = TokenGenerator.generateToken(token);
+    // endUserService.createEndUserToken(newtoken, userId);
+    // response.setToken(newtoken);
+
     return response;
   }
 }
