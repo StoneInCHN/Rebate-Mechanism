@@ -26,10 +26,10 @@ public class BaseController{
 	protected static final String VIEW_404 = "/common/404";
 
 	/** 错误消息 */
-	protected static final Message ERROR_MESSAGE = Message.error("csh.message.error");
+	protected static final Message ERROR_MESSAGE = Message.error("rebate.message.error");
 
 	/** 成功消息 */
-	protected static final Message SUCCESS_MESSAGE = Message.success("csh.message.success");
+	protected static final Message SUCCESS_MESSAGE = Message.success("rebate.message.success");
 
 	/** "验证结果"参数名称 */
 	private static final String CONSTRAINT_VIOLATIONS_ATTRIBUTE_NAME = "constraintViolations";

@@ -141,12 +141,10 @@ public class SellerCategoryController extends BaseController {
         SellerCategory sellerCategory = sellerCategoryService.find(id);
         Set<Seller> sellers = sellerCategory.getSellers();
         if (sellers != null && sellers.size() > 0) {
-          return ERROR_MESSAGE;
-        } else {
-          sellerCategoryService.delete(id);
+          return Message.error("rebate.sellerCategory.seller.hasExist",sellerCategory.getCategoryName());
         }
       }
-
+      sellerCategoryService.delete(ids);
     }
     return SUCCESS_MESSAGE;
   }
