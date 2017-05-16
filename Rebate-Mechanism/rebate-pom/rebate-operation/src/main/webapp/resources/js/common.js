@@ -56,6 +56,8 @@ var messages = {
 	"User.device.exist": "设备已存在",
 	"rebate.message.error":"操作执行失败!",
 	"rebate.message.success":"操作执行成功!",
+	"admin.dialog.activeConfirm":"确定要启用吗",
+	"admin.dialog.inActiveConfirm":"确定要禁用吗",
 	"admin.sendMessage.allUser":"您确定要将该消息发送给所有用户吗？"
 };
 

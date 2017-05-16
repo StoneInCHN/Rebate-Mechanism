@@ -5,6 +5,8 @@ $().ready( function() {
 	var $pageTotal = $("#pageTotal");
 	var $addButton = $("#addButton");
 	var $deleteButton = $("#deleteButton");
+	var $activeButton = $("#activeButton");
+	var $inActiveButton = $("#inActiveButton");
 	var $withdrawButton = $("#withdrawButton");
 	var $lockedButton = $("#lockedButton");
 	var $refreshButton = $("#refreshButton");
@@ -101,6 +103,77 @@ $().ready( function() {
 			}
 		});
 	});
+	
+	// 启用
+	$activeButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		$.dialog({
+			type: "warn",
+			content: message("admin.dialog.activeConfirm"),
+			ok: message("admin.dialog.ok"),
+			cancel: message("admin.dialog.cancel"),
+			onOk: function() {
+				$.ajax({
+					url: "active.jhtml",
+					type: "POST",
+					data: $checkedIds.serialize(),
+					dataType: "json",
+					cache: false,
+					success: function(message) {
+						$.message(message);
+						if (message.type == "success") {
+							setTimeout(function() {
+								location.reload(true);
+							}, 2000);
+						}
+						$activeButton.addClass("disabled");
+						$selectAll.prop("checked", false);
+						$checkedIds.prop("checked", false);
+					}
+				});
+			}
+		});
+	});
+	
+	// 禁用
+	$inActiveButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		$.dialog({
+			type: "warn",
+			content: message("admin.dialog.inActiveConfirm"),
+			ok: message("admin.dialog.ok"),
+			cancel: message("admin.dialog.cancel"),
+			onOk: function() {
+				$.ajax({
+					url: "inActive.jhtml",
+					type: "POST",
+					data: $checkedIds.serialize(),
+					dataType: "json",
+					cache: false,
+					success: function(message) {
+						$.message(message);
+						if (message.type == "success") {
+							setTimeout(function() {
+								location.reload(true);
+							}, 2000);
+						}
+						$inActiveButton.addClass("disabled");
+						$selectAll.prop("checked", false);
+						$checkedIds.prop("checked", false);
+					}
+				});
+			}
+		});
+	});
+	
 	// 删除
 	$lockedButton.click( function() {
 		var $this = $(this);
@@ -176,10 +249,14 @@ $().ready( function() {
 				$deleteButton.removeClass("disabled");
 				$withdrawButton.removeClass("disabled");
 				$lockedButton.removeClass("disabled");
+				$activeButton.removeClass("disabled");
+				$inActiveButton.removeClass("disabled");
 				$promptButton.removeClass("disabled");
 				$contentRow.addClass("selected");
 			} else {
 				$deleteButton.addClass("disabled");
+				$activeButton.addClass("disabled");
+				$inActiveButton.addClass("disabled");
 				$withdrawButton.addClass("disabled");
 				$lockedButton.addClass("disabled");
 			}
@@ -189,6 +266,8 @@ $().ready( function() {
 			$withdrawButton.addClass("disabled");
 			$lockedButton.addClass("disabled");
 			$contentRow.removeClass("selected");
+			$activeButton.addClass("disabled");
+			$inActiveButton.addClass("disabled");
 		}
 	});
 	
@@ -201,6 +280,8 @@ $().ready( function() {
 			$withdrawButton.removeClass("disabled");
 			$lockedButton.removeClass("disabled");
 			$promptButton.removeClass("disabled");
+			$activeButton.removeClass("disabled");
+			$inActiveButton.removeClass("disabled");
 		
 		} else {
 			$this.closest("tr").removeClass("selected");
@@ -209,11 +290,15 @@ $().ready( function() {
 				$withdrawButton.removeClass("disabled");
 				$lockedButton.removeClass("disabled");
 				$promptButton.removeClass("disabled");
+				$activeButton.removeClass("disabled");
+				$inActiveButton.removeClass("disabled");
 			} else {
 				$deleteButton.addClass("disabled");
 				$withdrawButton.addClass("disabled");
 				$lockedButton.addClass("disabled");
 				$promptButton.addClass("disabled");
+				$activeButton.addClass("disabled");
+				$inActiveButton.addClass("disabled");
 			}
 		}
 	});
