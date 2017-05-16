@@ -20,6 +20,7 @@ import org.rebate.controller.base.MobileBaseController;
 import org.rebate.service.OrderService;
 import org.rebate.utils.alipay.util.AlipayNotify;
 import org.rebate.utils.wechat.WeixinUtil;
+import org.rebate.utils.yipay.CryptTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,81 @@ public class NotifyController extends MobileBaseController {
 
   @Resource(name = "orderServiceImpl")
   private OrderService orderService;
+
+
+  /**
+   * 翼支付回调接口
+   * 
+   * @param req
+   * @return
+   * @throws IOException
+   */
+  @RequestMapping(value = "/notify_yipay", method = RequestMethod.POST)
+  public @ResponseBody String notify_yipay(HttpServletRequest request) throws Exception {
+    String uptranSeq = request.getParameter("UPTRANSEQ");// 翼支付网关平台交易流水号
+    String trandate = request.getParameter("TRANDATE");// 翼支付网关平台交易日期
+    String retncode = request.getParameter("RETNCODE");// 处理结果码
+    String retninfo = request.getParameter("RETNINFO");// 处理结果解释码
+    String orderreqtranseq = request.getParameter("ORDERREQTRANSEQ");// 订单请求交易流水号
+    String orderseq = request.getParameter("ORDERSEQ");// 订单号
+    String orderamount = request.getParameter("ORDERAMOUNT");// 订单总金额
+    // String productamount = request.getParameter("PRODUCTAMOUNT");
+    // String attachamount = request.getParameter("ATTACHAMOUNT");
+    // String curtype = request.getParameter("CURTYPE");
+    String encodetype = request.getParameter("ENCODETYPE");// 加密方式0：不加密 1：MD5摘要(默认)
+    // String attach = request.getParameter("ATTACH");
+    String sign = request.getParameter("SIGN");// 数字签名
+    String merchantId = request.getParameter("MERCHANTID");// 商户号
+    if (LogUtil.isDebugEnabled(NotifyController.class)) {
+      LogUtil
+          .debug(
+              NotifyController.class,
+              "notify_yipay",
+              "yi pay notify callback method. response: UPTRANSEQ: %s,RETNCODE: %s,RETNINFO: %s,ORDERSEQ: %s,ORDERAMOUNT: %s,ENCODETYPE: %s,SIGN: %s",
+              uptranSeq, retncode, retninfo, orderseq, orderamount, encodetype, sign);
+    }
+    String check =
+        "UPTRANSEQ=" + uptranSeq + "&MERCHANTID=" + merchantId + "&ORDERSEQ=" + orderseq
+            + "&ORDERAMOUNT=" + orderamount + "&RETNCODE=" + retncode + "&RETNINFO=" + retninfo
+            + "&TRANDATE=" + trandate + "&KEY=" + setting.getYiMerchantKey();
+    String checkMac = CryptTool.md5Digest(check);
+    if (checkMac.equals(sign)) {
+      if ("0000".equals(retncode)) {
+        if (LogUtil.isDebugEnabled(NotifyController.class)) {
+          LogUtil.debug(NotifyController.class, "notify_yipay",
+              "user pay order call back successfully with yi pay. orderSn: %s, amount: %s,",
+              orderseq, orderamount);
+        }
+        orderService.updateOrderforPayCallBack(orderseq);
+      } else {
+        /**
+         * 支付结果不成功：结果码为“0000”表示支付成功，其他值则表示支付失败
+         */
+        if (LogUtil.isDebugEnabled(NotifyController.class)) {
+          LogUtil
+              .debug(
+                  NotifyController.class,
+                  "notify_yipay",
+                  "yi pay notify callback method. pay result code is failed. retncode: %s,retninfo: %s,orderSn: %s",
+                  retncode, retninfo, orderseq);
+        }
+      }
+    } else {
+      /**
+       * 签名验证失败
+       */
+      if (LogUtil.isDebugEnabled(NotifyController.class)) {
+        LogUtil
+            .debug(
+                NotifyController.class,
+                "notify_yipay",
+                "yi pay notify callback method. sign verify failed. yiPaySign: %s,checkStr: %s,checkSign: %s",
+                sign, check, checkMac);
+      }
+    }
+
+    return "UPTRANSEQ_" + uptranSeq;
+  }
 
 
   /**

@@ -179,6 +179,10 @@ public class OrderController extends MobileBaseController {
         response.setCode(CommonAttributes.SUCCESS);
       } else if ("3".equals(payTypeId)) {// 翼支付
 
+        response =
+            PayUtil.yiPay(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                order.getId().toString(), amount, userId.toString());
+        response.getMsg().put("encourageAmount", order.getEncourageAmount());
       }
     } catch (Exception e) {
       e.printStackTrace();
