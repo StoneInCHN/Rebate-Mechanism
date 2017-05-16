@@ -102,4 +102,15 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
     }
     return message;
   }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Message batchWithdraw(Long[] ids) {
+    if(ids!=null){
+      for (Long id : ids) {
+        System.out.println(id);
+      }
+    }
+    return Message.success("批量提现执行成功");
+  }
 }

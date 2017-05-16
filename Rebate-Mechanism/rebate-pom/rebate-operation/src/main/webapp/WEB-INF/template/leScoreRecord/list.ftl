@@ -9,6 +9,7 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
   <!-- HTML5 Support for IE -->
   <!--[if lt IE 9]>
   <script src="${base}/resources/js/html5shim.js"></script>
@@ -121,7 +122,7 @@
 				[#list page.content as leScoreRecord]
 				<tr>
 						<td>
-							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" />
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus == "AUDIT_FAILED" || leScoreRecord.isWithdraw] disabled="disabled" [/#if]/>
 						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]

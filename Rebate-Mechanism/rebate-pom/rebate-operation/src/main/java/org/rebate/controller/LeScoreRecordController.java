@@ -98,6 +98,6 @@ public class LeScoreRecordController extends BaseController {
    */
   @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
   public @ResponseBody Message withdraw(Long[] ids) {
-    return SUCCESS_MESSAGE;
+    return leScoreRecordService.batchWithdraw(ids);
   }
 }
