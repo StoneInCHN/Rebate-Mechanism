@@ -157,9 +157,9 @@ function nationChartDate(formId){
 		data:$("#"+formId).serialize(),
 		success : function(result, response, status) {
 			if(result.length==0){
-				alert('只能展示单一用户统计信息')
+				alert('对不起，统计数据缺失')
 			}
-			
+			debugger;
 			var _categories=new Array();
 			var consumeTotalAmountData=new Array();
 			var consumePeopleNumData=new Array();
@@ -172,6 +172,9 @@ function nationChartDate(formId){
 			var platformIncomeData=new Array();
 			var awardData=new Array();
 			var ventureFundData = new Array();
+			var agentCommissionData = new Array();
+			var userRecommendCommissionData = new Array();
+			var sellerRecommendCommissionData = new Array();
 			for(var i=0;i<result.length;i++){
 				_categories.push(result[i].reportDate);
 				consumeTotalAmountData.push(result[i].consumeTotalAmount/1000);
@@ -185,6 +188,9 @@ function nationChartDate(formId){
 				platformIncomeData.push(result[i].platformIncome);
 				awardData.push(result[i].award)
 				ventureFundData.push(result[i].ventureFund)
+				agentCommissionData.push(result[i].agentCommission)
+				userRecommendCommissionData.push(result[i].userRecommendCommission)
+				sellerRecommendCommissionData.push(result[i].sellerRecommendCommission)
 			}
 			$('#nationBonusReportDivId')
 			.highcharts(
@@ -263,6 +269,18 @@ function nationChartDate(formId){
 								{
 									name : '创业基金',
 									data : ventureFundData
+								},
+								{
+									name : '代理商提成金',
+									data : agentCommissionData
+								},
+								{
+									name : '用户推荐提成金',
+									data : userRecommendCommissionData
+								},
+								{
+									name : '商家推荐提成金',
+									data : sellerRecommendCommissionData
 								}
 								]
 					});

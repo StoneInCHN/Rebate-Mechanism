@@ -87,6 +87,22 @@ public class NationBonusReport extends BaseEntity {
    * 奖池
    */
   private BigDecimal award;
+  
+  /**
+   * 代理商提成金
+   */
+  private BigDecimal agentCommission;
+  
+  /**
+   * 用户推荐提成金
+   */
+  private BigDecimal userRecommendCommission;
+  
+  /**
+   * 商户推荐提成金
+   */
+  private BigDecimal sellerRecommendCommission;
+  
   @Column(scale = 4, precision = 18)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
@@ -213,6 +229,36 @@ public class NationBonusReport extends BaseEntity {
 
   public void setAward(BigDecimal award) {
     this.award = award;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getAgentCommission() {
+    return agentCommission;
+  }
+
+  public void setAgentCommission(BigDecimal agentCommission) {
+    this.agentCommission = agentCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getUserRecommendCommission() {
+    return userRecommendCommission;
+  }
+
+  public void setUserRecommendCommission(BigDecimal userRecommendCommission) {
+    this.userRecommendCommission = userRecommendCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getSellerRecommendCommission() {
+    return sellerRecommendCommission;
+  }
+
+  public void setSellerRecommendCommission(BigDecimal sellerRecommendCommission) {
+    this.sellerRecommendCommission = sellerRecommendCommission;
   }
 
   

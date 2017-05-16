@@ -53,6 +53,10 @@ public class OrderRequest extends BaseRequest {
    */
   private String payPwd;
 
+  /**
+   * 商家录单
+   */
+  private Boolean isSallerOrder;
 
   public String getPayPwd() {
     return payPwd;
@@ -125,5 +129,14 @@ public class OrderRequest extends BaseRequest {
   public void setOrderStatus(OrderStatus orderStatus) {
     this.orderStatus = orderStatus;
   }
+
+  public Boolean getIsSallerOrder() {
+    return isSallerOrder;
+  }
+
+  public void setIsSallerOrder(Boolean isSallerOrder) {
+    this.isSallerOrder = isSallerOrder;
+  }
+
 
 }

@@ -106,6 +106,15 @@
 						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.ventureFund")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.agentCommission")}</a>
+					</th>
+					<th>
+						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.userRecommendCommission")}</a>
+					</th>
+					<th>
+						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.sellerRecommendCommission")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" name="reportDate">${message("rebate.report.reportDate")}</a>
 					</th>
 					
@@ -149,6 +158,15 @@
 					</td>
 					<td>
 						${report.ventureFund}
+					</td>
+					<td>
+						${report.agentCommission}
+					</td>
+					<td>
+						${report.userRecommendCommission}
+					</td>
+					<td>
+						${report.sellerRecommendCommission}
 					</td>
 					<td>
 						${report.reportDate}
