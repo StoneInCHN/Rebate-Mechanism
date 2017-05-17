@@ -8,6 +8,7 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
 </script>
 </head>
 <body>
@@ -110,6 +111,11 @@
 									&nbsp;
 								</th>
 								<td>
+									[#if  sellerEvaluate.status =="ACITVE"]
+										<input id="inActiveButton" type="button" class="btn btn-danger" value="禁用" />
+									[#elseif sellerEvaluate.status =="INACTIVE"]
+										<input id="activeButton" type="button" class="btn btn-info" value="启用" />
+									[/#if]
 									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
@@ -118,10 +124,66 @@
  <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>    
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$('.viewer-images').viewer();
 		$('.img-lazy').lazyload();
+		var $activeButton = $("#activeButton");
+		var $inActiveButton = $("#inActiveButton");
+		
+		// 启用
+		$activeButton.click( function() {
+			$.dialog({
+				type: "warn",
+				content: message("admin.dialog.activeConfirm"),
+				ok: message("admin.dialog.ok"),
+				cancel: message("admin.dialog.cancel"),
+				onOk: function() {
+					$.ajax({
+						url: "active.jhtml",
+						type: "POST",
+						data: {ids:${sellerEvaluate.id}},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if (message.type == "success") {
+								setTimeout(function() {
+									location.reload(true);
+								}, 1000);
+							}
+						}
+					});
+				}
+			});
+		});
+		
+		// 禁用
+		$inActiveButton.click( function() {
+			$.dialog({
+				type: "warn",
+				content: message("admin.dialog.inActiveConfirm"),
+				ok: message("admin.dialog.ok"),
+				cancel: message("admin.dialog.cancel"),
+				onOk: function() {
+					$.ajax({
+						url: "inActive.jhtml",
+						type: "POST",
+						data: {ids:${sellerEvaluate.id}},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if (message.type == "success") {
+								setTimeout(function() {
+									location.reload(true);
+								}, 1000);
+							}
+						}
+					});
+				}
+			});
+		});
+		
 	})
 </script>
 </body>
