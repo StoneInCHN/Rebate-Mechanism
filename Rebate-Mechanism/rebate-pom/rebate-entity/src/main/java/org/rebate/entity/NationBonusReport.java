@@ -1,18 +1,11 @@
 package org.rebate.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.rebate.entity.base.BaseEntity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 每日全国分红统计
@@ -87,6 +80,23 @@ public class NationBonusReport extends BaseEntity {
    * 奖池
    */
   private BigDecimal award;
+
+  /**
+   * 代理商提成金
+   */
+  private BigDecimal agentCommission;
+
+  /**
+   * 用户推荐提成金
+   */
+  private BigDecimal userRecommendCommission;
+
+  /**
+   * 商户推荐提成金
+   */
+  private BigDecimal sellerRecommendCommission;
+
+
   @Column(scale = 4, precision = 18)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
