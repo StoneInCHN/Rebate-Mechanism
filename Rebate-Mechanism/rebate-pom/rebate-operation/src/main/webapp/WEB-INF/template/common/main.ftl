@@ -220,7 +220,7 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-				[#list ["rebate:order"] as permission]
+				[#list ["rebate:order","rebate:sallerOrder"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -233,6 +233,11 @@
 		                     	  [@shiro.hasPermission name="rebate:order"]
 		                           <li>
 		                               <a href="../order/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.order.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:sallerOrder"]
+		                           <li>
+		                               <a href="../sallerOrder/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.sallerOrder.info")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>
