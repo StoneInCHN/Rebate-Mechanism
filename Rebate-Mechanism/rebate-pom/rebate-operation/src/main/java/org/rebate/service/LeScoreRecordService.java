@@ -8,4 +8,7 @@ public interface LeScoreRecordService extends BaseService<LeScoreRecord,Long>{
 
   Message auditWithdraw(LeScoreRecord leScoreRecord);
   
+  Message batchWithdraw(Long[] ids);
+  
+  
 }

@@ -1,8 +1,10 @@
 package org.rebate.utils;
 
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +20,7 @@ import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
 import org.rebate.utils.wechat.WeixinUtil;
+import org.rebate.utils.yipay.CryptTool;
 
 import com.tencent.common.MD5;
 
@@ -40,6 +43,80 @@ public class PayUtil {
   // 微信下订单接口
   public static final String wechat_AddOrderUrl = setting.getWechatAddOrderUrl();
 
+  // 翼支付下单url
+  private static final String yi_payOrder = setting.getYiPayOrder();
+  // 翼支付商户代码
+  private static final String yi_merchantId = setting.getYiMerchantId();
+  // 翼支付商户key
+  private static final String yi_merchantKey = setting.getYiMerchantKey();
+  // 翼支付回调url
+  private static final String yi_notify_url = setting.getYiPayNotifyUrl();
+
+  /**
+   * 电信翼支付接口
+   * 
+   * @param order_sn 商户订单号
+   * @param body 商品介绍
+   * @param ip
+   * @param product_id 商品ID
+   * @param total_fee 商品价格（分）
+   * @return
+   * @throws Exception
+   */
+  public static ResponseOne<Map<String, Object>> yiPay(String order_sn, String body, String ip,
+      String product_id, BigDecimal amount, String userId) throws Exception {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    String orderTime = TimeUtils.format("yyyyMMddHHmmss", new Date().getTime());
+    String orderReqTranSeq = orderTime + "000001"; // 订单流水号(当前时间+000001)(格式如：yyyymmddhhmmss000001)
+    String temp =
+        "MERCHANTID=" + yi_merchantId + "&ORDERSEQ=" + order_sn + "&ORDERREQTRANSEQ="
+            + orderReqTranSeq + "&ORDERREQTIME=" + orderTime + "&KEY=" + yi_merchantKey;
+    String mac = CryptTool.md5Digest(temp);
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("MERCHANTID", yi_merchantId);
+    map.put("ORDERSEQ", order_sn);
+    map.put("ORDERREQTRANSEQ", orderReqTranSeq);
+    map.put("ORDERREQTIME", orderTime);
+    BigDecimal total_fee = amount.multiply(new BigDecimal(100));
+    map.put("ORDERAMT", total_fee);
+    map.put("TRANSCODE", "01");
+    map.put("MAC", mac);
+    String result = ApiUtils.post(yi_payOrder, map);
+    String res[] = result.split("&");
+    if ("00".equals(res[0])) {
+      Map<String, Object> resMap = new HashMap<String, Object>();
+      resMap.put("out_trade_no", order_sn);
+      resMap.put("MERCHANTID", yi_merchantId);
+      resMap.put("ORDERSEQ", order_sn);
+      resMap.put("ORDERREQTRANSEQ", orderReqTranSeq);
+      String orderAmount = amount.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+      resMap.put("ORDERAMOUNT", orderAmount);
+      resMap.put("ORDERTIME", orderTime);
+
+      resMap.put("PRODUCTDESC", body);
+      resMap.put("BACKMERCHANTURL", yi_notify_url);
+      resMap.put("PRODUCTAMOUNT", orderAmount);
+      resMap.put("ATTACHAMOUNT", "0");
+      resMap.put("CURTYPE", "RMB");
+      resMap.put("CUSTOMERID", userId);
+      resMap.put("USERIP", ip);
+      resMap.put("ACCOUNTID", "");
+      resMap.put("BUSITYPE", "04");
+
+      String tempStr =
+          "MERCHANTID=" + yi_merchantId + "&ORDERSEQ=" + order_sn + "&ORDERREQTRNSEQ="
+              + orderReqTranSeq + "&ORDERTIME=" + orderTime + "&KEY=" + yi_merchantKey;
+      String macStr = CryptTool.md5Digest(tempStr);
+      resMap.put("MAC", macStr);
+      response.setCode(CommonAttributes.SUCCESS);
+      response.setMsg(resMap);
+    } else {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.success("rebate.payOrder.create.fail").getContent() + result);
+    }
+    return response;
+  }
 
   /**
    * create the order info for alipay. 创建订单信息

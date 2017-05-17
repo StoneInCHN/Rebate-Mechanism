@@ -22,6 +22,7 @@ import freemarker.template.TemplateException;
 public class SnDaoImpl implements SnDao, InitializingBean {
 
   private HiloOptimizer orderHiloOptimizer;
+  private HiloOptimizer clearingHiloOptimizer;
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -29,6 +30,10 @@ public class SnDaoImpl implements SnDao, InitializingBean {
   private String orderPrefix;
   @Value("${sn.order.maxLo}")
   private int orderMaxLo;
+  @Value("${sn.clearing.prefix}")
+  private String clearingPrefix;
+  @Value("${sn.clearing.maxLo}")
+  private int clearingMaxLo;
 
   @Override
   public String generate(Type type) {
@@ -36,12 +41,16 @@ public class SnDaoImpl implements SnDao, InitializingBean {
     if (type == Type.ORDER) {
       return orderHiloOptimizer.generate();
     }
+    if (type == Type.WITHDRAW) {
+      return clearingHiloOptimizer.generate();
+    }
     return null;
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     orderHiloOptimizer = new HiloOptimizer(Type.ORDER, orderPrefix, orderMaxLo);
+    clearingHiloOptimizer = new HiloOptimizer(Type.WITHDRAW, clearingPrefix, clearingMaxLo);
 
   }
 

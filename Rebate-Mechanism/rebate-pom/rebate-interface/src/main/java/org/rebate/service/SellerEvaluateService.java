@@ -12,4 +12,6 @@ public interface SellerEvaluateService extends BaseService<SellerEvaluate, Long>
    * @return
    */
   SellerEvaluate getEvaluateByOrder(Long orderId);
+
+
 }

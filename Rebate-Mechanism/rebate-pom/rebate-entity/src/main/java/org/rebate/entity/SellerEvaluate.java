@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.rebate.entity.base.BaseEntity;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 
 /**
  * Entity - 用户对商家评价
@@ -66,6 +67,19 @@ public class SellerEvaluate extends BaseEntity {
    */
   private Order order;
 
+  /**
+   * 是否显示，被屏蔽的评价评分也要去掉
+   */
+  private CommonStatus status;
+
+
+  public CommonStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(CommonStatus status) {
+    this.status = status;
+  }
 
   @OneToOne(mappedBy = "evaluate")
   public Order getOrder() {

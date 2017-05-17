@@ -287,6 +287,58 @@ public class Setting implements Serializable {
    */
   private String sellerDiscountMin;
 
+  /**
+   * 翼支付平台商户Key
+   */
+  private String yiMerchantKey;
+
+  /**
+   * 翼支付平台商户代码
+   */
+  private String yiMerchantId;
+
+  /**
+   * 翼支付平台下单url
+   */
+  private String yiPayOrder;
+
+  /**
+   * 翼支付订单回调url
+   */
+  private String yiPayNotifyUrl;
+
+
+  public String getYiPayNotifyUrl() {
+    return yiPayNotifyUrl;
+  }
+
+  public void setYiPayNotifyUrl(String yiPayNotifyUrl) {
+    this.yiPayNotifyUrl = yiPayNotifyUrl;
+  }
+
+  public String getYiPayOrder() {
+    return yiPayOrder;
+  }
+
+  public void setYiPayOrder(String yiPayOrder) {
+    this.yiPayOrder = yiPayOrder;
+  }
+
+  public String getYiMerchantKey() {
+    return yiMerchantKey;
+  }
+
+  public void setYiMerchantKey(String yiMerchantKey) {
+    this.yiMerchantKey = yiMerchantKey;
+  }
+
+  public String getYiMerchantId() {
+    return yiMerchantId;
+  }
+
+  public void setYiMerchantId(String yiMerchantId) {
+    this.yiMerchantId = yiMerchantId;
+  }
 
   public String getDownloadPage() {
     return downloadPage;
