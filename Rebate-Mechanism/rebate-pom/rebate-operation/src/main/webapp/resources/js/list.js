@@ -5,6 +5,9 @@ $().ready( function() {
 	var $pageTotal = $("#pageTotal");
 	var $addButton = $("#addButton");
 	var $deleteButton = $("#deleteButton");
+	var $activeButton = $("#activeButton");
+	var $inActiveButton = $("#inActiveButton");
+	var $withdrawButton = $("#withdrawButton");
 	var $lockedButton = $("#lockedButton");
 	var $refreshButton = $("#refreshButton");
 	var $moreOperation = $("#moreOperation");
@@ -67,6 +70,109 @@ $().ready( function() {
 		});
 	});
 	
+	$withdrawButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		$.dialog({
+			type: "warn",
+			content: message("admin.dialog.withdrawConfirm"),
+			ok: message("admin.dialog.ok"),
+			cancel: message("admin.dialog.cancel"),
+			onOk: function() {
+				$.ajax({
+					url: "withdraw.jhtml",
+					type: "POST",
+					data: $checkedIds.serialize(),
+					dataType: "json",
+					cache: false,
+					success: function(message) {
+						$.message(message);
+						if (message.type == "success") {
+							setTimeout(function() {
+								location.reload(true);
+							}, 3000);
+						}
+						$withdrawButton.addClass("disabled");
+						$selectAll.prop("checked", false);
+						$checkedIds.prop("checked", false);
+					}
+				});
+			}
+		});
+	});
+	
+	// 启用
+	$activeButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		$.dialog({
+			type: "warn",
+			content: message("admin.dialog.activeConfirm"),
+			ok: message("admin.dialog.ok"),
+			cancel: message("admin.dialog.cancel"),
+			onOk: function() {
+				$.ajax({
+					url: "active.jhtml",
+					type: "POST",
+					data: $checkedIds.serialize(),
+					dataType: "json",
+					cache: false,
+					success: function(message) {
+						$.message(message);
+						if (message.type == "success") {
+							setTimeout(function() {
+								location.reload(true);
+							}, 2000);
+						}
+						$activeButton.addClass("disabled");
+						$selectAll.prop("checked", false);
+						$checkedIds.prop("checked", false);
+					}
+				});
+			}
+		});
+	});
+	
+	// 禁用
+	$inActiveButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		$.dialog({
+			type: "warn",
+			content: message("admin.dialog.inActiveConfirm"),
+			ok: message("admin.dialog.ok"),
+			cancel: message("admin.dialog.cancel"),
+			onOk: function() {
+				$.ajax({
+					url: "inActive.jhtml",
+					type: "POST",
+					data: $checkedIds.serialize(),
+					dataType: "json",
+					cache: false,
+					success: function(message) {
+						$.message(message);
+						if (message.type == "success") {
+							setTimeout(function() {
+								location.reload(true);
+							}, 2000);
+						}
+						$inActiveButton.addClass("disabled");
+						$selectAll.prop("checked", false);
+						$checkedIds.prop("checked", false);
+					}
+				});
+			}
+		});
+	});
 	
 	// 删除
 	$lockedButton.click( function() {
@@ -123,18 +229,6 @@ $().ready( function() {
 		});
 	});
 	
-	// 搜索选项
-/*	$searchPropertyOption.mouseover( function() {
-		var $this = $(this);
-		var offset = $this.offset();
-		var $menuWrap = $this.closest("div.menuWrap");
-		var $popupMenu = $menuWrap.children("div.popupMenu");
-		$popupMenu.css({left: offset.left - 1, top: offset.top + $this.height() + 2}).show();
-		$menuWrap.mouseleave(function() {
-			$popupMenu.hide();
-		});
-		alert("ok")
-	});*/
 	
 	// 搜索选项
 	$searchPropertyOption.click( function() {
@@ -145,13 +239,6 @@ $().ready( function() {
 		return false;
 	});
 	
-	// 搜索选项
-/*	$searchPropertyOption.change( function() {
-		var $this = $(this);
-		$searchProperty.val($this.val());
-		return false;
-	});*/
-	
 	// 全选
 	$selectAll.click( function() {
 		var $this = $(this);
@@ -160,18 +247,27 @@ $().ready( function() {
 			$enabledIds.prop("checked", true);
 			if ($enabledIds.filter(":checked").size() > 0) {
 				$deleteButton.removeClass("disabled");
+				$withdrawButton.removeClass("disabled");
 				$lockedButton.removeClass("disabled");
+				$activeButton.removeClass("disabled");
+				$inActiveButton.removeClass("disabled");
 				$promptButton.removeClass("disabled");
 				$contentRow.addClass("selected");
 			} else {
 				$deleteButton.addClass("disabled");
+				$activeButton.addClass("disabled");
+				$inActiveButton.addClass("disabled");
+				$withdrawButton.addClass("disabled");
 				$lockedButton.addClass("disabled");
 			}
 		} else {
 			$enabledIds.prop("checked", false);
 			$deleteButton.addClass("disabled");
+			$withdrawButton.addClass("disabled");
 			$lockedButton.addClass("disabled");
 			$contentRow.removeClass("selected");
+			$activeButton.addClass("disabled");
+			$inActiveButton.addClass("disabled");
 		}
 	});
 	
@@ -181,19 +277,28 @@ $().ready( function() {
 		if ($this.prop("checked")) {
 			$this.closest("tr").addClass("selected");
 			$deleteButton.removeClass("disabled");
+			$withdrawButton.removeClass("disabled");
 			$lockedButton.removeClass("disabled");
 			$promptButton.removeClass("disabled");
+			$activeButton.removeClass("disabled");
+			$inActiveButton.removeClass("disabled");
 		
 		} else {
 			$this.closest("tr").removeClass("selected");
 			if ($("#listTable input[name='ids']:enabled:checked").size() > 0) {
 				$deleteButton.removeClass("disabled");
+				$withdrawButton.removeClass("disabled");
 				$lockedButton.removeClass("disabled");
 				$promptButton.removeClass("disabled");
+				$activeButton.removeClass("disabled");
+				$inActiveButton.removeClass("disabled");
 			} else {
 				$deleteButton.addClass("disabled");
+				$withdrawButton.addClass("disabled");
 				$lockedButton.addClass("disabled");
 				$promptButton.addClass("disabled");
+				$activeButton.addClass("disabled");
+				$inActiveButton.addClass("disabled");
 			}
 		}
 	});
@@ -256,11 +361,5 @@ $().ready( function() {
 		return false;
 	}
 	
-	// 列表查询
-	/*if (location.search != "") {
-		addCookie("listQuery", location.search);
-	} else {
-		removeCookie("listQuery");
-	}*/
 
 });

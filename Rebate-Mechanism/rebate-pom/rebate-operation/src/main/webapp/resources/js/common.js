@@ -19,6 +19,7 @@ var messages = {
 	"admin.dialog.cancel": "取&nbsp;&nbsp;消",
 	"admin.dialog.deleteConfirm": "您确定要删除吗？",
 	"admin.dialog.lockedConfirm": "您确定要禁用吗？",
+	"admin.dialog.withdrawConfirm":"确定要执行批量提现吗",
 	"admin.browser.title": "选择文件",
 	"admin.browser.upload": "本地上传",
 	"admin.browser.parent": "上级目录",
@@ -53,6 +54,10 @@ var messages = {
 	"admin.validate.pattern": "格式错误",
 	"admin.validate.extension": "文件格式错误",
 	"User.device.exist": "设备已存在",
+	"rebate.message.error":"操作执行失败!",
+	"rebate.message.success":"操作执行成功!",
+	"admin.dialog.activeConfirm":"确定要启用吗",
+	"admin.dialog.inActiveConfirm":"确定要禁用吗",
 	"admin.sendMessage.allUser":"您确定要将该消息发送给所有用户吗？"
 };
 

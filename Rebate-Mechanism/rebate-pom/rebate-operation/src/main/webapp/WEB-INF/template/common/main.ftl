@@ -155,6 +155,11 @@
 		                               <a href="../seller/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.seller")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
+		                            [@shiro.hasPermission name="rebate:sellerEvaluate"]
+		                           <li>
+		                               <a href="../sellerEvaluate/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.sellerEvaluate")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
 		                       </ul>
 		                   </div>
 						   	[#break /]

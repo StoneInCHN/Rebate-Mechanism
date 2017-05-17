@@ -15,6 +15,7 @@ import org.rebate.dao.AreaDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.dao.SettingConfigDao;
+import org.rebate.dao.SnDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.dao.UserRegReportDao;
@@ -24,6 +25,7 @@ import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SettingConfig;
+import org.rebate.entity.Sn.Type;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.UserRegReport;
@@ -67,6 +69,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "settingConfigDaoImpl")
   private SettingConfigDao settingConfigDao;
+
+  @Resource(name = "snDaoImpl")
+  private SnDao snDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -295,6 +300,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     leScoreRecord.setMotivateLeScore(map.get("motivateLeScore"));
     leScoreRecord.setIncomeLeScore(map.get("incomeLeScore"));
     leScoreRecord.setAgentLeScore(map.get("agentLeScore"));
+    leScoreRecord.setWithDrawSn(snDao.generate(Type.WITHDRAW));
     leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
     endUser.getLeScoreRecords().add(leScoreRecord);
 

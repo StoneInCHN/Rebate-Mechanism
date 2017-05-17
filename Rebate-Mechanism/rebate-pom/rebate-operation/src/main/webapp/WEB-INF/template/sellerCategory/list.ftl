@@ -9,8 +9,8 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 	.viewer-images li {
     float: inherit;

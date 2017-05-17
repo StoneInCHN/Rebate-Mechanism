@@ -72,7 +72,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
         } else {
           // 提现失败
           temp.setIsWithdraw(false);
-          temp.setWechatReturnMsg(response.getDesc());
+          temp.setWithdrawMsg(response.getDesc());
         }
 
       } else if (ApplyStatus.AUDIT_FAILED.equals(leScoreRecord.getWithdrawStatus())) {
@@ -101,5 +101,16 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
       return Message.error("提现审核执行失败 ，异常信息：", e.getMessage());
     }
     return message;
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Message batchWithdraw(Long[] ids) {
+    if(ids!=null){
+      for (Long id : ids) {
+        System.out.println(id);
+      }
+    }
+    return Message.success("批量提现执行成功");
   }
 }

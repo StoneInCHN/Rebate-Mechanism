@@ -148,29 +148,25 @@ public class CommonEnum {
     RECOMMEND_INDIRECT_USER,
     /** 消费商户的推荐人收益百分比 9 */
     RECOMMEND_SELLER,
-    /** 公益金额百分比 10 */
-    PUBLIC_BENEFIT,
-    /** 激励乐分提现最低金额限制 11 */
+    /** 激励乐分提现最低金额限制 10 */
     WITHDRAW_MINIMUM_LIMIT,
-    /** 每日分红总金额占平台每日总收益的比例 12 */
+    /** 每日分红总额占平台每日让利金额的比例 11 */
     TOTAL_BONUS_PERCENTAGE,
-    /** 推荐用户提成乐分的最大推荐层级限制 13 */
+    /** 推荐用户提成乐分的最大推荐层级限制 12 */
     RECOMMEND_LEVEL_LIMIT,
-    /** 鼓励金占让利金额百分比 14 */
+    /** 鼓励金占让利金额百分比 13 */
     ENCOURAGE_CONSUME,
-    /** 商家积分返利订单百分比参数 15 */
+    /** 商家积分返利订单百分比参数 14 */
     REBATESCORE_SELLER_ORDER_PERCENTAGE,
-    /** 平台获利占总让利百分比 16 */
+    /** 平台获利占总让利百分比 15 */
     PLATFORM_INCOME_PERCENTAGE,
-    /** 创业基金占总让利百分比 17 */
+    /** 创业基金占总让利百分比 16 */
     VENTURE_FUND_PERCENTAGE,
-    /** 奖池占总让利百分比 18 */
-    AWARD_PERCENTAGE,
-    /** 代理商提成占总让利百分比 19 */
+    /** 代理商提成占总让利百分比 17 */
     AGENT_COMMISSION_PERCENTAGE,
-    /** 用户推荐提成占总让利百分比 20 */
+    /** 分享佣金占总让利百分比 18 */
     USER_RECOMMEND_COMMISSION_PERCENTAGE,
-    /** 商家联盟提成占总让利百分比 21 */
+    /** 发展商家提成占总让利百分比 19 */
     SELLER_RECOMMEND_COMMISSION_PERCENTAGE,
   }
 

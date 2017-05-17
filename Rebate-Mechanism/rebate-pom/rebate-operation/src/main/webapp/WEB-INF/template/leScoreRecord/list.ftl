@@ -9,6 +9,7 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
   <!-- HTML5 Support for IE -->
   <!--[if lt IE 9]>
   <script src="${base}/resources/js/html5shim.js"></script>
@@ -81,13 +82,16 @@
              </div>
          </div>
  		 <div class="button-group">
+              <a  id="withdrawButton" class="btn btn-default"> <i class="fa fa-money"></i><span>提现</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
          <div>
         <table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
-
+					<th class="check">
+							<input type="checkbox" id="selectAll" />
+						</th>
 					<th>
 						<span>${message("rebate.leScoreRecord.endUser.userName")}</span>
 					</th>
@@ -117,7 +121,9 @@
 			<tbody>
 				[#list page.content as leScoreRecord]
 				<tr>
-
+						<td>
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus == "AUDIT_FAILED" || leScoreRecord.isWithdraw] disabled="disabled" [/#if]/>
+						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
 							${leScoreRecord.endUser.userName}

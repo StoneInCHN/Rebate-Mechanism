@@ -87,9 +87,9 @@ public class LeScoreRecord extends BaseEntity {
   private BigDecimal agentLeScore;
 
   /**
-   * 微信提现失败时返回的错误信息
+   * 提现失败时返回的错误信息
    */
-  private String wechatReturnMsg;
+  private String withdrawMsg;
 
   /**
    * 是否已提现
@@ -106,6 +106,20 @@ public class LeScoreRecord extends BaseEntity {
    */
   private Long withDrawType;
 
+  /**
+   * 提现流水号
+   */
+  private String withDrawSn;
+
+
+  @Column(length = 30)
+  public String getWithDrawSn() {
+    return withDrawSn;
+  }
+
+  public void setWithDrawSn(String withDrawSn) {
+    this.withDrawSn = withDrawSn;
+  }
 
   public Long getWithDrawType() {
     return withDrawType;
@@ -234,13 +248,14 @@ public class LeScoreRecord extends BaseEntity {
     this.seller = seller;
   }
 
+
   @Column(length = 100)
-  public String getWechatReturnMsg() {
-    return wechatReturnMsg;
+  public String getWithdrawMsg() {
+    return withdrawMsg;
   }
 
-  public void setWechatReturnMsg(String wechatReturnMsg) {
-    this.wechatReturnMsg = wechatReturnMsg;
+  public void setWithdrawMsg(String withdrawMsg) {
+    this.withdrawMsg = withdrawMsg;
   }
 
   public Boolean getIsWithdraw() {

@@ -109,8 +109,8 @@ public class OrderController extends MobileBaseController {
       return response;
     }
 
-    
-    if (isSallerOrder!=null && isSallerOrder == false && isBeanPay) {// 乐豆支付需要验证支付密码
+
+    if (isSallerOrder != null && isSallerOrder == false && isBeanPay) {// 乐豆支付需要验证支付密码
       EndUser endUser = endUserService.find(userId);
       if (endUser.getCurLeBean().compareTo(amount) < 0) {
         response.setCode(CommonAttributes.FAIL_COMMON);
@@ -150,13 +150,13 @@ public class OrderController extends MobileBaseController {
         return response;
       }
     }
-    Order order =null;
+    Order order = null;
     if (isSallerOrder) {
-      order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay,true);
-    }else {
+      order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay, true);
+    } else {
       order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
     }
-     
+
     if (LogUtil.isDebugEnabled(OrderController.class)) {
       LogUtil
           .debug(
@@ -166,7 +166,7 @@ public class OrderController extends MobileBaseController {
               userId, payType, payTypeId, amount, sellerId, remark, isBeanPay);
     }
 
-    if (isSallerOrder!=null && isSallerOrder == false ) {
+    if (isSallerOrder != null && isSallerOrder == false) {
       try {
         if ("1".equals(payTypeId)) {// 微信支付
           BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
@@ -177,14 +177,18 @@ public class OrderController extends MobileBaseController {
         } else if ("2".equals(payTypeId)) {// 支付宝支付
           Map<String, Object> map = new HashMap<String, Object>();
           String orderStr =
-              PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller().getName(),
-                  amount.toString());
+              PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller()
+                  .getName(), amount.toString());
           map.put("orderStr", orderStr);
           map.put("out_trade_no", order.getSn());
           map.put("encourageAmount", order.getEncourageAmount());
           response.setMsg(map);
           response.setCode(CommonAttributes.SUCCESS);
         } else if ("3".equals(payTypeId)) {// 翼支付
+          response =
+              PayUtil.yiPay(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                  order.getId().toString(), amount, userId.toString());
+          response.getMsg().put("encourageAmount", order.getEncourageAmount());
 
         }
       } catch (Exception e) {
@@ -199,12 +203,13 @@ public class OrderController extends MobileBaseController {
         map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
         response.setMsg(map);
         response.setCode(CommonAttributes.SUCCESS);
+
       }
       response.getMsg().put("orderId", order.getId());
-    }else {
+    } else {
       response.setCode(CommonAttributes.SUCCESS);
     }
-    
+
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);

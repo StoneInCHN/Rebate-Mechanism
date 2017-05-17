@@ -19,6 +19,7 @@ import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SystemConfig;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
 import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
@@ -279,6 +280,8 @@ public class SellerController extends MobileBaseController {
     Seller seller = sellerService.find(sellerId);
     List<Filter> filters = new ArrayList<Filter>();
     Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
+    filters.add(statusFilter);
     filters.add(sellerFilter);
     pageable.setFilters(filters);
     pageable.setOrderDirection(Direction.desc);
