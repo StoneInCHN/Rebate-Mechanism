@@ -1,11 +1,18 @@
 package org.rebate.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.rebate.entity.base.BaseEntity;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.rebate.entity.base.BaseEntity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 每日全国分红统计
@@ -75,7 +82,7 @@ public class NationBonusReport extends BaseEntity {
    * 创业基金
    */
   private BigDecimal ventureFund;
-  
+
   /**
    * 奖池
    */
@@ -96,6 +103,35 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal sellerRecommendCommission;
 
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getAgentCommission() {
+    return agentCommission;
+  }
+
+  public void setAgentCommission(BigDecimal agentCommission) {
+    this.agentCommission = agentCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getUserRecommendCommission() {
+    return userRecommendCommission;
+  }
+
+  public void setUserRecommendCommission(BigDecimal userRecommendCommission) {
+    this.userRecommendCommission = userRecommendCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getSellerRecommendCommission() {
+    return sellerRecommendCommission;
+  }
+
+  public void setSellerRecommendCommission(BigDecimal sellerRecommendCommission) {
+    this.sellerRecommendCommission = sellerRecommendCommission;
+  }
 
   @Column(scale = 4, precision = 18)
   @JsonProperty
@@ -225,5 +261,5 @@ public class NationBonusReport extends BaseEntity {
     this.award = award;
   }
 
-  
+
 }
