@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.rebate.service.EndUserService;
 import org.rebate.utils.LogUtil;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,7 +21,7 @@ public class DailyLeScoreCalJob {
 
 
   // @Scheduled(cron="0/10 * *  * * ? ") //每10秒执行一次
-  // @Scheduled(cron = "${job.daily_leScore_cal.cron}")
+  @Scheduled(cron = "${job.daily_leScore_cal.cron}")
   // 每天2点0分0秒执行 0 0 2 * * ?
   public void dailyLeScoreCalculate() {
 

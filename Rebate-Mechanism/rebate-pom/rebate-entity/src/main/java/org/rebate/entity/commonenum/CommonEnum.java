@@ -202,8 +202,8 @@ public class CommonEnum {
     CONSUME_SELLER,
     // /** 用户消费鼓励金收益 */
     // ENCOURAGE,
-    // /** 乐心（积分）产生的分红 */
-    // BONUS,
+    /** 乐心（积分）产生的分红 */
+    BONUS,
     /** 推荐好友消费返利 */
     RECOMMEND_USER,
     /** 推荐店铺收益返利 */

@@ -18,11 +18,15 @@ import org.rebate.entity.BonusParamPerDay;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
+import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
+import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
@@ -94,45 +98,45 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusParamPerDay.setRemark(msg);
         return;
       }
-      // /**
-      // * 每日分红总金额占平台每日总收益的比例
-      // */
-      // SystemConfig totalBonusPerConfig =
-      // systemConfigDao.getConfigByKey(SystemConfigKey.TOTAL_BONUS_PERCENTAGE);
-      // if (totalBonusPerConfig == null || totalBonusPerConfig.getConfigValue() == null) {
-      // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
-      // LogUtil
-      // .debug(
-      // EndUserServiceImpl.class,
-      // "dailyBonusCalJob",
-      // "daily Bonus calculate job failed! Timer Period: %s, total bonus percentage config no exist!",
-      // startTime + "-" + endTime);
-      // }
-      // msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
-      // bonusParamPerDay.setRemark(msg);
-      // return;
-      // }
-      // bonusParamPerDay.setTotalBonusPerConfig(totalBonusPerConfig.getConfigValue());
+      /**
+       * 每日分红总金额占平台每日总收益的比例
+       */
+      SystemConfig totalBonusPerConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.TOTAL_BONUS_PERCENTAGE);
+      if (totalBonusPerConfig == null || totalBonusPerConfig.getConfigValue() == null) {
+        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+          LogUtil
+              .debug(
+                  EndUserServiceImpl.class,
+                  "dailyBonusCalJob",
+                  "daily Bonus calculate job failed! Timer Period: %s, total bonus percentage config no exist!",
+                  startTime + "-" + endTime);
+        }
+        msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
+        bonusParamPerDay.setRemark(msg);
+        return;
+      }
+      bonusParamPerDay.setTotalBonusPerConfig(totalBonusPerConfig.getConfigValue());
 
-      // /**
-      // * 收益后乐分乐豆比例
-      // */
-      // SystemConfig leScorePerConfig =
-      // systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
-      // if (leScorePerConfig == null || leScorePerConfig.getConfigValue() == null) {
-      // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
-      // LogUtil
-      // .debug(
-      // EndUserServiceImpl.class,
-      // "dailyBonusCalJob",
-      // "daily Bonus calculate job failed! Timer Period: %s, bonus leScore percentage config no exist!",
-      // startTime + "-" + endTime);
-      // }
-      // msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
-      // bonusParamPerDay.setRemark(msg);
-      // return;
-      // }
-      // bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
+      /**
+       * 收益后乐分乐豆比例
+       */
+      SystemConfig leScorePerConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.LESCORE_PERCENTAGE);
+      if (leScorePerConfig == null || leScorePerConfig.getConfigValue() == null) {
+        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+          LogUtil
+              .debug(
+                  EndUserServiceImpl.class,
+                  "dailyBonusCalJob",
+                  "daily Bonus calculate job failed! Timer Period: %s, bonus leScore percentage config no exist!",
+                  startTime + "-" + endTime);
+        }
+        msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
+        bonusParamPerDay.setRemark(msg);
+        return;
+      }
+      bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
 
       List<Filter> filters = new ArrayList<Filter>();
       Filter start = new Filter("paymentTime", Operator.ge, startTime);
@@ -172,14 +176,14 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
       bonusParamPerDay.setRebateTotalAmount(totalBonus.toString());
 
-      // /**
-      // * 每日用于分红计算的总金额
-      // */
-      // totalBonus =
-      // totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(2,
-      // BigDecimal.ROUND_HALF_UP);
-      //
-      // bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
+      /**
+       * 每日用于分红计算的总金额
+       */
+      BigDecimal totalBonusPer =
+          totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(4,
+              BigDecimal.ROUND_HALF_UP);
+
+      bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
 
       // /**
       // * 计算每日乐心大于等于1的用户
@@ -197,17 +201,17 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       // return;
       // }
       // bonusParamPerDay.setLeMindUserCount(endUsers.size());
-
-      /**
-       * 乐心的每天的市值计算(取0.8~1.2的随机数产生，保留两位小数) [0.8,1.2)
-       */
-      BigDecimal value =
-          new BigDecimal(Math.random() * 4 + 8).divide(new BigDecimal("10"), 2,
-              BigDecimal.ROUND_HALF_UP);
+      //
+      // /**
+      // * 乐心的每天的市值计算(取0.8~1.2的随机数产生，保留两位小数) [0.8,1.2)
+      // */
       // BigDecimal value =
-      // totalBonus.divide(new BigDecimal(endUsers.size()), 2, BigDecimal.ROUND_HALF_UP);
+      // new BigDecimal(Math.random() * 4 + 8).divide(new BigDecimal("10"), 2,
+      // BigDecimal.ROUND_HALF_UP);
+      // // BigDecimal value =
+      // // totalBonus.divide(new BigDecimal(endUsers.size()), 2, BigDecimal.ROUND_HALF_UP);
 
-      bonusParamPerDay.setCalValue(value.toString());
+
 
       List<Filter> mindFilters = new ArrayList<Filter>();
       Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
@@ -226,6 +230,13 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
 
       BigDecimal leMindSize = new BigDecimal("0");
+      for (LeMindRecord leMindRecord : leMindRecords) {
+        leMindSize = leMindSize.add(leMindRecord.getAmount());
+      }
+      BigDecimal value = totalBonusPer.divide(leMindSize, 4, BigDecimal.ROUND_HALF_UP);
+      bonusParamPerDay.setCalValue(value.toString());
+      bonusParamPerDay.setAvlLeMindCount(leMindSize.intValue());
+
       BigDecimal totalBonusAmountByMind = new BigDecimal("0");
       List<EndUser> userList = new ArrayList<EndUser>();
       for (LeMindRecord leMindRecord : leMindRecords) {
@@ -233,7 +244,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
         BigDecimal totalLeScoreBonus = leMindRecord.getTotalBonus().add(curBonus);
 
-        leMindSize = leMindSize.add(leMindRecord.getAmount());
+
 
         if (totalLeScoreBonus.compareTo(leMindRecord.getMaxBonus()) >= 0) {
           curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
@@ -258,31 +269,35 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusByMindPerDay.setBonusAmount(curBonus);
         leMindRecord.getBonusByDays().add(bonusByMindPerDay);
 
-        // BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
+        BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
+        if (leScorePer.compareTo(new BigDecimal("0")) > 0) {
+          LeScoreRecord leScoreRecord = new LeScoreRecord();
+          leScoreRecord.setEndUser(endUser);
+          leScoreRecord.setLeScoreType(LeScoreType.BONUS);
+          leScoreRecord.setAmount(curBonus.multiply(leScorePer));
+          leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+          endUser.getLeScoreRecords().add(leScoreRecord);
+          endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+          endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+        }
 
-        // LeScoreRecord leScoreRecord = new LeScoreRecord();
-        // leScoreRecord.setEndUser(endUser);
-        // leScoreRecord.setLeScoreType(LeScoreType.BONUS);
-        // leScoreRecord.setAmount(curBonus.multiply(leScorePer));
-        // leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
-        // endUser.getLeScoreRecords().add(leScoreRecord);
-        // endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
-        // endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+        if (leScorePer.compareTo(new BigDecimal("1")) < 0) {
+          LeBeanRecord leBeanRecord = new LeBeanRecord();
+          leBeanRecord.setAmount(curBonus.subtract(curBonus.multiply(leScorePer)));
+          // leBeanRecord.setAmount(curBonus);
+          leBeanRecord.setEndUser(endUser);
+          leBeanRecord.setType(LeBeanChangeType.BONUS);
+          leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+          endUser.getLeBeanRecords().add(leBeanRecord);
+          endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+          endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
+        }
 
-        LeBeanRecord leBeanRecord = new LeBeanRecord();
-        // leBeanRecord.setAmount(curBonus.subtract(leScoreRecord.getAmount()));
-        leBeanRecord.setAmount(curBonus);
-        leBeanRecord.setEndUser(endUser);
-        leBeanRecord.setType(LeBeanChangeType.BONUS);
-        leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
-        endUser.getLeBeanRecords().add(leBeanRecord);
-        endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
-        endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
 
         totalBonusAmountByMind = totalBonusAmountByMind.add(curBonus);
         userList.add(endUser);
       }
-      bonusParamPerDay.setAvlLeMindCount(leMindSize.intValue());
+
       bonusParamPerDay.setBonusAmount(totalBonusAmountByMind.toString());
 
       if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
