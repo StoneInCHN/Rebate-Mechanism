@@ -69,6 +69,10 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal platformIncome;
   /**
+   * 每日让利总额
+   */
+  private BigDecimal profitByDay;
+  /**
    * 统计日期
    */
   private Date reportDate;
@@ -102,36 +106,6 @@ public class NationBonusReport extends BaseEntity {
    * 商户推荐提成金
    */
   private BigDecimal sellerRecommendCommission;
-
-  @JsonProperty
-  @Column(scale = 4, precision = 18)
-  public BigDecimal getAgentCommission() {
-    return agentCommission;
-  }
-
-  public void setAgentCommission(BigDecimal agentCommission) {
-    this.agentCommission = agentCommission;
-  }
-
-  @JsonProperty
-  @Column(scale = 4, precision = 18)
-  public BigDecimal getUserRecommendCommission() {
-    return userRecommendCommission;
-  }
-
-  public void setUserRecommendCommission(BigDecimal userRecommendCommission) {
-    this.userRecommendCommission = userRecommendCommission;
-  }
-
-  @JsonProperty
-  @Column(scale = 4, precision = 18)
-  public BigDecimal getSellerRecommendCommission() {
-    return sellerRecommendCommission;
-  }
-
-  public void setSellerRecommendCommission(BigDecimal sellerRecommendCommission) {
-    this.sellerRecommendCommission = sellerRecommendCommission;
-  }
 
   @Column(scale = 4, precision = 18)
   @JsonProperty
@@ -259,6 +233,46 @@ public class NationBonusReport extends BaseEntity {
 
   public void setAward(BigDecimal award) {
     this.award = award;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getAgentCommission() {
+    return agentCommission;
+  }
+
+  public void setAgentCommission(BigDecimal agentCommission) {
+    this.agentCommission = agentCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getUserRecommendCommission() {
+    return userRecommendCommission;
+  }
+
+  public void setUserRecommendCommission(BigDecimal userRecommendCommission) {
+    this.userRecommendCommission = userRecommendCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getSellerRecommendCommission() {
+    return sellerRecommendCommission;
+  }
+
+  public void setSellerRecommendCommission(BigDecimal sellerRecommendCommission) {
+    this.sellerRecommendCommission = sellerRecommendCommission;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getProfitByDay() {
+    return profitByDay;
+  }
+
+  public void setProfitByDay(BigDecimal profitByDay) {
+    this.profitByDay = profitByDay;
   }
 
 
