@@ -307,6 +307,19 @@ public class Setting implements Serializable {
    */
   private String yiPayNotifyUrl;
 
+  /**
+   * 通联支付-商户md5 key
+   */
+  private String allinpayMd5Key;
+
+
+  public String getAllinpayMd5Key() {
+    return allinpayMd5Key;
+  }
+
+  public void setAllinpayMd5Key(String allinpayMd5Key) {
+    this.allinpayMd5Key = allinpayMd5Key;
+  }
 
   public String getYiPayNotifyUrl() {
     return yiPayNotifyUrl;

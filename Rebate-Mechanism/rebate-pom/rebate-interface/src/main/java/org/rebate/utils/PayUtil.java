@@ -19,8 +19,10 @@ import org.rebate.beans.Setting;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
+import org.rebate.utils.allinpay.SunMd5;
 import org.rebate.utils.wechat.WeixinUtil;
 import org.rebate.utils.yipay.CryptTool;
+import org.springframework.util.StringUtils;
 
 import com.tencent.common.MD5;
 
@@ -51,6 +53,76 @@ public class PayUtil {
   private static final String yi_merchantKey = setting.getYiMerchantKey();
   // 翼支付回调url
   private static final String yi_notify_url = setting.getYiPayNotifyUrl();
+
+
+  // 通联支付用户注册url
+  private static final String allinpay_regUser_url = "";
+  // 通联支付商户号
+  private static final String allinpay_merchantId = "";
+  // 通联支付合作商户的用户编号
+  private static final String allinpay_partnerUserId = "";
+  // 通联支付商户md5 key
+  private static final String allinpay_merchantMD5Key = "";
+  // 通联支付回调url
+  private static final String allinpay_notify_url = "";
+
+
+
+  /**
+   * 通联支付接口
+   * 
+   * @param order_sn 商户订单号
+   * @param body 商品介绍
+   * @param ip
+   * @param product_id 商品ID
+   * @param total_fee 商品价格（分）
+   * @return
+   * @throws Exception
+   */
+  public static ResponseOne<Map<String, Object>> allinpay(String order_sn, String body, String ip,
+      String product_id, String total_fee) throws Exception {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    String allinpay_userId =
+        SunMd5.allinpayRegister(allinpay_merchantId, allinpay_partnerUserId.toLowerCase(),
+            allinpay_merchantMD5Key, allinpay_regUser_url);
+    if (!StringUtils.isEmpty(allinpay_userId)) {
+      Map<String, Object> resMap = new HashMap<String, Object>();
+
+      resMap.put("inputCharset", "1");
+      resMap.put("receiveUrl", allinpay_notify_url);
+      resMap.put("version", "v1.0");
+      resMap.put("signType", "0");
+      resMap.put("merchantId", allinpay_merchantId);
+      resMap.put("orderNo", order_sn);
+      resMap.put("orderAmount", total_fee);
+      resMap.put("orderCurrency", "0");
+      resMap.put("orderDatetime", TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
+      resMap.put("productName", body);
+      resMap.put("ext1", "<USER>" + allinpay_userId + "</USER>");
+      resMap.put("payType", "0");
+
+      String tempStr =
+          "inputCharset=" + resMap.get("inputCharset") + "&receiveUrl=" + resMap.get("receiveUrl")
+              + "&version=" + resMap.get("version") + "&signType=" + resMap.get("signType")
+              + "&merchantId=" + resMap.get("merchantId") + "&orderNo=" + resMap.get("orderNo")
+              + "&orderAmount=" + resMap.get("orderAmount") + "&orderCurrency="
+              + resMap.get("orderCurrency") + "&orderDatetime=" + resMap.get("orderDatetime")
+              + "&productName=" + resMap.get("productName") + "&ext1=" + resMap.get("ext1")
+              + "&payType=" + resMap.get("payType") + "&key=" + allinpay_merchantMD5Key;
+      String signMsg = SunMd5.md5(tempStr).toUpperCase().trim();
+      resMap.put("signMsg", signMsg);
+      resMap.put("out_trade_no", order_sn);
+      resMap.putAll(resMap);
+
+      response.setCode(CommonAttributes.SUCCESS);
+      response.setMsg(resMap);
+    } else {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.success("rebate.payOrder.create.fail").getContent());
+    }
+    return response;
+  }
 
   /**
    * 电信翼支付接口
@@ -328,6 +400,8 @@ public class PayUtil {
 
     return result;
   }
+
+
 
   // private static String createSign(Map<String, Object> map) {
   // SortedMap<String, Object> parameters = new TreeMap<String, Object>();
