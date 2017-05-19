@@ -14,16 +14,20 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.ApkVersion;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.Order;
 import org.rebate.entity.SettingConfig;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.json.base.BaseRequest;
+import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SettingConfigRequest;
 import org.rebate.service.ApkVersionService;
 import org.rebate.service.EndUserService;
+import org.rebate.service.OrderService;
 import org.rebate.service.SettingConfigService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
@@ -50,6 +54,35 @@ public class CommonController extends MobileBaseController {
   @Resource(name = "settingConfigServiceImpl")
   private SettingConfigService settingConfigService;
 
+  @Resource(name = "orderServiceImpl")
+  private OrderService orderService;
+
+
+
+  /**
+   * 测试
+   *
+   * @return
+   */
+  @RequestMapping(value = "/test", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse test(@RequestBody BaseRequest req) {
+    BaseResponse response = new BaseResponse();
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter sellerFilter = new Filter("endUser", Operator.eq, 63);
+    Filter status = new Filter("status", Operator.eq, OrderStatus.UNPAID);
+    filters.add(sellerFilter);
+    filters.add(status);
+    List<Order> orders = orderService.findList(null, filters, null);
+    for (Order order : orders) {
+      long startTime = System.currentTimeMillis();
+      orderService.updateOrderforPayCallBack(order.getSn());
+      long endTime = System.currentTimeMillis();
+      System.out.println("订单号：" + order.getSn() + "--时间:" + (endTime - startTime));
+
+    }
+
+    return response;
+  }
 
   /**
    * 初始化jpush reg id
