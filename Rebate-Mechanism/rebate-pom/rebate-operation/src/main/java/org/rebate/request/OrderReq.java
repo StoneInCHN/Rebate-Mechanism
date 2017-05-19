@@ -40,6 +40,16 @@ public class OrderReq {
   private Date orderDateTo;
 
   /**
+   * 支付时间from
+   */
+  private Date paymentTimeFrom;
+
+  /**
+   * 支付时间To
+   */
+  private Date paymentTimeTo;
+
+  /**
    * 订单编号
    */
   private String sn;
@@ -114,6 +124,23 @@ public class OrderReq {
   public void setPaymentType(String paymentType) {
     this.paymentType = paymentType;
   }
+
+  public Date getPaymentTimeFrom() {
+    return paymentTimeFrom;
+  }
+
+  public void setPaymentTimeFrom(Date paymentTimeFrom) {
+    this.paymentTimeFrom = paymentTimeFrom;
+  }
+
+  public Date getPaymentTimeTo() {
+    return paymentTimeTo;
+  }
+
+  public void setPaymentTimeTo(Date paymentTimeTo) {
+    this.paymentTimeTo = paymentTimeTo;
+  }
+
 
 
 }

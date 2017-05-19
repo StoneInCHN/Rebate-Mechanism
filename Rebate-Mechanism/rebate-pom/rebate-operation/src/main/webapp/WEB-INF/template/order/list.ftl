@@ -76,6 +76,21 @@
 								<td>
 									<input type="text" id="orderDateTo" name="orderDateTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'orderDateFrom\')}'});" readonly [#if orderDateTo??]value="${orderDateTo?string("yyyy-MM-dd")}" [/#if]/>
 								</td>
+								
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.order.paymentTime")}:
+								</th>
+								<td>
+									<input type="text" id="paymentTimeFrom" name="paymentTimeFrom" class="text Wdate" onclick="WdatePicker({maxDate: '#F{$dp.$D(\'paymentTimeTo\')}'});" readonly [#if paymentTimeFrom??]value="${paymentTimeFrom?string("yyyy-MM-dd")}"[/#if] />
+								</td>
+								<th class="dateRange">
+									---
+								</th>
+								<td>
+									<input type="text" id="paymentTimeTo" name="paymentTimeTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'paymentTimeFrom\')}'});" readonly [#if paymentTimeTo??]value="${paymentTimeTo?string("yyyy-MM-dd")}" [/#if]/>
+								</td>
 							</tr>
 							<tr>
 								<th>
@@ -121,6 +136,9 @@
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.order.orderTime")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="paymentTime">${message("rebate.order.paymentTime")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="paymentType">${message("rebate.order.paymentType")}</a>
 					</th>
 					<th>
@@ -154,6 +172,9 @@
 					</td>
 					<td>
 						${order.createDate?string("yyyy-MM-dd HH:mm:ss")}
+					</td>
+					<td>
+						${(order.paymentTime?string("yyyy-MM-dd HH:mm:ss"))!}
 					</td>
 					<td>
 						${order.paymentType}

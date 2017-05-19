@@ -60,8 +60,18 @@ public class OrderController extends BaseController {
     if (request.getOrderDateTo() != null) {
       filters.add(Filter.lt("createDate",
           TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getOrderDateTo()))));
-      model.addAttribute("orderDateTo", request.getOrderDateTo());
+      model.addAttribute("createDateTo", request.getOrderDateTo());
     }
+    if (request.getPaymentTimeFrom() != null) {
+      filters.add(Filter.ge("paymentTime", TimeUtils.formatDate2Day(request.getPaymentTimeFrom())));
+      model.addAttribute("paymentTimeFrom", request.getPaymentTimeFrom());
+    }
+    if (request.getPaymentTimeTo() != null) {
+      filters.add(Filter.lt("paymentTime",
+          TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getPaymentTimeTo()))));
+      model.addAttribute("paymentTimeTo", request.getPaymentTimeTo());
+    }
+    
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
