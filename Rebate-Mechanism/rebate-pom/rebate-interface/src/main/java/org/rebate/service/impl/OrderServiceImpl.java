@@ -147,7 +147,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     if (!OrderStatus.UNPAID.equals(order.getStatus())) {
       if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
         LogUtil.debug(OrderServiceImpl.class, "updateOrderforPayCallBack",
-            "The order already deal with. orderSn: %s, orderStatus: %s", order.getStatus());
+            "The order already deal with. orderSn: %s, orderStatus: %s", orderSn, order.getStatus()
+                .toString());
       }
       return order;
     }
