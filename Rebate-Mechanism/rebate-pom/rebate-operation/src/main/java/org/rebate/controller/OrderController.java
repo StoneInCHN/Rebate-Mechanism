@@ -69,7 +69,6 @@ public class OrderController extends BaseController {
     model.addAttribute("page", orderService.findPage(pageable));
     return "/order/list";
   }
-
   /**
    * 查看
    */

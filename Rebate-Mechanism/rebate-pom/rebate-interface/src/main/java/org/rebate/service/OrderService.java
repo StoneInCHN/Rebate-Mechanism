@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.rebate.entity.Order;
+import org.rebate.entity.SellerOrderCart;
 import org.rebate.framework.service.BaseService;
+import org.rebate.json.request.SellerOrderCartRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -66,4 +68,12 @@ public interface OrderService extends BaseService<Order, Long> {
 
   Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
       Boolean isBeanPay, Boolean isSallerOrder);
+
+
+  Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId);
+
+
+  List<Order> createSellerOrder(List<SellerOrderCart> sellerOrderCarts);
+
+
 }

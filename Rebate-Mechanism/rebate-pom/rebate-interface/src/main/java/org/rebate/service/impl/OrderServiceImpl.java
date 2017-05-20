@@ -14,6 +14,7 @@ import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeScoreRecordDao;
 import org.rebate.dao.OrderDao;
 import org.rebate.dao.SellerDao;
+import org.rebate.dao.SellerOrderCartDao;
 import org.rebate.dao.SnDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
@@ -28,6 +29,7 @@ import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SellerEvaluateImage;
+import org.rebate.entity.SellerOrderCart;
 import org.rebate.entity.Sn.Type;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
@@ -40,6 +42,8 @@ import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.json.request.OrderRequest;
+import org.rebate.json.request.SellerOrderCartRequest;
 import org.rebate.service.FileService;
 import org.rebate.service.OrderService;
 import org.rebate.utils.TimeUtils;
@@ -79,6 +83,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   @Resource(name = "agentCommissionConfigDaoImpl")
   private AgentCommissionConfigDao agentCommissionConfigDao;
+  @Resource(name = "sellerOrderCartDaoImpl")
+  private SellerOrderCartDao sellerOrderCartDao;
 
   @Resource(name = "orderDaoImpl")
   public void setBaseDao(OrderDao orderDao) {
@@ -106,8 +112,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     if (isSallerOrder) {
       order.setIsSallerOrder(true);
-      order.setStatus(OrderStatus.PAID);
-      order.setPaymentTime(new Date());
     }
     if (!isBeanPay) {
       BigDecimal rebateUserScoreConfig =
@@ -613,6 +617,71 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
               limitAmount.toString(), startTime + "-" + endTime);
     }
     return null;
+
+  }
+
+  @Override
+  public Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId) {
+
+    return create(userId, null, amount, sellerId, null, false, true);
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED)
+  public List<Order> createSellerOrder(List<SellerOrderCart> sellerOrderCarts) {
+    List<Order> sellerOrders = new ArrayList<>();
+    for (SellerOrderCart sellerOrderCart : sellerOrderCarts) {
+      Order order = new Order();
+      Seller seller = sellerOrderCart.getSeller();
+      BigDecimal amount = sellerOrderCart.getAmount();
+      order.setEndUser(sellerOrderCart.getEndUser());
+      order.setSeller(seller);
+      order.setAmount(amount);
+      order.setSellerIncome(amount.multiply(seller.getDiscount().divide(new BigDecimal("10"))));
+      order.setPaymentType(null);
+      order.setStatus(OrderStatus.UNPAID);
+      order.setSn(snDao.generate(Type.ORDER));
+      order.setIsBeanPay(false);
+
+      order.setIsSallerOrder(true);
+      BigDecimal rebateUserScoreConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER)
+              .getConfigValue());
+      BigDecimal rebateSellerScoreConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
+              .getConfigValue());
+      BigDecimal rebateSellerOrderPercentageConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(
+              SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
+      BigDecimal encourageAmountConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
+              .getConfigValue());
+
+      BigDecimal encourageAmount =
+          (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
+              .setScale(4, BigDecimal.ROUND_HALF_UP);
+      order.setEncourageAmount(encourageAmount);
+
+      BigDecimal rebateUserScore =
+          amount.subtract(order.getSellerIncome()).multiply(rebateUserScoreConfig);
+      if (rebateUserScore.compareTo(order.getAmount()) > 0) {
+        rebateUserScore = order.getAmount();
+      }
+
+      BigDecimal rebateSellerScore =
+          amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
+      rebateSellerScore =
+          rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
+
+      order.setUserScore(rebateUserScore);
+      order.setSellerScore(rebateSellerScore);
+      sellerOrders.add(order);
+      sellerOrderCartDao.remove(sellerOrderCart);
+    }
+    orderDao.persist(sellerOrders);
+
+
+    return sellerOrders;
 
   }
 }

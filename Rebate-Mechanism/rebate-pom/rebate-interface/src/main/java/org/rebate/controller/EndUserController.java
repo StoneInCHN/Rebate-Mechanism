@@ -25,8 +25,6 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
-import org.rebate.entity.MessageInfo;
-import org.rebate.entity.MsgEndUser;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SystemConfig;
@@ -57,6 +55,7 @@ import org.rebate.service.LeBeanRecordService;
 import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.RebateRecordService;
+import org.rebate.service.SellerOrderCartService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
@@ -115,6 +114,9 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "agentCommissionConfigServiceImpl")
   private AgentCommissionConfigService agentCommissionConfigService;
+
+  @Resource(name = "sellerOrderCartServiceImpl")
+  private SellerOrderCartService sellerOrderCartService;
 
   /**
    * 测试
@@ -1613,7 +1615,7 @@ public class EndUserController extends MobileBaseController {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
     String token = request.getToken();
-    Long userId = request.getEntityId();
+    Long userId = request.getUserId();
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
     // if (!TokenGenerator.isValiableToken(token, userToken)) {
@@ -1635,14 +1637,18 @@ public class EndUserController extends MobileBaseController {
     }
     String[] propertys = {"id", "name", "address", "discount"};
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, seller);
-    // String newtoken = TokenGenerator.generateToken(token);
-    // endUserService.createEndUserToken(newtoken, userId);
-    // response.setToken(newtoken);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    List<Filter> filters = new ArrayList<>();
+    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    filters.add(sellerFilter);
+    long cartCount = sellerOrderCartService.count(sellerFilter);
+    result.put("cartCount", cartCount);
     response.setCode(CommonAttributes.SUCCESS);
     response.setMsg(result);
     return response;
   }
-
 
   @RequestMapping(value = "/getUserInfoByMobile", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
@@ -1652,7 +1658,8 @@ public class EndUserController extends MobileBaseController {
 
     String token = request.getToken();
     String cellPhoneNum = request.getCellPhoneNum();
-    // // 验证登录token
+    Long userId = request.getUserId();
+    // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
     // if (!TokenGenerator.isValiableToken(token, userToken)) {
     // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
@@ -1670,9 +1677,9 @@ public class EndUserController extends MobileBaseController {
 
     String[] propertys = {"id", "cellPhoneNum", "nickName"};
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, user);
-    // String newtoken = TokenGenerator.generateToken(token);
-    // endUserService.createEndUserToken(newtoken, userId);
-    // response.setToken(newtoken);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     response.setMsg(result);
     return response;

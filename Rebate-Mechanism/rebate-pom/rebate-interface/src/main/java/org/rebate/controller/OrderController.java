@@ -94,7 +94,6 @@ public class OrderController extends MobileBaseController {
     String remark = req.getRemark();
     Boolean isBeanPay = req.getIsBeanPay();
     String password = req.getPayPwd();
-    Boolean isSallerOrder = req.getIsSallerOrder();
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
     // if (!TokenGenerator.isValiableToken(token, userToken)) {
@@ -110,7 +109,7 @@ public class OrderController extends MobileBaseController {
     }
 
 
-    if (isSallerOrder != null && isSallerOrder == false && isBeanPay) {// 乐豆支付需要验证支付密码
+    if (isBeanPay) {// 乐豆支付需要验证支付密码
       EndUser endUser = endUserService.find(userId);
       if (endUser.getCurLeBean().compareTo(amount) < 0) {
         response.setCode(CommonAttributes.FAIL_COMMON);
@@ -150,12 +149,7 @@ public class OrderController extends MobileBaseController {
         return response;
       }
     }
-    Order order = null;
-    if (isSallerOrder) {
-      order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay, true);
-    } else {
-      order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
-    }
+    Order order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
 
     if (LogUtil.isDebugEnabled(OrderController.class)) {
       LogUtil
@@ -166,49 +160,46 @@ public class OrderController extends MobileBaseController {
               userId, payType, payTypeId, amount, sellerId, remark, isBeanPay);
     }
 
-    if (isSallerOrder != null && isSallerOrder == false) {
-      try {
-        if ("1".equals(payTypeId)) {// 微信支付
-          BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
-          response =
-              PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
-                  order.getId().toString(), weChatPrice.intValue() + "");
-          response.getMsg().put("encourageAmount", order.getEncourageAmount());
-        } else if ("2".equals(payTypeId)) {// 支付宝支付
-          Map<String, Object> map = new HashMap<String, Object>();
-          String orderStr =
-              PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller()
-                  .getName(), amount.toString());
-          map.put("orderStr", orderStr);
-          map.put("out_trade_no", order.getSn());
-          map.put("encourageAmount", order.getEncourageAmount());
-          response.setMsg(map);
-          response.setCode(CommonAttributes.SUCCESS);
-        } else if ("3".equals(payTypeId)) {// 翼支付
-          response =
-              PayUtil.yiPay(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
-                  order.getId().toString(), amount, userId.toString());
-          response.getMsg().put("encourageAmount", order.getEncourageAmount());
-
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      // orderService.updateOrderforPayCallBack(order.getSn());
-      if (isBeanPay) {// 乐豆支付
-        orderService.updateOrderforPayCallBack(order.getSn());
+    try {
+      if ("1".equals(payTypeId)) {// 微信支付
+        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        response =
+            PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                order.getId().toString(), weChatPrice.intValue() + "");
+        response.getMsg().put("encourageAmount", order.getEncourageAmount());
+      } else if ("2".equals(payTypeId)) {// 支付宝支付
         Map<String, Object> map = new HashMap<String, Object>();
+        String orderStr =
+            PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller().getName(),
+                amount.toString());
+        map.put("orderStr", orderStr);
         map.put("out_trade_no", order.getSn());
-        map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
+        map.put("encourageAmount", order.getEncourageAmount());
         response.setMsg(map);
         response.setCode(CommonAttributes.SUCCESS);
+      } else if ("3".equals(payTypeId)) {// 翼支付
+        response =
+            PayUtil.yiPay(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                order.getId().toString(), amount, userId.toString());
+        response.getMsg().put("encourageAmount", order.getEncourageAmount());
 
       }
-      response.getMsg().put("orderId", order.getId());
-    } else {
-      response.setCode(CommonAttributes.SUCCESS);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
+    // orderService.updateOrderforPayCallBack(order.getSn());
+    if (isBeanPay) {// 乐豆支付
+      orderService.updateOrderforPayCallBack(order.getSn());
+      Map<String, Object> map = new HashMap<String, Object>();
+      map.put("out_trade_no", order.getSn());
+      map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
+      response.setMsg(map);
+      response.setCode(CommonAttributes.SUCCESS);
+
+    }
+    response.getMsg().put("orderId", order.getId());
+
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
@@ -477,6 +468,8 @@ public class OrderController extends MobileBaseController {
       filters.add(statusFilter);
     }
 
+    Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.ne, true);
+    filters.add(sellerOrderFilter);
 
     pageable.setFilters(filters);
 
@@ -503,4 +496,114 @@ public class OrderController extends MobileBaseController {
     return response;
   }
 
+  /**
+   * 获取录单订单（录单购物车）
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getSallerOrderCart", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getSallerOrderCart(
+      @RequestBody OrderRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageNumber = request.getPageNumber();
+    Integer pageSize = request.getPageSize();
+    EndUser endUser = endUserService.find(userId);
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
+
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    filters.add(endUserFilter);
+
+    Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    filters.add(statusFilter);
+
+    Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.eq, true);
+    filters.add(sellerOrderFilter);
+
+    pageable.setFilters(filters);
+
+    Page<Order> orderPage = orderService.findPage(pageable);
+    String[] propertys =
+        {"id", "endUser.nickName", "endUser.cellPhoneNum", "amount", "sellerIncome", "createDate"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
+
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) orderPage.getTotal());
+    response.setPage(pageInfo);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 生成录单订单
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/generateSellerOrder", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> generateSellerOrder(
+      @RequestBody OrderRequest req, HttpServletRequest httpReq) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = req.getUserId();
+    Long entityId = req.getEntityId();
+    String token = req.getToken();
+    BigDecimal amount = req.getAmount();
+    Long sellerId = req.getSellerId();
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
+
+    if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
+      return response;
+    }
+
+
+    Order order = orderService.createSellerOrder(entityId, amount, sellerId);
+
+    if (LogUtil.isDebugEnabled(OrderController.class)) {
+      LogUtil.debug(OrderController.class, "pay", "pay order. userId: %s,amount: %s,sellerId: %s",
+          userId, amount, sellerId);
+    }
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 }
