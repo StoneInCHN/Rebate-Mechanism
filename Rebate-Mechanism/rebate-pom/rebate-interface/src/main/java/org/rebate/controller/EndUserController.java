@@ -1601,26 +1601,18 @@ public class EndUserController extends MobileBaseController {
 
 
   /**
-   * 微信解除授权清空openid
+   * 获取当前用户的商户信息
    * 
    * @param request
    * @return
    */
-  @RequestMapping(value = "/fetchEndUser", method = RequestMethod.POST)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> fetchEndUser(
+  @RequestMapping(value = "/getCurrentSellerInfo", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> getCurrentSellerInfo(
       @RequestBody BaseRequest request) {
-    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
-
-    String cellPhoneNum = request.getCellPhoneNum();
     String token = request.getToken();
-    int pageNumber = request.getPageNumber();
-    int pageSize = request.getPageSize();
-
-    Pageable pageable = new Pageable();
-    pageable.setPageNumber(pageNumber);
-    pageable.setPageSize(pageSize);
-
+    Long userId = request.getEntityId();
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
     // if (!TokenGenerator.isValiableToken(token, userToken)) {
@@ -1629,31 +1621,61 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    List<Filter> filters = new ArrayList<>();
-    if (cellPhoneNum != null) {
-      Filter cellPhoneFillter = new Filter("cellPhoneNum", Operator.like, "%" + cellPhoneNum + "%");
-      filters.add(cellPhoneFillter);
+    EndUser endUser = endUserService.find(userId);
+
+
+    Seller seller = endUser.getSellers().iterator().next();
+
+
+    if (seller == null) {
+      response.setCode(CommonAttributes.USER_INVALID);
+      response.setDesc(Message.error("rebate.seller.invalid").getContent());
+      return response;
     }
-
-    pageable.setFilters(filters);
-
-    Page<EndUser> endUserPage = endUserService.findPage(pageable);
-    response.setCode(CommonAttributes.SUCCESS);
-
-    PageResponse pageInfo = new PageResponse();
-    pageInfo.setPageNumber(pageNumber);
-    pageInfo.setPageSize(pageSize);
-    pageInfo.setTotal((int) endUserPage.getTotal());
-
-    String[] propertys = {"id", "userName", "cellPhoneNum", "nickName"};
-    List<Map<String, Object>> result =
-        FieldFilterUtils.filterCollectionMap(propertys, endUserPage.getContent());
-    response.setMsg(result);
-    response.setPage(pageInfo);
+    String[] propertys = {"id", "name", "address", "discount"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, seller);
     // String newtoken = TokenGenerator.generateToken(token);
     // endUserService.createEndUserToken(newtoken, userId);
     // response.setToken(newtoken);
-
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setMsg(result);
     return response;
   }
+
+
+  @RequestMapping(value = "/getUserInfoByMobile", method = RequestMethod.POST)
+  public @ResponseBody ResponseOne<Map<String, Object>> getUserInfoByMobile(
+      @RequestBody BaseRequest request) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    String token = request.getToken();
+    String cellPhoneNum = request.getCellPhoneNum();
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
+
+    EndUser user = endUserService.findByUserMobile(cellPhoneNum);
+
+    if (user == null) {
+      response.setCode(CommonAttributes.USER_INVALID);
+      response.setDesc(Message.error("rebate.user.notfound").getContent());
+      return response;
+    }
+
+    String[] propertys = {"id", "cellPhoneNum", "nickName"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, user);
+    // String newtoken = TokenGenerator.generateToken(token);
+    // endUserService.createEndUserToken(newtoken, userId);
+    // response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    response.setMsg(result);
+    return response;
+  }
+
+
+
 }
