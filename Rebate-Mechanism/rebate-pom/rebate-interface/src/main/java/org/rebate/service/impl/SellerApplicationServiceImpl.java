@@ -8,10 +8,12 @@ import javax.annotation.Resource;
 
 import org.rebate.dao.AreaDao;
 import org.rebate.dao.EndUserDao;
+import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerApplicationDao;
 import org.rebate.dao.SellerCategoryDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
@@ -34,6 +36,9 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
   @Resource(name = "sellerApplicationDaoImpl")
   private SellerApplicationDao sellerApplicationDao;
 
+  @Resource(name = "salesmanSellerRelationDaoImpl")
+  private SalesmanSellerRelationDao salesmanSellerRelationDao;
+
   @Resource(name = "areaDaoImpl")
   private AreaDao areaDao;
 
@@ -53,7 +58,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public SellerApplication createApplication(SellerRequest req) {
+  public SellerApplication createApplication(SellerRequest req, EndUser sellerUser) {
     SellerApplication application = new SellerApplication();
     if (req.getApplyId() != null) {
       application = sellerApplicationDao.find(req.getApplyId());
@@ -70,8 +75,8 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     application.setDiscount(new BigDecimal(req.getDiscount()));
     application.setApplyStatus(ApplyStatus.AUDIT_WAITING);
 
-    EndUser endUser = endUserDao.find(req.getUserId());
-    application.setEndUser(endUser);
+    // EndUser endUser = endUserDao.findByUserMobile(req.getCellPhoneNum());
+    application.setEndUser(sellerUser);
 
     Area area = areaDao.find(req.getAreaId());
     application.setArea(area);
@@ -93,8 +98,14 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
       application.setEnvImages(envImages);
     }
 
-
     sellerApplicationDao.merge(application);
+
+    EndUser salesman = endUserDao.find(req.getUserId());
+    SalesmanSellerRelation salesmanSellerRelation = new SalesmanSellerRelation();
+    salesmanSellerRelation.setSellerApplication(application);
+    salesmanSellerRelation.setEndUser(salesman);
+    salesmanSellerRelation.setApplyStatus(false);
+    salesmanSellerRelationDao.persist(salesmanSellerRelation);
     return application;
   }
 }

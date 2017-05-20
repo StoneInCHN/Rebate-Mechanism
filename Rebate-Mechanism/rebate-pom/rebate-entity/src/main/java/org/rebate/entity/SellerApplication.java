@@ -8,6 +8,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -125,7 +126,7 @@ public class SellerApplication extends BaseEntity {
    * 折扣
    */
   private BigDecimal discount;
-  
+
   /**
    * 每日营业额上限
    */
@@ -230,7 +231,7 @@ public class SellerApplication extends BaseEntity {
     this.contactPerson = contactPerson;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public Area getArea() {
     return area;
   }
@@ -293,7 +294,7 @@ public class SellerApplication extends BaseEntity {
     this.email = email;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public SellerCategory getSellerCategory() {
     return sellerCategory;
   }
@@ -302,7 +303,7 @@ public class SellerApplication extends BaseEntity {
     this.sellerCategory = sellerCategory;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }
@@ -319,5 +320,5 @@ public class SellerApplication extends BaseEntity {
   public void setLimitAmountByDay(BigDecimal limitAmountByDay) {
     this.limitAmountByDay = limitAmountByDay;
   }
-  
+
 }

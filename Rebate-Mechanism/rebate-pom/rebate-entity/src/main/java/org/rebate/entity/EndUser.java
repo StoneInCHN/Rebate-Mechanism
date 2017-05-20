@@ -259,6 +259,20 @@ public class EndUser extends BaseEntity {
    */
   private String sellerPicUrl;
 
+  /**
+   * 是否为业务员
+   */
+  private Boolean isSalesman = false;
+
+
+
+  public Boolean getIsSalesman() {
+    return isSalesman;
+  }
+
+  public void setIsSalesman(Boolean isSalesman) {
+    this.isSalesman = isSalesman;
+  }
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getAgentLeScore() {

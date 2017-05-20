@@ -13,6 +13,7 @@ import org.rebate.dao.AgentCommissionConfigDao;
 import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeScoreRecordDao;
 import org.rebate.dao.OrderDao;
+import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.dao.SellerOrderCartDao;
 import org.rebate.dao.SnDao;
@@ -26,6 +27,7 @@ import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.RebateRecord;
+import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SellerEvaluateImage;
@@ -85,6 +87,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   private AgentCommissionConfigDao agentCommissionConfigDao;
   @Resource(name = "sellerOrderCartDaoImpl")
   private SellerOrderCartDao sellerOrderCartDao;
+
+  @Resource(name = "salesmanSellerRelationDaoImpl")
+  private SalesmanSellerRelationDao salesmanSellerRelationDao;
 
   @Resource(name = "orderDaoImpl")
   public void setBaseDao(OrderDao orderDao) {
@@ -379,28 +384,26 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       }
 
       /**
-       * 商家消费收益后推荐人返利乐分
+       * 商家消费收益后业务员返利乐分
        */
-      UserRecommendRelation sellerRecommendRelation =
-          userRecommendRelationDao.findByUser(sellerEndUser);
+      SalesmanSellerRelation salesmanSellerRelation =
+          salesmanSellerRelationDao.getRelationBySeller(seller);
       SystemConfig recommendSellerConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_SELLER);
-      if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
-          && sellerRecommendRelation != null && sellerRecommendRelation.getParent() != null) {
+      if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null) {
         LeScoreRecord leScoreRecord = new LeScoreRecord();
         leScoreRecord.setOrderId(orderId);
-        EndUser sellerRecommender = sellerRecommendRelation.getParent().getEndUser();
-        leScoreRecord.setEndUser(sellerRecommender);
-        leScoreRecord.setRecommender(sellerRecommendRelation.getEndUser().getNickName());
-        leScoreRecord.setRecommenderPhoto(sellerRecommendRelation.getEndUser().getUserPhoto());
+        EndUser salesman = salesmanSellerRelation.getEndUser();
+        leScoreRecord.setEndUser(salesman);
+        leScoreRecord.setRecommender(seller.getName());
+        leScoreRecord.setRecommenderPhoto(seller.getStorePictureUrl());
         leScoreRecord.setLeScoreType(LeScoreType.RECOMMEND_SELLER);
         BigDecimal income =
             rebateAmount.multiply(new BigDecimal(recommendSellerConfig.getConfigValue()));
         // leScoreRecord.setAmount(income.multiply(new
         // BigDecimal(leScorePerConfig.getConfigValue())));
         leScoreRecord.setAmount(income);
-        leScoreRecord.setUserCurLeScore(sellerRecommender.getCurLeScore().add(
-            leScoreRecord.getAmount()));
+        leScoreRecord.setUserCurLeScore(salesman.getCurLeScore().add(leScoreRecord.getAmount()));
 
         // LeBeanRecord leBeanRecord = new LeBeanRecord();
         // leBeanRecord.setAmount(income.subtract(leScoreRecord.getAmount()));
@@ -415,18 +418,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         // sellerRecommender.setTotalLeBean(sellerRecommender.getTotalLeBean().add(
         // leBeanRecord.getAmount()));
         // sellerRecommender.getLeBeanRecords().add(leBeanRecord);
-        sellerRecommender.setCurLeScore(sellerRecommender.getCurLeScore().add(
-            leScoreRecord.getAmount()));
-        sellerRecommender.setTotalLeScore(sellerRecommender.getTotalLeScore().add(
-            leScoreRecord.getAmount()));
-        sellerRecommender.setMotivateLeScore(sellerRecommender.getMotivateLeScore().add(
-            leScoreRecord.getAmount()));
-        sellerRecommender.getLeScoreRecords().add(leScoreRecord);
-        endUserDao.merge(sellerRecommender);
+        salesman.setCurLeScore(salesman.getCurLeScore().add(leScoreRecord.getAmount()));
+        salesman.setTotalLeScore(salesman.getTotalLeScore().add(leScoreRecord.getAmount()));
+        salesman.setMotivateLeScore(salesman.getMotivateLeScore().add(leScoreRecord.getAmount()));
+        salesman.getLeScoreRecords().add(leScoreRecord);
+        endUserDao.merge(salesman);
 
-        userRecommendRelation.setTotalRecommendLeScore(sellerRecommendRelation
+        salesmanSellerRelation.setTotalRecommendLeScore(salesmanSellerRelation
             .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
-        userRecommendRelationDao.merge(sellerRecommendRelation);
+        salesmanSellerRelationDao.merge(salesmanSellerRelation);
       }
     }
 

@@ -26,6 +26,7 @@ import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.RebateRecord;
+import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
@@ -56,6 +57,7 @@ import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.RebateRecordService;
 import org.rebate.service.SellerOrderCartService;
+import org.rebate.service.SalesmanSellerRelationService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
@@ -117,6 +119,8 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "sellerOrderCartServiceImpl")
   private SellerOrderCartService sellerOrderCartService;
+  @Resource(name = "salesmanSellerRelationServiceImpl")
+  private SalesmanSellerRelationService salesmanSellerRelationService;
 
   /**
    * 测试
@@ -339,7 +343,7 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat", "isSalesman"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, loginUser);
     map.putAll(endUserService.isUserHasSeller(loginUser));
     map.put("isSetLoginPwd", false);
@@ -618,7 +622,7 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat", "isSalesman"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, regUser);
     map.putAll(endUserService.isUserHasSeller(regUser));
     map.put("isSetLoginPwd", false);
@@ -870,7 +874,7 @@ public class EndUserController extends MobileBaseController {
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
             "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
-            "wechatNickName"};
+            "wechatNickName", "isSalesman"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.putAll(endUserService.isUserHasSeller(endUser));
     map.put("isSetLoginPwd", false);
@@ -968,6 +972,59 @@ public class EndUserController extends MobileBaseController {
     String[] propertys =
         {"id", "endUser.nickName", "endUser.createDate", "totalRecommendLeScore",
             "endUser.userPhoto", "endUser.sellerName"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 获取业务员推荐商家记录
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getRecommendSellerRec", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getRecommendSellerRec(
+      @RequestBody BaseRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("endUser", userId));
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.asc("applyStatus"));
+    orderings.add(Ordering.desc("createDate"));
+    pageable.setFilters(filters);
+    pageable.setOrders(orderings);
+
+
+    Page<SalesmanSellerRelation> page = salesmanSellerRelationService.findPage(pageable);
+    String[] propertys =
+        {"id", "createDate", "sellerApplication.sellerName", "sellerApplication.id",
+            "sellerApplication.applyStatus", "sellerApplication.storePhoto",
+            "sellerApplication.contactCellPhone", "totalRecommendLeScore", "seller.name",
+            "seller.storePictureUrl"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
