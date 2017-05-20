@@ -1607,6 +1607,7 @@ public class EndUserController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getCurrentSellerInfo", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getCurrentSellerInfo(
       @RequestBody BaseRequest request) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
@@ -1644,6 +1645,7 @@ public class EndUserController extends MobileBaseController {
 
 
   @RequestMapping(value = "/getUserInfoByMobile", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getUserInfoByMobile(
       @RequestBody BaseRequest request) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
