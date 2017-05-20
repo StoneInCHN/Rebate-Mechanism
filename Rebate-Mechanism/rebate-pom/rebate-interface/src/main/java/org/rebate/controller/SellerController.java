@@ -12,8 +12,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
+import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
@@ -310,7 +312,7 @@ public class SellerController extends MobileBaseController {
 
 
   /**
-   * 申请店铺
+   * 业务员提交申请店铺
    *
    * @param req
    * @return
@@ -340,7 +342,20 @@ public class SellerController extends MobileBaseController {
     // return response;
     // }
 
-    sellerApplicationService.createApplication(req);
+    EndUser endUser = endUserService.findByUserMobile(req.getCellPhoneNum());
+    if (endUser == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.apply.cellPhone.unreg",
+          setting.getSellerDiscountMin()).getContent());
+      return response;
+    }
+    if (endUser.getSellerName() != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller",
+          setting.getSellerDiscountMin()).getContent());
+      return response;
+    }
+    sellerApplicationService.createApplication(req, endUser);
     if (LogUtil.isDebugEnabled(SellerController.class)) {
       LogUtil
           .debug(

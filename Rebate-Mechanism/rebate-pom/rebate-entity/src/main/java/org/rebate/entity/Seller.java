@@ -316,7 +316,7 @@ public class Seller extends BaseEntity {
     this.sellerOrders = sellerOrders;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }
@@ -404,7 +404,7 @@ public class Seller extends BaseEntity {
     this.accountStatus = accountStatus;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public Area getArea() {
     return area;
   }
@@ -495,7 +495,7 @@ public class Seller extends BaseEntity {
   }
 
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public SellerCategory getSellerCategory() {
     return sellerCategory;
   }

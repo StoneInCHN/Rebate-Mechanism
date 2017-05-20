@@ -1,5 +1,6 @@
 package org.rebate.service;
 
+import org.rebate.entity.EndUser;
 import org.rebate.entity.SellerApplication;
 import org.rebate.framework.service.BaseService;
 import org.rebate.json.request.SellerRequest;
@@ -12,5 +13,5 @@ public interface SellerApplicationService extends BaseService<SellerApplication,
    * @param req
    * @return
    */
-  SellerApplication createApplication(SellerRequest req);
+  SellerApplication createApplication(SellerRequest req, EndUser sellerUser);
 }
