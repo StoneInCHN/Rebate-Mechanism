@@ -13,6 +13,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.AreaDao;
 import org.rebate.dao.EndUserDao;
+import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.dao.SettingConfigDao;
 import org.rebate.dao.SnDao;
@@ -72,6 +73,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "snDaoImpl")
   private SnDao snDao;
+
+  @Resource(name = "salesmanSellerRelationDaoImpl")
+  private SalesmanSellerRelationDao salesmanSellerRelationDao;
 
   @Resource(name = "endUserDaoImpl")
   public void setBaseDao(EndUserDao endUserDao) {
@@ -218,6 +222,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
           } else if (ApplyStatus.AUDIT_FAILED.equals(application.getApplyStatus())) {
             map.put("sellerStatus", "AUDIT_FAILED"); // 审核失败
             map.put("applyId", application.getId());
+            map.put("salesmanCellphone",
+                salesmanSellerRelationDao.getRelationBySellerApplication(application).getEndUser()
+                    .getCellPhoneNum());
           }
           break;
         }

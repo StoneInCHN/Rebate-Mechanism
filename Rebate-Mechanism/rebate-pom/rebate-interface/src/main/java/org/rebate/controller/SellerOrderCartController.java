@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.rebate.aspect.UserValidCheck;
 import org.rebate.aspect.UserParam.CheckUserType;
+import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.EndUser;
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Controller - 数据字典
+ * Controller - 录单购物车
  * 
  *
  */
@@ -69,13 +69,6 @@ public class SellerOrderCartController extends MobileBaseController {
     Long userId = request.getUserId();
     Long entityId = request.getEntityId();
     String token = request.getToken();
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
     Seller seller = sellerService.find(request.getSellerId());
     BigDecimal tenBigDecimal = new BigDecimal(10);
     SellerOrderCart sellerOrderCart = new SellerOrderCart();
@@ -87,7 +80,7 @@ public class SellerOrderCartController extends MobileBaseController {
     sellerOrderCartService.save(sellerOrderCart);
 
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);

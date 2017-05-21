@@ -87,7 +87,9 @@ public class CommonEnum {
     /** 修改登录密码 */
     UPDATELOGINPWD,
     /** 修改支付密码 */
-    UPDATEPAYPWD
+    UPDATEPAYPWD,
+    /** 银行预留手机号验证 */
+    RESERVEDMOBILE
   }
 
   /**
@@ -191,7 +193,11 @@ public class CommonEnum {
     /** 安卓下载地址 6 */
     ANDROID_DOWNLOAD_URL,
     /** IOS下载地址 7 */
-    IOS_DOWNLOAD_URL
+    IOS_DOWNLOAD_URL,
+    /** 店铺货款说明 8 */
+    SELLER_PAYMENT_DESC,
+    /** 实名认证说明 9 */
+    USER_AUTH_DESC
   }
 
   /**
@@ -252,7 +258,9 @@ public class CommonEnum {
     /** 店铺列表展示图片 */
     STORE_SIGN,
     /** 订单评论图片 */
-    ORDER_EVALUATE
+    ORDER_EVALUATE,
+    /** 身份证照片 */
+    AUTH_IDCARD
   }
 
   public enum FileType {

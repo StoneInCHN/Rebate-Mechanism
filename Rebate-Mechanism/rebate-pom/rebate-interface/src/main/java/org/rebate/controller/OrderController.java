@@ -497,13 +497,13 @@ public class OrderController extends MobileBaseController {
   }
 
   /**
-   * 获取录单订单（录单购物车）
+   * 获取录单订单
    * 
    * @return
    */
-  @RequestMapping(value = "/getSallerOrderCart", method = RequestMethod.POST)
+  @RequestMapping(value = "/getSallerOrder", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> getSallerOrderCart(
+  public @ResponseBody ResponseMultiple<Map<String, Object>> getSallerOrder(
       @RequestBody OrderRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
@@ -530,8 +530,8 @@ public class OrderController extends MobileBaseController {
     Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
     filters.add(endUserFilter);
 
-    Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
-    filters.add(statusFilter);
+    // Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    // filters.add(statusFilter);
 
     Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.eq, true);
     filters.add(sellerOrderFilter);

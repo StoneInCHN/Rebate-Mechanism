@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SellerApplication;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.SalesmanSellerRelationService;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,11 @@ public class SalesmanSellerRelationServiceImpl extends
   @Override
   public SalesmanSellerRelation getRelationBySeller(Seller seller) {
     return salesmanSellerRelationDao.getRelationBySeller(seller);
+  }
+
+
+  @Override
+  public SalesmanSellerRelation getRelationBySellerApplication(SellerApplication sellerApplication) {
+    return salesmanSellerRelationDao.getRelationBySellerApplication(sellerApplication);
   }
 }

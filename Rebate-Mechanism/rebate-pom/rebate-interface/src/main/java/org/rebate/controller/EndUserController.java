@@ -29,6 +29,7 @@ import org.rebate.entity.RebateRecord;
 import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SystemConfig;
+import org.rebate.entity.UserAuth;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
@@ -45,6 +46,7 @@ import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
+import org.rebate.json.request.AuthRequest;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
@@ -56,11 +58,12 @@ import org.rebate.service.LeBeanRecordService;
 import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.RebateRecordService;
-import org.rebate.service.SellerOrderCartService;
 import org.rebate.service.SalesmanSellerRelationService;
+import org.rebate.service.SellerOrderCartService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
+import org.rebate.service.UserAuthService;
 import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
@@ -119,8 +122,13 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "sellerOrderCartServiceImpl")
   private SellerOrderCartService sellerOrderCartService;
+
   @Resource(name = "salesmanSellerRelationServiceImpl")
   private SalesmanSellerRelationService salesmanSellerRelationService;
+
+
+  @Resource(name = "userAuthServiceImpl")
+  private UserAuthService userAuthService;
 
   /**
    * 测试
@@ -470,23 +478,25 @@ public class EndUserController extends MobileBaseController {
       response.setCode(CommonAttributes.FAIL_SMSTOKEN);
       response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
     } else {
-      EndUser endUser = endUserService.findByUserMobile(cellPhoneNum);
-      if (smsCodeType.equals(SmsCodeType.REG)) {// 注册（user应不存在）
-        if (endUser != null) {
-          response.setCode(CommonAttributes.FAIL_SMSTOKEN);
-          response.setDesc(Message.error("rebate.mobile.used").getContent());
-          return response;
-        }
-      } else if (smsCodeType.equals(SmsCodeType.UPDATELOGINPWD)
-          || smsCodeType.equals(SmsCodeType.RESETPWD)
-          || smsCodeType.equals(SmsCodeType.UPDATEPAYPWD)) {// 找回登录密码，修改登录密码，修改支付密码（user应存在）
-        if (endUser == null) {
-          response.setCode(CommonAttributes.FAIL_SMSTOKEN);
-          response.setDesc(Message.error("rebate.user.noexist").getContent());
-          return response;
-        }
-      } else {// 登录
+      if (smsCodeType.equals(SmsCodeType.LOGIN) || smsCodeType.equals(SmsCodeType.RESERVEDMOBILE)) {
         // do nothing
+      } else {
+        EndUser endUser = endUserService.findByUserMobile(cellPhoneNum);
+        if (smsCodeType.equals(SmsCodeType.REG)) {// 注册（user应不存在）
+          if (endUser != null) {
+            response.setCode(CommonAttributes.FAIL_SMSTOKEN);
+            response.setDesc(Message.error("rebate.mobile.used").getContent());
+            return response;
+          }
+        } else if (smsCodeType.equals(SmsCodeType.UPDATELOGINPWD)
+            || smsCodeType.equals(SmsCodeType.RESETPWD)
+            || smsCodeType.equals(SmsCodeType.UPDATEPAYPWD)) {// 找回登录密码，修改登录密码，修改支付密码（user应存在）
+          if (endUser == null) {
+            response.setCode(CommonAttributes.FAIL_SMSTOKEN);
+            response.setDesc(Message.error("rebate.user.noexist").getContent());
+            return response;
+          }
+        }
       }
 
       SMSVerificationCode smsVerificationCode = endUserService.getSmsCode(cellPhoneNum);
@@ -876,6 +886,7 @@ public class EndUserController extends MobileBaseController {
             "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
             "wechatNickName", "isSalesman"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
+    map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
     map.putAll(endUserService.isUserHasSeller(endUser));
     map.put("isSetLoginPwd", false);
     map.put("isSetPayPwd", false);
@@ -1707,6 +1718,13 @@ public class EndUserController extends MobileBaseController {
     return response;
   }
 
+
+  /**
+   * 录单时获取用户信息
+   * 
+   * @param request
+   * @return
+   */
   @RequestMapping(value = "/getUserInfoByMobile", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseOne<Map<String, Object>> getUserInfoByMobile(
@@ -1744,4 +1762,44 @@ public class EndUserController extends MobileBaseController {
 
 
 
+  /**
+   * 用户实名认证
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/doIdentityAuth", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse doIdentityAuth(AuthRequest req) {
+    BaseResponse response = new BaseResponse();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    MultipartFile cardFrontPic = req.getCardFrontPic();
+    MultipartFile cardBackPic = req.getCardBackPic();
+    String realName = req.getRealName();
+    String cardNo = req.getCardNo();
+
+
+    UserAuth userAuth = userAuthService.getUserAuthByIdCard(cardNo, true);
+    if (userAuth != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      return response;
+    }
+
+    userAuthService.doAuth(userId, realName, cardNo, cardFrontPic, cardBackPic);
+    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+      LogUtil.debug(EndUserController.class, "doIdentityAuth",
+          "endUser do Identity Auth. userId: %s, realName: %s, idCardNo: %s", userId, realName,
+          cardNo);
+    }
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setDesc(realName);
+    return response;
+  }
 }

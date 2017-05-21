@@ -111,6 +111,9 @@ public class Order extends BaseEntity {
    */
   private BigDecimal encourageAmount;
 
+  /**
+   * 是否为录单订单
+   */
   private Boolean isSallerOrder;
 
   @Column(scale = 4, precision = 12)

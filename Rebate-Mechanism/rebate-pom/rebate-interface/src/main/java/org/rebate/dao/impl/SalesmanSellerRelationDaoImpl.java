@@ -6,6 +6,7 @@ import javax.persistence.NoResultException;
 import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SellerApplication;
 import org.rebate.framework.dao.impl.BaseDaoImpl;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,22 @@ public class SalesmanSellerRelationDaoImpl extends BaseDaoImpl<SalesmanSellerRel
           "select relation from SalesmanSellerRelation relation where relation.seller = :seller";
       return entityManager.createQuery(jpql, SalesmanSellerRelation.class)
           .setFlushMode(FlushModeType.COMMIT).setParameter("seller", seller).getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  @Override
+  public SalesmanSellerRelation getRelationBySellerApplication(SellerApplication sellerApplication) {
+    if (sellerApplication == null) {
+      return null;
+    }
+    try {
+      String jpql =
+          "select relation from SalesmanSellerRelation relation where relation.sellerApplication = :sellerApplication";
+      return entityManager.createQuery(jpql, SalesmanSellerRelation.class)
+          .setFlushMode(FlushModeType.COMMIT).setParameter("sellerApplication", sellerApplication)
+          .getSingleResult();
     } catch (NoResultException e) {
       return null;
     }
