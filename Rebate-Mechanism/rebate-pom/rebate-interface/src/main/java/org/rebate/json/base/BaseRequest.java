@@ -1,5 +1,7 @@
 package org.rebate.json.base;
 
+import java.util.List;
+
 public class BaseRequest {
 
   /**
@@ -24,6 +26,8 @@ public class BaseRequest {
    */
   private Long entityId;
 
+  private List<Long> entityIds;
+
   /**
    * 分页-页面大小
    */
@@ -32,6 +36,16 @@ public class BaseRequest {
    * 分页-当前页码
    */
   private Integer pageNumber;
+
+
+
+  public List<Long> getEntityIds() {
+    return entityIds;
+  }
+
+  public void setEntityIds(List<Long> entityIds) {
+    this.entityIds = entityIds;
+  }
 
   public Long getEntityId() {
     return entityId;

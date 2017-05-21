@@ -2,6 +2,7 @@ package org.rebate.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,11 +19,12 @@ import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.json.base.BaseRequest;
+import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.OrderRequest;
-import org.rebate.json.request.SellerOrderCartRequest;
 import org.rebate.service.EndUserService;
 import org.rebate.service.OrderService;
 import org.rebate.service.SellerOrderCartService;
@@ -69,16 +71,21 @@ public class SellerOrderCartController extends MobileBaseController {
     Long userId = request.getUserId();
     Long entityId = request.getEntityId();
     String token = request.getToken();
-    Seller seller = sellerService.find(request.getSellerId());
-    BigDecimal tenBigDecimal = new BigDecimal(10);
-    SellerOrderCart sellerOrderCart = new SellerOrderCart();
-    sellerOrderCart.setAmount(request.getAmount());
-    sellerOrderCart.setRebateAmount(request.getAmount().multiply(
-        (tenBigDecimal.subtract(seller.getDiscount())).divide(new BigDecimal("10"))));
-    sellerOrderCart.setSeller(seller);
-    sellerOrderCart.setEndUser(endUserService.find(entityId));
-    sellerOrderCartService.save(sellerOrderCart);
 
+    if (entityId != null) {
+      Seller seller = sellerService.find(request.getSellerId());
+      BigDecimal tenBigDecimal = new BigDecimal(10);
+      SellerOrderCart sellerOrderCart = new SellerOrderCart();
+      sellerOrderCart.setAmount(request.getAmount());
+      sellerOrderCart.setRebateAmount(request.getAmount().multiply(
+          (tenBigDecimal.subtract(seller.getDiscount())).divide(new BigDecimal("10"))));
+      sellerOrderCart.setSeller(seller);
+      sellerOrderCart.setEndUser(endUserService.find(entityId));
+      sellerOrderCartService.save(sellerOrderCart);
+    }
+
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("count", sellerOrderCartService.count());
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
@@ -134,60 +141,65 @@ public class SellerOrderCartController extends MobileBaseController {
     response.setPage(pageInfo);
     response.setMsg(result);
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
 
+
+  /**
+   * 从购物车提交录单
+   * 
+   * @param request
+   * @return
+   */
   @RequestMapping(value = "/confirmOrder", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseOne<Map<String, Object>> confirmOrder(
-      @RequestBody SellerOrderCartRequest request) {
-    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+  public @ResponseBody BaseResponse confirmOrder(@RequestBody BaseRequest request) {
+    BaseResponse response = new BaseResponse();
 
     Long userId = request.getUserId();
     String token = request.getToken();
+    List<Long> entityIds = request.getEntityIds();
 
-    List<Long> deleteList = new ArrayList<>();
 
-    for (OrderRequest orderRequest : request.getOrderRequests()) {
-      deleteList.add(orderRequest.getEntityId());
-    }
+    Long entityIdsLong[] = new Long[entityIds.size()];
+    entityIdsLong = entityIds.toArray(entityIdsLong);
 
-    Long deleteLong[] = new Long[deleteList.size()];
-    deleteLong = deleteList.toArray(deleteLong);
-
-    List<SellerOrderCart> sellerOrderCarts = sellerOrderCartService.findList(deleteLong);
+    List<SellerOrderCart> sellerOrderCarts = sellerOrderCartService.findList(entityIdsLong);
 
     orderService.createSellerOrder(sellerOrderCarts);
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
 
+
+  /**
+   * 删除购物车中录单记录
+   * 
+   * @param request
+   * @return
+   */
   @RequestMapping(value = "/delete", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseOne<Map<String, Object>> delete(
-      @RequestBody SellerOrderCartRequest request) {
-    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+  public @ResponseBody BaseResponse delete(@RequestBody BaseRequest request) {
+    BaseResponse response = new BaseResponse();
 
     Long userId = request.getUserId();
     String token = request.getToken();
 
-    List<Long> deleteList = new ArrayList<>();
+    List<Long> deleteList = request.getEntityIds();
 
-    for (OrderRequest orderRequest : request.getOrderRequests()) {
-      deleteList.add(orderRequest.getEntityId());
-    }
     Long deleteLong[] = new Long[deleteList.size()];
     deleteLong = deleteList.toArray(deleteLong);
     sellerOrderCartService.delete(deleteLong);
 
-    String newtoken = TokenGenerator.generateToken(request.getToken());
+    String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);

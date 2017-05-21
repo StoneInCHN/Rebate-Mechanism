@@ -96,10 +96,6 @@ public class Order extends BaseEntity {
    */
   private Boolean isBeanPay;
 
-  // /**
-  // * 订单直接收益是否结算(提取)
-  // */
-  // private Boolean isClearing = false;
 
   /**
    * 返利金额
@@ -115,6 +111,7 @@ public class Order extends BaseEntity {
    * 是否为录单订单
    */
   private Boolean isSallerOrder;
+
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getEncourageAmount() {

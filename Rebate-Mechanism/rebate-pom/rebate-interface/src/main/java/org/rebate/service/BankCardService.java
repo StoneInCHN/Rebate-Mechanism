@@ -15,10 +15,20 @@ public interface BankCardService extends BaseService<BankCard, Long> {
 
 
   /**
-   * 用户图面添加 银行卡
+   * 用户添加 银行卡
    * 
    * @param cardId
    */
   BankCard addCard(BankCardRequest req);
+
+
+  /**
+   * 用户获取默认 银行卡
+   * 
+   * @param cardId
+   */
+  BankCard getDefaultCard(Long userId);
+
+
 
 }

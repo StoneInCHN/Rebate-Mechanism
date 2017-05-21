@@ -102,7 +102,7 @@ public class LeScoreRecord extends BaseEntity {
   private Long orderId;
 
   /**
-   * 提现方式
+   * 提现方式(银行卡ID)
    */
   private Long withDrawType;
 

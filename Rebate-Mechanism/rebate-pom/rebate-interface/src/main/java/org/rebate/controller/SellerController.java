@@ -16,6 +16,7 @@ import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
@@ -501,6 +502,113 @@ public class SellerController extends MobileBaseController {
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 店铺货款列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/paymentList", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> paymentList(
+      @RequestBody SellerRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    // Long userId = request.getUserId();
+    // String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+    Long sellerId = request.getSellerId();
+
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
+
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    if (LogUtil.isDebugEnabled(SellerController.class)) {
+      LogUtil.debug(SellerController.class, "evaluateList", "seller evaluate list. sellerId: %s",
+          sellerId, pageSize, pageNumber);
+    }
+    Seller seller = sellerService.find(sellerId);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
+    filters.add(statusFilter);
+    filters.add(sellerFilter);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<SellerEvaluate> page = sellerEvaluateService.findPage(pageable);
+    String[] propertys =
+        {"id", "endUser.userPhoto", "endUser.nickName", "createDate", "content", "evaluateImages",
+            "sellerReply", "score"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+
+    // String newtoken = TokenGenerator.generateToken(request.getToken());
+    // endUserService.createEndUserToken(newtoken, userId);
+    // response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+
+  /**
+   * 货款明细
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/paymentDetail", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> paymentDetail(@RequestBody BaseRequest req) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    Long orderId = req.getEntityId();
+
+    // // 验证登录token
+    // String userToken = endUserService.getEndUserToken(userId);
+    // if (!TokenGenerator.isValiableToken(token, userToken)) {
+    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
+    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+    // return response;
+    // }
+
+    Order order = null;
+
+    String[] propertys =
+        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
+            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
+            "seller.address"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
+    response.setMsg(result);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     return response;
   }
 

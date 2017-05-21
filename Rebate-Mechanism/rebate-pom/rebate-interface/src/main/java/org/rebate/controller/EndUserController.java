@@ -1734,13 +1734,7 @@ public class EndUserController extends MobileBaseController {
     String token = request.getToken();
     String cellPhoneNum = request.getCellPhoneNum();
     Long userId = request.getUserId();
-    // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
+
 
     EndUser user = endUserService.findByUserMobile(cellPhoneNum);
 
@@ -1752,6 +1746,10 @@ public class EndUserController extends MobileBaseController {
 
     String[] propertys = {"id", "cellPhoneNum", "nickName"};
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, user);
+    UserAuth userAuth = userAuthService.getUserAuth(user.getId(), true);
+    if (userAuth != null) {
+      result.put("realName", userAuth.getRealName());
+    }
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
@@ -1759,7 +1757,6 @@ public class EndUserController extends MobileBaseController {
     response.setMsg(result);
     return response;
   }
-
 
 
   /**

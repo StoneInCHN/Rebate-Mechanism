@@ -92,4 +92,16 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
     bankCardDao.merge(mergeCards);
     return bankCard;
   }
+
+  @Override
+  public BankCard getDefaultCard(Long userId) {
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("isDefault", true));
+    filters.add(Filter.eq("endUser", userId));
+    List<BankCard> cards = bankCardDao.findList(0, 1, filters, null);
+    if (!CollectionUtils.isEmpty(cards)) {
+      return cards.get(0);
+    }
+    return null;
+  }
 }
