@@ -3,6 +3,7 @@ package org.rebate.entity;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -37,11 +38,6 @@ public class ClearingOrderRelation extends BaseEntity {
    */
   private Order order;
 
-  /**
-   * 订单直接收益是否结算(提取)
-   */
-  private Boolean isClearing = false;
-
 
 
   public Long getWithDrawRecId() {
@@ -53,6 +49,7 @@ public class ClearingOrderRelation extends BaseEntity {
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "orderInfo")
   public Order getOrder() {
     return order;
   }
@@ -60,14 +57,5 @@ public class ClearingOrderRelation extends BaseEntity {
   public void setOrder(Order order) {
     this.order = order;
   }
-
-  public Boolean getIsClearing() {
-    return isClearing;
-  }
-
-  public void setIsClearing(Boolean isClearing) {
-    this.isClearing = isClearing;
-  }
-
 
 }

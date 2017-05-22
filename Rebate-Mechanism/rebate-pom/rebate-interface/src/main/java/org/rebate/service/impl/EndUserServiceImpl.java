@@ -12,7 +12,10 @@ import javax.annotation.Resource;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.AreaDao;
+import org.rebate.dao.ClearingOrderRelationDao;
 import org.rebate.dao.EndUserDao;
+import org.rebate.dao.LeScoreRecordDao;
+import org.rebate.dao.OrderDao;
 import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.dao.SettingConfigDao;
@@ -21,8 +24,10 @@ import org.rebate.dao.SystemConfigDao;
 import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.dao.UserRegReportDao;
 import org.rebate.entity.Area;
+import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SettingConfig;
@@ -73,6 +78,15 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Resource(name = "snDaoImpl")
   private SnDao snDao;
+
+  @Resource(name = "orderDaoImpl")
+  private OrderDao orderDao;
+
+  @Resource(name = "leScoreRecordDaoImpl")
+  private LeScoreRecordDao leScoreRecordDao;
+
+  @Resource(name = "clearingOrderRelationDaoImpl")
+  private ClearingOrderRelationDao clearingOrderRelationDao;
 
   @Resource(name = "salesmanSellerRelationDaoImpl")
   private SalesmanSellerRelationDao salesmanSellerRelationDao;
@@ -160,7 +174,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       regUser.setLoginPwd(DigestUtils.md5Hex(password));
     }
     regUser.setAccountStatus(AccountStatus.ACTIVED);
-    regUser.setNickName("翼享" + ToolsUtils.createNickName());
+    regUser.setNickName("享个购" + ToolsUtils.createNickName());
 
     UserRecommendRelation relation = new UserRecommendRelation();
     relation.setEndUser(regUser);
@@ -309,21 +323,39 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     leScoreRecord.setAgentLeScore(map.get("agentLeScore"));
     leScoreRecord.setWithDrawSn(snDao.generate(Type.WITHDRAW));
     leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
-    endUser.getLeScoreRecords().add(leScoreRecord);
+    leScoreRecordDao.persist(leScoreRecord);
 
+    endUser.getLeScoreRecords().add(leScoreRecord);
     endUser.setAgentLeScore(endUser.getAgentLeScore().subtract(map.get("agentLeScore")));
     endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(map.get("incomeLeScore")));
     endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(map.get("motivateLeScore")));
     endUser.setCurLeScore(endUser.getCurLeScore().subtract(map.get("avlLeScore")));
     endUserDao.merge(endUser);
 
-    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
-      for (Seller seller : endUser.getSellers()) {
-        seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeLeScore")));
-        sellerDao.merge(seller);
-        break;
-      }
+    Seller seller = endUser.getSeller();
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("seller", seller));
+    filters.add(Filter.eq("isClearing", false));
+    List<Order> orders = orderDao.findList(null, null, filters, null);
+
+    List<ClearingOrderRelation> clearingOrderRelations = new ArrayList<ClearingOrderRelation>();
+    for (Order order : orders) {
+      ClearingOrderRelation clearingOrderRelation = new ClearingOrderRelation();
+      clearingOrderRelation.setWithDrawRecId(leScoreRecord.getId());
+      clearingOrderRelation.setOrder(order);
+      clearingOrderRelations.add(clearingOrderRelation);
     }
+
+    if (!CollectionUtils.isEmpty(clearingOrderRelations)) {
+      clearingOrderRelationDao.persist(clearingOrderRelations);
+    }
+    // if (!CollectionUtils.isEmpty(endUser.getSellers())) {
+    // for (Seller seller : endUser.getSellers()) {
+    // seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeLeScore")));
+    // sellerDao.merge(seller);
+    // break;
+    // }
+    // }
     return endUser;
   }
 

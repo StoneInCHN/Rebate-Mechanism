@@ -24,7 +24,8 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
  */
 @Entity
 @Table(name = "rm_order", indexes = {@Index(name = "createDateIndex", columnList = "createDate"),
-    @Index(name = "snIndex", columnList = "sn")})
+    @Index(name = "snIndex", columnList = "sn"),
+    @Index(name = "batchSnIndex", columnList = "batchSn")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_order_sequence")
 public class Order extends BaseEntity {
 
@@ -103,6 +104,11 @@ public class Order extends BaseEntity {
   private BigDecimal rebateAmount;
 
   /**
+   * 扣除交易手续费后的返利金额
+   */
+  private BigDecimal realRebateAmount;
+
+  /**
    * 鼓励金额
    */
   private BigDecimal encourageAmount;
@@ -112,6 +118,57 @@ public class Order extends BaseEntity {
    */
   private Boolean isSallerOrder;
 
+  /**
+   * 商家折扣
+   */
+  private BigDecimal sellerDiscount;
+
+  /**
+   * 订单直接收益是否结算(提取)
+   */
+  private Boolean isClearing = false;
+
+  /**
+   * 批量录单时流水号
+   */
+  private String batchSn;
+
+
+
+  @Column(length = 40)
+  public String getBatchSn() {
+    return batchSn;
+  }
+
+  public void setBatchSn(String batchSn) {
+    this.batchSn = batchSn;
+  }
+
+  public BigDecimal getRealRebateAmount() {
+    return realRebateAmount;
+  }
+
+  public void setRealRebateAmount(BigDecimal realRebateAmount) {
+    this.realRebateAmount = realRebateAmount;
+  }
+
+  public Boolean getIsClearing() {
+    return isClearing;
+  }
+
+  public void setIsClearing(Boolean isClearing) {
+    this.isClearing = isClearing;
+  }
+
+  @Transient
+  public BigDecimal getSellerDiscount() {
+    sellerDiscount = sellerIncome.divide(amount, 1, BigDecimal.ROUND_HALF_UP);
+    return sellerDiscount;
+  }
+
+  public void setSellerDiscount(BigDecimal sellerDiscount) {
+    this.sellerDiscount = sellerDiscount;
+  }
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getEncourageAmount() {

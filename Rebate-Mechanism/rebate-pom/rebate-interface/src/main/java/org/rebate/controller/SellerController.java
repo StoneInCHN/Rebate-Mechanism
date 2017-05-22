@@ -9,14 +9,17 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.entity.BankCard;
+import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.EndUser;
-import org.rebate.entity.Order;
+import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
@@ -24,6 +27,7 @@ import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -38,7 +42,10 @@ import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SellerRequest;
+import org.rebate.service.BankCardService;
+import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.EndUserService;
+import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerEvaluateService;
@@ -81,6 +88,15 @@ public class SellerController extends MobileBaseController {
 
   @Resource(name = "systemConfigServiceImpl")
   private SystemConfigService systemConfigService;
+
+  @Resource(name = "leScoreRecordServiceImpl")
+  private LeScoreRecordService leScoreRecordService;
+
+  @Resource(name = "clearingOrderRelationServiceImpl")
+  private ClearingOrderRelationService clearingOrderRelationService;
+
+  @Resource(name = "bankCardServiceImpl")
+  private BankCardService bankCardService;
 
 
   /**
@@ -344,28 +360,30 @@ public class SellerController extends MobileBaseController {
     // }
 
     EndUser endUser = endUserService.findByUserMobile(req.getCellPhoneNum());
-    if (endUser == null) {
+    if (endUser.getSeller() != null) {
       response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.seller.apply.cellPhone.unreg",
-          setting.getSellerDiscountMin()).getContent());
+      response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller").getContent());
       return response;
     }
-    if (endUser.getSellerName() != null) {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller",
-          setting.getSellerDiscountMin()).getContent());
+
+
+    if (endUser != null && BooleanUtils.isNotTrue(req.getIsConfirmOpr())) {
+      response.setCode(CommonAttributes.FAIL_USER_EXIST);
+      response.setDesc(Message.error("rebate.seller.apply.cellPhone.unreg").getContent());
       return response;
     }
+
     sellerApplicationService.createApplication(req, endUser);
     if (LogUtil.isDebugEnabled(SellerController.class)) {
       LogUtil
           .debug(
               SellerController.class,
               "apply",
-              "apply seller. applyId: %s,userId: %s, contactCellPhone: %s, sellerName: %s, categoryId: %s, discount: %s, storePhone: %s, areaId: %s, address: %s, licenseNum: %s, latitude: %s, longitude: %s",
-              req.getApplyId(), userId, req.getContactCellPhone(), req.getSellerName(),
-              req.getCategoryId(), req.getDiscount(), req.getStorePhone(), req.getAreaId(),
-              req.getAddress(), req.getLicenseNum(), req.getLatitude(), req.getLongitude());
+              "apply seller. applyId: %s,isConfirmOpr: %s,userId: %s, contactCellPhone: %s, sellerName: %s, categoryId: %s, discount: %s, storePhone: %s, areaId: %s, address: %s, licenseNum: %s, latitude: %s, longitude: %s",
+              req.getApplyId(), req.getIsConfirmOpr(), userId, req.getContactCellPhone(),
+              req.getSellerName(), req.getCategoryId(), req.getDiscount(), req.getStorePhone(),
+              req.getAreaId(), req.getAddress(), req.getLicenseNum(), req.getLatitude(),
+              req.getLongitude());
     }
 
     response.setCode(CommonAttributes.SUCCESS);
@@ -374,7 +392,6 @@ public class SellerController extends MobileBaseController {
     response.setToken(newtoken);
     return response;
   }
-
 
   /**
    * 用户获取我的店铺信息
@@ -517,43 +534,29 @@ public class SellerController extends MobileBaseController {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-    // Long userId = request.getUserId();
-    // String token = request.getToken();
+    Long userId = request.getUserId();
+    String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
-    Long sellerId = request.getSellerId();
-
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
 
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
 
-    if (LogUtil.isDebugEnabled(SellerController.class)) {
-      LogUtil.debug(SellerController.class, "evaluateList", "seller evaluate list. sellerId: %s",
-          sellerId, pageSize, pageNumber);
-    }
-    Seller seller = sellerService.find(sellerId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
-    Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
+    Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
+    Filter statusFilter = new Filter("incomeLeScore", Operator.ne, new BigDecimal("0"));
+    Filter typeFilter = new Filter("leScoreType", Operator.eq, LeScoreType.WITHDRAW);
     filters.add(statusFilter);
-    filters.add(sellerFilter);
+    filters.add(endUserFilter);
+    filters.add(typeFilter);
     pageable.setFilters(filters);
     pageable.setOrderDirection(Direction.desc);
     pageable.setOrderProperty("createDate");
 
-    Page<SellerEvaluate> page = sellerEvaluateService.findPage(pageable);
-    String[] propertys =
-        {"id", "endUser.userPhoto", "endUser.nickName", "createDate", "content", "evaluateImages",
-            "sellerReply", "score"};
+    Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
+    String[] propertys = {"id", "withDrawSn", "isWithdraw", "createDate", "incomeLeScore"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -564,9 +567,9 @@ public class SellerController extends MobileBaseController {
     response.setPage(pageInfo);
     response.setMsg(result);
 
-    // String newtoken = TokenGenerator.generateToken(request.getToken());
-    // endUserService.createEndUserToken(newtoken, userId);
-    // response.setToken(newtoken);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
@@ -581,28 +584,39 @@ public class SellerController extends MobileBaseController {
    */
   @RequestMapping(value = "/paymentDetail", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseOne<Map<String, Object>> paymentDetail(@RequestBody BaseRequest req) {
+  public @ResponseBody ResponseOne<Map<String, Object>> paymentDetail(@RequestBody SellerRequest req) {
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
     Long userId = req.getUserId();
     String token = req.getToken();
-    Long orderId = req.getEntityId();
+    Long entityId = req.getEntityId();
+    Integer pageSize = req.getPageSize();
+    Integer pageNumber = req.getPageNumber();
 
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
+    LeScoreRecord leScoreRecord = leScoreRecordService.find(entityId);
+    String[] pro = {"id", "withDrawSn", "isWithdraw", "createDate", "incomeLeScore"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(pro, leScoreRecord);
 
-    Order order = null;
-
+    Page<ClearingOrderRelation> page =
+        clearingOrderRelationService.getOrdersByWithDrawId(entityId, pageSize, pageNumber);
     String[] propertys =
-        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
-            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
-            "seller.address"};
-    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, order);
+        {"order.sn", "order.createDate", "order.amount", "order.sellerIncome",
+            "order.rebateAmount", "order.sellerDiscount"};
+    List<Map<String, Object>> orderMap =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+    result.put("orders", orderMap);
+    BigDecimal totalIncome = new BigDecimal("0");
+    for (ClearingOrderRelation relation : page.getContent()) {
+      totalIncome = totalIncome.add(relation.getOrder().getAmount());
+    }
+    result.put("totalIncome", totalIncome);
+
+
+    BankCard bankCard = bankCardService.find(leScoreRecord.getWithDrawType());
+    String[] bankCardPro = {"cardNum", "bankName", "cardType", "bankLogo"};
+    Map<String, Object> bankCardMap = FieldFilterUtils.filterEntityMap(bankCardPro, bankCard);
+    result.put("bankCard", bankCardMap);
+
     response.setMsg(result);
 
     response.setCode(CommonAttributes.SUCCESS);
@@ -611,5 +625,4 @@ public class SellerController extends MobileBaseController {
     response.setToken(newtoken);
     return response;
   }
-
 }

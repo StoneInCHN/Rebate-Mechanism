@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.rebate.dao.AreaDao;
-import org.rebate.dao.EndUserDao;
 import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerApplicationDao;
 import org.rebate.dao.SellerCategoryDao;
@@ -21,6 +20,7 @@ import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.json.request.SellerRequest;
+import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
 import org.rebate.service.SellerApplicationService;
 import org.springframework.stereotype.Service;
@@ -42,8 +42,8 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
   @Resource(name = "areaDaoImpl")
   private AreaDao areaDao;
 
-  @Resource(name = "endUserDaoImpl")
-  private EndUserDao endUserDao;
+  @Resource(name = "endUserServiceImpl")
+  private EndUserService endUserService;
 
   @Resource(name = "sellerCategoryDaoImpl")
   private SellerCategoryDao sellerCategoryDao;
@@ -59,6 +59,11 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public SellerApplication createApplication(SellerRequest req, EndUser sellerUser) {
+    EndUser salesman = endUserService.find(req.getUserId());
+    if (sellerUser == null) {
+      sellerUser = endUserService.userReg(req.getCellPhoneNum(), null, salesman.getCellPhoneNum());
+    }
+
     SellerApplication application = new SellerApplication();
     if (req.getApplyId() != null) {
       application = sellerApplicationDao.find(req.getApplyId());
@@ -100,7 +105,6 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
 
     sellerApplicationDao.merge(application);
 
-    EndUser salesman = endUserDao.find(req.getUserId());
     SalesmanSellerRelation salesmanSellerRelation = new SalesmanSellerRelation();
     salesmanSellerRelation.setSellerApplication(application);
     salesmanSellerRelation.setEndUser(salesman);

@@ -170,6 +170,10 @@ public class CommonEnum {
     USER_RECOMMEND_COMMISSION_PERCENTAGE,
     /** 发展商家提成占总让利百分比 19 */
     SELLER_RECOMMEND_COMMISSION_PERCENTAGE,
+    /** 提现手续费占提现金额的百分比 20 */
+    TRANSACTION_FEE_PERCENTAGE,
+    /** 每笔提现固定手续费 21 */
+    TRANSACTION_FEE_PERTIME
   }
 
   /**

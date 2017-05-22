@@ -1,20 +1,15 @@
 package org.rebate.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
-import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 
 /**
  * 录单购物车
@@ -23,19 +18,13 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
  *
  */
 @Entity
-@Table(name = "rm_seller_order_cart", indexes = {
-    @Index(name = "createDateIndex", columnList = "createDate"),
-    @Index(name = "snIndex", columnList = "sn")})
+@Table(name = "rm_seller_order_cart", indexes = {@Index(name = "createDateIndex",
+    columnList = "createDate")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_seller_order_cart_sequence")
 public class SellerOrderCart extends BaseEntity {
 
 
   private static final long serialVersionUID = 1L;
-
-  /**
-   * 订单编号
-   */
-  private String sn;
 
   /**
    * 订单所属商家
@@ -74,19 +63,6 @@ public class SellerOrderCart extends BaseEntity {
   public void setRebateAmount(BigDecimal rebateAmount) {
     this.rebateAmount = rebateAmount;
   }
-
-
-
-  @Column(length = 30)
-  public String getSn() {
-    return sn;
-  }
-
-
-  public void setSn(String sn) {
-    this.sn = sn;
-  }
-
 
 
   @Column(scale = 4, precision = 12)

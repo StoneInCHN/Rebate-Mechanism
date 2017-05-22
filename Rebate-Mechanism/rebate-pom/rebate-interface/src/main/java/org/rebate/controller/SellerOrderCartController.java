@@ -11,8 +11,10 @@ import javax.annotation.Resource;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
+import org.rebate.beans.Message;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerOrderCart;
 import org.rebate.framework.filter.Filter;
@@ -32,6 +34,7 @@ import org.rebate.service.SellerService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -87,6 +90,7 @@ public class SellerOrderCartController extends MobileBaseController {
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("count", sellerOrderCartService.count());
 
+    response.setMsg(map);
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
@@ -109,13 +113,7 @@ public class SellerOrderCartController extends MobileBaseController {
     String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
+
     EndUser endUser = endUserService.find(userId);
     Seller seller = endUser.getSellers().iterator().next();
     Pageable pageable = new Pageable();
@@ -157,27 +155,36 @@ public class SellerOrderCartController extends MobileBaseController {
    */
   @RequestMapping(value = "/confirmOrder", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody BaseResponse confirmOrder(@RequestBody BaseRequest request) {
-    BaseResponse response = new BaseResponse();
+  public @ResponseBody ResponseOne<Map<String, Object>> confirmOrder(
+      @RequestBody BaseRequest request) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 
     Long userId = request.getUserId();
     String token = request.getToken();
     List<Long> entityIds = request.getEntityIds();
 
+    if (CollectionUtils.isEmpty(entityIds)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.order.cart.isNull").getContent());
+      return response;
+    }
 
     Long entityIdsLong[] = new Long[entityIds.size()];
     entityIdsLong = entityIds.toArray(entityIdsLong);
 
     List<SellerOrderCart> sellerOrderCarts = sellerOrderCartService.findList(entityIdsLong);
 
-    orderService.createSellerOrder(sellerOrderCarts);
+    List<Order> orders = orderService.createSellerOrder(sellerOrderCarts);
+
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("orderSn", orders.get(0).getBatchSn());
+    response.setMsg(map);
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
-
 
   /**
    * 删除购物车中录单记录

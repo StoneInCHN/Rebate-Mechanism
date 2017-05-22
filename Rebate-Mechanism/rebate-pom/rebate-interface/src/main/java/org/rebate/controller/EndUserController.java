@@ -1684,37 +1684,34 @@ public class EndUserController extends MobileBaseController {
 
     String token = request.getToken();
     Long userId = request.getUserId();
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
 
     EndUser endUser = endUserService.find(userId);
 
-
     Seller seller = endUser.getSellers().iterator().next();
-
 
     if (seller == null) {
       response.setCode(CommonAttributes.USER_INVALID);
       response.setDesc(Message.error("rebate.seller.invalid").getContent());
       return response;
     }
+
     String[] propertys = {"id", "name", "address", "discount"};
     Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, seller);
-    String newtoken = TokenGenerator.generateToken(token);
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
+    UserAuth userAuth = userAuthService.getUserAuth(userId, true);
+    if (userAuth != null) {
+      result.put("realName", userAuth.getRealName());
+    }
     List<Filter> filters = new ArrayList<>();
     Filter sellerFilter = new Filter("seller", Operator.eq, seller);
     filters.add(sellerFilter);
     long cartCount = sellerOrderCartService.count(sellerFilter);
     result.put("cartCount", cartCount);
-    response.setCode(CommonAttributes.SUCCESS);
     response.setMsg(result);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
     return response;
   }
 
@@ -1781,7 +1778,7 @@ public class EndUserController extends MobileBaseController {
     UserAuth userAuth = userAuthService.getUserAuthByIdCard(cardNo, true);
     if (userAuth != null) {
       response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.user.token.timeout").getContent());
+      response.setDesc(Message.error("rebate.user.auth.isAuthed").getContent());
       return response;
     }
 

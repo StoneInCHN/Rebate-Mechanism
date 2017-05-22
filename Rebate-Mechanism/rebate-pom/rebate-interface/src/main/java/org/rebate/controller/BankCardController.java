@@ -50,9 +50,46 @@ public class BankCardController extends MobileBaseController {
   private EndUserService endUserService;
 
 
+  /**
+   * 验证银行卡
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/verifyCard", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse verifyCard(@RequestBody BankCardRequest request) {
+
+    BaseResponse response = new BaseResponse();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    String ownerName = request.getOwnerName();
+    String cardNum = request.getCardNum();
+    String idcard = request.getIdCard();
+    String reservedMobile = request.getReservedMobile();
+
+    // do verify bank card
+
+
+
+    if (LogUtil.isDebugEnabled(BankCardController.class)) {
+      LogUtil
+          .debug(
+              BankCardController.class,
+              "verifyCard",
+              "verify the bank card. ownerName: %s, cardNum: %s, idcard: %s, reservedMobile: %s, result: %s",
+              ownerName, cardNum, idcard, reservedMobile, null);
+    }
+
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
   /**
-   * 验证并添加银行卡
+   * 添加银行卡
    * 
    * @return
    */
@@ -171,7 +208,7 @@ public class BankCardController extends MobileBaseController {
     pageable.setOrders(orderings);
 
     Page<BankCard> page = bankCardService.findPage(pageable);
-    String[] propertys = {"id", "cardNum", "bankName", "cardType", "isDefault"};
+    String[] propertys = {"id", "cardNum", "bankName", "cardType", "bankLogo", "isDefault"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 

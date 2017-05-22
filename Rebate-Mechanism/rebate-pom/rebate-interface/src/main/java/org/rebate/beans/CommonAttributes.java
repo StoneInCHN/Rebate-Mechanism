@@ -52,8 +52,8 @@ public final class CommonAttributes {
   public static final String FAIL_USER_WITHDRAW = "0007";// 用户提现
   /** 账号在其它设备上登录 */
   public static final String FAIL_TOKEN_AUTH = "0008";// 账号在其它设备上登录
-  // /** OBD设备不存在 */
-  // public static final String FAIL_DEVICE_NOEXIST = "0009";// OBD设备不存在
+  /** 会员存在 */
+  public static final String FAIL_USER_EXIST = "0009";// 用户已经存在
   //
   // /** OBD设备未绑定车辆 */
   // public static final String FAIL_DEVICE_NOBIND = "0010";// OBD设备不存在

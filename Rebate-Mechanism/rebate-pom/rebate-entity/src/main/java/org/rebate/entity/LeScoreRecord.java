@@ -21,7 +21,8 @@ import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 @Entity
 @Table(name = "rm_le_score_record", indexes = {
     @Index(name = "createDateIndex", columnList = "createDate"),
-    @Index(name = "leScoreTypeIndex", columnList = "leScoreType")})
+    @Index(name = "leScoreTypeIndex", columnList = "leScoreType"),
+    @Index(name = "incomeLeScoreIndex", columnList = "incomeLeScore")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_le_score_record_sequence")
 public class LeScoreRecord extends BaseEntity {
 

@@ -45,6 +45,7 @@ import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.PayUtil;
 import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,6 +72,8 @@ public class OrderController extends MobileBaseController {
   private SellerEvaluateService sellerEvaluateService;
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
+  @Resource(name = "taskExecutor")
+  private TaskExecutor taskExecutor;
 
   /**
    * 立即下单
@@ -592,7 +595,6 @@ public class OrderController extends MobileBaseController {
       return response;
     }
 
-
     Order order = orderService.createSellerOrder(entityId, amount, sellerId);
 
     if (LogUtil.isDebugEnabled(OrderController.class)) {
@@ -600,6 +602,16 @@ public class OrderController extends MobileBaseController {
           userId, amount, sellerId);
     }
 
+    taskExecutor.execute(new Runnable() {
+      public void run() {
+        orderService.updateOrderforPayCallBack(order.getSn());
+      }
+    });
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("orderSn", order.getSn());
+    map.put("orderId", order.getId());
+
+    response.setMsg(map);
     response.setCode(CommonAttributes.SUCCESS);
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);

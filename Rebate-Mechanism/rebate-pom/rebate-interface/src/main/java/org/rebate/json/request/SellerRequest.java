@@ -123,6 +123,19 @@ public class SellerRequest extends BaseRequest {
    */
   private String keyWord;
 
+  /**
+   * 是否为确定操作
+   */
+  private Boolean isConfirmOpr;
+
+
+  public Boolean getIsConfirmOpr() {
+    return isConfirmOpr;
+  }
+
+  public void setIsConfirmOpr(Boolean isConfirmOpr) {
+    this.isConfirmOpr = isConfirmOpr;
+  }
 
   public String getAreaIds() {
     return areaIds;
