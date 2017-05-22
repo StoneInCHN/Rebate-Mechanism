@@ -6,15 +6,18 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.rebate.beans.Message;
+import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerApplicationDao;
 import org.rebate.dao.SellerDao;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.framework.filter.Filter;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.SellerApplicationService;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,9 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
 
   @Resource(name = "sellerDaoImpl")
   private SellerDao sellerDao;
+  
+  @Resource(name = "salesmanSellerRelationDaoImpl")
+  private SalesmanSellerRelationDao salesmanSellerRelationDao;
 
   @Resource(name = "sellerApplicationDaoImpl")
   public void setBaseDao(SellerApplicationDao baseDao) {
@@ -80,11 +86,21 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
         seller.setDescription(apply.getDescription());
         seller.setAccountStatus(AccountStatus.ACTIVED);
         sellerDao.persist(seller);
+        
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(Filter.eq("sellerApplication", sellerApply.getId()));
+        List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationDao.findList(null, null, filters, null);
+        if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+          SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
+          salesmanSellerRelation.setSeller(seller);
+          salesmanSellerRelation.setApplyStatus(true);
+          salesmanSellerRelationDao.merge(salesmanSellerRelation);
+        }
       }
       this.update(apply);
-      return Message.success("csh.message.success");
+      return Message.success("rebate.message.success");
     } catch (Exception e) {
-      return Message.error("csh.message.error");
+      return Message.error("rebate.message.error");
     }
   }
 
