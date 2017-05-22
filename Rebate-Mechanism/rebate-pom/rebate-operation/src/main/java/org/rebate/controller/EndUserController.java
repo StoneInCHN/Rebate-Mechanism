@@ -272,4 +272,18 @@ public class EndUserController extends BaseController {
     return "/endUser/leBeanRecord";
   }
 
+  /**
+   * 禁用
+   */
+  @RequestMapping(value = "/updateSalesMan", method = RequestMethod.POST)
+  public @ResponseBody Message updateSalesMan(Long id ,Boolean isSalesman) {
+     if(id==null||isSalesman==null){
+       return ERROR_MESSAGE;
+     }
+    EndUser endUser = endUserService.find(id);
+    endUser.setIsSalesman(isSalesman);
+    endUserService.update(endUser);
+    return SUCCESS_MESSAGE;
+  }
+  
 }

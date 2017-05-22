@@ -9,6 +9,7 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	  <ol class="breadcrumb">
@@ -187,13 +188,18 @@
 								</td>
 							</tr>
 							[/#if]
-							
-							
+						</table>	
+						<table class="input">	
 							<tr>
 								<th>
 									&nbsp;
 								</th>
 								<td>
+									[#if endUser.isSalesman]
+									 	<input type="button" id="salesInActive" class="btn btn-info" value="${message("rebate.endUser.salesMan.inActive")}" />
+									[#else] 	
+									  	<input type="button" id="salesActive" class="btn btn-danger" value="${message("rebate.endUser.salesMan.active")}" />
+									[/#if]
 									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
@@ -201,10 +207,60 @@
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$('.viewer-images').viewer();
 		$('.img-lazy').lazyload();
+		$("#salesActive").click(function(){
+			setSalesMan(true);
+		});
+		$("#salesInActive").click(function(){
+			setSalesMan(false);
+		});
+		
+		function setSalesMan(flag){
+			var content = "";
+			if(flag == "undefined"){
+				return false;
+			}else if(flag){
+				content= "确定要将当前用户设置为业务员吗？";
+			}else{
+				content= "确定要取消当前业务员的资格吗?";
+			}
+			
+			var d = dialog({
+				title: '提示',
+				content: content,
+				okValue: '确定',
+				ok: function () {
+					$.ajax({
+						url: "updateSalesMan.jhtml",
+						type: "POST",
+						data: {
+							id:${endUser.id},
+							isSalesman:flag
+						},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if(message.type == "success"){
+									alert(message.content);
+									setTimeout(function() {
+										location.reload();
+									}, 1000);
+							}else{
+								alert(message.content);
+							}
+						}
+					});
+				},
+				cancelValue: '取消',
+				cancel: function () {}
+			});
+			d.show();
+		}
+		
 	})
 </script>	
 </body>
