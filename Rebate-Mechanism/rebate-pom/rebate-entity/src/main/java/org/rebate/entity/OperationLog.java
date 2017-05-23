@@ -2,7 +2,6 @@ package org.rebate.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -18,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "rm_operation_log")
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_operation_log_sequence")
-public class OperationLog extends BaseEntity{
+public class OperationLog extends BaseEntity {
 
   /**
    * 

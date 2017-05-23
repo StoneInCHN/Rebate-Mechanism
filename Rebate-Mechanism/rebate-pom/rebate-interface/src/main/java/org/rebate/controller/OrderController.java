@@ -193,7 +193,12 @@ public class OrderController extends MobileBaseController {
 
     // orderService.updateOrderforPayCallBack(order.getSn());
     if (isBeanPay) {// 乐豆支付
-      orderService.updateOrderforPayCallBack(order.getSn());
+      taskExecutor.execute(new Runnable() {
+        public void run() {
+          orderService.updateOrderforPayCallBack(order.getSn());
+        }
+      });
+      // orderService.updateOrderforPayCallBack(order.getSn());
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("out_trade_no", order.getSn());
       map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
@@ -543,7 +548,8 @@ public class OrderController extends MobileBaseController {
 
     Page<Order> orderPage = orderService.findPage(pageable);
     String[] propertys =
-        {"id", "endUser.nickName", "endUser.cellPhoneNum", "amount", "sellerIncome", "createDate"};
+        {"id", "endUser.nickName", "sn", "endUser.cellPhoneNum", "amount", "rebateAmount",
+            "sellerIncome", "createDate", "status"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 

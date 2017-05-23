@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -73,7 +74,7 @@ public class SalesmanSellerRelation extends BaseEntity {
     this.totalRecommendLeScore = totalRecommendLeScore;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }

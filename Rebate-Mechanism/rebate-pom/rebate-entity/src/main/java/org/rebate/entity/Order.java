@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -103,10 +104,10 @@ public class Order extends BaseEntity {
    */
   private BigDecimal rebateAmount;
 
-  /**
-   * 扣除交易手续费后的返利金额
-   */
-  private BigDecimal realRebateAmount;
+  // /**
+  // * 扣除交易手续费后的返利金额
+  // */
+  // private BigDecimal realRebateAmount;
 
   /**
    * 鼓励金额
@@ -144,13 +145,13 @@ public class Order extends BaseEntity {
     this.batchSn = batchSn;
   }
 
-  public BigDecimal getRealRebateAmount() {
-    return realRebateAmount;
-  }
-
-  public void setRealRebateAmount(BigDecimal realRebateAmount) {
-    this.realRebateAmount = realRebateAmount;
-  }
+  // public BigDecimal getRealRebateAmount() {
+  // return realRebateAmount;
+  // }
+  //
+  // public void setRealRebateAmount(BigDecimal realRebateAmount) {
+  // this.realRebateAmount = realRebateAmount;
+  // }
 
   public Boolean getIsClearing() {
     return isClearing;
@@ -310,7 +311,7 @@ public class Order extends BaseEntity {
   }
 
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }
@@ -320,7 +321,7 @@ public class Order extends BaseEntity {
     this.endUser = endUser;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public Seller getSeller() {
     return seller;
   }

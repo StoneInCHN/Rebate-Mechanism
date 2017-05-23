@@ -21,6 +21,7 @@ import org.rebate.service.OrderService;
 import org.rebate.utils.alipay.util.AlipayNotify;
 import org.rebate.utils.wechat.WeixinUtil;
 import org.rebate.utils.yipay.CryptTool;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +36,9 @@ public class NotifyController extends MobileBaseController {
 
   @Resource(name = "orderServiceImpl")
   private OrderService orderService;
+
+  @Resource(name = "taskExecutor")
+  private TaskExecutor taskExecutor;
 
 
   /**
@@ -174,7 +178,14 @@ public class NotifyController extends MobileBaseController {
                 "user pay order call back successfully with wechat pay. orderSn: %s, amount: %s,",
                 out_trade_no, amount);
           }
-          orderService.updateOrderforPayCallBack(out_trade_no);
+
+          taskExecutor.execute(new Runnable() {
+            public void run() {
+              orderService.updateOrderforPayCallBack(out_trade_no);
+            }
+          });
+
+          // orderService.updateOrderforPayCallBack(out_trade_no);
         } else {
           if (LogUtil.isDebugEnabled(NotifyController.class)) {
             LogUtil.debug(NotifyController.class, "notify_wechat", "WeChat pay fail. orderSn: %s",

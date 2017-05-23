@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -50,7 +51,7 @@ public class BonusByMindPerDay extends BaseEntity {
   private String remark;
 
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public LeMindRecord getLeMindRecord() {
     return leMindRecord;
   }

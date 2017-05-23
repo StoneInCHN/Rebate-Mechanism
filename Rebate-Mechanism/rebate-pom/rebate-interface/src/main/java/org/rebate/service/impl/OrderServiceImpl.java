@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.dao.AgentCommissionConfigDao;
@@ -114,16 +113,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setSn(snDao.generate(Type.ORDER));
     order.setIsBeanPay(isBeanPay);
 
-    BigDecimal transactionFeeConfig =
-        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.TRANSACTION_FEE_PERCENTAGE)
-            .getConfigValue());
-    BigDecimal transactionFee =
-        amount.multiply(transactionFeeConfig).setScale(4, BigDecimal.ROUND_HALF_UP);
-    BigDecimal realRebateAmount = order.getRebateAmount().subtract(transactionFee);
-    if (realRebateAmount.compareTo(new BigDecimal("0")) < 0) {
-      realRebateAmount = new BigDecimal("0");
-    }
-    order.setRealRebateAmount(realRebateAmount);
+    // BigDecimal transactionFeeConfig =
+    // new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.TRANSACTION_FEE_PERCENTAGE)
+    // .getConfigValue());
+    // BigDecimal transactionFee =
+    // amount.multiply(transactionFeeConfig).setScale(4, BigDecimal.ROUND_HALF_UP);
+    // BigDecimal realRebateAmount = order.getRebateAmount().subtract(transactionFee);
+    // if (realRebateAmount.compareTo(new BigDecimal("0")) < 0) {
+    // realRebateAmount = new BigDecimal("0");
+    // }
+    // order.setRealRebateAmount(realRebateAmount);
+
     if (isSallerOrder) {
       order.setIsSallerOrder(true);
     }
@@ -184,9 +184,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       return order;
     }
 
-    if (BooleanUtils.isTrue(order.getIsSallerOrder())) {
-      order.setStatus(OrderStatus.PAID);
-    }
     order.setStatus(OrderStatus.PAID);
     order.setPaymentTime(new Date());
 

@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -148,7 +149,7 @@ public class LeMindRecord extends BaseEntity {
     this.remark = remark;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }

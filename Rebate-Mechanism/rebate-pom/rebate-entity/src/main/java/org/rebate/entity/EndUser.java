@@ -368,7 +368,7 @@ public class EndUser extends BaseEntity {
     this.isBindWeChat = isBindWeChat;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public Area getArea() {
     return area;
   }

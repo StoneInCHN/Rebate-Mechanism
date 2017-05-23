@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -76,7 +77,7 @@ public class LeBeanRecord extends BaseEntity {
   private Long orderId;
 
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public Seller getSeller() {
     return seller;
   }
@@ -150,7 +151,7 @@ public class LeBeanRecord extends BaseEntity {
 
 
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }

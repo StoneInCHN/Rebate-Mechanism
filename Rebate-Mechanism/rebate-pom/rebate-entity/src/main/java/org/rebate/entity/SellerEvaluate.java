@@ -7,6 +7,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -102,7 +103,7 @@ public class SellerEvaluate extends BaseEntity {
     this.evaluateImages = evaluateImages;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public Seller getSeller() {
     return seller;
   }
@@ -120,7 +121,7 @@ public class SellerEvaluate extends BaseEntity {
     this.sellerReply = sellerReply;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }

@@ -1,6 +1,7 @@
 package org.rebate.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -32,7 +33,7 @@ public class MsgEndUser extends BaseEntity {
   /** 是否已读 */
   private Boolean isRead;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public EndUser getEndUser() {
     return endUser;
   }
@@ -41,7 +42,7 @@ public class MsgEndUser extends BaseEntity {
     this.endUser = endUser;
   }
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   public MessageInfo getMessage() {
     return message;
   }
