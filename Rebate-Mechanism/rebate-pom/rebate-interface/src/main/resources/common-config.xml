@@ -104,5 +104,9 @@
 		<!-- 百度API Store api 汉字转拼音 -->
 		<setting name="bdApiStoreHz2PyUrl" value="http://apis.baidu.com/sillystudio/service/topy"/>
 		
+		<!-- 聚合数据 银行卡四元素验证URL -->
+		<setting name="juheVerifyBankcard4" value="http://v.juhe.cn/verifybankcard4/query"/>		
+		<!-- 聚合数据 申请的key -->
+		<setting name="juheKey" value="f79edf87ef4384ce64eb53bad54b415f"/>	
 	</rebate>	
 	

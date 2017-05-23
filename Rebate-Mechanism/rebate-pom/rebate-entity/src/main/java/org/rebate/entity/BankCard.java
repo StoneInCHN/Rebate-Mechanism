@@ -74,7 +74,7 @@ public class BankCard extends BaseEntity {
     this.bankLogo = bankLogo;
   }
 
-  @Column(length = 20)
+  @Column(length = 20, nullable = false)
   public String getOwnerName() {
     return ownerName;
   }
@@ -92,7 +92,7 @@ public class BankCard extends BaseEntity {
     this.reservedMobile = reservedMobile;
   }
 
-  @Column(length = 50)
+  @Column(length = 50, nullable = false)
   public String getCardNum() {
     return cardNum;
   }
@@ -101,7 +101,7 @@ public class BankCard extends BaseEntity {
     this.cardNum = cardNum;
   }
 
-  @Column(length = 50)
+  @Column(length = 50, nullable = false)
   public String getBankName() {
     return bankName;
   }
@@ -128,7 +128,7 @@ public class BankCard extends BaseEntity {
   public void setEndUser(EndUser endUser) {
     this.endUser = endUser;
   }
-
+  @Column(nullable = false)
   public Boolean getIsDefault() {
     return isDefault;
   }

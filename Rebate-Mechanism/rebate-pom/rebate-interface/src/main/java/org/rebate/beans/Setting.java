@@ -306,6 +306,14 @@ public class Setting implements Serializable {
    * 翼支付订单回调url
    */
   private String yiPayNotifyUrl;
+  /**
+   * 聚合数据 银行卡四元素验证URL
+   */
+  private String juheVerifyBankcard4;
+  /**
+   * 聚合数据 申请的key
+   */
+  private String juheKey;
 
 
   public String getYiPayNotifyUrl() {
@@ -890,6 +898,22 @@ public class Setting implements Serializable {
 
   public void setSiteUrl(String siteUrl) {
     this.siteUrl = siteUrl;
+  }
+
+  public String getJuheVerifyBankcard4() {
+    return juheVerifyBankcard4;
+  }
+
+  public void setJuheVerifyBankcard4(String juheVerifyBankcard4) {
+    this.juheVerifyBankcard4 = juheVerifyBankcard4;
+  }
+
+  public String getJuheKey() {
+    return juheKey;
+  }
+
+  public void setJuheKey(String juheKey) {
+    this.juheKey = juheKey;
   }
 
 }

@@ -1,6 +1,7 @@
 package org.rebate.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.beans.SMSVerificationCode;
+import org.rebate.beans.VerifyBankcardBean;
+import org.rebate.beans.VerifyBankcardResult;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.BankCard;
@@ -26,6 +29,7 @@ import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.request.BankCardRequest;
 import org.rebate.service.BankCardService;
 import org.rebate.service.EndUserService;
+import org.rebate.utils.ApiUtils;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
@@ -33,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Controller - BankCard
@@ -51,8 +57,8 @@ public class BankCardController extends MobileBaseController {
 
 
   /**
-   * 验证银行卡
-   * 
+   * 银行卡四元素校验
+   * 四元素:姓名、身份证、银行卡、手机号码
    * @return
    */
   @RequestMapping(value = "/verifyCard", method = RequestMethod.POST)
@@ -63,27 +69,67 @@ public class BankCardController extends MobileBaseController {
 
     Long userId = request.getUserId();
     String token = request.getToken();
+    
     String ownerName = request.getOwnerName();
     String cardNum = request.getCardNum();
     String idcard = request.getIdCard();
     String reservedMobile = request.getReservedMobile();
+    
+    //银行卡四元素,都不能为空
+    if (ownerName == null || cardNum == null || idcard == null || reservedMobile == null) {
+      response.setCode(CommonAttributes.MISSING_REQUIRE_PARAM);
+      response.setDesc(message("rebate.request.param.missing"));
+      return response;
+    }
 
-    // do verify bank card
-
-
-
-    if (LogUtil.isDebugEnabled(BankCardController.class)) {
-      LogUtil
-          .debug(
-              BankCardController.class,
-              "verifyCard",
-              "verify the bank card. ownerName: %s, cardNum: %s, idcard: %s, reservedMobile: %s, result: %s",
-              ownerName, cardNum, idcard, reservedMobile, null);
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("key", setting.getJuheKey());
+    params.put("bankcard", cardNum);
+    params.put("realname", ownerName);
+    params.put("idcard", idcard);
+    params.put("mobile", reservedMobile);
+    
+    String desc = null;
+    try {
+      String result = ApiUtils.post(setting.getJuheVerifyBankcard4(),params);
+      
+      if (LogUtil.isDebugEnabled(this.getClass())) {
+        LogUtil.debug(this.getClass(),
+                "verifyCard", "request params: %s, result: %s", params.toString(), result);
+      }
+      
+      ObjectMapper objectMapper = new ObjectMapper();
+      VerifyBankcardBean verifyBankcardBean = objectMapper.readValue(result, VerifyBankcardBean.class);
+      if (verifyBankcardBean == null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(message("rebate.request.failed"));
+        return response;
+      }
+      
+      if (verifyBankcardBean.getError_code() == 0 && verifyBankcardBean.getResult() != null) {
+        VerifyBankcardResult verifyBankcardResult = verifyBankcardBean.getResult();
+        if ("1".equals(verifyBankcardResult.getRes())) {//验证成功
+          desc = verifyBankcardResult.getMessage();
+        }else if ("2".equals(verifyBankcardResult.getRes())) {//验证不匹配
+          response.setCode(CommonAttributes.FAIL_COMMON);
+          response.setDesc(verifyBankcardResult.getMessage());
+          return response;
+        }
+      }else {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(verifyBankcardBean.getError_code() + ":" + verifyBankcardBean.getReason());
+        return response;
+      }
+    } catch (Exception e) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(message("rebate.request.failed"));
+      return response;
     }
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
+    response.setDesc(desc);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
