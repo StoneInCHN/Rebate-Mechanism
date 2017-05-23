@@ -6,8 +6,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.Order;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller("sallerOrderController")
@@ -80,5 +84,19 @@ public class SallerOrderController extends BaseController{
     Order order = orderService.find(id);
     model.addAttribute("order", order);
     return "/sallerOrder/details";
+  }
+  
+  /**
+   * 设置业务员
+   */
+  @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+  public @ResponseBody Message updateStatus(Long id ,OrderStatus status) {
+     if(id==null||status==null){
+       return ERROR_MESSAGE;
+     }
+    Order order = orderService.find(id);
+    order.setStatus(status);
+    orderService.update(order);
+    return SUCCESS_MESSAGE;
   }
 }

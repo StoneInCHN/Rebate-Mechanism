@@ -9,12 +9,13 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	  <ol class="breadcrumb">
-          <li><a ><i class="fa fa-user"></i> ${message("rebate.main.orderManager")}</a> </li>
-          <li><a href="list.jhtml">${message("rebate.order.list")}</a></li>
-          <li class="active">${message("rebate.order.details")}</li>
+          <li><a ><i class="fa fa-user"></i> ${message("rebate.sallerOrder.info")}</a> </li>
+          <li><a href="list.jhtml">${message("rebate.sallerOrder.list")}</a></li>
+          <li class="active">${message("rebate.sallerOrder.details")}</li>
       </ol>
 	<table class="input">
 							<tr>
@@ -224,6 +225,9 @@
 									&nbsp;
 								</th>
 								<td>
+									[#if  order.status =="UNPAID"]
+										<input type="button" id="setPaid" class="btn btn-info" value="${message("rebate.order.status.setPaid")}" />
+									[/#if]
 									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
@@ -231,10 +235,47 @@
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$('.viewer-images').viewer();
 		$('.img-lazy').lazyload();
+		$("#setPaid").click(function(){
+			var d = dialog({
+				title: '提示',
+				content: "确定要将订单状态改为[已支付]状态吗?",
+				okValue: '确定',
+				ok: function () {
+					$.ajax({
+						url: "updateStatus.jhtml",
+						type: "POST",
+						data: {
+							id:${order.id},
+							status:"PAID"
+						},
+						beforeSend:function(){
+							$("#setPaid").attr("disabled","disabled");
+						},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if(message.type == "success"){
+									alert(message.content);
+									setTimeout(function() {
+										location.reload();
+									}, 1000);
+							}else{
+								alert(message.content);
+								$("#setPaid").attr("disabled",false);
+							}
+						}
+					});
+				},
+				cancelValue: '取消',
+				cancel: function () {}
+			});
+			d.show();
+		});
 	})
 </script>	
 </body>

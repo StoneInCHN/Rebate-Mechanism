@@ -273,7 +273,7 @@ public class EndUserController extends BaseController {
   }
 
   /**
-   * 禁用
+   * 设置业务员
    */
   @RequestMapping(value = "/updateSalesMan", method = RequestMethod.POST)
   public @ResponseBody Message updateSalesMan(Long id ,Boolean isSalesman) {

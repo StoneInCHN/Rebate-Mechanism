@@ -18,8 +18,8 @@
 <body>
 	<form id="listForm" action="list.jhtml" method="get">
           <ol class="breadcrumb">
-                <li><a ><i class="fa fa-user"></i> ${message("rebate.main.orderManager")}</a> </li>
-                <li class="active">${message("rebate.order.list")}(${message("rebate.common.page.totalPages", page.total)})</li>
+                <li><a ><i class="fa fa-user"></i> ${message("rebate.sallerOrder.info")}</a> </li>
+                <li class="active">${message("rebate.sallerOrder.list")}(${message("rebate.common.page.totalPages", page.total)})</li>
           </ol>
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
