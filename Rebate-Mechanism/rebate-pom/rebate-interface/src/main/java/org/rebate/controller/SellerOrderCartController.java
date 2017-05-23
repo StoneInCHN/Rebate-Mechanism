@@ -162,6 +162,7 @@ public class SellerOrderCartController extends MobileBaseController {
     Long userId = request.getUserId();
     String token = request.getToken();
     List<Long> entityIds = request.getEntityIds();
+    Long sellerId = request.getEntityId();
 
     if (CollectionUtils.isEmpty(entityIds)) {
       response.setCode(CommonAttributes.FAIL_COMMON);
@@ -173,7 +174,16 @@ public class SellerOrderCartController extends MobileBaseController {
     entityIdsLong = entityIds.toArray(entityIdsLong);
 
     List<SellerOrderCart> sellerOrderCarts = sellerOrderCartService.findList(entityIdsLong);
+    BigDecimal totalAmount = new BigDecimal("0");
+    for (SellerOrderCart sellerOrderCart : sellerOrderCarts) {
+      totalAmount = totalAmount.add(sellerOrderCart.getAmount());
+    }
 
+    if (orderService.isOverSellerLimitAmount(sellerId, totalAmount)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
+      return response;
+    }
     List<Order> orders = orderService.createSellerOrder(sellerOrderCarts);
 
     Map<String, Object> map = new HashMap<String, Object>();

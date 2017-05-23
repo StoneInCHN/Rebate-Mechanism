@@ -26,12 +26,26 @@ public interface OrderService extends BaseService<Order, Long> {
 
 
   /**
-   * 支付成功回调更新订单数据
+   * 普通订单支付成功回调更新订单数据
    * 
    * @param orderSn
    * @return
    */
-  Order updateOrderforPayCallBack(String orderSn);
+  Order updateOrderforPayCallBack(Order order);
+
+  Order updateOrderInfo(Order order);
+
+  /**
+   * 商家录单订单录单成功后,无论支付与否,先更新订单相关信息
+   */
+  void updateSellerOrder(List<Order> orders);
+
+  /**
+   * 支付成功后回调方法
+   * 
+   * @param sn
+   */
+  void callbackAfterPay(String sn);
 
 
   /**
@@ -41,6 +55,14 @@ public interface OrderService extends BaseService<Order, Long> {
    * @return
    */
   Order getOrderBySn(String orderSn);
+
+  /**
+   * 根据批量订单流水号获取订单
+   * 
+   * @param orderSn
+   * @return
+   */
+  List<Order> getOrderByBatchSn(String batchSn);
 
   /**
    * 用户评价

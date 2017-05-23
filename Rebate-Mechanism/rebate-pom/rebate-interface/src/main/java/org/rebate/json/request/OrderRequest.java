@@ -58,6 +58,20 @@ public class OrderRequest extends BaseRequest {
    */
   private Boolean isSallerOrder;
 
+  /**
+   * 订单编号
+   */
+  private String sn;
+
+
+  public String getSn() {
+    return sn;
+  }
+
+  public void setSn(String sn) {
+    this.sn = sn;
+  }
+
   public String getPayPwd() {
     return payPwd;
   }

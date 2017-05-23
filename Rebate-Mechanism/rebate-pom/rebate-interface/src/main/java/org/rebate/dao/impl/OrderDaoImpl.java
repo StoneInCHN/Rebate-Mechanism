@@ -1,5 +1,7 @@
 package org.rebate.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
@@ -20,6 +22,21 @@ public class OrderDaoImpl extends BaseDaoImpl<Order, Long> implements OrderDao {
       String jpql = "select order from Order order where order.sn = :orderSn";
       return entityManager.createQuery(jpql, Order.class).setFlushMode(FlushModeType.COMMIT)
           .setParameter("orderSn", orderSn).getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+
+  @Override
+  public List<Order> getOrderByBatchSn(String batchSn) {
+    if (batchSn == null) {
+      return null;
+    }
+    try {
+      String jpql = "select order from Order order where order.batchSn = :batchSn";
+      return entityManager.createQuery(jpql, Order.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("batchSn", batchSn).getResultList();
     } catch (NoResultException e) {
       return null;
     }

@@ -1796,4 +1796,47 @@ public class EndUserController extends MobileBaseController {
     response.setDesc(realName);
     return response;
   }
+
+
+  /**
+   * 验证手机号是否已注册会员或已成为商家
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/verifyMobile", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse verifyMobile(@RequestBody UserRequest req) {
+    BaseResponse response = new BaseResponse();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    String cellPhoneNum = req.getCellPhoneNum();
+
+    // 手机号码格式验证
+    if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
+      return response;
+    }
+
+    EndUser endUser = endUserService.findByUserMobile(cellPhoneNum);
+
+    if (endUser != null) {
+      if (endUser.getSeller() != null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller").getContent());
+        return response;
+      }
+      response.setCode(CommonAttributes.FAIL_USER_EXIST);
+      response.setDesc(Message.error("rebate.seller.apply.cellPhone.reg").getContent());
+      return response;
+    }
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 }

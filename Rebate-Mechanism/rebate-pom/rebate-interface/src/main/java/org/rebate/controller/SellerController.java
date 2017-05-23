@@ -9,11 +9,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
-import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.BankCard;
@@ -342,13 +340,6 @@ public class SellerController extends MobileBaseController {
     Long userId = req.getUserId();
     String token = req.getToken();
 
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
 
     // // 验证店铺折扣,不得低于设定的最小值
     // if (new BigDecimal(req.getDiscount()).compareTo(new
@@ -359,19 +350,19 @@ public class SellerController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.findByUserMobile(req.getCellPhoneNum());
-    if (endUser.getSeller() != null) {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller").getContent());
-      return response;
-    }
-
-
-    if (endUser != null && BooleanUtils.isNotTrue(req.getIsConfirmOpr())) {
-      response.setCode(CommonAttributes.FAIL_USER_EXIST);
-      response.setDesc(Message.error("rebate.seller.apply.cellPhone.unreg").getContent());
-      return response;
-    }
+    EndUser endUser = endUserService.findByUserMobile(req.getContactCellPhone());
+    // if (endUser.getSeller() != null) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller").getContent());
+    // return response;
+    // }
+    //
+    //
+    // if (endUser != null && BooleanUtils.isNotTrue(req.getIsConfirmOpr())) {
+    // response.setCode(CommonAttributes.FAIL_USER_EXIST);
+    // response.setDesc(Message.error("rebate.seller.apply.cellPhone.unreg").getContent());
+    // return response;
+    // }
 
     sellerApplicationService.createApplication(req, endUser);
     if (LogUtil.isDebugEnabled(SellerController.class)) {
@@ -379,11 +370,10 @@ public class SellerController extends MobileBaseController {
           .debug(
               SellerController.class,
               "apply",
-              "apply seller. applyId: %s,isConfirmOpr: %s,userId: %s, contactCellPhone: %s, sellerName: %s, categoryId: %s, discount: %s, storePhone: %s, areaId: %s, address: %s, licenseNum: %s, latitude: %s, longitude: %s",
-              req.getApplyId(), req.getIsConfirmOpr(), userId, req.getContactCellPhone(),
-              req.getSellerName(), req.getCategoryId(), req.getDiscount(), req.getStorePhone(),
-              req.getAreaId(), req.getAddress(), req.getLicenseNum(), req.getLatitude(),
-              req.getLongitude());
+              "apply seller. applyId: %s,userId: %s, contactCellPhone: %s, sellerName: %s, categoryId: %s, discount: %s, storePhone: %s, areaId: %s, address: %s, licenseNum: %s, latitude: %s, longitude: %s",
+              req.getApplyId(), userId, req.getContactCellPhone(), req.getSellerName(),
+              req.getCategoryId(), req.getDiscount(), req.getStorePhone(), req.getAreaId(),
+              req.getAddress(), req.getLicenseNum(), req.getLatitude(), req.getLongitude());
     }
 
     response.setCode(CommonAttributes.SUCCESS);

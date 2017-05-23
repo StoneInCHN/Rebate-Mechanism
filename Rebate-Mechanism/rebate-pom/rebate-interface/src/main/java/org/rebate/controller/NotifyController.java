@@ -84,7 +84,13 @@ public class NotifyController extends MobileBaseController {
               "user pay order call back successfully with yi pay. orderSn: %s, amount: %s,",
               orderseq, orderamount);
         }
-        orderService.updateOrderforPayCallBack(orderseq);
+
+        taskExecutor.execute(new Runnable() {
+          public void run() {
+            orderService.callbackAfterPay(orderseq);
+          }
+        });
+
       } else {
         /**
          * 支付结果不成功：结果码为“0000”表示支付成功，其他值则表示支付失败
@@ -181,7 +187,7 @@ public class NotifyController extends MobileBaseController {
 
           taskExecutor.execute(new Runnable() {
             public void run() {
-              orderService.updateOrderforPayCallBack(out_trade_no);
+              orderService.callbackAfterPay(out_trade_no);
             }
           });
 
@@ -296,6 +302,10 @@ public class NotifyController extends MobileBaseController {
               "user pay order call back successfully with alipay. orderSn: %s, amount: %s, trade_status: %s",
               out_trade_no, total_fee, trade_status);
     }
-    orderService.updateOrderforPayCallBack(out_trade_no);
+    taskExecutor.execute(new Runnable() {
+      public void run() {
+        orderService.callbackAfterPay(out_trade_no);
+      }
+    });
   }
 }

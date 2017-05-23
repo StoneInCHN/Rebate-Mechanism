@@ -61,7 +61,8 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
   public SellerApplication createApplication(SellerRequest req, EndUser sellerUser) {
     EndUser salesman = endUserService.find(req.getUserId());
     if (sellerUser == null) {
-      sellerUser = endUserService.userReg(req.getCellPhoneNum(), null, salesman.getCellPhoneNum());
+      sellerUser =
+          endUserService.userReg(req.getContactCellPhone(), null, salesman.getCellPhoneNum());
     }
 
     SellerApplication application = new SellerApplication();
@@ -103,13 +104,16 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
       application.setEnvImages(envImages);
     }
 
-    sellerApplicationDao.merge(application);
+    sellerApplicationDao.persist(application);
 
-    SalesmanSellerRelation salesmanSellerRelation = new SalesmanSellerRelation();
-    salesmanSellerRelation.setSellerApplication(application);
-    salesmanSellerRelation.setEndUser(salesman);
-    salesmanSellerRelation.setApplyStatus(false);
-    salesmanSellerRelationDao.persist(salesmanSellerRelation);
+    if (req.getApplyId() == null) {
+      SalesmanSellerRelation salesmanSellerRelation = new SalesmanSellerRelation();
+      salesmanSellerRelation.setSellerApplication(application);
+      salesmanSellerRelation.setEndUser(salesman);
+      salesmanSellerRelation.setApplyStatus(false);
+      salesmanSellerRelationDao.persist(salesmanSellerRelation);
+    }
+
     return application;
   }
 }

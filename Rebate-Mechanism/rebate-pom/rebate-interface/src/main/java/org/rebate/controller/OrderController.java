@@ -191,11 +191,10 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-    // orderService.updateOrderforPayCallBack(order.getSn());
     if (isBeanPay) {// 乐豆支付
       taskExecutor.execute(new Runnable() {
         public void run() {
-          orderService.updateOrderforPayCallBack(order.getSn());
+          orderService.updateOrderforPayCallBack(order);
         }
       });
       // orderService.updateOrderforPayCallBack(order.getSn());
@@ -208,6 +207,146 @@ public class OrderController extends MobileBaseController {
     }
     response.getMsg().put("orderId", order.getId());
 
+
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
+
+
+
+  /**
+   * 录单订单支付
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/paySellerOrder", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
+  public @ResponseBody ResponseOne<Map<String, Object>> paySellerOrder(
+      @RequestBody OrderRequest req, HttpServletRequest httpReq) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    String payType = req.getPayType();
+    String payTypeId = req.getPayTypeId();
+    String orderSn = req.getSn();
+    Long sellerId = req.getSellerId();
+    // Boolean isBeanPay = req.getIsBeanPay();
+    // String password = req.getPayPwd();
+
+    Seller seller = sellerService.find(sellerId);
+    //
+    // if (isBeanPay) {// 乐豆支付需要验证支付密码
+    // EndUser endUser = endUserService.find(userId);
+    // if (endUser.getCurLeBean().compareTo(amount) < 0) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.payOrder.curLeBean.insufficient").getContent());
+    // return response;
+    // }
+    // String serverPrivateKey = setting.getServerPrivateKey();
+    // // 密码非空验证
+    // if (StringUtils.isEmpty(password)) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.pwd.null.error").getContent());
+    // return response;
+    // }
+    // // 支付密码未设置
+    // if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
+    // return response;
+    // }
+    // try {
+    // password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    //
+    // // 密码长度验证
+    // if (password.length() < setting.getPasswordMinlength()) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
+    // .getContent());
+    // return response;
+    // }
+    //
+    // if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.payPwd.error").getContent());
+    // return response;
+    // }
+    // }
+    // Order order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
+    //
+    // if (LogUtil.isDebugEnabled(OrderController.class)) {
+    // LogUtil
+    // .debug(
+    // OrderController.class,
+    // "pay",
+    // "pay order. userId: %s,payType: %s,payTypeId: %s,amount: %s,sellerId: %s,remark: %s,isBeanPay: %s",
+    // userId, payType, payTypeId, amount, sellerId, remark, isBeanPay);
+    // }
+    BigDecimal totalFee = new BigDecimal("0");
+    List<Order> orders = new ArrayList<Order>();
+    if (orderSn.startsWith("90000")) {// 批量录单支付
+      orders = orderService.getOrderByBatchSn(orderSn);
+      for (Order order : orders) {
+
+        totalFee = totalFee.add(order.getAmount());
+        order.setPaymentType(payType);
+      }
+    } else {
+      Order order = orderService.getOrderBySn(orderSn);
+      totalFee = order.getAmount();
+      order.setPaymentType(payType);
+      orders.add(order);
+    }
+
+    try {
+      if ("1".equals(payTypeId)) {// 微信支付
+        BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
+        response =
+            PayUtil.wechat(orderSn, seller.getName(), httpReq.getRemoteAddr(), orderSn,
+                weChatPrice.intValue() + "");
+      } else if ("2".equals(payTypeId)) {// 支付宝支付
+        Map<String, Object> map = new HashMap<String, Object>();
+        String orderStr =
+            PayUtil.alipay(orderSn, seller.getName(), seller.getName(), totalFee.toString());
+        map.put("orderStr", orderStr);
+        map.put("out_trade_no", orderSn);
+        response.setMsg(map);
+        response.setCode(CommonAttributes.SUCCESS);
+      } else if ("3".equals(payTypeId)) {// 翼支付
+        response =
+            PayUtil.yiPay(orderSn, seller.getName(), httpReq.getRemoteAddr(), orderSn, totalFee,
+                userId.toString());
+
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // if (isBeanPay) {// 乐豆支付
+    // taskExecutor.execute(new Runnable() {
+    // public void run() {
+    // orderService.updateOrderforPayCallBack(order);
+    // }
+    // });
+    // // orderService.updateOrderforPayCallBack(order.getSn());
+    // Map<String, Object> map = new HashMap<String, Object>();
+    // map.put("out_trade_no", order.getSn());
+    // map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
+    // response.setMsg(map);
+    // response.setCode(CommonAttributes.SUCCESS);
+    //
+    // }
+    // response.getMsg().put("orderId", order.getId());
+
+    orderService.update(orders);
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
@@ -604,13 +743,17 @@ public class OrderController extends MobileBaseController {
     Order order = orderService.createSellerOrder(entityId, amount, sellerId);
 
     if (LogUtil.isDebugEnabled(OrderController.class)) {
-      LogUtil.debug(OrderController.class, "pay", "pay order. userId: %s,amount: %s,sellerId: %s",
-          userId, amount, sellerId);
+      LogUtil.debug(OrderController.class, "generateSellerOrder",
+          "generate Seller Order. consumerId: %s,amount: %s,sellerId: %s", entityId, amount,
+          sellerId);
     }
+
+    List<Order> orders = new ArrayList<Order>();
+    orders.add(order);
 
     taskExecutor.execute(new Runnable() {
       public void run() {
-        orderService.updateOrderforPayCallBack(order.getSn());
+        orderService.updateSellerOrder(orders);
       }
     });
     Map<String, Object> map = new HashMap<String, Object>();

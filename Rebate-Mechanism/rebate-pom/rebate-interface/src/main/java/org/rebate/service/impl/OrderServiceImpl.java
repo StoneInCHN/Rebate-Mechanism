@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.dao.AgentCommissionConfigDao;
@@ -173,19 +174,94 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     return create(userId, payType, amount, sellerId, remark, isBeanPay, false);
   }
 
+  /**
+   * 商家录单订单录单成功后,无论支付与否,先更新订单相关信息
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public Order updateOrderforPayCallBack(String orderSn) {
-    Order order = orderDao.getOrderBySn(orderSn);
+  public void updateSellerOrder(List<Order> orders) {
+    for (Order order : orders) {
+      if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
+        LogUtil
+            .debug(
+                OrderServiceImpl.class,
+                "updateSellerOrder",
+                "update the seller order info before pay. orderSn: %s, orderStatus: %s, isSallerOrder: %s",
+                order.getSn(), order.getStatus().toString(), order.getIsSallerOrder());
+      }
+      updateOrderInfo(order);
+    }
+
+  }
+
+  @Override
+  public void callbackAfterPay(String sn) {
+    if (sn.startsWith("90000")) {// 批量录单支付后回调
+      List<Order> orders = getOrderByBatchSn(sn);
+      if (CollectionUtils.isEmpty(orders)) {
+        if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
+          LogUtil
+              .debug(
+                  OrderServiceImpl.class,
+                  "callbackAfterPay",
+                  "There is no seller orders under the batchSn for callback After Pay. orderBatchSn: %s",
+                  sn);
+        }
+        return;
+      } else {
+        for (Order order : orders) {
+          updateSellerOrderforPayCallBack(order);
+        }
+      }
+    } else {
+      Order order = getOrderBySn(sn);
+      if (BooleanUtils.isTrue(order.getIsSallerOrder())) {// 录单订单支付后回调只更新支付时间和订单状态
+        updateSellerOrderforPayCallBack(order);
+      } else {// 普通订单支付后更新订单及相关收益信息
+        updateOrderforPayCallBack(order);
+      }
+    }
+
+  }
+
+  /**
+   * 商家录单订单支付后回调方法
+   */
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Order updateSellerOrderforPayCallBack(Order order) {
     if (!OrderStatus.UNPAID.equals(order.getStatus())) {
       if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
-        LogUtil.debug(OrderServiceImpl.class, "updateOrderforPayCallBack",
-            "The order already deal with. orderSn: %s, orderStatus: %s", order.getStatus());
+        LogUtil.debug(OrderServiceImpl.class, "updateSellerOrderforPayCallBack",
+            "update Seller Order for PayCallBack. orderSn: %s, orderStatus: %s, isSallerOrder: %s",
+            order.getSn(), order.getStatus().toString(), order.getIsSallerOrder());
       }
       return order;
     }
-
     order.setStatus(OrderStatus.PAID);
     order.setPaymentTime(new Date());
+    orderDao.merge(order);
+    return order;
+  }
+
+  /**
+   * 普通订单支付后回调方法
+   */
+  // @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Order updateOrderforPayCallBack(Order order) {
+    if (!OrderStatus.UNPAID.equals(order.getStatus())) {
+      if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
+        LogUtil.debug(OrderServiceImpl.class, "updateOrderforPayCallBack",
+            "The common order already deal with. orderSn: %s, orderStatus: %s", order.getSn(),
+            order.getStatus().toString());
+      }
+      return order;
+    }
+    order.setStatus(OrderStatus.PAID);
+    order.setPaymentTime(new Date());
+    return updateOrderInfo(order);
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public Order updateOrderInfo(Order order) {
 
     Long orderId = order.getId();
     EndUser endUser = order.getEndUser();
@@ -696,4 +772,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     return sellerOrders;
 
   }
+
+  @Override
+  public List<Order> getOrderByBatchSn(String batchSn) {
+    return orderDao.getOrderByBatchSn(batchSn);
+  }
+
+
 }
