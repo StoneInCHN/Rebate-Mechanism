@@ -22,12 +22,12 @@
 		<setting name="smsPwd" value="552233" />
 		
 		<!-- 验证码消息内容 -->
-		<setting name="smsContentTemp" value="【翼享生活】您的验证码是" />
+		<setting name="smsContentTemp" value="【享个购】您的验证码是" />
 		
 		<!-- 验证码消息内容后缀 -->
 		<setting name="smsPostfix" value="，如非本人操作请忽略。" />
 		
-		<setting name="siteName" value="翼享生活App" />
+		<setting name="siteName" value="享个购App" />
 		<setting name="defaultPageSize" value="5" />
 		
 		<!-- recommend url -->

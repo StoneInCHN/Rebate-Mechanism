@@ -215,6 +215,19 @@ public class Setting implements Serializable {
   private String serverIp;
 
 
+  /** 短信服务平台地址 */
+  private String smsUrl;
+
+  /** 短信平台机构代码 */
+  private String smsOrgId;
+
+  /** 短信平台用户名 */
+  private String smsUserName;
+
+  /** 短信平台密码 */
+  private String smsPwd;
+  
+  
   public String getServerIp() {
     return serverIp;
   }
@@ -545,4 +558,36 @@ public class Setting implements Serializable {
     this.wechatTransfersUrl = wechatTransfersUrl;
   }
 
+  public String getSmsUrl() {
+    return smsUrl;
+  }
+
+  public void setSmsUrl(String smsUrl) {
+    this.smsUrl = smsUrl;
+  }
+
+  public String getSmsOrgId() {
+    return smsOrgId;
+  }
+
+  public void setSmsOrgId(String smsOrgId) {
+    this.smsOrgId = smsOrgId;
+  }
+
+  public String getSmsUserName() {
+    return smsUserName;
+  }
+
+  public void setSmsUserName(String smsUserName) {
+    this.smsUserName = smsUserName;
+  }
+
+  public String getSmsPwd() {
+    return smsPwd;
+  }
+
+  public void setSmsPwd(String smsPwd) {
+    this.smsPwd = smsPwd;
+  }
+  
 }
