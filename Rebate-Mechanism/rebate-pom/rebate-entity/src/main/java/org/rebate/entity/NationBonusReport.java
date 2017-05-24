@@ -37,15 +37,6 @@ public class NationBonusReport extends BaseEntity {
    * 全国消费人数
    */
   private Integer consumePeopleNum;
-  /**
-   * 全国公益商家
-   */
-  private Integer sellerNum;
-
-  /**
-   * 公益总金额
-   */
-  private BigDecimal publicTotalAmount;
 
   /**
    * 当日累计分红乐心
@@ -59,11 +50,16 @@ public class NationBonusReport extends BaseEntity {
    * 当日分红乐分（改完乐豆）
    */
   private BigDecimal bonusLeScoreByDay;
-  /**
-   * 公益金额
-   */
-  private BigDecimal publicAmountByDay;
 
+  /**
+   * 每日分红金额
+   */
+  private BigDecimal bonusByDay;
+
+  /**
+   * 每日让利
+   */
+  private BigDecimal ProfitByDay;
   /**
    * 平台收益
    */
@@ -82,27 +78,27 @@ public class NationBonusReport extends BaseEntity {
    * 创业基金
    */
   private BigDecimal ventureFund;
-  
-  /**
-   * 奖池
-   */
-  private BigDecimal award;
-  
+
+
   /**
    * 代理商提成金
    */
   private BigDecimal agentCommission;
-  
+
+  /**
+   * 鼓励金
+   */
+  private BigDecimal encourageConsume;
   /**
    * 用户推荐提成金
    */
   private BigDecimal userRecommendCommission;
-  
+
   /**
    * 商户推荐提成金
    */
   private BigDecimal sellerRecommendCommission;
-  
+
   @Column(scale = 4, precision = 18)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
@@ -122,24 +118,7 @@ public class NationBonusReport extends BaseEntity {
     this.consumePeopleNum = consumePeopleNum;
   }
 
-  @JsonProperty
-  public Integer getSellerNum() {
-    return sellerNum;
-  }
 
-  public void setSellerNum(Integer sellerNum) {
-    this.sellerNum = sellerNum;
-  }
-
-  @JsonProperty
-  @Column(scale = 4, precision = 18)
-  public BigDecimal getPublicTotalAmount() {
-    return publicTotalAmount;
-  }
-
-  public void setPublicTotalAmount(BigDecimal publicTotalAmount) {
-    this.publicTotalAmount = publicTotalAmount;
-  }
 
   @JsonProperty
   @Column(scale = 4, precision = 18)
@@ -171,15 +150,6 @@ public class NationBonusReport extends BaseEntity {
     this.bonusLeScoreByDay = bonusLeScoreByDay;
   }
 
-  @JsonProperty
-  @Column(scale = 4, precision = 18)
-  public BigDecimal getPublicAmountByDay() {
-    return publicAmountByDay;
-  }
-
-  public void setPublicAmountByDay(BigDecimal publicAmountByDay) {
-    this.publicAmountByDay = publicAmountByDay;
-  }
 
   @JsonProperty
   @Temporal(TemporalType.DATE)
@@ -221,15 +191,6 @@ public class NationBonusReport extends BaseEntity {
     this.ventureFund = ventureFund;
   }
 
-  @JsonProperty
-  @Column(scale = 4, precision = 18)
-  public BigDecimal getAward() {
-    return award;
-  }
-
-  public void setAward(BigDecimal award) {
-    this.award = award;
-  }
 
   @JsonProperty
   @Column(scale = 4, precision = 18)
@@ -261,5 +222,35 @@ public class NationBonusReport extends BaseEntity {
     this.sellerRecommendCommission = sellerRecommendCommission;
   }
 
-  
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getBonusByDay() {
+    return bonusByDay;
+  }
+
+  public void setBonusByDay(BigDecimal bonusByDay) {
+    this.bonusByDay = bonusByDay;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getProfitByDay() {
+    return ProfitByDay;
+  }
+
+  public void setProfitByDay(BigDecimal profitByDay) {
+    ProfitByDay = profitByDay;
+  }
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getEncourageConsume() {
+    return encourageConsume;
+  }
+
+  public void setEncourageConsume(BigDecimal encourageConsume) {
+    this.encourageConsume = encourageConsume;
+  }
+
+
 }

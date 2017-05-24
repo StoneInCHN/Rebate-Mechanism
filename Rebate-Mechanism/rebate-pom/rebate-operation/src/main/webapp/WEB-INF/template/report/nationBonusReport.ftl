@@ -82,12 +82,6 @@
 						<a href="javascript:;" name="platformIncome">${message("rebate.nationBonusReport.platformIncome")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="sellerNum">${message("rebate.nationBonusReport.sellerNum")}</a>
-					</th>
-					<th>
-						<a href="javascript:;" name="publicTotalAmount">${message("rebate.nationBonusReport.publicTotalAmount")}</a>
-					</th>
-					<th>
 						<a href="javascript:;" name="leMindByDay">${message("rebate.nationBonusReport.leMindByDay")}</a>
 					</th>
 					<th>
@@ -97,10 +91,10 @@
 						<a href="javascript:;" name="bonusLeScoreByDay">${message("rebate.nationBonusReport.bonusLeScoreByDay")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="publicAmountByDay">${message("rebate.nationBonusReport.publicAmountByDay")}</a>
+						<a href="javascript:;" name="bonusByDay">${message("rebate.nationBonusReport.bonusByDay")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="award">${message("rebate.nationBonusReport.award")}</a>
+						<a href="javascript:;" name="ProfitByDay">${message("rebate.nationBonusReport.ProfitByDay")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.ventureFund")}</a>
@@ -115,9 +109,11 @@
 						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.sellerRecommendCommission")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="encourageConsume">${message("rebate.nationBonusReport.encourageConsume")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" name="reportDate">${message("rebate.report.reportDate")}</a>
 					</th>
-					
 				</tr>
 			</thead>
 			<tbody>
@@ -136,12 +132,6 @@
 						${report.platformIncome}
 					</td>
 					<td>
-						${report.sellerNum}
-					</td>
-					<td>
-						${report.publicTotalAmount}
-					</td>
-					<td>
 						${report.leMindByDay}
 					</td>
 					<td>
@@ -151,10 +141,10 @@
 						${report.bonusLeScoreByDay}
 					</td>
 					<td>
-						${report.publicAmountByDay}
+						${report.bonusByDay}
 					</td>
 					<td>
-						${report.award}
+						${report.profitByDay}
 					</td>
 					<td>
 						${report.ventureFund}
@@ -167,6 +157,9 @@
 					</td>
 					<td>
 						${report.sellerRecommendCommission}
+					</td>
+					<td>
+						${report.encourageConsume}
 					</td>
 					<td>
 						${report.reportDate}
