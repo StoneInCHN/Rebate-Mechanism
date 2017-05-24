@@ -1,12 +1,11 @@
 package org.rebate.utils;
 
-import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.dom4j.Document;
@@ -19,9 +18,11 @@ import org.rebate.beans.Setting;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
+import org.rebate.utils.allinpay.HttpConnectionUtil;
+import org.rebate.utils.allinpay.SybUtil;
 import org.rebate.utils.wechat.WeixinUtil;
-import org.rebate.utils.yipay.CryptTool;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tencent.common.MD5;
 
 
@@ -43,80 +44,95 @@ public class PayUtil {
   // 微信下订单接口
   public static final String wechat_AddOrderUrl = setting.getWechatAddOrderUrl();
 
-  // 翼支付下单url
-  private static final String yi_payOrder = setting.getYiPayOrder();
-  // 翼支付商户代码
-  private static final String yi_merchantId = setting.getYiMerchantId();
-  // 翼支付商户key
-  private static final String yi_merchantKey = setting.getYiMerchantKey();
-  // 翼支付回调url
-  private static final String yi_notify_url = setting.getYiPayNotifyUrl();
+  // // 翼支付下单url
+  // private static final String yi_payOrder = setting.getYiPayOrder();
+  // // 翼支付商户代码
+  // private static final String yi_merchantId = setting.getYiMerchantId();
+  // // 翼支付商户key
+  // private static final String yi_merchantKey = setting.getYiMerchantKey();
+  // // 翼支付回调url
+  // private static final String yi_notify_url = setting.getYiPayNotifyUrl();
 
-  /**
-   * 电信翼支付接口
-   * 
-   * @param order_sn 商户订单号
-   * @param body 商品介绍
-   * @param ip
-   * @param product_id 商品ID
-   * @param total_fee 商品价格（分）
-   * @return
-   * @throws Exception
-   */
-  public static ResponseOne<Map<String, Object>> yiPay(String order_sn, String body, String ip,
-      String product_id, BigDecimal amount, String userId) throws Exception {
 
-    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
-    String orderTime = TimeUtils.format("yyyyMMddHHmmss", new Date().getTime());
-    String orderReqTranSeq = orderTime + "000001"; // 订单流水号(当前时间+000001)(格式如：yyyymmddhhmmss000001)
-    String temp =
-        "MERCHANTID=" + yi_merchantId + "&ORDERSEQ=" + order_sn + "&ORDERREQTRANSEQ="
-            + orderReqTranSeq + "&ORDERREQTIME=" + orderTime + "&KEY=" + yi_merchantKey;
-    String mac = CryptTool.md5Digest(temp);
-    Map<String, Object> map = new HashMap<String, Object>();
-    map.put("MERCHANTID", yi_merchantId);
-    map.put("ORDERSEQ", order_sn);
-    map.put("ORDERREQTRANSEQ", orderReqTranSeq);
-    map.put("ORDERREQTIME", orderTime);
-    BigDecimal total_fee = amount.multiply(new BigDecimal(100));
-    map.put("ORDERAMT", total_fee);
-    map.put("TRANSCODE", "01");
-    map.put("MAC", mac);
-    String result = ApiUtils.post(yi_payOrder, map);
-    String res[] = result.split("&");
-    if ("00".equals(res[0])) {
-      Map<String, Object> resMap = new HashMap<String, Object>();
-      resMap.put("out_trade_no", order_sn);
-      resMap.put("MERCHANTID", yi_merchantId);
-      resMap.put("ORDERSEQ", order_sn);
-      resMap.put("ORDERREQTRANSEQ", orderReqTranSeq);
-      String orderAmount = amount.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-      resMap.put("ORDERAMOUNT", orderAmount);
-      resMap.put("ORDERTIME", orderTime);
 
-      resMap.put("PRODUCTDESC", body);
-      resMap.put("BACKMERCHANTURL", yi_notify_url);
-      resMap.put("PRODUCTAMOUNT", orderAmount);
-      resMap.put("ATTACHAMOUNT", "0");
-      resMap.put("CURTYPE", "RMB");
-      resMap.put("CUSTOMERID", userId);
-      resMap.put("USERIP", ip);
-      resMap.put("ACCOUNTID", "");
-      resMap.put("BUSITYPE", "04");
+  // 通联统一下单url
+  private static final String allinpay_order_url = setting.getTlPayOrder();
+  // 通联支付商户号
+  private static final String allinpay_merchantId = setting.getTlMerchantId();
+  // 通联支付appId
+  private static final String allinpay_appId = setting.getTlAppId();
+  // 通联支付商户md5 key
+  private static final String allinpay_merchantMD5Key = setting.getTlMerchantKey();
+  // 通联支付回调url
+  private static final String allinpay_notify_url = setting.getTlPayNotifyUrl();
 
-      String tempStr =
-          "MERCHANTID=" + yi_merchantId + "&ORDERSEQ=" + order_sn + "&ORDERREQTRNSEQ="
-              + orderReqTranSeq + "&ORDERTIME=" + orderTime + "&KEY=" + yi_merchantKey;
-      String macStr = CryptTool.md5Digest(tempStr);
-      resMap.put("MAC", macStr);
-      response.setCode(CommonAttributes.SUCCESS);
-      response.setMsg(resMap);
-    } else {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.success("rebate.payOrder.create.fail").getContent() + result);
-    }
-    return response;
-  }
+
+
+  // /**
+  // * 电信翼支付接口
+  // *
+  // * @param order_sn 商户订单号
+  // * @param body 商品介绍
+  // * @param ip
+  // * @param product_id 商品ID
+  // * @param total_fee 商品价格（分）
+  // * @return
+  // * @throws Exception
+  // */
+  // public static ResponseOne<Map<String, Object>> yiPay(String order_sn, String body, String ip,
+  // String product_id, BigDecimal amount, String userId) throws Exception {
+  //
+  // ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+  // String orderTime = TimeUtils.format("yyyyMMddHHmmss", new Date().getTime());
+  // String orderReqTranSeq = orderTime + "000001"; // 订单流水号(当前时间+000001)(格式如：yyyymmddhhmmss000001)
+  // String temp =
+  // "MERCHANTID=" + yi_merchantId + "&ORDERSEQ=" + order_sn + "&ORDERREQTRANSEQ="
+  // + orderReqTranSeq + "&ORDERREQTIME=" + orderTime + "&KEY=" + yi_merchantKey;
+  // String mac = CryptTool.md5Digest(temp);
+  // Map<String, Object> map = new HashMap<String, Object>();
+  // map.put("MERCHANTID", yi_merchantId);
+  // map.put("ORDERSEQ", order_sn);
+  // map.put("ORDERREQTRANSEQ", orderReqTranSeq);
+  // map.put("ORDERREQTIME", orderTime);
+  // BigDecimal total_fee = amount.multiply(new BigDecimal(100));
+  // map.put("ORDERAMT", total_fee);
+  // map.put("TRANSCODE", "01");
+  // map.put("MAC", mac);
+  // String result = ApiUtils.post(yi_payOrder, map);
+  // String res[] = result.split("&");
+  // if ("00".equals(res[0])) {
+  // Map<String, Object> resMap = new HashMap<String, Object>();
+  // resMap.put("out_trade_no", order_sn);
+  // resMap.put("MERCHANTID", yi_merchantId);
+  // resMap.put("ORDERSEQ", order_sn);
+  // resMap.put("ORDERREQTRANSEQ", orderReqTranSeq);
+  // String orderAmount = amount.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+  // resMap.put("ORDERAMOUNT", orderAmount);
+  // resMap.put("ORDERTIME", orderTime);
+  //
+  // resMap.put("PRODUCTDESC", body);
+  // resMap.put("BACKMERCHANTURL", yi_notify_url);
+  // resMap.put("PRODUCTAMOUNT", orderAmount);
+  // resMap.put("ATTACHAMOUNT", "0");
+  // resMap.put("CURTYPE", "RMB");
+  // resMap.put("CUSTOMERID", userId);
+  // resMap.put("USERIP", ip);
+  // resMap.put("ACCOUNTID", "");
+  // resMap.put("BUSITYPE", "04");
+  //
+  // String tempStr =
+  // "MERCHANTID=" + yi_merchantId + "&ORDERSEQ=" + order_sn + "&ORDERREQTRNSEQ="
+  // + orderReqTranSeq + "&ORDERTIME=" + orderTime + "&KEY=" + yi_merchantKey;
+  // String macStr = CryptTool.md5Digest(tempStr);
+  // resMap.put("MAC", macStr);
+  // response.setCode(CommonAttributes.SUCCESS);
+  // response.setMsg(resMap);
+  // } else {
+  // response.setCode(CommonAttributes.FAIL_COMMON);
+  // response.setDesc(Message.success("rebate.payOrder.create.fail").getContent() + result);
+  // }
+  // return response;
+  // }
 
   /**
    * create the order info for alipay. 创建订单信息
@@ -286,7 +302,7 @@ public class PayUtil {
         data.put("package", "Sign=WXPay");
         data.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
 
-        data.put("sign", getSign(data));
+        data.put("sign", getSignForWX(data));
         Map<String, Object> res = new HashMap<String, Object>();
         res.put("out_trade_no", order_sn);
         res.putAll(data);
@@ -306,7 +322,85 @@ public class PayUtil {
   }
 
 
-  public static String getSign(Map<String, String> map) {
+
+  /**
+   * 通联支付接口
+   * 
+   * @param order_sn 商户订单号
+   * @param body 商品介绍
+   * @param ip
+   * @param product_id 商品ID
+   * @param total_fee 商品价格（分）
+   * @return
+   * @throws Exception
+   */
+  public static ResponseOne<Map<String, Object>> allinPay(String order_sn, String body,
+      String total_fee) throws Exception {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    HttpConnectionUtil http = new HttpConnectionUtil(allinpay_order_url + "/pay");
+    http.init();
+    // 随机字符串，不长于32位。推荐随机数生成算法
+    String nonce_str = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+
+    TreeMap<String, String> data = new TreeMap<String, String>();
+    data.put("cusid", allinpay_merchantId);
+    data.put("appid", allinpay_appId);
+    // data.put("version", "11");
+    data.put("trxamt", total_fee);
+    data.put("reqsn", order_sn);
+    data.put("paytype", "A01");
+
+    // data.put("paytype", "W01");
+    data.put("randomstr", nonce_str);
+    data.put("body", body);
+    data.put("notify_url", allinpay_notify_url);
+
+    data.put("sign", SybUtil.sign(data, allinpay_merchantMD5Key));
+    byte[] bys = http.postParams(data, true);
+    String result = new String(bys, "UTF-8");
+    ObjectMapper objectMapper = new ObjectMapper();
+    Map<String, String> map = objectMapper.readValue(result, Map.class);
+    System.out.println(map.toString());
+    if (map == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.success("rebate.payOrder.create.fail").getContent());
+      return response;
+    }
+    if ("SUCCESS".equals(map.get("retcode"))) {// 通信成功
+      String trxstatus = map.get("trxstatus");
+      if ("0000".equals(trxstatus)) {// 下单成功
+        TreeMap tmap = new TreeMap();
+        tmap.putAll(map);
+        String sign = tmap.remove("sign").toString();
+        String signLocal = SybUtil.sign(tmap, allinpay_merchantMD5Key);
+        if (signLocal.toLowerCase().equals(sign.toLowerCase())) {
+          response.setCode(CommonAttributes.SUCCESS);
+          Map<String, Object> res = new HashMap<String, Object>();
+          res.put("payinfo", map.get("payinfo"));
+          res.put("out_trade_no", map.get("reqsn"));
+          response.setMsg(res);
+          System.out.println(res.toString());
+        } else {
+          response.setCode(CommonAttributes.FAIL_COMMON);
+          response.setDesc(Message.success("rebate.pay.sign.error").getContent());
+        }
+      } else {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.success("rebate.payOrder.create.fail").getContent());
+      }
+    } else {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc((map.get("retmsg") != null ? map.get("retmsg") : "")
+          + Message.success("rebate.payOrder.create.fail").getContent());
+    }
+    return response;
+
+  }
+
+
+  public static String getSignForWX(Map<String, String> map) {
     ArrayList<String> list = new ArrayList<String>();
     for (Map.Entry<String, String> entry : map.entrySet()) {
       if (!"sign".equals(entry.getKey()) && null != entry.getValue()

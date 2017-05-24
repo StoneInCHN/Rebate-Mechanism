@@ -25,20 +25,20 @@ public interface OrderService extends BaseService<Order, Long> {
       Boolean isBeanPay);
 
 
-  /**
-   * 普通订单支付成功回调更新订单数据
-   * 
-   * @param orderSn
-   * @return
-   */
-  Order updateOrderforPayCallBack(Order order);
-
-  Order updateOrderInfo(Order order);
+  // /**
+  // * 普通订单支付成功回调更新订单数据
+  // *
+  // * @param orderSn
+  // * @return
+  // */
+  // Order updateOrderforPayCallBack(Order order);
+  //
+  // Order updateOrderInfo(Order order);
 
   /**
    * 商家录单订单录单成功后,无论支付与否,先更新订单相关信息
    */
-  void updateSellerOrder(List<Order> orders);
+  void updateSellerOrderBeforePay(String sn);
 
   /**
    * 支付成功后回调方法

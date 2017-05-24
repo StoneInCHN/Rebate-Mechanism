@@ -178,19 +178,24 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
    * 商家录单订单录单成功后,无论支付与否,先更新订单相关信息
    */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public void updateSellerOrder(List<Order> orders) {
-    for (Order order : orders) {
-      if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
-        LogUtil
-            .debug(
-                OrderServiceImpl.class,
-                "updateSellerOrder",
-                "update the seller order info before pay. orderSn: %s, orderStatus: %s, isSallerOrder: %s",
-                order.getSn(), order.getStatus().toString(), order.getIsSallerOrder());
+  public void updateSellerOrderBeforePay(String sn) {
+    if (sn.startsWith("90000")) {// 批量录单后直接更新数据
+      List<Order> orders = getOrderByBatchSn(sn);
+      for (Order order : orders) {
+        if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
+          LogUtil
+              .debug(
+                  OrderServiceImpl.class,
+                  "updateSellerOrder",
+                  "update the seller order info before pay. orderSn: %s, orderStatus: %s, isSallerOrder: %s",
+                  order.getSn(), order.getStatus().toString(), order.getIsSallerOrder());
+        }
+        updateOrderInfo(order);
       }
+    } else {
+      Order order = getOrderBySn(sn);
       updateOrderInfo(order);
     }
-
   }
 
   @Override

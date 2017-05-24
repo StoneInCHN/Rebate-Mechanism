@@ -42,15 +42,17 @@
 		<setting name="masterSecret" value="e658c652b6b824afd582ab26" />
 		
 		
-		<!-- 翼支付平台 -->
+		<!-- 通联支付平台 -->
 		<!-- 商户key -->
-		<setting name="yiMerchantKey" value="A33B9C17EFD2CDB6303A4512A0373154AD9F9C067937BA7A" />
-		<!--商户代码 -->
-		<setting name="yiMerchantId" value="02510103030438531" />
+		<setting name="tlMerchantKey" value="xgg12345678" />
+		<!--商户号 -->
+		<setting name="tlMerchantId" value="313651054112042" />
+		<!--appid -->
+		<setting name="tlAppId" value="00010017" />
 		<!--下单url -->
-		<setting name="yiPayOrder" value="https://webpaywg.bestpay.com.cn/order.do" />
+		<setting name="tlPayOrder" value="https://vsp.allinpay.com/apiweb/unitorder" />
 		<!--回调url -->
-		<setting name="yiPayNotifyUrl" value="http://120.27.26.85:10001/rebate-interface/payNotify/notify_yipay.jhtml"/>
+		<setting name="tlPayNotifyUrl" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_allinpay.jhtml"/>
 		
 		 
 		<!-- 微信支付平台 -->

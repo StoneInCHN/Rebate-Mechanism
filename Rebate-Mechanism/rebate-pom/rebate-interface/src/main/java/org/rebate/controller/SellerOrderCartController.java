@@ -33,6 +33,7 @@ import org.rebate.service.SellerOrderCartService;
 import org.rebate.service.SellerService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,6 +60,8 @@ public class SellerOrderCartController extends MobileBaseController {
 
   @Resource(name = "orderServiceImpl")
   private OrderService orderService;
+  @Resource(name = "taskExecutor")
+  private TaskExecutor taskExecutor;
 
   /**
    * 获取录单购物车
@@ -186,7 +189,15 @@ public class SellerOrderCartController extends MobileBaseController {
     }
     List<Order> orders = orderService.createSellerOrder(sellerOrderCarts);
 
+    taskExecutor.execute(new Runnable() {
+      public void run() {
+        orderService.updateSellerOrderBeforePay(orders.get(0).getBatchSn());
+      }
+    });
+    // orderService.updateSellerOrderBeforePay(orders.get(0).getBatchSn());
+
     Map<String, Object> map = new HashMap<String, Object>();
+
     map.put("orderSn", orders.get(0).getBatchSn());
     response.setMsg(map);
     String newtoken = TokenGenerator.generateToken(token);

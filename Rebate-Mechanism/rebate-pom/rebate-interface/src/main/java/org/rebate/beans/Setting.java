@@ -288,24 +288,28 @@ public class Setting implements Serializable {
   private String sellerDiscountMin;
 
   /**
-   * 翼支付平台商户Key
+   * 通联平台商户Key
    */
-  private String yiMerchantKey;
+  private String tlMerchantKey;
 
   /**
-   * 翼支付平台商户代码
+   * 通联平台商户号
    */
-  private String yiMerchantId;
+  private String tlMerchantId;
+  /**
+   * 通联平台appid
+   */
+  private String tlAppId;
 
   /**
-   * 翼支付平台下单url
+   * 通联平台下单url
    */
-  private String yiPayOrder;
+  private String tlPayOrder;
 
   /**
-   * 翼支付订单回调url
+   * 通联订单回调url
    */
-  private String yiPayNotifyUrl;
+  private String tlPayNotifyUrl;
   /**
    * 聚合数据 银行卡四元素验证URL
    */
@@ -316,36 +320,44 @@ public class Setting implements Serializable {
   private String juheKey;
 
 
-  public String getYiPayNotifyUrl() {
-    return yiPayNotifyUrl;
+  public String getTlMerchantKey() {
+    return tlMerchantKey;
   }
 
-  public void setYiPayNotifyUrl(String yiPayNotifyUrl) {
-    this.yiPayNotifyUrl = yiPayNotifyUrl;
+  public void setTlMerchantKey(String tlMerchantKey) {
+    this.tlMerchantKey = tlMerchantKey;
   }
 
-  public String getYiPayOrder() {
-    return yiPayOrder;
+  public String getTlMerchantId() {
+    return tlMerchantId;
   }
 
-  public void setYiPayOrder(String yiPayOrder) {
-    this.yiPayOrder = yiPayOrder;
+  public void setTlMerchantId(String tlMerchantId) {
+    this.tlMerchantId = tlMerchantId;
   }
 
-  public String getYiMerchantKey() {
-    return yiMerchantKey;
+  public String getTlAppId() {
+    return tlAppId;
   }
 
-  public void setYiMerchantKey(String yiMerchantKey) {
-    this.yiMerchantKey = yiMerchantKey;
+  public void setTlAppId(String tlAppId) {
+    this.tlAppId = tlAppId;
   }
 
-  public String getYiMerchantId() {
-    return yiMerchantId;
+  public String getTlPayOrder() {
+    return tlPayOrder;
   }
 
-  public void setYiMerchantId(String yiMerchantId) {
-    this.yiMerchantId = yiMerchantId;
+  public void setTlPayOrder(String tlPayOrder) {
+    this.tlPayOrder = tlPayOrder;
+  }
+
+  public String getTlPayNotifyUrl() {
+    return tlPayNotifyUrl;
+  }
+
+  public void setTlPayNotifyUrl(String tlPayNotifyUrl) {
+    this.tlPayNotifyUrl = tlPayNotifyUrl;
   }
 
   public String getDownloadPage() {
