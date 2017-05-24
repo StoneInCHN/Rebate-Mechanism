@@ -481,7 +481,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           salesmanSellerRelationDao.getRelationBySeller(seller);
       SystemConfig recommendSellerConfig =
           systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_SELLER);
-      if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null) {
+      if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
+          && salesmanSellerRelation != null) {
         LeScoreRecord leScoreRecord = new LeScoreRecord();
         leScoreRecord.setOrderId(orderId);
         EndUser salesman = salesmanSellerRelation.getEndUser();

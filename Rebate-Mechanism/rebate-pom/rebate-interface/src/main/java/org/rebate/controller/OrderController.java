@@ -165,10 +165,15 @@ public class OrderController extends MobileBaseController {
 
     try {
       if ("1".equals(payTypeId)) {// 微信支付
+      // BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+      // response =
+      // PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
+      // + "");
+      // response.getMsg().put("encourageAmount", order.getEncourageAmount());
         BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
         response =
-            PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
-                + "");
+            PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
+                order.getId().toString(), weChatPrice.intValue() + "");
         response.getMsg().put("encourageAmount", order.getEncourageAmount());
       } else if ("2".equals(payTypeId)) {// 支付宝支付
         BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
