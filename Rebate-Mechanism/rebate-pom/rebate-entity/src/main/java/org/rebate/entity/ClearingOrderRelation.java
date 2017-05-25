@@ -20,8 +20,8 @@ import org.rebate.entity.base.BaseEntity;
  */
 
 @Entity
-@Table(name = "rm_clearing_order_relation", indexes = {@Index(name = "withDrawRecIdIndex",
-    columnList = "withDrawRecId")})
+@Table(name = "rm_clearing_order_relation", indexes = {@Index(name = "clearingRecIdIndex",
+    columnList = "clearingRecId")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_clearing_order_relation_sequence")
 public class ClearingOrderRelation extends BaseEntity {
 
