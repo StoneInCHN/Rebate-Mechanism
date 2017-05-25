@@ -3,7 +3,9 @@ package org.rebate.utils;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -19,8 +21,10 @@ import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
 import org.rebate.utils.allinpay.HttpConnectionUtil;
+import org.rebate.utils.allinpay.SunMd5;
 import org.rebate.utils.allinpay.SybUtil;
 import org.rebate.utils.wechat.WeixinUtil;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tencent.common.MD5;
@@ -57,8 +61,8 @@ public class PayUtil {
 
   // 通联统一下单url
   private static final String allinpay_order_url = setting.getTlPayOrder();
-  // 通联支付商户号
-  private static final String allinpay_merchantId = setting.getTlMerchantId();
+  // 通联微信支付宝扫码支付商户号
+  private static final String allinpay_merchantPayId = setting.getTlMerchantPayId();
   // 通联支付appId
   private static final String allinpay_appId = setting.getTlAppId();
   // 通联支付商户md5 key
@@ -67,6 +71,20 @@ public class PayUtil {
   private static final String allinpay_notify_url = setting.getTlPayNotifyUrl();
 
 
+  // 通联支付H5支付后同步跳转url
+  private static final String allinpay_pickup_url = setting.getTlPickupUrl();
+  // 通联支付用户注册url
+  private static final String allinpay_regUser_url = setting.getTlRegUserUrl();
+  // 通联支付商户H5支付编号
+  private static final String allinpay_merchantH5Id = setting.getTlMerchantH5Id();
+
+  // 通联支付商户H5支付 md5key
+  private static final String allinpay_merchantH5Key = setting.getTlMerchantH5Key();
+
+  // 银行卡支付H5回调url
+  private static final String allinpay_H5notify_Url = setting.getTlPayNotifyH5Url();
+  // H5页面提交订单接口url
+  private static final String allinpay_H5orderUrl = setting.getTlH5OrderUrl();
 
   // /**
   // * 电信翼支付接口
@@ -324,7 +342,67 @@ public class PayUtil {
 
 
   /**
-   * 通联支付接口
+   * 通联支付接口(银行卡快捷支付H5)
+   * 
+   * @param order_sn 商户订单号
+   * @param body 商品介绍
+   * @param ip
+   * @param product_id 商品ID
+   * @param total_fee 商品价格（分）
+   * @return
+   * @throws Exception
+   */
+  public static ResponseOne<Map<String, Object>> allinpayH5(String order_sn, String body,
+      String userId, String product_id, String total_fee) throws Exception {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    String allinpay_userId =
+        SunMd5.allinpayRegister(allinpay_merchantH5Id, userId.toLowerCase(),
+            allinpay_merchantH5Key, allinpay_regUser_url);
+    if (!StringUtils.isEmpty(allinpay_userId)) {
+      LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
+
+      params.put("inputCharset", "1");
+      params.put("pickupUrl", allinpay_pickup_url);
+      params.put("receiveUrl", allinpay_H5notify_Url);
+      params.put("version", "v1.0");
+      params.put("language", "1");
+      params.put("signType", "0");
+      params.put("merchantId", allinpay_merchantH5Id);
+      params.put("orderNo", order_sn);
+      params.put("orderAmount", total_fee);
+      params.put("orderCurrency", "0");
+      params.put("orderDatetime", TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
+      params.put("productName", body);
+      params.put("ext1", "<USER>" + allinpay_userId + "</USER>");
+      params.put("payType", "33");
+
+      // String tempStr =
+      // "inputCharset=" + resMap.get("inputCharset") + "&pickupUrl=" + resMap.get("pickupUrl")
+      // + "&receiveUrl=" + resMap.get("receiveUrl") + "&version=" + resMap.get("version")
+      // + "&language=" + resMap.get("language") + "&signType=" + resMap.get("signType")
+      // + "&merchantId=" + resMap.get("merchantId") + "&orderNo=" + resMap.get("orderNo")
+      // + "&orderAmount=" + resMap.get("orderAmount") + "&orderCurrency="
+      // + resMap.get("orderCurrency") + "&orderDatetime=" + resMap.get("orderDatetime")
+      // + "&productName=" + resMap.get("productName") + "&ext1=" + resMap.get("ext1")
+      // + "&payType=" + resMap.get("payType") + "&key=" + allinpay_merchantMD5Key;
+      String signMsg = SybUtil.sign(params, allinpay_merchantMD5Key);
+      Map<String, Object> resMap = new LinkedHashMap<String, Object>();
+      resMap.putAll(params);
+      resMap.put("signMsg", signMsg);
+      resMap.put("payH5orderUrl", allinpay_H5orderUrl);
+      response.setCode(CommonAttributes.SUCCESS);
+      response.setMsg(resMap);
+    } else {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.success("rebate.payOrder.create.fail").getContent());
+    }
+    return response;
+  }
+
+
+  /**
+   * 通联支付接口(支付宝支付)
    * 
    * @param order_sn 商户订单号
    * @param body 商品介绍
@@ -345,7 +423,7 @@ public class PayUtil {
     String nonce_str = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
 
     TreeMap<String, String> data = new TreeMap<String, String>();
-    data.put("cusid", allinpay_merchantId);
+    data.put("cusid", allinpay_merchantPayId);
     data.put("appid", allinpay_appId);
     // data.put("version", "11");
     data.put("trxamt", total_fee);

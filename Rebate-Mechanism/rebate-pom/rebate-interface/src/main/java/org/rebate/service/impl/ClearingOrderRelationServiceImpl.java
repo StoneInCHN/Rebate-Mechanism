@@ -28,14 +28,14 @@ public class ClearingOrderRelationServiceImpl extends BaseServiceImpl<ClearingOr
   }
 
   @Override
-  public Page<ClearingOrderRelation> getOrdersByWithDrawId(Long withDrawId, Integer pageSize,
+  public Page<ClearingOrderRelation> getOrdersByClearingId(Long clearingId, Integer pageSize,
       Integer pageNum) {
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNum);
     pageable.setPageSize(pageSize);
 
     List<Filter> filters = new ArrayList<Filter>();
-    filters.add(Filter.eq("withDrawRecId", withDrawId));
+    filters.add(Filter.eq("clearingRecId", clearingId));
     pageable.setFilters(filters);
     pageable.setOrderDirection(Direction.desc);
     pageable.setOrderProperty("createDate");

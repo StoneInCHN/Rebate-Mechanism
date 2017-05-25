@@ -165,11 +165,11 @@ public class OrderController extends MobileBaseController {
 
     try {
       if ("1".equals(payTypeId)) {// 微信支付
-      // BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
-      // response =
-      // PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
-      // + "");
-      // response.getMsg().put("encourageAmount", order.getEncourageAmount());
+        // BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        // response =
+        // PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
+        // + "");
+        // response.getMsg().put("encourageAmount", order.getEncourageAmount());
         BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
         response =
             PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
@@ -181,11 +181,12 @@ public class OrderController extends MobileBaseController {
             PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
                 + "");
         response.getMsg().put("encourageAmount", order.getEncourageAmount());
-      } else if ("3".equals(payTypeId)) {// 翼支付
-        // response =
-        // PayUtil.yiPay(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
-        // order.getId().toString(), amount, userId.toString());
-        // response.getMsg().put("encourageAmount", order.getEncourageAmount());
+      } else if ("3".equals(payTypeId)) {// 银行卡快捷支付
+        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        response =
+            PayUtil.allinpayH5(order.getSn(), order.getSeller().getName(), userId.toString(), order
+                .getId().toString(), weChatPrice.intValue() + "");
+        response.getMsg().put("encourageAmount", order.getEncourageAmount());
 
       }
     } catch (Exception e) {
@@ -214,8 +215,6 @@ public class OrderController extends MobileBaseController {
     response.setToken(newtoken);
     return response;
   }
-
-
 
   /**
    * 录单订单支付

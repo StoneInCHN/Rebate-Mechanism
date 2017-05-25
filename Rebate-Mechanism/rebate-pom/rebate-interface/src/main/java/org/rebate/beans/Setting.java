@@ -293,9 +293,9 @@ public class Setting implements Serializable {
   private String tlMerchantKey;
 
   /**
-   * 通联平台商户号
+   * 通联微信支付宝扫码支付商户号
    */
-  private String tlMerchantId;
+  private String tlMerchantPayId;
   /**
    * 通联平台appid
    */
@@ -310,6 +310,37 @@ public class Setting implements Serializable {
    * 通联订单回调url
    */
   private String tlPayNotifyUrl;
+
+  /**
+   * 通联支付用户注册url
+   */
+  private String tlRegUserUrl;
+
+  /**
+   * 通联商户的H5支付号
+   */
+  private String tlMerchantH5Id;
+
+  /**
+   * 通联支付支付后同步跳转url
+   */
+  private String tlPickupUrl;
+
+  /**
+   * H5页面提交订单接口url
+   */
+  private String tlH5OrderUrl;
+
+  /**
+   * 银行卡支付H5回调url
+   */
+  private String tlPayNotifyH5Url;
+
+  /**
+   * 商户H5 key
+   */
+  private String tlMerchantH5Key;
+
   /**
    * 聚合数据 银行卡四元素验证URL
    */
@@ -320,6 +351,55 @@ public class Setting implements Serializable {
   private String juheKey;
 
 
+  public String getTlMerchantH5Key() {
+    return tlMerchantH5Key;
+  }
+
+  public void setTlMerchantH5Key(String tlMerchantH5Key) {
+    this.tlMerchantH5Key = tlMerchantH5Key;
+  }
+
+  public String getTlPayNotifyH5Url() {
+    return tlPayNotifyH5Url;
+  }
+
+  public void setTlPayNotifyH5Url(String tlPayNotifyH5Url) {
+    this.tlPayNotifyH5Url = tlPayNotifyH5Url;
+  }
+
+  public String getTlH5OrderUrl() {
+    return tlH5OrderUrl;
+  }
+
+  public void setTlH5OrderUrl(String tlH5OrderUrl) {
+    this.tlH5OrderUrl = tlH5OrderUrl;
+  }
+
+  public String getTlPickupUrl() {
+    return tlPickupUrl;
+  }
+
+  public void setTlPickupUrl(String tlPickupUrl) {
+    this.tlPickupUrl = tlPickupUrl;
+  }
+
+  public String getTlRegUserUrl() {
+    return tlRegUserUrl;
+  }
+
+  public void setTlRegUserUrl(String tlRegUserUrl) {
+    this.tlRegUserUrl = tlRegUserUrl;
+  }
+
+
+  public String getTlMerchantH5Id() {
+    return tlMerchantH5Id;
+  }
+
+  public void setTlMerchantH5Id(String tlMerchantH5Id) {
+    this.tlMerchantH5Id = tlMerchantH5Id;
+  }
+
   public String getTlMerchantKey() {
     return tlMerchantKey;
   }
@@ -328,12 +408,13 @@ public class Setting implements Serializable {
     this.tlMerchantKey = tlMerchantKey;
   }
 
-  public String getTlMerchantId() {
-    return tlMerchantId;
+
+  public String getTlMerchantPayId() {
+    return tlMerchantPayId;
   }
 
-  public void setTlMerchantId(String tlMerchantId) {
-    this.tlMerchantId = tlMerchantId;
+  public void setTlMerchantPayId(String tlMerchantPayId) {
+    this.tlMerchantPayId = tlMerchantPayId;
   }
 
   public String getTlAppId() {

@@ -11,6 +11,6 @@ public interface ClearingOrderRelationService extends BaseService<ClearingOrderR
    * 
    * @return
    */
-  Page<ClearingOrderRelation> getOrdersByWithDrawId(Long withDrawId, Integer pageSize,
+  Page<ClearingOrderRelation> getOrdersByClearingId(Long clearingId, Integer pageSize,
       Integer pageNum);
 }

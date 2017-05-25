@@ -43,18 +43,36 @@
 		
 		
 		<!-- 通联支付平台 -->
+		
+		<!--微信支付宝接入相关参数 -->
 		<!-- 商户key -->
 		<setting name="tlMerchantKey" value="xgg12345678" />
-		<!--商户号 -->
-		<setting name="tlMerchantId" value="313651054112042" />
+		<!--通联微信支付宝扫码支付商户号 -->
+		<setting name="tlMerchantPayId" value="313651054112042" />
 		<!--appid -->
 		<setting name="tlAppId" value="00010017" />
 		<!--下单url -->
 		<setting name="tlPayOrder" value="https://vsp.allinpay.com/apiweb/unitorder" />
-		<!--回调url -->
+		<!--支付回调url -->
 		<setting name="tlPayNotifyUrl" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_allinpay.jhtml"/>
 		
-		 
+		<!--银行卡快捷支付H5接入相关参数 -->
+		<!-- 商户H5 key -->
+		<setting name="tlMerchantH5Key" value="1234567890" />
+		<!--商户H5支付号 -->
+		<setting name="tlMerchantH5Id" value="008510154113610" />
+		<!--支付用户注册url -->
+		<setting name="tlRegUserUrl" value="https://cashier.allinpay.com/usercenter/merchant/UserInfo/reg.do" />
+		<!--支付完成后同步跳转url -->
+		<setting name="tlPickupUrl" value="http://www.baidu.com"/>
+		<!--银行卡支付H5回调url -->
+		<setting name="tlPayNotifyH5Url" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_allinpay_H5.jhtml"/>
+		<!--H5页面提交订单接口url -->
+		<setting name="tlH5OrderUrl" value="https://cashier.allinpay.com/mobilepayment/mobile/SaveMchtOrderServlet.action" />
+		<!-- 通联支付平台 -->
+		
+		
+		
 		<!-- 微信支付平台 -->
 		<!-- 秘钥 -->
 		<setting name="wechatKey" value="0xtkBKi7PXCeTZBoUB0Zkr1BCE3rYlcU" />

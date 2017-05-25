@@ -17,15 +17,14 @@ import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.EndUser;
-import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
+import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
-import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SortType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -43,13 +42,14 @@ import org.rebate.json.request.SellerRequest;
 import org.rebate.service.BankCardService;
 import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.EndUserService;
-import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
+import org.rebate.service.SellerClearingRecordService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerJdbcService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SystemConfigService;
+import org.rebate.service.UserAuthService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.LatLonUtil;
 import org.rebate.utils.QRCodeGenerator;
@@ -87,14 +87,18 @@ public class SellerController extends MobileBaseController {
   @Resource(name = "systemConfigServiceImpl")
   private SystemConfigService systemConfigService;
 
-  @Resource(name = "leScoreRecordServiceImpl")
-  private LeScoreRecordService leScoreRecordService;
+  @Resource(name = "sellerClearingRecordServiceImpl")
+  private SellerClearingRecordService sellerClearingRecordService;
 
   @Resource(name = "clearingOrderRelationServiceImpl")
   private ClearingOrderRelationService clearingOrderRelationService;
 
   @Resource(name = "bankCardServiceImpl")
   private BankCardService bankCardService;
+
+  @Resource(name = "userAuthServiceImpl")
+  private UserAuthService userAuthService;
+
 
 
   /**
@@ -417,6 +421,7 @@ public class SellerController extends MobileBaseController {
     }
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, seller);
     map.put("envImgs", envImgs);
+    map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(token);
@@ -536,17 +541,13 @@ public class SellerController extends MobileBaseController {
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
-    Filter statusFilter = new Filter("incomeLeScore", Operator.ne, new BigDecimal("0"));
-    Filter typeFilter = new Filter("leScoreType", Operator.eq, LeScoreType.WITHDRAW);
-    filters.add(statusFilter);
     filters.add(endUserFilter);
-    filters.add(typeFilter);
     pageable.setFilters(filters);
     pageable.setOrderDirection(Direction.desc);
     pageable.setOrderProperty("createDate");
 
-    Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
-    String[] propertys = {"id", "withDrawSn", "isWithdraw", "createDate", "incomeLeScore"};
+    Page<SellerClearingRecord> page = sellerClearingRecordService.findPage(pageable);
+    String[] propertys = {"id", "clearingSn", "isClearing", "createDate", "amount"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -583,26 +584,26 @@ public class SellerController extends MobileBaseController {
     Integer pageSize = req.getPageSize();
     Integer pageNumber = req.getPageNumber();
 
-    LeScoreRecord leScoreRecord = leScoreRecordService.find(entityId);
-    String[] pro = {"id", "withDrawSn", "isWithdraw", "createDate", "incomeLeScore"};
-    Map<String, Object> result = FieldFilterUtils.filterEntityMap(pro, leScoreRecord);
+    SellerClearingRecord sellerClearingRecord = sellerClearingRecordService.find(entityId);
+    String[] pro = {"id", "clearingSn", "isClearing", "createDate", "amount", "totalOrderAmount"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(pro, sellerClearingRecord);
 
     Page<ClearingOrderRelation> page =
-        clearingOrderRelationService.getOrdersByWithDrawId(entityId, pageSize, pageNumber);
+        clearingOrderRelationService.getOrdersByClearingId(entityId, pageSize, pageNumber);
     String[] propertys =
         {"order.sn", "order.createDate", "order.amount", "order.sellerIncome",
             "order.rebateAmount", "order.sellerDiscount"};
     List<Map<String, Object>> orderMap =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
     result.put("orders", orderMap);
-    BigDecimal totalIncome = new BigDecimal("0");
-    for (ClearingOrderRelation relation : page.getContent()) {
-      totalIncome = totalIncome.add(relation.getOrder().getAmount());
-    }
-    result.put("totalIncome", totalIncome);
+    // BigDecimal totalIncome = new BigDecimal("0");
+    // for (ClearingOrderRelation relation : page.getContent()) {
+    // totalIncome = totalIncome.add(relation.getOrder().getAmount());
+    // }
+    // result.put("totalIncome", totalIncome);
 
 
-    BankCard bankCard = bankCardService.find(leScoreRecord.getWithDrawType());
+    BankCard bankCard = bankCardService.find(sellerClearingRecord.getBankCardId());
     String[] bankCardPro = {"cardNum", "bankName", "cardType", "bankLogo"};
     Map<String, Object> bankCardMap = FieldFilterUtils.filterEntityMap(bankCardPro, bankCard);
     result.put("bankCard", bankCardMap);

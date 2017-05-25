@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,6 +21,7 @@ import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.service.OrderService;
 import org.rebate.utils.alipay.util.AlipayNotify;
+import org.rebate.utils.allinpay.PayNotify;
 import org.rebate.utils.allinpay.SybUtil;
 import org.rebate.utils.wechat.WeixinUtil;
 import org.springframework.core.task.TaskExecutor;
@@ -325,7 +327,16 @@ public class NotifyController extends MobileBaseController {
   public @ResponseBody String notify_allinpay(HttpServletRequest request) throws Exception {
     request.setCharacterEncoding("gbk");// 通知传输的编码为GBK
     // response.setCharacterEncoding("gbk");
-    TreeMap<String, String> params = getParams(request);// 动态遍历获取所有收到的参数,此步非常关键,因为收银宝以后可能会加字段,动态获取可以兼容
+
+    // 动态遍历获取所有收到的参数,此步非常关键,因为收银宝以后可能会加字段,动态获取可以兼容
+    TreeMap<String, String> params = new TreeMap<String, String>();
+    Map reqMap = request.getParameterMap();
+    for (Object key : reqMap.keySet()) {
+      String value = ((String[]) reqMap.get(key))[0];
+      // System.out.println(key + ";" + value);
+      params.put(key.toString(), value);
+    }
+
 
     if (LogUtil.isDebugEnabled(NotifyController.class)) {
       LogUtil.debug(NotifyController.class, "notify_allinpay",
@@ -368,22 +379,86 @@ public class NotifyController extends MobileBaseController {
 
   }
 
-
   /**
-   * 动态遍历获取所有收到的参数,此步非常关键,因为收银宝以后可能会加字段,动态获取可以兼容由于收银宝加字段而引起的签名异常
+   * 通联H5支付回调接口
    * 
-   * @param request
+   * @param req
    * @return
+   * @throws IOException
    */
-  private TreeMap<String, String> getParams(HttpServletRequest request) {
-    TreeMap<String, String> map = new TreeMap<String, String>();
-    Map reqMap = request.getParameterMap();
-    for (Object key : reqMap.keySet()) {
-      String value = ((String[]) reqMap.get(key))[0];
-      System.out.println(key + ";" + value);
-      map.put(key.toString(), value);
+  @RequestMapping(value = "/notify_allinpay_H5", method = RequestMethod.POST)
+  public @ResponseBody String notify_allinpay_H5(HttpServletRequest request) throws Exception {
+    // 获取支付宝POST过来反馈信息
+    Map<String, String> params = new LinkedHashMap<String, String>();
+    Map requestParams = request.getParameterMap();
+    for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+      String name = (String) iter.next();
+      String[] values = (String[]) requestParams.get(name);
+      String valueStr = "";
+      for (int i = 0; i < values.length; i++) {
+        valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+      }
+      // 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+      // valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
+      params.put(name, valueStr);
     }
-    return map;
+    if (LogUtil.isDebugEnabled(NotifyController.class)) {
+      LogUtil.debug(NotifyController.class, "notify_allinpay_H5",
+          "allin pay H5 notify callback method. response: %s", params);
+    }
+
+    // 商户订单号
+    String out_trade_no =
+        new String(request.getParameter("orderNo").getBytes("ISO-8859-1"), "UTF-8");
+    // 交易金额
+    String total_fee =
+        new String(request.getParameter("payAmount").getBytes("ISO-8859-1"), "UTF-8");
+    // 加密类型
+    String sign_type = new String(request.getParameter("signType").getBytes("ISO-8859-1"), "UTF-8");
+    if ("0".equals(sign_type) && PayNotify.verify(params)) {// sign_type:0 MD5加密 sign_type:1 RSA加密
+      if (LogUtil.isDebugEnabled(NotifyController.class)) {
+        LogUtil
+            .debug(
+                NotifyController.class,
+                "notify_allinpay_H5",
+                "user pay order call back successfully with allin pay H5. orderSn: %s, amount: %s,sign_type: %s",
+                out_trade_no, total_fee, sign_type);
+      }
+      taskExecutor.execute(new Runnable() {
+        public void run() {
+          orderService.callbackAfterPay(out_trade_no);
+        }
+      });
+
+    } else {// 验证失败
+      if (LogUtil.isDebugEnabled(NotifyController.class)) {
+        LogUtil
+            .debug(
+                NotifyController.class,
+                "notify_allinpay_H5",
+                "user pay order call back verify sign failed with allin pay H5. orderSn: %s,sign_type: %s",
+                out_trade_no, sign_type);
+      }
+    }
+    return "success";
   }
+
+
+  // /**
+  // * 动态遍历获取所有收到的参数,此步非常关键,因为收银宝以后可能会加字段,动态获取可以兼容由于收银宝加字段而引起的签名异常
+  // *
+  // * @param request
+  // * @return
+  // */
+  // private TreeMap<String, String> getParams(HttpServletRequest request) {
+  // TreeMap<String, String> map = new TreeMap<String, String>();
+  // Map reqMap = request.getParameterMap();
+  // for (Object key : reqMap.keySet()) {
+  // String value = ((String[]) reqMap.get(key))[0];
+  // // System.out.println(key + ";" + value);
+  // map.put(key.toString(), value);
+  // }
+  // return map;
+  // }
 
 }

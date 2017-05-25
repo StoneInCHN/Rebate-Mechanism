@@ -3,6 +3,7 @@ package org.rebate.utils.allinpay;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -87,8 +88,34 @@ public class SybUtil {
     return sRand;
   }
 
+
   /**
-   * 签名
+   * 签名 LinkedHashMap
+   * 
+   * @param params
+   * @return
+   * @throws Exception
+   */
+  public static String sign(LinkedHashMap<String, String> params, String appkey) throws Exception {
+    if (params.containsKey("sign"))// 签名明文组装不包含sign字段
+      params.remove("sign");
+    params.put("key", appkey);
+    StringBuilder sb = new StringBuilder();
+    for (Map.Entry<String, String> entry : params.entrySet()) {
+      if (entry.getValue() != null && entry.getValue().length() > 0) {
+        sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+      }
+    }
+    if (sb.length() > 0) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
+    String sign = md5(sb.toString().getBytes("UTF-8"));// 记得是md5编码的加签
+    params.remove("key");
+    return sign;
+  }
+
+  /**
+   * 签名 TreeMap
    * 
    * @param params
    * @return
