@@ -29,9 +29,9 @@ public class ClearingOrderRelation extends BaseEntity {
   private static final long serialVersionUID = 1L;
 
   /**
-   * 提现记录ID
+   * 结算记录ID
    */
-  private Long withDrawRecId;
+  private Long clearingRecId;
 
   /**
    * 关联的订单
@@ -40,12 +40,12 @@ public class ClearingOrderRelation extends BaseEntity {
 
 
 
-  public Long getWithDrawRecId() {
-    return withDrawRecId;
+  public Long getClearingRecId() {
+    return clearingRecId;
   }
 
-  public void setWithDrawRecId(Long withDrawRecId) {
-    this.withDrawRecId = withDrawRecId;
+  public void setClearingRecId(Long clearingRecId) {
+    this.clearingRecId = clearingRecId;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)

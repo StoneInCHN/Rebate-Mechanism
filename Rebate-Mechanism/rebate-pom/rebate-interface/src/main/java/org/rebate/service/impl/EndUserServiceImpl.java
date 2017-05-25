@@ -341,7 +341,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     List<ClearingOrderRelation> clearingOrderRelations = new ArrayList<ClearingOrderRelation>();
     for (Order order : orders) {
       ClearingOrderRelation clearingOrderRelation = new ClearingOrderRelation();
-      clearingOrderRelation.setWithDrawRecId(leScoreRecord.getId());
+      clearingOrderRelation.setClearingRecId(leScoreRecord.getId());
       clearingOrderRelation.setOrder(order);
       clearingOrderRelations.add(clearingOrderRelation);
     }
