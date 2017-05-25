@@ -282,18 +282,18 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     /**
      * 消费后商家的直接收益
      */
-    LeScoreRecord scoreRecord = new LeScoreRecord();
-    scoreRecord.setOrderId(orderId);
-    scoreRecord.setEndUser(sellerEndUser);
-    scoreRecord.setSeller(seller);
-    scoreRecord.setLeScoreType(LeScoreType.CONSUME_SELLER);
-    scoreRecord.setRemark(order.getPaymentType());
-    scoreRecord.setAmount(order.getSellerIncome());
-    scoreRecord.setUserCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
-    sellerEndUser.setCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
-    sellerEndUser.setTotalLeScore(sellerEndUser.getTotalLeScore().add(scoreRecord.getAmount()));
-    sellerEndUser.setIncomeLeScore(sellerEndUser.getIncomeLeScore().add(scoreRecord.getAmount()));
-    sellerEndUser.getLeScoreRecords().add(scoreRecord);
+    // LeScoreRecord scoreRecord = new LeScoreRecord();
+    // scoreRecord.setOrderId(orderId);
+    // scoreRecord.setEndUser(sellerEndUser);
+    // scoreRecord.setSeller(seller);
+    // scoreRecord.setLeScoreType(LeScoreType.CONSUME_SELLER);
+    // scoreRecord.setRemark(order.getPaymentType());
+    // scoreRecord.setAmount(order.getSellerIncome());
+    // scoreRecord.setUserCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
+    sellerEndUser.setCurLeScore(sellerEndUser.getCurLeScore().add(order.getSellerIncome()));
+    sellerEndUser.setTotalLeScore(sellerEndUser.getTotalLeScore().add(order.getSellerIncome()));
+    sellerEndUser.setIncomeLeScore(sellerEndUser.getIncomeLeScore().add(order.getSellerIncome()));
+    // sellerEndUser.getLeScoreRecords().add(scoreRecord);
 
     // endUserDao.merge(sellerEndUser);
 
