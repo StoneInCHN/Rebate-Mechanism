@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.SettingConfig;
 import org.rebate.entity.SystemConfig;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller("systemConfigController")
 @RequestMapping("/console/systemConfig")
@@ -66,15 +68,22 @@ public class SystemConfigController extends BaseController {
    * 更新
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
-  public String update(SystemConfig config) {
-    SystemConfig temp = systemConfigService.find(config.getId());
-    if (!temp.getConfigKey().equals(SystemConfigKey.PAYMENTTYPE)) {
+  public @ResponseBody Message update(SystemConfig config) {
+    SystemConfig temp =new SystemConfig();
+    SystemConfig temp1 =  systemConfigService.find(config.getId());
+    if (!temp1.getConfigKey().equals(SystemConfigKey.PAYMENTTYPE)) {
       temp.setIsEnabled(config.getIsEnabled());
       temp.setRemark(config.getRemark());
       temp.setConfigValue(config.getConfigValue());
-      systemConfigService.update(temp);
+      temp.setConfigKey(temp1.getConfigKey());
+      temp.setCreateDate(temp1.getCreateDate());
+      temp.setModifyDate(temp1.getModifyDate());
+      temp.setId(config.getId());
+      temp.setConfigOrder(temp1.getConfigOrder());
+      return systemConfigService.updateSystemConfig(temp);
+    }else {
+      return ERROR_MESSAGE;
     }
-    return "redirect:list.jhtml";
   }
 
   /**

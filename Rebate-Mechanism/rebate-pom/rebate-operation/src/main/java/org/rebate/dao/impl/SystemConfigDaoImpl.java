@@ -28,4 +28,19 @@ public class SystemConfigDaoImpl extends BaseDaoImpl<SystemConfig, Long> impleme
     }
 
   }
+
+  @Override
+  public SystemConfig getConfigByKeyIgnoreIsEnabled(SystemConfigKey key) {
+    if (key == null) {
+      return null;
+    }
+    try {
+      String jpql =
+          "select config from SystemConfig config where  config.configKey = :key";
+      return entityManager.createQuery(jpql, SystemConfig.class).setFlushMode(FlushModeType.COMMIT)
+          .setParameter("key", key).getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
 }

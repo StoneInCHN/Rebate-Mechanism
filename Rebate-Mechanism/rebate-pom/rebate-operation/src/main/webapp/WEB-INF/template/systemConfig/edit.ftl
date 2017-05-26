@@ -11,6 +11,7 @@
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.form.js"></script>
 <script type="text/javascript">
 $(function() {
 
@@ -22,6 +23,24 @@ $(function() {
 				required:true,
 				number:true
 			}
+		},
+		submitHandler:function(form){
+			$inputForm.ajaxSubmit({
+			      	dataType:"json",
+			       	beforeSubmit:function(){
+			       		$('input[type="submit"]').attr("disabled","disabled");
+			       	},
+			       	success:function(result){
+			       		if(result.type == "error"){
+			       			alert(result.content);
+			       			$('input[type="submit"]').attr("disabled",false);
+			       		}else{
+			       			alert(result.content);
+			       			location.href="list.jhtml";
+			       		}
+			       		
+			       }
+			});
 		}
 	});
 

@@ -81,7 +81,7 @@
 								<td>
 									<select  name="isSalesman">
 										<option value="">${message("rebate.common.All")}</option>
-										<option [#if isSalesman == "true"] selected="selected" [/#if] value="true">${message("rebate.common.true")}</option>
+										<option [#if isSalesman?? && isSalesman] selected="selected" [/#if] value="true">${message("rebate.common.true")}</option>
 										<option [#if isSalesman?? && !isSalesman] selected="selected" [/#if] value="false">${message("rebate.common.false")}</option>
 									</select>
 								</td>

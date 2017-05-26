@@ -61,7 +61,7 @@
 						[#list systemConfigs as systemConfig]
 						<tr>
 							<td>
-								<span data-toggle="tooltip" data-placement="top" title="${systemConfig.remark}">${message("rebate.systemConfig.configKey."+systemConfig.configKey)}</span>
+								<span  title="${systemConfig.remark}">${message("rebate.systemConfig.configKey."+systemConfig.configKey)}</span>
 							</td>
 							<td>
 								[#if  systemConfig.configValue??]
@@ -87,7 +87,9 @@
 								
 							</td>
 							<td>
-								<a href="edit.jhtml?id=${systemConfig.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+								[#if  systemConfig.configKey != "USER_RECOMMEND_COMMISSION_PERCENTAGE"]
+									<a href="edit.jhtml?id=${systemConfig.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+								[/#if]
 							</td>
 						</tr>
 						[/#list]
@@ -193,7 +195,7 @@
 								<a href="javascript:;" class="sort" name="configValue">${message("rebate.settingConfig.configValue")}</a>
 							</th>
 							<th>
-								<a href="javascript:;" class="sort" name="configValue">${message("rebate.settingConfig.isEnabled")}</a>
+								<a href="javascript:;" class="sort" name="isEnabled">${message("rebate.settingConfig.isEnabled")}</a>
 							</th>
 							<th>
 								<span>${message("rebate.common.handle")}</span>
