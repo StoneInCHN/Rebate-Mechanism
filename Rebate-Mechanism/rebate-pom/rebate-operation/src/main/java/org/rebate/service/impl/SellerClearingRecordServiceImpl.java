@@ -1,6 +1,7 @@
 package org.rebate.service.impl; 
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,7 +64,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)  
-	public void sellerClearing() {
+	public void sellerClearing(Date startDate, Date endDate) {
     	
 		Map<Seller, BigDecimal> sellerAmountMap = new HashMap<Seller, BigDecimal>();
 		Map<Seller, Set<Order>> sellerOrdersMap = new HashMap<Seller, Set<Order>>();
@@ -71,6 +72,8 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		List<Filter> filters = new ArrayList<Filter>();
 		filters.add(Filter.ne("orderStatus", OrderStatus.UNPAID));
 		filters.add(Filter.eq("isClearing", false));
+        Date[] queryDates = {startDate, endDate};
+        filters.add(Filter.between("paymentTime", queryDates));
 		List<Order> orders = orderService.findList(null, filters, null);
 		
 		for (int i = 0; i < orders.size(); i++) {

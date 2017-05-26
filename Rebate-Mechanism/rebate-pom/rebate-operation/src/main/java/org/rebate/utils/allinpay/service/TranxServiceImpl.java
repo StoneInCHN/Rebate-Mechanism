@@ -6,8 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.rebate.entity.BankCard;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerClearingRecord;
+import org.rebate.service.BankCardService;
 import org.rebate.utils.TimeUtils;
 import org.rebate.utils.allinpay.pojo.TranxCon;
 import org.rebate.utils.allinpay.tools.FileUtil;
@@ -26,10 +31,12 @@ import com.allinpay.XmlTools;
 /**
  */
 public class TranxServiceImpl {
+  
+  @Resource(name="bankCardServiceImpl")
+  private BankCardService bankCardService;
+  
   TranxCon tranxContants = new TranxCon();
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-
-
 
   /**
    * 批量代付 Andrea
@@ -53,22 +60,27 @@ public class TranxServiceImpl {
     body.setTRANS_SUM(trans_sum);
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
     for (int i = 1; i <= records.size(); i++) {
-      Trans_Detail trans_detail = new Trans_Detail();
-      trans_detail.setSN(genSn(i));
-      trans_detail.setACCOUNT_NAME("焦然"); // 银行卡姓名
-      trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
-      trans_detail.setACCOUNT_NO("6217002200007441106"); // 银行卡账号
-      trans_detail.setAMOUNT("10003");
-      trans_detail.setBANK_CODE("0105");
-      trans_detail.setCURRENCY("CNY");
+      SellerClearingRecord record = records.get(i);
+      EndUser endUser = record.getEndUser();
+      BankCard bankCard = bankCardService.getDefaultCard(endUser.getId());
+      if (endUser != null && bankCard != null) {
+        Trans_Detail trans_detail = new Trans_Detail();
+        trans_detail.setSN(genSn(i));
+        trans_detail.setACCOUNT_NAME(bankCard.getBankName()); // 银行卡姓名
+        trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
+        trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
+        trans_detail.setAMOUNT(record.getAmount().toString());
+        trans_detail.setBANK_CODE("0105");
+        trans_detail.setCURRENCY("CNY");
 
-      // trans_detail.setCUST_USERID("252523524253xx");
-      // trans_detail.setTEL("13434245846");
-      // trans_detail.setCURRENCY("NBK");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
-      // trans_detail.setSETTGROUPFLAG("xCHM");
-      // trans_detail.setSUMMARY("分组清算");
-      // trans_detail.setUNION_BANK("234234523523");
-      transList.add(trans_detail);
+        // trans_detail.setCUST_USERID("252523524253xx");
+        // trans_detail.setTEL("13434245846");
+        // trans_detail.setCURRENCY("NBK");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
+        // trans_detail.setSETTGROUPFLAG("xCHM");
+        // trans_detail.setSUMMARY("分组清算");
+        // trans_detail.setUNION_BANK("234234523523");
+        transList.add(trans_detail);
+      }
     }
     body.setDetails(transList);
     aipg.addTrx(body);

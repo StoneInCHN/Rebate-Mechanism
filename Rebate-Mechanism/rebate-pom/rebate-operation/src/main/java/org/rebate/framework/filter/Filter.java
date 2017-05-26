@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+
 public class Filter implements Serializable {
 
   private static final long serialVersionUID = -8712382358441065075L;
@@ -42,7 +43,10 @@ public class Filter implements Serializable {
     isNull,
 
     /** 不为Null */
-    isNotNull;
+    isNotNull,
+    
+    /** between:(between 开始日期 and 结束日期)*/
+    between;
 
     /**
      * 从String中获取Operator
@@ -234,7 +238,16 @@ public class Filter implements Serializable {
   public static Filter isNotNull(String property) {
     return new Filter(property, Operator.isNotNull, null);
   }
-
+  /**
+   * 返回等于筛选
+   * 
+   * @param property 属性
+   * @param value 值
+   * @return 等于筛选
+   */
+  public static Filter between(String property, Object value) {
+    return new Filter(property, Operator.between, value);
+  }
   /**
    * 返回忽略大小写筛选
    * 

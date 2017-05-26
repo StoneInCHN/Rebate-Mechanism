@@ -22,6 +22,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
@@ -423,6 +424,16 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
         restrictions =
             criteriaBuilder.and(restrictions, root.get(filter.getProperty()).isNotNull());
       }
+      else if (filter.getOperator() == Operator.between && filter.getValue() != null) {
+        if (filter.getValue() instanceof Date[]) {
+          Path<Date> path = getPath(root, filter.getProperty());
+          Date[] dates = (Date[]) filter.getValue();
+          if (dates.length == 2) {
+            restrictions = criteriaBuilder.and(restrictions,
+                criteriaBuilder.between(path, dates[0],dates[1]));
+          }
+        }
+      }
     }
     criteriaQuery.where(restrictions);
   }
@@ -587,11 +598,42 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
           restrictions =
               criteriaBuilder.and(restrictions, root.get(filter.getProperty()).isNotNull());
         }
+        else if (filter.getOperator() == Operator.between && filter.getValue() != null) {
+          if (filter.getValue() instanceof Date[]) {
+            Path<Date> path = getPath(root, filter.getProperty());
+            Date[] dates = (Date[]) filter.getValue();
+            if (dates.length == 2) {
+              restrictions = criteriaBuilder.and(restrictions,
+                  criteriaBuilder.between(path, dates[0],dates[1]));
+            }
+          }
+        }
       }
     }
     criteriaQuery.where(restrictions);
   }
-
+  /**
+   * 支持多级字段查询
+   * @param root
+   * @param property
+   * @return
+   */
+   private <Y> Path<Y> getPath(Root<T> root, String property){
+    Path<Y> path = null;
+    if (property.indexOf(".") != -1) {
+      String[] propertys = property.split("\\.");
+      for (int i = 0; i < propertys.length; i++) {
+        if (path != null) {
+          path = path.get(propertys[i]);
+        }else {
+          path = root.get(propertys[i]);
+        }
+      }
+    }else {
+      path = root.get(property);
+    }
+    return path;
+  }
   private void addOrderBys(CriteriaQuery<T> criteriaQuery, List<Ordering> orderings) {
     if (criteriaQuery == null || orderings == null || orderings.isEmpty()) {
       return;

@@ -1,4 +1,4 @@
-package org.rebate.beans;
+package org.rebate.json.beans;
 
 import java.io.Serializable;
 
