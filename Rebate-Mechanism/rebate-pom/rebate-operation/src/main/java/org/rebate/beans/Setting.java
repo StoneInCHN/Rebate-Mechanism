@@ -227,6 +227,11 @@ public class Setting implements Serializable {
   /** 短信平台密码 */
   private String smsPwd;
   
+  /**
+   * 通联支付URL
+   */
+  private String allinpayUrl;
+  
   
   public String getServerIp() {
     return serverIp;
@@ -589,5 +594,13 @@ public class Setting implements Serializable {
   public void setSmsPwd(String smsPwd) {
     this.smsPwd = smsPwd;
   }
+
+	public String getAllinpayUrl() {
+		return allinpayUrl;
+	}
+	
+	public void setAllinpayUrl(String allinpayUrl) {
+		this.allinpayUrl = allinpayUrl;
+	}
   
 }

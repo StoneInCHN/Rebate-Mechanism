@@ -43,6 +43,12 @@
 	<!-- 密码 -->
 	<setting name="smsPwd" value="552233" />
 	
+	<!-- 通联支付URL 测试环境 -->
+	<setting name="allinpayUrl" value="https://113.108.182.3/aipg/ProcessServlet" />
+	<!-- 通联支付URL 生产环境 -->
+	<!-- <setting name="allinpayUrl" value="https://tlt.allinpay.com/aipg/ProcessServlet" /> -->	
+	
+	
 	<logConfig operation="系统管理修改角色" urlPattern="/console/role/update.jhtml" />
 	<logConfig operation="系统管理添加角色" urlPattern="/console/role/save.jhtml" />
 	<logConfig operation="系统管理删除角色" urlPattern="/console/role/delete.jhtml" />

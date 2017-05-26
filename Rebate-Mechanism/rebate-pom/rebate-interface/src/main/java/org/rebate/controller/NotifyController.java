@@ -124,7 +124,37 @@ public class NotifyController extends MobileBaseController {
   //
   // return "UPTRANSEQ_" + uptranSeq;
   // }
+  /**
+   * 交易结果通知接口
+   * 
+   * @param req
+   * @return
+   * @throws IOException
+   */
+  @RequestMapping(value = "/notify_batchDaiFu", method = RequestMethod.POST)
+  public @ResponseBody void notify_batchDaiFu(HttpServletRequest request) throws Exception {
+	    // 获取支付通知xml数据
+	    ServletInputStream inputStream = request.getInputStream();
+	    InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+	    BufferedReader bufferReader = new BufferedReader(reader);
+	    String xml = null;
+	    StringBuffer buffer = new StringBuffer();
+	    while ((xml = bufferReader.readLine()) != null) {
+	      buffer.append(xml);
+	    }
+	    bufferReader.close();
+	    reader.close();
+	    inputStream.close();
+	    inputStream = null;
+	    // 解析xml数据
+	    Map<String, Object> xmlMap = new HashMap<String, Object>();
+	    // 解析XML数据
+	    Document doc = DocumentHelper.parseText(buffer.toString());
+	    
+	    
+	    
 
+  }
 
   /**
    * 微信支付回调接口

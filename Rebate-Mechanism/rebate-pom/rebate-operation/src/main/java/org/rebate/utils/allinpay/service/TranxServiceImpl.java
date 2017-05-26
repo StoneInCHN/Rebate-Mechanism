@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.SellerClearingRecord;
 import org.rebate.utils.TimeUtils;
 import org.rebate.utils.allinpay.pojo.TranxCon;
 import org.rebate.utils.allinpay.tools.FileUtil;
@@ -36,7 +37,7 @@ public class TranxServiceImpl {
    * @throws Exception
    */
   public void batchDaiFu(String url, boolean isTLTFront, String totalItem, String totalSum,
-      List<LeScoreRecord> records) throws Exception {
+      List<SellerClearingRecord> records) throws Exception {
 
     String xml = "";
     AipgReq aipg = new AipgReq();

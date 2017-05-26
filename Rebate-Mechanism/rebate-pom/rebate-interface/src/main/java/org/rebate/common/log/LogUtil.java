@@ -22,7 +22,11 @@ public class LogUtil {
   public static boolean isInfoEnabled(Class<?> c) {
     return getLogger(c.getName()).isInfoEnabled();
   }
-
+  
+  public static boolean isEnabled(Class<?> c, Level level) {
+	    return getLogger(c.getName()).isEnabledFor(level);
+  }
+  
   public static Logger getLogger(String c) {
     return (Logger) LoggerFactory.getLogger(c);
   }
@@ -66,7 +70,7 @@ public class LogUtil {
 
   private static void writeLog(Level level, Class<?> clazz, String method, String format,
       Object... args) {
-    if (null != clazz && null != format) {
+    if (null != clazz && null != format && isEnabled(clazz, level)) {
       populateMDC();
       StringBuffer buffer = new StringBuffer();
       buffer.append(clazz.getSimpleName());

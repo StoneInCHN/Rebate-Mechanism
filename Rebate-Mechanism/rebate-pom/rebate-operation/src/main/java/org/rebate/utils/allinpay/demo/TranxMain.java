@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.SellerClearingRecord;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
 
 
@@ -37,8 +38,8 @@ public class TranxMain {
     // tranxService.QueryTradeNew(URL11, reqsn, isfront);
     // 单笔实时代付
     // tranxService.singleDaiFushi(URL11, isfront);
-    List<LeScoreRecord> records = new ArrayList<LeScoreRecord>();
-    LeScoreRecord record = new LeScoreRecord();
+    List<SellerClearingRecord> records = new ArrayList<SellerClearingRecord>();
+    SellerClearingRecord record = new SellerClearingRecord();
     record.setRemark("1");
     records.add(record);
     tranxService.batchDaiFu("https://113.108.182.3/aipg/ProcessServlet", isfront, "1", "10003",
