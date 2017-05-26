@@ -63,6 +63,10 @@ public class EndUserReq {
    */
   private LeBeanChangeType type;
 
+  /**
+   * 是否为业务员
+   */
+  private Boolean isSalesman ;
 
   public LeBeanChangeType getType() {
     return type;
@@ -152,5 +156,13 @@ public class EndUserReq {
     this.accountStatus = accountStatus;
   }
 
+  public Boolean getIsSalesman() {
+    return isSalesman;
+  }
 
+  public void setIsSalesman(Boolean isSalesman) {
+    this.isSalesman = isSalesman;
+  }
+
+  
 }

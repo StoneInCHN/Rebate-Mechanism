@@ -76,6 +76,30 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.endUser.isBindWeChat")}:
+								</th>
+								<td>
+									[#if endUser.isBindWeChat == true]
+										${message("rebate.common.true")}
+									[#else]
+										${message("rebate.common.false")}
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.endUser.isSalesman")}:
+								</th>
+								<td>
+									[#if endUser.isSalesman == true]
+										${message("rebate.common.true")}
+									[#else]
+										${message("rebate.common.false")}
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.endUser.userPhoto")}:
 								</th>
 								<td>
@@ -196,9 +220,9 @@
 								</th>
 								<td>
 									[#if endUser.isSalesman]
-									 	<input type="button" id="salesInActive" class="btn btn-info" value="${message("rebate.endUser.salesMan.inActive")}" />
+									 	<input type="button" id="salesInActive" class="btn btn-danger" value="${message("rebate.endUser.salesMan.inActive")}" />
 									[#else] 	
-									  	<input type="button" id="salesActive" class="btn btn-danger" value="${message("rebate.endUser.salesMan.active")}" />
+									  	<input type="button" id="salesActive" class="btn btn-info" value="${message("rebate.endUser.salesMan.active")}" />
 									[/#if]
 									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>

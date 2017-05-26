@@ -73,6 +73,10 @@ public class EndUserController extends BaseController {
           TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getRegDateTo()))));
       model.addAttribute("regDateTo", request.getRegDateTo());
     }
+    if (request.getIsSalesman() != null) {
+      filters.add(Filter.eq("isSalesman", request.getIsSalesman()));
+      model.addAttribute("isSalesman",  request.getIsSalesman());
+    }
     filters.add(Filter.ne("accountStatus", AccountStatus.DELETE));
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();

@@ -75,6 +75,16 @@
 								<td>
 									<input type="text" id="regDateTo" name="regDateTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'regDateFrom\')}'});" readonly [#if regDateTo??]value="${regDateTo?string("yyyy-MM-dd")}" [/#if]/>
 								</td>
+								<th>
+									${message("rebate.endUser.isSalesman")}:
+								</th>
+								<td>
+									<select  name="isSalesman">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if isSalesman == "true"] selected="selected" [/#if] value="true">${message("rebate.common.true")}</option>
+										<option [#if isSalesman?? && !isSalesman] selected="selected" [/#if] value="false">${message("rebate.common.false")}</option>
+									</select>
+								</td>
 							</tr>
 						</table>
                   </div>
@@ -108,6 +118,9 @@
 					</th>
 					<th>
 						<a href="javascript:;" name="isBindWeChat">${message("rebate.endUser.isBindWeChat")}</a>
+					</th>
+					<th>
+						<a href="javascript:;" name="isSalesman">${message("rebate.endUser.isSalesman")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.endUser.regDate")}</a>
@@ -155,7 +168,14 @@
 						[/#if]
 					</td>
 					<td>
-						[#if endUser.isBindWeChat==true]
+						[#if endUser.isBindWeChat == true]
+							${message("rebate.common.true")}
+						[#else]
+							${message("rebate.common.false")}
+						[/#if]
+					</td>
+					<td>
+						[#if endUser.isSalesman == true]
 							${message("rebate.common.true")}
 						[#else]
 							${message("rebate.common.false")}
