@@ -70,7 +70,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		Map<Seller, Set<Order>> sellerOrdersMap = new HashMap<Seller, Set<Order>>();
 		
 		List<Filter> filters = new ArrayList<Filter>();
-		filters.add(Filter.ne("orderStatus", OrderStatus.UNPAID));
+		filters.add(Filter.ne("status", OrderStatus.UNPAID));
 		filters.add(Filter.eq("isClearing", false));
         Date[] queryDates = {startDate, endDate};
         filters.add(Filter.between("paymentTime", queryDates));
@@ -86,7 +86,8 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				sellerOrdersMap.put(seller, orderSet);
 			}else {
 				BigDecimal income = sellerAmountMap.get(seller);
-				income.add(order.getAmount());
+				income = income.add(order.getAmount());
+				sellerAmountMap.put(seller, income);
 				
 				Set<Order> orderSet = sellerOrdersMap.get(seller);
 				orderSet.add(order);
@@ -112,6 +113,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				 record.setTotalOrderAmount(totalOrderAmount);  
 				 record.setHandlingCharge(getHandlingCharge(totalOrderAmount));
 				 record.setClearingSn(snService.generate(Type.SELLER_CLEARING_RECORD));
+				 record.setIsClearing(false);
 				 save(record);//保存商家货款结算记录
 				 
 				 records.add(record);
@@ -128,7 +130,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				    TranxServiceImpl tranxService = new TranxServiceImpl();
 				    try {
 				    	Setting setting = SettingUtils.get();
-						tranxService.batchDaiFu(setting.getAllinpayUrl(), false, records.size()+"", totalClearingAmount.toString(), records);
+						//tranxService.batchDaiFu(setting.getAllinpayUrl(), false, records.size()+"", totalClearingAmount.toString(), records);
 					} catch (Exception e) {
 						LogUtil.debug(this.getClass(), "clearingRecordJob", "Batch daifu failed, Catch exception: %s", e.getMessage());
 						e.printStackTrace();

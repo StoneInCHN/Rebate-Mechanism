@@ -1,7 +1,13 @@
 package org.rebate.controller;
 
+import java.util.Date;
+
+import javax.annotation.Resource;
+
 import org.quartz.Job;
+import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.job.SellerClearingRecordJob;
 import org.rebate.service.QuartzManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +21,9 @@ public class JobManagerController extends BaseController {
 
   @Autowired
   QuartzManagerService quartzManagerService;
+  
+  @Resource(name = "sellerClearingRecordJob")
+  private SellerClearingRecordJob sellerClearingRecordJob;
 
   /**
    * 列表
@@ -36,5 +45,20 @@ public class JobManagerController extends BaseController {
   public @ResponseBody String add(String name) {
     quartzManagerService.removeJob(name);
     return "success";
+  }
+  /**
+   * 手动结算商家货款记录
+   * @param manualDate
+   * @return
+   */
+  @RequestMapping(value = "/manualClearingRecordJob", method = RequestMethod.POST)
+  public @ResponseBody Message manualReconciliationJob(Date manualDate) {
+      try {
+          SellerClearingRecordJob.date = manualDate;
+          sellerClearingRecordJob.sellerClearingCalculate();
+          return SUCCESS_MESSAGE;
+      } catch (Exception e) {
+          return ERROR_MESSAGE;
+      }
   }
 }

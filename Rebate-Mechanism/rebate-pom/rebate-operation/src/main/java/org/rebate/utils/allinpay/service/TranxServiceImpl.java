@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
-import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.service.BankCardService;
 import org.rebate.utils.TimeUtils;
