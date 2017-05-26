@@ -11,6 +11,7 @@ import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
+import org.rebate.framework.ordering.Ordering;
 import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
 import org.springframework.stereotype.Controller;
@@ -83,8 +84,10 @@ public class SystemConfigController extends BaseController {
   public String list(ModelMap model) {
     List<Filter> systemConfigsfilters = new ArrayList<Filter>();
     systemConfigsfilters.add(Filter.ne("configKey", SystemConfigKey.PAYMENTTYPE));
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.asc("configOrder"));
     model.addAttribute("systemConfigs",
-        systemConfigService.findList(null, systemConfigsfilters, null));
+        systemConfigService.findList(null, systemConfigsfilters, orderings));
     List<Filter> payMentTypeFilter = new ArrayList<Filter>();
     payMentTypeFilter.add(Filter.eq("configKey", SystemConfigKey.PAYMENTTYPE));
     model.addAttribute("paymentTypes", systemConfigService.findList(null, payMentTypeFilter, null));

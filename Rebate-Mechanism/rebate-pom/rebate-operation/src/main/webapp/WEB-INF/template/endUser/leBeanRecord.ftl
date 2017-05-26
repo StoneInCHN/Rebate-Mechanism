@@ -53,6 +53,7 @@
 										<option [#if type == "RECOMMEND_USER"] selected="selected" [/#if] value="RECOMMEND_USER">${message("rebate.endUser.leBean.type.RECOMMEND_USER")}</option>
 										<option [#if type == "RECOMMEND_SELLER"] selected="selected" [/#if] value="RECOMMEND_SELLER">${message("rebate.endUser.leBean.type.RECOMMEND_SELLER")}</option>
 										<option [#if type == "CONSUME"] selected="selected" [/#if] value="CONSUME">${message("rebate.endUser.leBean.type.CONSUME")}</option>
+										<option [#if type == "ENCOURAGE"] selected="selected" [/#if] value="ENCOURAGE">${message("rebate.endUser.leBean.type.ENCOURAGE")}</option>
 									</select>
 								</td>
 								<th>

@@ -19,6 +19,7 @@ import org.rebate.entity.Seller;
 import org.rebate.entity.SellerOrderCart;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
+import org.rebate.framework.ordering.Ordering.Direction;
 import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.json.base.BaseRequest;
@@ -122,12 +123,13 @@ public class SellerOrderCartController extends MobileBaseController {
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
-    List<Filter> filters = new ArrayList<>();
-
-
-    Filter userFilter = new Filter("seller", Operator.eq, seller);
-    filters.add(userFilter);
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter sellerFilter = new Filter("seller", Operator.eq, seller.getId());
+    filters.add(sellerFilter);
     pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
     Page<SellerOrderCart> sellerOrderCartPage = sellerOrderCartService.findPage(pageable);
 
     String[] propertys =
