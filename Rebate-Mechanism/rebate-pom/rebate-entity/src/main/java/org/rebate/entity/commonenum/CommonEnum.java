@@ -136,9 +136,9 @@ public class CommonEnum {
     REBATESCORE_SELLER,
     /** 用户返利积分参数2 */
     REBATESCORE_USER,
-    /** 收益后乐分乐豆比例 3 */
+    /** 收益后乐分比例 3 */
     LESCORE_PERCENTAGE,
-    /** 每个乐心分红的阈值 4 */
+    /** 每个乐心分红上限 4 */
     BONUS_MAXIMUM,
     /** 单位消费值（消费UNIT_CONSUME元赠送**积分）5 */
     UNIT_CONSUME,
@@ -148,31 +148,29 @@ public class CommonEnum {
     RECOMMEND_DIRECT_USER,
     /** 消费用户的间接推荐人收益百分比 8 */
     RECOMMEND_INDIRECT_USER,
-    /** 消费商户的推荐人收益百分比 9 */
+    /** 业务员发展商家提成占让利百分比 9 */
     RECOMMEND_SELLER,
     /** 激励乐分提现最低金额限制 10 */
     WITHDRAW_MINIMUM_LIMIT,
     /** 每日分红总额占平台每日让利金额的比例 11 */
     TOTAL_BONUS_PERCENTAGE,
-    /** 推荐用户提成乐分的最大推荐层级限制 12 */
+    /** 推荐用户提成的最大推荐层级限制 12 */
     RECOMMEND_LEVEL_LIMIT,
     /** 鼓励金占让利金额百分比 13 */
     ENCOURAGE_CONSUME,
-    /** 商家积分返利订单百分比参数 14 */
-    REBATESCORE_SELLER_ORDER_PERCENTAGE,
-    /** 平台获利占总让利百分比 15 */
+    // /** 商家积分返利订单百分比参数 */
+    // REBATESCORE_SELLER_ORDER_PERCENTAGE,
+    /** 平台获利占总让利百分比 14 */
     PLATFORM_INCOME_PERCENTAGE,
-    /** 创业基金占总让利百分比 16 */
+    /** 创业基金占总让利百分比 15 */
     VENTURE_FUND_PERCENTAGE,
-    /** 代理商提成占总让利百分比 17 */
+    /** 代理商提成占总让利百分比 16 */
     AGENT_COMMISSION_PERCENTAGE,
-    /** 分享佣金占总让利百分比 18 */
+    /** 分享佣金占总让利百分比 17 */
     USER_RECOMMEND_COMMISSION_PERCENTAGE,
-    /** 发展商家提成占总让利百分比 19 */
-    SELLER_RECOMMEND_COMMISSION_PERCENTAGE,
-    /** 提现手续费占提现金额的百分比 20 */
+    /** 提现手续费占提现金额的百分比 18 */
     TRANSACTION_FEE_PERCENTAGE,
-    /** 每笔提现固定手续费 21 */
+    /** 每笔提现固定手续费 19 */
     TRANSACTION_FEE_PERTIME
   }
 

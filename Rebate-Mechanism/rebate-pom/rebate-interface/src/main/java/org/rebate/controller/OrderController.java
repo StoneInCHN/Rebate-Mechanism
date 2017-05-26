@@ -313,10 +313,14 @@ public class OrderController extends MobileBaseController {
       } else if ("2".equals(payTypeId)) {// 支付宝支付
         BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
         response = PayUtil.allinPay(orderSn, seller.getName(), weChatPrice.intValue() + "");
-      } else if ("3".equals(payTypeId)) {// 翼支付
+      } else if ("3".equals(payTypeId)) {// 银行卡快捷支付
         // response =
         // PayUtil.yiPay(orderSn, seller.getName(), httpReq.getRemoteAddr(), orderSn, totalFee,
         // userId.toString());
+        BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
+        response =
+            PayUtil.allinpayH5(orderSn, seller.getName(), userId.toString(), orderSn,
+                weChatPrice.intValue() + "");
 
       }
     } catch (Exception e) {

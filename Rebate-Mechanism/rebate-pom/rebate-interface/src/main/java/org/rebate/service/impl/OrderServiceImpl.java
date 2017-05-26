@@ -135,9 +135,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       BigDecimal rebateSellerScoreConfig =
           new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
               .getConfigValue());
-      BigDecimal rebateSellerOrderPercentageConfig =
-          new BigDecimal(systemConfigDao.getConfigByKey(
-              SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
+      // BigDecimal rebateSellerOrderPercentageConfig =
+      // new BigDecimal(systemConfigDao.getConfigByKey(
+      // SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
       BigDecimal encourageAmountConfig =
           new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
               .getConfigValue());
@@ -155,8 +155,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       BigDecimal rebateSellerScore =
           amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
-      rebateSellerScore =
-          rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
+      // rebateSellerScore =
+      // rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
 
       order.setUserScore(rebateUserScore);
       order.setSellerScore(rebateSellerScore);
@@ -744,9 +744,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       BigDecimal rebateSellerScoreConfig =
           new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
               .getConfigValue());
-      BigDecimal rebateSellerOrderPercentageConfig =
-          new BigDecimal(systemConfigDao.getConfigByKey(
-              SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
+      // BigDecimal rebateSellerOrderPercentageConfig =
+      // new BigDecimal(systemConfigDao.getConfigByKey(
+      // SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
       BigDecimal encourageAmountConfig =
           new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
               .getConfigValue());
@@ -764,8 +764,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       BigDecimal rebateSellerScore =
           amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
-      rebateSellerScore =
-          rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
+      // rebateSellerScore =
+      // rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
 
       order.setUserScore(rebateUserScore);
       order.setSellerScore(rebateSellerScore);
