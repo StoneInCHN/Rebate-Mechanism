@@ -72,7 +72,8 @@
 							</td>
 							<td>
 								[#if  systemConfig.remark??]
-									${systemConfig.remark}
+								<span title="${systemConfig.remark}">${abbreviate(systemConfig.remark,50, "...")}</span>
+									
 								[#else]
 									--
 								[/#if]

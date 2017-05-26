@@ -138,7 +138,7 @@ public class CommonEnum {
     REBATESCORE_USER,
     /** 收益后乐分比例 3 */
     LESCORE_PERCENTAGE,
-    /** 每个乐心分红的阈值 4 */
+    /** 每个乐心分红上限 4 */
     BONUS_MAXIMUM,
     /** 单位消费值（消费UNIT_CONSUME元赠送**积分）5 */
     UNIT_CONSUME,
@@ -154,7 +154,7 @@ public class CommonEnum {
     WITHDRAW_MINIMUM_LIMIT,
     /** 每日分红总额占平台每日让利金额的比例 11 */
     TOTAL_BONUS_PERCENTAGE,
-    /** 推荐用户提成乐分的最大推荐层级限制 12 */
+    /** 推荐用户提成的最大推荐层级限制 12 */
     RECOMMEND_LEVEL_LIMIT,
     /** 鼓励金占让利金额百分比 13 */
     ENCOURAGE_CONSUME,
