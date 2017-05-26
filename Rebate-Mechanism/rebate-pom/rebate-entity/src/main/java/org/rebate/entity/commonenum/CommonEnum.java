@@ -132,9 +132,9 @@ public class CommonEnum {
   public enum SystemConfigKey {
     /** 支付方式 0 */
     PAYMENTTYPE,
-    /** 商户返利积分参数 1 */
+    /** 商户返利积分倍数 1 */
     REBATESCORE_SELLER,
-    /** 用户返利积分参数2 */
+    /** 用户返利积分倍数 2 */
     REBATESCORE_USER,
     /** 收益后乐分比例 3 */
     LESCORE_PERCENTAGE,
