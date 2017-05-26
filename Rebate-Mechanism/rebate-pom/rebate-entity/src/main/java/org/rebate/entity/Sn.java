@@ -27,7 +27,9 @@ public class Sn extends BaseEntity {
     /** 订单 */
     ORDER,
     /** 提现 */
-    WITHDRAW
+    WITHDRAW,
+    /** 商户货款结算记录 */
+    SELLER_CLEARING_RECORD
   }
 
   /** 类型 */

@@ -48,16 +48,15 @@ public class SellerClearingRecord extends BaseEntity {
    */
   private BigDecimal totalOrderAmount;
   /**
-   * 备注
+   * 结算手续费
    */
-  private String remark;
+  private BigDecimal handlingCharge;
+
 
   /**
    * 是否已结算
    */
   private Boolean isClearing;
-
-
   /**
    * 结算银行卡ID
    */
@@ -67,8 +66,15 @@ public class SellerClearingRecord extends BaseEntity {
    * 结算货款单编号
    */
   private String clearingSn;
+  /**
+   * 交易批次号（批量代付号）
+   */
+  private String reqSn;
 
-
+  /**
+   * 备注
+   */
+  private String remark;
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getAmount() {
@@ -142,5 +148,22 @@ public class SellerClearingRecord extends BaseEntity {
   public void setClearingSn(String clearingSn) {
     this.clearingSn = clearingSn;
   }
+  
+  @Column(scale = 4, precision = 12)
+	public BigDecimal getHandlingCharge() {
+		return handlingCharge;
+	}
+	
+	public void setHandlingCharge(BigDecimal handlingCharge) {
+		this.handlingCharge = handlingCharge;
+	}
+	
+	public String getReqSn() {
+		return reqSn;
+	}
+	
+	public void setReqSn(String reqSn) {
+		this.reqSn = reqSn;
+	}
 
 }
