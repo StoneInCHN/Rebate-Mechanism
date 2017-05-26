@@ -82,12 +82,12 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
         // 激励乐分(包括乐心分红乐分，推荐获得乐分)
         BigDecimal motivateLeScore = temp.getMotivateLeScore();
         // 商家直接收益乐分
-        BigDecimal incomeLeScore = temp.getIncomeLeScore();
+   //     BigDecimal incomeLeScore = temp.getIncomeLeScore();
         // 代理商提成乐分
         BigDecimal agentLeScore = temp.getAgentLeScore();
         endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore));
         endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore));
-        endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
+    //    endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
         endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore));
         endUserService.update(endUser);
       }
