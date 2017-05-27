@@ -17,10 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.rebate.beans.CommonAttributes;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.json.beans.Info;
+import org.rebate.json.beans.TxnResultNotify;
 import org.rebate.service.OrderService;
+import org.rebate.service.SellerClearingRecordService;
+import org.rebate.utils.HttpServletRequestUtils;
 import org.rebate.utils.alipay.util.AlipayNotify;
+import org.rebate.utils.allinpay.ManageSign;
 import org.rebate.utils.allinpay.PayNotify;
 import org.rebate.utils.allinpay.SybUtil;
 import org.rebate.utils.wechat.WeixinUtil;
@@ -39,6 +45,9 @@ public class NotifyController extends MobileBaseController {
 
   @Resource(name = "orderServiceImpl")
   private OrderService orderService;
+  
+  @Resource(name = "sellerClearingRecordServiceImpl")
+  private SellerClearingRecordService sellerClearingRecordService;
 
   @Resource(name = "taskExecutor")
   private TaskExecutor taskExecutor;
@@ -125,37 +134,66 @@ public class NotifyController extends MobileBaseController {
   // return "UPTRANSEQ_" + uptranSeq;
   // }
   /**
-   * 交易结果通知接口
+   * 通联交易结果通知接口
    * 
    * @param req
    * @return
    * @throws IOException
    */
-  @RequestMapping(value = "/notify_batchDaiFu", method = RequestMethod.POST)
-  public @ResponseBody void notify_batchDaiFu(HttpServletRequest request) throws Exception {
-	    // 获取支付通知xml数据
-	    ServletInputStream inputStream = request.getInputStream();
-	    InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
-	    BufferedReader bufferReader = new BufferedReader(reader);
-	    String xml = null;
-	    StringBuffer buffer = new StringBuffer();
-	    while ((xml = bufferReader.readLine()) != null) {
-	      buffer.append(xml);
-	    }
-	    bufferReader.close();
-	    reader.close();
-	    inputStream.close();
-	    inputStream = null;
-	    // 解析xml数据
-	    Map<String, Object> xmlMap = new HashMap<String, Object>();
-	    // 解析XML数据
-	    Document doc = DocumentHelper.parseText(buffer.toString());
+  @RequestMapping(value = "/notify_batch", method = RequestMethod.POST)
+  public @ResponseBody TxnResultNotify notify_batchDaiFu(HttpServletRequest request) throws Exception {
+	  
+	    TxnResultNotify notify = new TxnResultNotify();
+	    Info info = notify.getINFO();
+	    
+	    //获取通联交易结果通知xml数据
+	    String xml = HttpServletRequestUtils.getRequestParam(request, "UTF-8");
+	    LogUtil.debug(this.getClass(), "notify_batch", "Request Param: %s", xml);
 	    
 	    
-	    
+        try {  
+		    //是否需要验证通联的参数SIGNED_MSG？？？
+//		    boolean signOK = ManageSign.verifyMsg(xml, false);
+//		    if (!signOK) {
+//		    	info.setRET_CODE(CommonAttributes.FAIL_COMMON);
+//				info.setERR_MSG(message("rebate.notify.errMsg.update.order.failed"));
+//				return notify;
+//			}
+		    
+			Document doc = DocumentHelper.parseText(xml);
+		    Element root = doc.getRootElement();//AIPG
+		    Element infoElement = root.element("INFO");
+		    Element notifyElement = root.element("NOTIFY");
 
+		  	info = new Info(infoElement.element("TRX_CODE").getText(), infoElement.element("VERSION").getText(),
+		  			infoElement.element("DATA_TYPE").getText(),infoElement.element("REQ_SN").getText(),
+		  			CommonAttributes.FAIL_COMMON, null, infoElement.element("SIGNED_MSG").getText() );
+		  	
+            	String trxCode = info.getTRX_CODE();
+            	if ("200003".equals(trxCode)) {
+                	String reqSn = notifyElement.element("NOTIFY_SN").getText();
+                	try {
+                    	//更新该交易批次号的所有订单结算状态
+                    	sellerClearingRecordService.updateClearingByReqSn(reqSn);
+                    	//商户订单更新成功，返回0000给通联
+                    	info.setRET_CODE(CommonAttributes.SUCCESS);
+                    	
+    				} catch (Exception e) {
+    					e.printStackTrace();
+    					info.setERR_MSG(message("rebate.notify.errMsg.update.order.failed"));
+    					return notify;
+    				}
+				}else {
+					info.setERR_MSG(message("rebate.notify.errMsg.trxCode.error"));
+				}
+        } catch (Exception e) {  
+            e.printStackTrace();  
+            info.setERR_MSG(message("rebate.notify.errMsg.xml.error"));
+			return notify;
+            
+        } 
+        return notify;
   }
-
   /**
    * 微信支付回调接口
    * 

@@ -1,5 +1,6 @@
 package org.rebate.utils.allinpay.demo;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,10 @@ public class TranxMain {
     SellerClearingRecord record = new SellerClearingRecord();
     record.setRemark("1");
     records.add(record);
-    tranxService.batchDaiFu("https://113.108.182.3/aipg/ProcessServlet", isfront, "1", "10003",
+    SellerClearingRecord record1 = new SellerClearingRecord();
+    record.setRemark("1");
+    records.add(record1);
+    tranxService.batchDaiFu("https://113.108.182.3/aipg/ProcessServlet", isfront, "2", "20010",
         records);
     // tranxService.batchDaiShou("https://113.108.182.3/aipg/ProcessServlet", isfront);
     // tranxService.singleDaiFushi("https://113.108.182.3/aipg/ProcessServlet", isfront);

@@ -12,6 +12,7 @@ import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.service.BankCardService;
+import org.rebate.service.SellerClearingRecordService;
 import org.rebate.utils.TimeUtils;
 import org.rebate.utils.allinpay.pojo.TranxCon;
 import org.rebate.utils.allinpay.tools.FileUtil;
@@ -33,6 +34,9 @@ public class TranxServiceImpl {
   
   @Resource(name="bankCardServiceImpl")
   private BankCardService bankCardService;
+  
+  @Resource(name="sellerClearingRecordServiceImpl")
+  private SellerClearingRecordService sellerClearingRecordService;
   
   TranxCon tranxContants = new TranxCon();
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -60,6 +64,7 @@ public class TranxServiceImpl {
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
     for (int i = 1; i <= records.size(); i++) {
       SellerClearingRecord record = records.get(i);
+      record.setReqSn(info.getREQ_SN());
       EndUser endUser = record.getEndUser();
       BankCard bankCard = bankCardService.getDefaultCard(endUser.getId());
       if (endUser != null && bankCard != null) {
@@ -87,6 +92,8 @@ public class TranxServiceImpl {
     xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",
                                         // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
     isFront(xml, isTLTFront, url);
+    
+    sellerClearingRecordService.update(records);
   }
 
   /**
