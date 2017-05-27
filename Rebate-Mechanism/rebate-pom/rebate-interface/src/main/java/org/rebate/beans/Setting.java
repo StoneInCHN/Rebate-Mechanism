@@ -293,6 +293,11 @@ public class Setting implements Serializable {
   private String yiMerchantKey;
 
   /**
+   * 翼支付平台商户密码
+   */
+  private String yiMerchantPwd;
+
+  /**
    * 翼支付平台商户代码
    */
   private String yiMerchantId;
@@ -312,6 +317,14 @@ public class Setting implements Serializable {
    */
   private String allinpayMd5Key;
 
+
+  public String getYiMerchantPwd() {
+    return yiMerchantPwd;
+  }
+
+  public void setYiMerchantPwd(String yiMerchantPwd) {
+    this.yiMerchantPwd = yiMerchantPwd;
+  }
 
   public String getAllinpayMd5Key() {
     return allinpayMd5Key;

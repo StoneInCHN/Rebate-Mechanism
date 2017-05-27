@@ -45,10 +45,12 @@
 		<!-- 翼支付平台 -->
 		<!-- 商户key -->
 		<setting name="yiMerchantKey" value="A33B9C17EFD2CDB6303A4512A0373154AD9F9C067937BA7A" />
+		<!-- 商户密码 -->
+		<setting name="yiMerchantPwd" value="298382" />
 		<!--商户代码 -->
 		<setting name="yiMerchantId" value="02510103030438531" />
 		<!--下单url -->
-		<setting name="yiPayOrder" value="https://webpaywg.bestpay.com.cn/order.do" />
+		<setting name="yiPayOrder" value="https://webpaywg.bestpay.com.cn/order.action" />
 		<!--回调url -->
 		<setting name="yiPayNotifyUrl" value="http://120.27.26.85:10001/rebate-interface/payNotify/notify_yipay.jhtml"/>
 		

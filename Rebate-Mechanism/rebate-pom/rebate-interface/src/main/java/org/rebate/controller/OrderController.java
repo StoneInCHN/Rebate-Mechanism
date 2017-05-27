@@ -45,6 +45,7 @@ import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.PayUtil;
 import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,6 +72,8 @@ public class OrderController extends MobileBaseController {
   private SellerEvaluateService sellerEvaluateService;
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
+  @Resource(name = "taskExecutor")
+  private TaskExecutor taskExecutor;
 
   /**
    * 立即下单
@@ -178,7 +181,6 @@ public class OrderController extends MobileBaseController {
         response.setMsg(map);
         response.setCode(CommonAttributes.SUCCESS);
       } else if ("3".equals(payTypeId)) {// 翼支付
-
         response =
             PayUtil.yiPay(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
                 order.getId().toString(), amount, userId.toString());
@@ -190,7 +192,11 @@ public class OrderController extends MobileBaseController {
 
     // orderService.updateOrderforPayCallBack(order.getSn());
     if (isBeanPay) {// 乐豆支付
-      orderService.updateOrderforPayCallBack(order.getSn());
+      taskExecutor.execute(new Runnable() {
+        public void run() {
+          orderService.updateOrderforPayCallBack(order.getSn());
+        }
+      });
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("out_trade_no", order.getSn());
       map.put("user_cur_leBean", order.getEndUser().getCurLeBean());

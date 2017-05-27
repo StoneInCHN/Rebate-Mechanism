@@ -254,10 +254,10 @@ public class EndUser extends BaseEntity {
    */
   private String sellerName;
 
-  /**
-   * 商户图片
-   */
-  private String sellerPicUrl;
+  // /**
+  // * 商户图片
+  // */
+  // private String sellerPicUrl;
 
 
   @Column(scale = 4, precision = 12)
@@ -301,19 +301,6 @@ public class EndUser extends BaseEntity {
     this.sellerName = sellerName;
   }
 
-  @Transient
-  public String getSellerPicUrl() {
-    if (this.getSellers() != null) {
-      for (Seller seller : this.getSellers()) {
-        return seller.getStorePictureUrl();
-      }
-    }
-    return sellerPicUrl;
-  }
-
-  public void setSellerPicUrl(String sellerPicUrl) {
-    this.sellerPicUrl = sellerPicUrl;
-  }
 
   @Transient
   public Boolean getIsLimitRecommend() {
