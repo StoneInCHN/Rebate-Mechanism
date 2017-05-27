@@ -176,11 +176,23 @@ public class OrderController extends MobileBaseController {
                 order.getId().toString(), weChatPrice.intValue() + "");
         response.getMsg().put("encourageAmount", order.getEncourageAmount());
       } else if ("2".equals(payTypeId)) {// 支付宝支付
-        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
-        response =
-            PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
-                + "");
-        response.getMsg().put("encourageAmount", order.getEncourageAmount());
+
+        // 支付宝直接支付
+        Map<String, Object> map = new HashMap<String, Object>();
+        String orderStr =
+            PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller().getName(),
+                amount.toString());
+        map.put("orderStr", orderStr);
+        map.put("out_trade_no", order.getSn());
+        map.put("encourageAmount", order.getEncourageAmount());
+        response.setMsg(map);
+
+        // // 支付宝通过通联支付
+        // BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        // response =
+        // PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
+        // + "");
+        // response.getMsg().put("encourageAmount", order.getEncourageAmount());
       } else if ("3".equals(payTypeId)) {// 银行卡快捷支付
         BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
         response =

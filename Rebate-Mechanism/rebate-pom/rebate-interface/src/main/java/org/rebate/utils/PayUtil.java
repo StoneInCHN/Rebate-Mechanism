@@ -386,7 +386,7 @@ public class PayUtil {
       // + resMap.get("orderCurrency") + "&orderDatetime=" + resMap.get("orderDatetime")
       // + "&productName=" + resMap.get("productName") + "&ext1=" + resMap.get("ext1")
       // + "&payType=" + resMap.get("payType") + "&key=" + allinpay_merchantMD5Key;
-      String signMsg = SybUtil.sign(params, allinpay_merchantMD5Key);
+      String signMsg = SybUtil.sign(params, allinpay_merchantH5Key);
       Map<String, Object> resMap = new LinkedHashMap<String, Object>();
       resMap.putAll(params);
       resMap.put("signMsg", signMsg);
