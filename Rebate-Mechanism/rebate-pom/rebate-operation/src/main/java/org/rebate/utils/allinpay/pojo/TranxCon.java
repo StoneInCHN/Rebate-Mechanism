@@ -1,5 +1,6 @@
 package org.rebate.utils.allinpay.pojo;
 
+
 /**
  */
 public class TranxCon {
@@ -11,15 +12,15 @@ public class TranxCon {
   public String acctNo = "6225882516636351";
   public String amount = "100000";// 交易金额
   public String bankcode = "0105";// 银行代码
-  public String cerPath = "src\\main\\resources\\allinpayConfig\\20060400000044502.cer";
+  public String cerPath = "D:\\certs\\allinpay\\20060400000044502.cer";
   public String merchantId = "200604000000445";
   public String password = "`12qwe";
   // 商户证书信息
   public String pfxPassword = "111111";
-  public String pfxPath = "src\\main\\resources\\allinpayConfig\\20060400000044502.p12";
+  public String pfxPath = "D:\\certs\\allinpay\\20060400000044502.p12";
   public String sum = "200000";// 交易总金额
   public String tel = "13434245847";
-  public String tltcerPath = "src\\main\\resources\\allinpayConfig\\allinpay-pds.cer";
+  public String tltcerPath = "D:\\certs\\allinpay\\allinpay-pds.cer";
   public String userName = "20060400000044502";
 
   public String getAcctName() {

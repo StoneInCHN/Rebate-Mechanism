@@ -28,11 +28,13 @@ import org.rebate.service.BankCardService;
 import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.OrderService;
 import org.rebate.service.SellerClearingRecordService;
+import org.rebate.service.SellerService;
 import org.rebate.service.SnService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.utils.LogUtil;
 import org.rebate.utils.SettingUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +50,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
       @Resource(name="orderServiceImpl")
       private OrderService orderService;
       
+      @Resource(name="sellerServiceImpl")
+      private SellerService sellerService;
+      
       @Resource(name="bankCardServiceImpl")
       private BankCardService bankCardService;
       
@@ -59,15 +64,18 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
       
       @Resource(name="clearingOrderRelationServiceImpl")
       private ClearingOrderRelationService clearingOrderRelationService;  
+      
+      @Autowired
+      private SellerClearingRecordDao sellerClearingRecordDao;
     /**
      * 商家货款结算
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)  
+    //@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)  
 	public void sellerClearing(Date startDate, Date endDate) {
     	
-		Map<Seller, BigDecimal> sellerAmountMap = new HashMap<Seller, BigDecimal>();
-		Map<Seller, Set<Order>> sellerOrdersMap = new HashMap<Seller, Set<Order>>();
+		Map<Long, BigDecimal> sellerAmountMap = new HashMap<Long, BigDecimal>();
+		Map<Long, Set<Order>> sellerOrdersMap = new HashMap<Long, Set<Order>>();
 		
 		List<Filter> filters = new ArrayList<Filter>();
 		filters.add(Filter.ne("status", OrderStatus.UNPAID));
@@ -79,17 +87,18 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		for (int i = 0; i < orders.size(); i++) {
 			Order order = orders.get(i);
 			Seller seller = order.getSeller();
-			if (!sellerAmountMap.containsKey(seller)) {
-				sellerAmountMap.put(seller, order.getAmount());
+			Long sellerId = seller.getId();
+			if (!sellerAmountMap.containsKey(sellerId)) {
+				sellerAmountMap.put(sellerId, order.getAmount());
 				Set<Order> orderSet = new HashSet<Order>();
 				orderSet.add(order);
-				sellerOrdersMap.put(seller, orderSet);
+				sellerOrdersMap.put(sellerId, orderSet);
 			}else {
-				BigDecimal income = sellerAmountMap.get(seller);
+				BigDecimal income = sellerAmountMap.get(sellerId);
 				income = income.add(order.getAmount());
-				sellerAmountMap.put(seller, income);
+				sellerAmountMap.put(sellerId, income);
 				
-				Set<Order> orderSet = sellerOrdersMap.get(seller);
+				Set<Order> orderSet = sellerOrdersMap.get(sellerId);
 				orderSet.add(order);
 			}
 		}
@@ -99,8 +108,8 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 			 List<SellerClearingRecord> records = new ArrayList<SellerClearingRecord>();
 			 BigDecimal totalClearingAmount = new BigDecimal(0);//货款结算总金额
 			 
-			 for (Map.Entry<Seller, BigDecimal> entry : sellerAmountMap.entrySet()) {
-				 Seller seller = entry.getKey();
+			 for (Map.Entry<Long, BigDecimal> entry : sellerAmountMap.entrySet()) {
+				 Seller seller = sellerService.find(entry.getKey());
 				 BigDecimal totalOrderAmount = entry.getValue(); //订单总金额
 				 EndUser endUser = seller.getEndUser();
 				 
@@ -109,7 +118,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				 record.setEndUser(endUser);
 				 record.setBankCardId(bankCardService.getDefaultCard(endUser.getId()).getId());
 				 record.setAmount(endUser.getIncomeLeScore());
-				 totalClearingAmount.add(endUser.getIncomeLeScore());
+				 totalClearingAmount = totalClearingAmount.add(endUser.getIncomeLeScore());
 				 record.setTotalOrderAmount(totalOrderAmount);  
 				 record.setHandlingCharge(getHandlingCharge(totalOrderAmount));
 				 record.setClearingSn(snService.generate(Type.SELLER_CLEARING_RECORD));
@@ -118,7 +127,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				 
 				 records.add(record);
 				 
-				 Set<Order> orderSet = sellerOrdersMap.get(seller);
+				 Set<Order> orderSet = sellerOrdersMap.get(seller.getId());
 				 for (Order order : orderSet) {
 					ClearingOrderRelation relation = new ClearingOrderRelation();
 					relation.setClearingRecId(record.getId());
@@ -130,7 +139,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				    TranxServiceImpl tranxService = new TranxServiceImpl();
 				    try {
 				    	Setting setting = SettingUtils.get();
-						//tranxService.batchDaiFu(setting.getAllinpayUrl(), false, records.size()+"", totalClearingAmount.toString(), records);
+				    	String totalAmount = totalClearingAmount.multiply(new BigDecimal(100)).setScale(0).toString();
+						tranxService.batchDaiFu(setting.getAllinpayUrl(), false, records.size()+"", 
+						    totalAmount, records, bankCardService, sellerClearingRecordDao);
 					} catch (Exception e) {
 						LogUtil.debug(this.getClass(), "clearingRecordJob", "Batch daifu failed, Catch exception: %s", e.getMessage());
 						e.printStackTrace();

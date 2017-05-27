@@ -47,7 +47,7 @@ public class TranxMain {
     record.setRemark("1");
     records.add(record1);
     tranxService.batchDaiFu("https://113.108.182.3/aipg/ProcessServlet", isfront, "2", "20010",
-        records);
+        records,null,null);
     // tranxService.batchDaiShou("https://113.108.182.3/aipg/ProcessServlet", isfront);
     // tranxService.singleDaiFushi("https://113.108.182.3/aipg/ProcessServlet", isfront);
 

@@ -1,6 +1,8 @@
 package org.rebate.utils.allinpay.service;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,14 +10,21 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.SellerClearingRecord;
+import org.rebate.framework.filter.Filter;
 import org.rebate.service.BankCardService;
 import org.rebate.service.SellerClearingRecordService;
+import org.rebate.utils.SpringUtils;
 import org.rebate.utils.TimeUtils;
 import org.rebate.utils.allinpay.pojo.TranxCon;
 import org.rebate.utils.allinpay.tools.FileUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import com.aipg.common.AipgReq;
 import com.aipg.common.InfoReq;
@@ -28,26 +37,20 @@ import com.aipg.signquery.QSignDetail;
 import com.aipg.transquery.TransQueryReq;
 import com.allinpay.XmlTools;
 
-/**
- */
 public class TranxServiceImpl {
-  
-  @Resource(name="bankCardServiceImpl")
-  private BankCardService bankCardService;
-  
-  @Resource(name="sellerClearingRecordServiceImpl")
-  private SellerClearingRecordService sellerClearingRecordService;
   
   TranxCon tranxContants = new TranxCon();
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
   /**
    * 批量代付 Andrea
+   * @param sellerClearingRecordService 
    * 
    * @throws Exception
    */
   public void batchDaiFu(String url, boolean isTLTFront, String totalItem, String totalSum,
-      List<SellerClearingRecord> records) throws Exception {
+      List<SellerClearingRecord> records, BankCardService bankCardService,
+      SellerClearingRecordDao sellerClearingRecordDao) throws Exception {
 
     String xml = "";
     AipgReq aipg = new AipgReq();
@@ -62,18 +65,17 @@ public class TranxServiceImpl {
     trans_sum.setTOTAL_SUM(totalSum);
     body.setTRANS_SUM(trans_sum);
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
-    for (int i = 1; i <= records.size(); i++) {
+    for (int i = 0; i < records.size(); i++) {
       SellerClearingRecord record = records.get(i);
       record.setReqSn(info.getREQ_SN());
-      EndUser endUser = record.getEndUser();
-      BankCard bankCard = bankCardService.getDefaultCard(endUser.getId());
-      if (endUser != null && bankCard != null) {
+      BankCard bankCard = bankCardService.find(record.getBankCardId());
+      if (bankCard != null) {
         Trans_Detail trans_detail = new Trans_Detail();
         trans_detail.setSN(genSn(i));
-        trans_detail.setACCOUNT_NAME(bankCard.getBankName()); // 银行卡姓名
+        trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
         trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
         trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-        trans_detail.setAMOUNT(record.getAmount().toString());
+        trans_detail.setAMOUNT(record.getAmount().multiply(new BigDecimal(100)).setScale(0).toString());
         trans_detail.setBANK_CODE("0105");
         trans_detail.setCURRENCY("CNY");
 
@@ -90,10 +92,10 @@ public class TranxServiceImpl {
     aipg.addTrx(body);
 
     xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",
-                                        // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
-    isFront(xml, isTLTFront, url);
+    // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
+    String xmlResponse = isFront(xml, isTLTFront, url);
     
-    sellerClearingRecordService.update(records);
+    sellerClearingRecordDao.merge(records);
   }
 
   /**
