@@ -373,7 +373,7 @@ public class PayUtil {
       params.put("orderAmount", total_fee);
       params.put("orderCurrency", "0");
       params.put("orderDatetime", TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
-      params.put("productName", body);
+      // params.put("productName", body);
       params.put("ext1", "<USER>" + allinpay_userId + "</USER>");
       params.put("payType", "33");
 
