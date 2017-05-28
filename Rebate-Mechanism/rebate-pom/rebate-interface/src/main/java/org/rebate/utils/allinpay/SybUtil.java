@@ -109,7 +109,7 @@ public class SybUtil {
     if (sb.length() > 0) {
       sb.deleteCharAt(sb.length() - 1);
     }
-    // System.out.println(sb.toString());
+    System.out.println(sb.toString());
     String sign = md5(sb.toString().getBytes("UTF-8")).toUpperCase();// 记得是md5编码的加签
     params.remove("key");
     return sign;

@@ -24,11 +24,10 @@ public class PayNotify {
     if (params.get("signMsg") != null) {
       sign = params.get("signMsg");
     }
-    boolean isSign = getSignVeryfy(params, sign, setting.getTlMerchantKey());
+    boolean isSign = getSignVeryfy(params, sign, setting.getTlMerchantH5Key());
 
     return isSign;
   }
-
 
   /**
    * 根据反馈回来的信息，生成签名结果
