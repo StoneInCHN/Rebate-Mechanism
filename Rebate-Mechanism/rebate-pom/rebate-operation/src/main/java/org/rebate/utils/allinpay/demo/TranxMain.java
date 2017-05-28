@@ -1,12 +1,9 @@
 package org.rebate.utils.allinpay.demo;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerClearingRecord;
-import org.rebate.utils.allinpay.service.TranxServiceImpl;
 
 
 
@@ -29,12 +26,8 @@ public class TranxMain {
 //    String reqsn = "122432353465235433";// 交易流水号
     
     
-    
-    //测试环境
-    //String url = "https://113.108.182.3/aipg/ProcessServlet";
-    //生产环境
-    String url = "https://tlt.allinpay.com/aipg/ProcessServlet";
-    
+	TranxConTest tranxContants = new TranxConTest();
+
     boolean isfront = false;// 是否发送至前置机（由前置机进行签名）
     TranxServiceImplTest tranxService = new TranxServiceImplTest();
     // tranxService.batchDaiShou(URL11https, isfront);
@@ -52,7 +45,7 @@ public class TranxMain {
     record.setRemark("1");
     records.add(record);
 
-    tranxService.batchDaiFu(url, isfront, "1", "1", records);
+    tranxService.batchDaiFu(tranxContants.getUrl(), isfront, "1", "1", records);
      
     // tranxService.batchDaiShou("https://113.108.182.3/aipg/ProcessServlet", isfront);
     // tranxService.singleDaiFushi("https://113.108.182.3/aipg/ProcessServlet", isfront);

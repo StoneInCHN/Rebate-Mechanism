@@ -24,6 +24,7 @@ import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
+import org.rebate.json.base.ResponseOne;
 import org.rebate.json.beans.VerifyBankcardBean;
 import org.rebate.json.beans.VerifyBankcardResult;
 import org.rebate.json.request.BankCardRequest;
@@ -55,7 +56,40 @@ public class BankCardController extends MobileBaseController {
   @Resource(name = "endUserServiceImpl")
   private EndUserService endUserService;
 
-
+  /**
+   * 银行卡四元素校验
+   * 四元素:姓名、身份证、银行卡、手机号码
+   * @return
+   */
+  @RequestMapping(value = "/getDefaultCard", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> getDefaultCard(@RequestBody BankCardRequest request) {
+	  ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+	    Long userId = request.getUserId();
+	    String token = request.getToken();
+	    if (userId == null) {
+	        response.setCode(CommonAttributes.MISSING_REQUIRE_PARAM);
+	        response.setDesc(message("rebate.request.param.missing")+":userId");
+	        return response;
+	      }
+	    BankCard bankCard = bankCardService.getDefaultCard(userId);
+	    if (bankCard == null) {
+	        LogUtil.debug(this.getClass(), "getDefaultCard", "Cannot find default bankcard for user: %s", userId);
+	        response.setCode(CommonAttributes.FAIL_COMMON);
+	        response.setDesc(message("rebate.bankCard.cannot.find.default"));
+	        return response;
+		}
+	    String[] propertys = {"id", "cardNum", "bankName", "cardType", "idCard", "bankLogo", "isDefault"};
+	    Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, bankCard);
+	    
+	    response.setMsg(result);
+	    String newtoken = TokenGenerator.generateToken(token);
+	    endUserService.createEndUserToken(newtoken, userId);
+	    response.setToken(newtoken);
+	    response.setCode(CommonAttributes.SUCCESS);
+	    return response;
+  }
+  
   /**
    * 银行卡四元素校验
    * 四元素:姓名、身份证、银行卡、手机号码

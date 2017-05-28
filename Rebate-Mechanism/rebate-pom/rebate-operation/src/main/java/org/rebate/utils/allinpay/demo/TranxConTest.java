@@ -7,28 +7,26 @@ public class TranxConTest {
 
   /**
    * XML交易参数
-   */
-  
-  // 商户证书信息
-  public String pfxPassword = "111111";
+   */    
+    
   //测试环境
-  //public String userName = "20060400000044502";
-  //public String merchantId = "200604000000445";
-  //public String password = "`12qwe";
-  //public String cerPath = "src\\main\\resources\\allinpayConfig\\test\\20060400000044502.cer";
-  //public String pfxPath = "src\\main\\resources\\allinpayConfig\\test\\20060400000044502.p12";
-  //public String tltcerPath = "src\\main\\resources\\allinpayConfig\\test\\allinpay-pds.cer";
+  public String url = "https://113.108.182.3/aipg/ProcessServlet";
+  public String pfxPassword = "111111";
+  public String userName = "20060400000044502";
+  public String merchantId = "200604000000445";
+  public String password = "`12qwe";
+  public String pfxPath = "src\\main\\resources\\allinpayConfig\\test\\20060400000044502.p12";
+  public String tltcerPath = "src\\main\\resources\\allinpayConfig\\test\\allinpay-pds.cer";
   
   //生产环境
-  public String userName = "20070100000440901";
-  public String merchantId = "200701000004409";
-  public String password = "allinpay_123";
-  public String pfxPath = "src\\main\\resources\\allinpayConfig\\product\\20070100000440904.p12";
-  public String tltcerPath = "src\\main\\resources\\allinpayConfig\\product\\allinpay-pds.cer";
+//  public String url = "https://tlt.allinpay.com/aipg/ProcessServlet";
+//  public String pfxPassword = "111111";
+//  public String userName = "20070100000440901";
+//  public String merchantId = "200701000004409";
+//  public String password = "allinpay_123";
+//  public String pfxPath = "src\\main\\resources\\allinpayConfig\\product\\20070100000440904.p12";
+//  public String tltcerPath = "src\\main\\resources\\allinpayConfig\\product\\allinpay-pds.cer";
   
-  public String sum = "200000";// 交易总金额
-  public String tel = "13434245847";
-    
 
   public String getMerchantId() {
     return merchantId;
@@ -46,13 +44,6 @@ public class TranxConTest {
     return pfxPath;
   }
 
-  public String getSum() {
-    return sum;
-  }
-
-  public String getTel() {
-    return tel;
-  }
 
   public String getTltcerPath() {
     return tltcerPath;
@@ -61,8 +52,6 @@ public class TranxConTest {
   public String getUserName() {
     return userName;
   }
-
-
 
   public void setMerchantId(String merchantId) {
     this.merchantId = merchantId;
@@ -80,14 +69,6 @@ public class TranxConTest {
     this.pfxPath = pfxPath;
   }
 
-  public void setSum(String sum) {
-    this.sum = sum;
-  }
-
-  public void setTel(String tel) {
-    this.tel = tel;
-  }
-
   public void setTltcerPath(String tltcerPath) {
     this.tltcerPath = tltcerPath;
   }
@@ -95,6 +76,14 @@ public class TranxConTest {
   public void setUserName(String userName) {
     this.userName = userName;
   }
+
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 
 
