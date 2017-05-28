@@ -57,8 +57,8 @@ public class BankCardController extends MobileBaseController {
   private EndUserService endUserService;
 
   /**
-   * 银行卡四元素校验
-   * 四元素:姓名、身份证、银行卡、手机号码
+   * 获取用户默认银行卡
+   * 
    * @return
    */
   @RequestMapping(value = "/getDefaultCard", method = RequestMethod.POST)
@@ -85,6 +85,49 @@ public class BankCardController extends MobileBaseController {
 	    response.setMsg(result);
 	    String newtoken = TokenGenerator.generateToken(token);
 	    endUserService.createEndUserToken(newtoken, userId);
+	    response.setDesc(message("rebate.find.success"));
+	    response.setToken(newtoken);
+	    response.setCode(CommonAttributes.SUCCESS);
+	    return response;
+  }
+  /**
+   * 设置默认银行卡
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/updateCardDefault", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse updateCard(@RequestBody BankCardRequest request) {
+	    BaseResponse response = new BaseResponse();
+	    Long userId = request.getUserId();
+	    String token = request.getToken();
+	    
+	    Long entityId = request.getEntityId();
+	    if (entityId == null || userId == null) {
+	        response.setCode(CommonAttributes.MISSING_REQUIRE_PARAM);
+	        response.setDesc(message("rebate.request.param.missing"));
+	        return response;
+	    }
+	    BankCard bankCard = bankCardService.find(entityId);
+	    if (bankCard == null) {
+	        LogUtil.debug(this.getClass(), "updateCard", "Cannot find bankcard for entityId: %s", entityId);
+	        response.setCode(CommonAttributes.FAIL_COMMON);
+	        response.setDesc(message("rebate.find.failed"));
+	        return response;
+		}
+	    try {
+	    	bankCardService.updateCardDefault(bankCard, userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+	        LogUtil.debug(this.getClass(), "updateCard", "Cannot find bankcard for entityId: %s", e);
+	        response.setCode(CommonAttributes.FAIL_COMMON);
+	        response.setDesc(message("rebate.update.failed") + ":" + e.getMessage());
+	        return response;
+		}
+	    
+	    String newtoken = TokenGenerator.generateToken(token);
+	    endUserService.createEndUserToken(newtoken, userId);
+	    response.setDesc(message("rebate.update.success"));
 	    response.setToken(newtoken);
 	    response.setCode(CommonAttributes.SUCCESS);
 	    return response;

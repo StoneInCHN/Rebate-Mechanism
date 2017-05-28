@@ -81,7 +81,7 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
     List<BankCard> mergeCards = new ArrayList<BankCard>();
     mergeCards.add(bankCard);
 
-    if (req.getIsDefault()) {
+    if (req.getIsDefault() != null && req.getIsDefault()) {
       List<Filter> filters = new ArrayList<Filter>();
       filters.add(Filter.eq("endUser", endUser));
       filters.add(Filter.eq("isDefault", true));
@@ -114,4 +114,21 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
     }
     return null;
   }
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)  
+	public void updateCardDefault(BankCard bankCard, Long userId) {
+	    bankCard.setIsDefault(true);
+	    List<BankCard> mergeCards = new ArrayList<BankCard>();
+	    mergeCards.add(bankCard);	
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(Filter.eq("endUser", userId));
+        filters.add(Filter.eq("isDefault", true));
+        List<BankCard> cards = bankCardDao.findList(null, null, filters, null);
+        for (BankCard card : cards) {
+            card.setIsDefault(false);
+            mergeCards.add(card);
+        }
+        bankCardDao.merge(mergeCards);
+	}
 }
