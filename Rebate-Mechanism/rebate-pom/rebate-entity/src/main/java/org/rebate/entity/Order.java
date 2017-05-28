@@ -117,7 +117,7 @@ public class Order extends BaseEntity {
   /**
    * 是否为录单订单
    */
-  private Boolean isSallerOrder;
+  private Boolean isSallerOrder = false;
 
   /**
    * 商家折扣

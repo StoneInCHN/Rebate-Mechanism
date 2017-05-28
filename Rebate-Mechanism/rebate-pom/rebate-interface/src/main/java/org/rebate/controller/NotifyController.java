@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,7 +25,6 @@ import org.rebate.service.OrderService;
 import org.rebate.service.SellerClearingRecordService;
 import org.rebate.utils.HttpServletRequestUtils;
 import org.rebate.utils.alipay.util.AlipayNotify;
-import org.rebate.utils.allinpay.ManageSign;
 import org.rebate.utils.allinpay.PayNotify;
 import org.rebate.utils.allinpay.SybUtil;
 import org.rebate.utils.wechat.WeixinUtil;
@@ -45,7 +43,7 @@ public class NotifyController extends MobileBaseController {
 
   @Resource(name = "orderServiceImpl")
   private OrderService orderService;
-  
+
   @Resource(name = "sellerClearingRecordServiceImpl")
   private SellerClearingRecordService sellerClearingRecordService;
 
@@ -141,58 +139,62 @@ public class NotifyController extends MobileBaseController {
    * @throws IOException
    */
   @RequestMapping(value = "/notify_batch", method = RequestMethod.POST)
-  public @ResponseBody TxnResultNotify notify_batchDaiFu(HttpServletRequest request) throws Exception {
-	  
-	    TxnResultNotify notify = new TxnResultNotify();
-	    Info info = notify.getINFO();
-	    
-	    //获取通联交易结果通知xml数据
-	    String xml = HttpServletRequestUtils.getRequestParam(request, "UTF-8");
-	    LogUtil.debug(this.getClass(), "notify_batch", "Request Param: %s", xml);
-	    
-        try {  
-		    //验证通联的参数签名SIGNED_MSG
-//		    boolean signOK = ManageSign.verifyMsg(xml, false);
-//		    if (!signOK) {
-//		    	info.setRET_CODE(CommonAttributes.FAIL_COMMON);
-//				info.setERR_MSG(message("rebate.notify.errMsg.sign.invalid"));
-//				return notify;
-//			}
-		    
-			Document doc = DocumentHelper.parseText(xml);
-		    Element root = doc.getRootElement();//AIPG
-		    Element infoElement = root.element("INFO");
-		    Element notifyElement = root.element("NOTIFY");
+  public @ResponseBody TxnResultNotify notify_batchDaiFu(HttpServletRequest request)
+      throws Exception {
 
-		  	info = new Info(infoElement.element("TRX_CODE").getText(), infoElement.element("VERSION").getText(),
-		  			infoElement.element("DATA_TYPE").getText(),infoElement.element("REQ_SN").getText(),
-		  			CommonAttributes.FAIL_COMMON, null, infoElement.element("SIGNED_MSG").getText() );
-		  	
-            	String trxCode = info.getTRX_CODE();
-            	if ("200003".equals(trxCode)) {
-                	String reqSn = notifyElement.element("NOTIFY_SN").getText();
-                	try {
-                    	//更新该交易批次号的所有订单结算状态
-                    	sellerClearingRecordService.updateClearingByReqSn(reqSn);
-                    	//商户订单更新成功，返回0000给通联
-                    	info.setRET_CODE(CommonAttributes.SUCCESS);
-                    	
-    				} catch (Exception e) {
-    					e.printStackTrace();
-    					info.setERR_MSG(message("rebate.notify.errMsg.update.order.failed"));
-    					return notify;
-    				}
-				}else {
-					info.setERR_MSG(message("rebate.notify.errMsg.trxCode.error"));
-				}
-        } catch (Exception e) {  
-            e.printStackTrace();  
-            info.setERR_MSG(message("rebate.notify.errMsg.xml.error"));
-			return notify;
-            
-        } 
-        return notify;
+    TxnResultNotify notify = new TxnResultNotify();
+    Info info = notify.getINFO();
+
+    // 获取通联交易结果通知xml数据
+    String xml = HttpServletRequestUtils.getRequestParam(request, "UTF-8");
+    LogUtil.debug(this.getClass(), "notify_batch", "Request Param: %s", xml);
+
+    try {
+      // 验证通联的参数签名SIGNED_MSG
+      // boolean signOK = ManageSign.verifyMsg(xml, false);
+      // if (!signOK) {
+      // info.setRET_CODE(CommonAttributes.FAIL_COMMON);
+      // info.setERR_MSG(message("rebate.notify.errMsg.sign.invalid"));
+      // return notify;
+      // }
+
+      Document doc = DocumentHelper.parseText(xml);
+      Element root = doc.getRootElement();// AIPG
+      Element infoElement = root.element("INFO");
+      Element notifyElement = root.element("NOTIFY");
+
+      info =
+          new Info(infoElement.element("TRX_CODE").getText(), infoElement.element("VERSION")
+              .getText(), infoElement.element("DATA_TYPE").getText(), infoElement.element("REQ_SN")
+              .getText(), CommonAttributes.FAIL_COMMON, null, infoElement.element("SIGNED_MSG")
+              .getText());
+
+      String trxCode = info.getTRX_CODE();
+      if ("200003".equals(trxCode)) {
+        String reqSn = notifyElement.element("NOTIFY_SN").getText();
+        try {
+          // 更新该交易批次号的所有订单结算状态
+          sellerClearingRecordService.updateClearingByReqSn(reqSn);
+          // 商户订单更新成功，返回0000给通联
+          info.setRET_CODE(CommonAttributes.SUCCESS);
+
+        } catch (Exception e) {
+          e.printStackTrace();
+          info.setERR_MSG(message("rebate.notify.errMsg.update.order.failed"));
+          return notify;
+        }
+      } else {
+        info.setERR_MSG(message("rebate.notify.errMsg.trxCode.error"));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      info.setERR_MSG(message("rebate.notify.errMsg.xml.error"));
+      return notify;
+
+    }
+    return notify;
   }
+
   /**
    * 微信支付回调接口
    * 
@@ -456,7 +458,7 @@ public class NotifyController extends MobileBaseController {
   @RequestMapping(value = "/notify_allinpay_H5", method = RequestMethod.POST)
   public @ResponseBody String notify_allinpay_H5(HttpServletRequest request) throws Exception {
     // 获取支付宝POST过来反馈信息
-    Map<String, String> params = new LinkedHashMap<String, String>();
+    Map<String, String> params = new HashMap<String, String>();
     Map requestParams = request.getParameterMap();
     for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
       String name = (String) iter.next();
@@ -482,7 +484,8 @@ public class NotifyController extends MobileBaseController {
         new String(request.getParameter("payAmount").getBytes("ISO-8859-1"), "UTF-8");
     // 加密类型
     String sign_type = new String(request.getParameter("signType").getBytes("ISO-8859-1"), "UTF-8");
-    if ("0".equals(sign_type) && PayNotify.verify(params)) {// sign_type:0 MD5加密 sign_type:1 RSA加密
+    if ("0".equals(sign_type) && PayNotify.verifySignH5(params)) {// sign_type:0 MD5加密 sign_type:1
+                                                                  // RSA加密
       if (LogUtil.isDebugEnabled(NotifyController.class)) {
         LogUtil
             .debug(
