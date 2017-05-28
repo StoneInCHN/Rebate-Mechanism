@@ -97,7 +97,7 @@ public class BankCardController extends MobileBaseController {
    */
   @RequestMapping(value = "/updateCardDefault", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody BaseResponse updateCard(@RequestBody BankCardRequest request) {
+  public @ResponseBody BaseResponse updateCardDefault(@RequestBody BankCardRequest request) {
 	    BaseResponse response = new BaseResponse();
 	    Long userId = request.getUserId();
 	    String token = request.getToken();
@@ -119,7 +119,7 @@ public class BankCardController extends MobileBaseController {
 	    	bankCardService.updateCardDefault(bankCard, userId);
 		} catch (Exception e) {
 			e.printStackTrace();
-	        LogUtil.debug(this.getClass(), "updateCard", "Cannot find bankcard for entityId: %s", e);
+	        LogUtil.debug(this.getClass(), "updateCard", "Update default bank card failed:", e.getMessage());
 	        response.setCode(CommonAttributes.FAIL_COMMON);
 	        response.setDesc(message("rebate.update.failed") + ":" + e.getMessage());
 	        return response;

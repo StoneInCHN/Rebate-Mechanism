@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
@@ -43,19 +46,18 @@ public class TranxServiceImpl {
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
   /**
-   * 批量代付 Andrea
-   * @param sellerClearingRecordService 
+   * 批量代付
    * 
    * @throws Exception
    */
-  public void batchDaiFu(String url, boolean isTLTFront, String totalItem, String totalSum,
-      List<SellerClearingRecord> records, BankCardService bankCardService,
-      SellerClearingRecordDao sellerClearingRecordDao) throws Exception {
+  public List<SellerClearingRecord> batchDaiFu(String url, boolean isTLTFront, String totalItem, String totalSum,
+      List<SellerClearingRecord> records, BankCardService bankCardService) throws Exception {
 
-    String xml = "";
+    String xmlRequest = "";
     AipgReq aipg = new AipgReq();
-    InfoReq info = makeReq("100002");
+    InfoReq info = makeReq("100002");//批量代付的交易代码：100002
     aipg.setINFO(info);
+    
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
     trans_sum.setBUSINESS_CODE("09400"); // 提款类：虚拟账户取现
@@ -64,38 +66,50 @@ public class TranxServiceImpl {
     trans_sum.setTOTAL_ITEM(totalItem);
     trans_sum.setTOTAL_SUM(totalSum);
     body.setTRANS_SUM(trans_sum);
+    
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
     for (int i = 0; i < records.size(); i++) {
       SellerClearingRecord record = records.get(i);
       record.setReqSn(info.getREQ_SN());
       BankCard bankCard = bankCardService.find(record.getBankCardId());
-      if (bankCard != null) {
-        Trans_Detail trans_detail = new Trans_Detail();
-        trans_detail.setSN(genSn(i));
-        trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
-        trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
-        trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-        trans_detail.setAMOUNT(record.getAmount().multiply(new BigDecimal(100)).setScale(0).toString());
-        //trans_detail.setBANK_CODE("0105");
-        trans_detail.setCURRENCY("CNY");
+      if (bankCard == null) {//批量代付的话，是整批次成功或整批次失败，不允许某一单银行卡为空
+		return null;
+	  }
+      Trans_Detail trans_detail = new Trans_Detail();
+      String sn = genSn(i);
+      trans_detail.setSN(sn);//记录序号，同一个请求内必须唯一，从0001,0002..开始递增
+      record.setSn(sn);
+      trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
+      trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
+      trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
+      trans_detail.setAMOUNT(record.getAmount().multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
+      //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
+      trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
-        // trans_detail.setCUST_USERID("252523524253xx");
-        // trans_detail.setTEL("13434245846");
-        // trans_detail.setCURRENCY("NBK");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
-        // trans_detail.setSETTGROUPFLAG("xCHM");
-        // trans_detail.setSUMMARY("分组清算");
-        // trans_detail.setUNION_BANK("234234523523");
         transList.add(trans_detail);
-      }
     }
     body.setDetails(transList);
     aipg.addTrx(body);
 
-    xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",
-    // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
-    String xmlResponse = isFront(xml, isTLTFront, url);
+    xmlRequest = XmlTools.buildXml(aipg, true);
     
-    sellerClearingRecordDao.merge(records);
+    String xmlResponse = isFront(xmlRequest, isTLTFront, url);
+    
+    if (xmlResponse != null) {
+        Document doc = DocumentHelper.parseText(xmlResponse);
+        Element root = doc.getRootElement();// AIPG
+        Element infoElement = root.element("INFO");
+        String ret_code = infoElement.element("RET_CODE").getText();
+        String err_msg = infoElement.element("ERR_MSG").getText();
+        if ("0000".equals(ret_code)) {//0000表示通联接受请求并处理成功，RET_CODE是一个中间状态
+        	System.out.println("批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+        	return records;
+		}else {
+			System.out.println("批量代付失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+		}
+	}
+    return null;
+    
   }
 
   /**

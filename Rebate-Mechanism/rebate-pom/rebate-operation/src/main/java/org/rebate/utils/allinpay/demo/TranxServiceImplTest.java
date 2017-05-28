@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
@@ -75,16 +78,10 @@ public class TranxServiceImplTest {
         trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
         trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
         trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-        trans_detail.setAMOUNT("1");
+        trans_detail.setAMOUNT("2");
         //trans_detail.setBANK_CODE(bankCard.getBankCode());
-        trans_detail.setCURRENCY("CNY");
+        trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
-        // trans_detail.setCUST_USERID("252523524253xx");
-        // trans_detail.setTEL("13434245846");
-        // trans_detail.setCURRENCY("NBK");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
-        // trans_detail.setSETTGROUPFLAG("xCHM");
-        // trans_detail.setSUMMARY("分组清算");
-        // trans_detail.setUNION_BANK("234234523523");
         transList.add(trans_detail);
       }
     }
@@ -94,6 +91,19 @@ public class TranxServiceImplTest {
     xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",
     // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
     String xmlResponse = isFront(xml, isTLTFront, url);
+    
+    if (xmlResponse != null) {
+        Document doc = DocumentHelper.parseText(xmlResponse);
+        Element root = doc.getRootElement();// AIPG
+        Element infoElement = root.element("INFO");
+        String ret_code = infoElement.element("RET_CODE").getText();
+        String err_msg = infoElement.element("ERR_MSG").getText();
+        if ("0000".equals(ret_code)) {//0000表示通联接受请求并处理成功，RET_CODE是一个中间状态
+        	System.out.println("批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+		}else {
+			System.out.println("批量代付失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+		}
+	}
     
   }
 

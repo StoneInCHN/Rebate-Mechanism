@@ -63,13 +63,17 @@ public class SellerClearingRecord extends BaseEntity {
   private Long bankCardId;
 
   /**
-   * 结算货款单编号
+   * 结算货款单编号（用于显示）
    */
   private String clearingSn;
   /**
    * 交易批次号（批量代付号）
    */
   private String reqSn;
+  /**
+   * 记录序号，例如：0001
+   */
+  private String sn;
 
   /**
    * 备注
@@ -164,6 +168,14 @@ public class SellerClearingRecord extends BaseEntity {
 	
 	public void setReqSn(String reqSn) {
 		this.reqSn = reqSn;
+	}
+
+	public String getSn() {
+		return sn;
+	}
+
+	public void setSn(String sn) {
+		this.sn = sn;
 	}
 
 }

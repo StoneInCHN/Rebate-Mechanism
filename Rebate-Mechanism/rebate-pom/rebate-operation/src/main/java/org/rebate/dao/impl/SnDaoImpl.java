@@ -41,7 +41,7 @@ public class SnDaoImpl implements SnDao, InitializingBean {
 
 	  @Override
 	  public void afterPropertiesSet() throws Exception {
-		  clearingHiloOptimizer = new HiloOptimizer(Type.ORDER, clearingPrefix, clearingMaxLo);
+		  clearingHiloOptimizer = new HiloOptimizer(Type.SELLER_CLEARING_RECORD, clearingPrefix, clearingMaxLo);
 
 	  }
 
