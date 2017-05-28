@@ -7,8 +7,10 @@ import javax.annotation.Resource;
 
 import org.rebate.dao.BankCardDao;
 import org.rebate.dao.EndUserDao;
+import org.rebate.dao.UserAuthDao;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.UserAuth;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.service.impl.BaseServiceImpl;
@@ -27,6 +29,8 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
 
   @Resource(name = "endUserDaoImpl")
   private EndUserDao endUserDao;
+  @Resource(name = "userAuthDaoImpl")
+  private UserAuthDao userAuthDao;
 
   @Resource(name = "bankCardDaoImpl")
   public void setBaseDao(BankCardDao bankCardDao) {
@@ -91,6 +95,11 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
     }
 
     bankCardDao.merge(mergeCards);
+    UserAuth userAuth = userAuthDao.getUserAuth(req.getUserId(), false);
+    if (userAuth != null) {
+      userAuth.setIsAuth(true);
+      userAuthDao.merge(userAuth);
+    }
     return bankCard;
   }
 

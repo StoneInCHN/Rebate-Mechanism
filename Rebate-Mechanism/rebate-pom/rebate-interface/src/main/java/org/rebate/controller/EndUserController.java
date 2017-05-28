@@ -1775,10 +1775,17 @@ public class EndUserController extends MobileBaseController {
     String cardNo = req.getCardNo();
 
 
-    UserAuth userAuth = userAuthService.getUserAuthByIdCard(cardNo, true);
-    if (userAuth != null) {
+    UserAuth userAuthByUserId = userAuthService.getUserAuth(userId, true);
+    if (userAuthByUserId != null) {
       response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.user.auth.isAuthed").getContent());
+      response.setDesc(Message.error("rebate.userAuth.user.isAuthed").getContent());
+      return response;
+    }
+
+    UserAuth userAuthByIdCard = userAuthService.getUserAuthByIdCard(cardNo, true);
+    if (userAuthByIdCard != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.userAuth.idCard.isAuthed").getContent());
       return response;
     }
 
