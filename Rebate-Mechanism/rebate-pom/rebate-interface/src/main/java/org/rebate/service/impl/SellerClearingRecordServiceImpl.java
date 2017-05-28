@@ -17,6 +17,7 @@ import org.rebate.entity.SellerClearingRecord;
 import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.EndUserService;
+import org.rebate.service.OrderService;
 import org.rebate.service.SellerClearingRecordService;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.service.impl.BaseServiceImpl;
@@ -27,13 +28,17 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
       @Resource(name="sellerClearingRecordDaoImpl")
       public void setBaseDao(SellerClearingRecordDao sellerClearingRecordDao) {
          super.setBaseDao(sellerClearingRecordDao);
-     }
+      }
       
       @Resource(name="clearingOrderRelationServiceImpl")
       private ClearingOrderRelationService clearingOrderRelationService;
       
       @Resource(name="endUserServiceImpl")
       private EndUserService endUserService;
+      
+      @Resource(name="orderServiceImpl")
+      private OrderService orderService;
+      
 
 	@Override
 	public List<SellerClearingRecord> getListByReqSn(String reqSn) {
@@ -55,10 +60,12 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
         		endUserService.update(endUser);
         		record.setIsClearing(true);
         		record.setRemark("success");
+        		update(record);
         		List<Order> orders = getOrderListByRecordId(record.getId());
         		for (Order order : orders) {
         			order.setIsClearing(true);
     			}
+        		orderService.update(orders);
     		}
 		}
 	}

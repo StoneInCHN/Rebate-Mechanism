@@ -150,13 +150,12 @@ public class NotifyController extends MobileBaseController {
 	    String xml = HttpServletRequestUtils.getRequestParam(request, "UTF-8");
 	    LogUtil.debug(this.getClass(), "notify_batch", "Request Param: %s", xml);
 	    
-	    
         try {  
-		    //是否需要验证通联的参数SIGNED_MSG？？？
+		    //验证通联的参数签名SIGNED_MSG
 //		    boolean signOK = ManageSign.verifyMsg(xml, false);
 //		    if (!signOK) {
 //		    	info.setRET_CODE(CommonAttributes.FAIL_COMMON);
-//				info.setERR_MSG(message("rebate.notify.errMsg.update.order.failed"));
+//				info.setERR_MSG(message("rebate.notify.errMsg.sign.invalid"));
 //				return notify;
 //			}
 		    

@@ -1,4 +1,4 @@
-package org.rebate.utils.allinpay.service;
+package org.rebate.utils.allinpay.demo;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -37,9 +37,9 @@ import com.aipg.signquery.QSignDetail;
 import com.aipg.transquery.TransQueryReq;
 import com.allinpay.XmlTools;
 
-public class TranxServiceImpl {
+public class TranxServiceImplTest {
   
-  TranxCon tranxContants = new TranxCon();
+  TranxConTest tranxContants = new TranxConTest();
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
   /**
@@ -49,8 +49,7 @@ public class TranxServiceImpl {
    * @throws Exception
    */
   public void batchDaiFu(String url, boolean isTLTFront, String totalItem, String totalSum,
-      List<SellerClearingRecord> records, BankCardService bankCardService,
-      SellerClearingRecordDao sellerClearingRecordDao) throws Exception {
+      List<SellerClearingRecord> records) throws Exception {
 
     String xml = "";
     AipgReq aipg = new AipgReq();
@@ -67,16 +66,17 @@ public class TranxServiceImpl {
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
     for (int i = 0; i < records.size(); i++) {
       SellerClearingRecord record = records.get(i);
-      record.setReqSn(info.getREQ_SN());
-      BankCard bankCard = bankCardService.find(record.getBankCardId());
+      BankCard bankCard = new BankCard();
+      bankCard.setCardNum("6222629530005276796");
+      bankCard.setOwnerName("陈贵川");
       if (bankCard != null) {
         Trans_Detail trans_detail = new Trans_Detail();
         trans_detail.setSN(genSn(i));
         trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
         trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
         trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-        trans_detail.setAMOUNT(record.getAmount().multiply(new BigDecimal(100)).setScale(0).toString());
-        //trans_detail.setBANK_CODE("0105");
+        trans_detail.setAMOUNT("1");
+        //trans_detail.setBANK_CODE(bankCard.getBankCode());
         trans_detail.setCURRENCY("CNY");
 
         // trans_detail.setCUST_USERID("252523524253xx");
@@ -95,7 +95,6 @@ public class TranxServiceImpl {
     // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
     String xmlResponse = isFront(xml, isTLTFront, url);
     
-    sellerClearingRecordDao.merge(records);
   }
 
   /**

@@ -38,16 +38,23 @@ public class BankCard extends BaseEntity {
    * 银行类别
    */
   private String bankName;
+  
 
   /**
    * 银行卡类型
    */
   private String cardType;
 
+
   /**
    * 用户
    */
   private EndUser endUser;
+  
+  /**
+   * 身份证号
+   */
+  private String idCard;  
 
   /**
    * 是否为默认银行卡
@@ -136,6 +143,14 @@ public class BankCard extends BaseEntity {
   public void setIsDefault(Boolean isDefault) {
     this.isDefault = isDefault;
   }
+
+	public String getIdCard() {
+		return idCard;
+	}
+	
+	public void setIdCard(String idCard) {
+		this.idCard = idCard;
+	}
 
 
 }

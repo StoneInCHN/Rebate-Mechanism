@@ -33,5 +33,9 @@ public class ManageSign {
     return flag;
   }
 
-
+  public static void main(String[] args) throws Exception{
+	  String xmlString = "<?xml version=\"1.0\" encoding=\"GBK\"?><AIPG>  <INFO>    <TRX_CODE>200003</TRX_CODE>    <VERSION>03</VERSION>    <DATA_TYPE>2</DATA_TYPE>    <REQ_SN>2006040000004451495764988336</REQ_SN>       <SIGNED_MSG></SIGNED_MSG>  </INFO></AIPG>  ";
+	  String newXml = signMsg(xmlString);
+	  System.out.println(newXml);
+  }
 }

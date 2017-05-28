@@ -68,6 +68,7 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
     bankCard.setOwnerName(req.getOwnerName());
     bankCard.setBankName(req.getBankName());
     bankCard.setCardNum(req.getCardNum());
+    bankCard.setIdCard(req.getIdCard());
     bankCard.setCardType(req.getCardType());
     bankCard.setIsDefault(req.getIsDefault());
     bankCard.setReservedMobile(req.getReservedMobile());

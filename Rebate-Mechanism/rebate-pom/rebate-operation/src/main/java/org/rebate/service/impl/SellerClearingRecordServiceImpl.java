@@ -71,7 +71,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
      * 商家货款结算
      */
     @Override
-    //@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)  
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)  
 	public void sellerClearing(Date startDate, Date endDate) {
     	
 		Map<Long, BigDecimal> sellerAmountMap = new HashMap<Long, BigDecimal>();

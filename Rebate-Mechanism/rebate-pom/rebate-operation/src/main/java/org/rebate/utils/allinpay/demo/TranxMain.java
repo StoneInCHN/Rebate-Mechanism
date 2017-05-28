@@ -19,16 +19,24 @@ public class TranxMain {
    * @throws Exception
    */
   public static void main(String[] args) throws Exception {
-    String URL8083 = "http://113.108.182.4:8083/aipg/ProcessServlet"; //
-    String URL11 = "http://172.16.1.11:8080/aipg/ProcessServlet"; //
-    String URL11https = "https://172.16.1.11/aipg/ProcessServlet"; //
-    String URL = "http://tlt.allinpay.com/aipg/ProcessServlet";
-    String NOTICEURL = "http://116.52.144.99:11021"; //
-    String URLbill =
-        "http://172.16.1.11:8080/aipg/GetConFile.do?SETTDAY=@xxx&REQTIME=@yyy&MERID=@zzz&SIGN=@sss"; //
+//    String URL8083 = "http://113.108.182.4:8083/aipg/ProcessServlet"; //
+//    String URL11 = "http://172.16.1.11:8080/aipg/ProcessServlet"; //
+//    String URL11https = "https://172.16.1.11/aipg/ProcessServlet"; //
+//    String URL = "http://tlt.allinpay.com/aipg/ProcessServlet";
+//    String NOTICEURL = "http://116.52.144.99:11021"; //
+//    String URLbill =
+//        "http://172.16.1.11:8080/aipg/GetConFile.do?SETTDAY=@xxx&REQTIME=@yyy&MERID=@zzz&SIGN=@sss"; //
+//    String reqsn = "122432353465235433";// 交易流水号
+    
+    
+    
+    //测试环境
+    //String url = "https://113.108.182.3/aipg/ProcessServlet";
+    //生产环境
+    String url = "https://tlt.allinpay.com/aipg/ProcessServlet";
+    
     boolean isfront = false;// 是否发送至前置机（由前置机进行签名）
-    String reqsn = "122432353465235433";// 交易流水号
-    TranxServiceImpl tranxService = new TranxServiceImpl();
+    TranxServiceImplTest tranxService = new TranxServiceImplTest();
     // tranxService.batchDaiShou(URL11https, isfront);
     // tranxService.downBills(URL11, isfront);
     // 签约结果通知
@@ -43,11 +51,9 @@ public class TranxMain {
     SellerClearingRecord record = new SellerClearingRecord();
     record.setRemark("1");
     records.add(record);
-    SellerClearingRecord record1 = new SellerClearingRecord();
-    record.setRemark("1");
-    records.add(record1);
-    tranxService.batchDaiFu("https://113.108.182.3/aipg/ProcessServlet", isfront, "2", "20010",
-        records,null,null);
+
+    tranxService.batchDaiFu(url, isfront, "1", "1", records);
+     
     // tranxService.batchDaiShou("https://113.108.182.3/aipg/ProcessServlet", isfront);
     // tranxService.singleDaiFushi("https://113.108.182.3/aipg/ProcessServlet", isfront);
 

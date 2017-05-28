@@ -93,14 +93,14 @@ public class BankCardController extends MobileBaseController {
     try {
       String result = ApiUtils.post(setting.getJuheVerifyBankcard4(),params);
       
-      if (LogUtil.isDebugEnabled(this.getClass())) {
-        LogUtil.debug(this.getClass(),
+      LogUtil.debug(this.getClass(),
                 "verifyCard", "request params: %s, result: %s", params.toString(), result);
-      }
       
       ObjectMapper objectMapper = new ObjectMapper();
       VerifyBankcardBean verifyBankcardBean = objectMapper.readValue(result, VerifyBankcardBean.class);
       if (verifyBankcardBean == null) {
+        LogUtil.debug(this.getClass(),
+                  "verifyCard", "Cannot convert from result to VerifyBankcardBean!!");
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(message("rebate.request.failed"));
         return response;
@@ -121,8 +121,9 @@ public class BankCardController extends MobileBaseController {
         return response;
       }
     } catch (Exception e) {
+      e.printStackTrace();
       response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(message("rebate.request.failed"));
+      response.setDesc(message("rebate.request.failed") + ":" + e.getMessage());
       return response;
     }
 
@@ -254,7 +255,7 @@ public class BankCardController extends MobileBaseController {
     pageable.setOrders(orderings);
 
     Page<BankCard> page = bankCardService.findPage(pageable);
-    String[] propertys = {"id", "cardNum", "bankName", "cardType", "bankLogo", "isDefault"};
+    String[] propertys = {"id", "cardNum", "bankName", "cardType", "idCard", "bankLogo", "isDefault"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
