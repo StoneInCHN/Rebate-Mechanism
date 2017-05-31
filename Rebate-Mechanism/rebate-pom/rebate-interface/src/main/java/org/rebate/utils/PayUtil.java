@@ -17,6 +17,7 @@ import org.dom4j.Element;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.beans.Message;
 import org.rebate.beans.Setting;
+import org.rebate.common.log.LogUtil;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
@@ -146,7 +147,7 @@ public class PayUtil {
     String orderReqTranSeq = orderTime + "000001"; // 订单流水号(当前时间+000001)(格式如：yyyymmddhhmmss000001)
     ObjectMapper mapper = new ObjectMapper();
     Map<String, String> riskInfo = new HashMap<String, String>();
-    riskInfo.put("service_identify", product_id);
+    riskInfo.put("service_identify", "100");
     riskInfo.put("subject", body);
     riskInfo.put("product_type", "1");
     // riskInfo.put("boby", body);
@@ -164,7 +165,8 @@ public class PayUtil {
     map.put("ORDERSEQ", order_sn);
     map.put("ORDERREQTRANSEQ", orderReqTranSeq);
     map.put("ORDERREQTIME", orderTime);
-    String amount = total_fee.multiply(new BigDecimal(100)).toString();
+    String amount =
+        total_fee.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
     map.put("ORDERAMT", amount);
     map.put("TRANSCODE", "01");
     map.put("PRODUCTID", "04");
@@ -173,7 +175,10 @@ public class PayUtil {
     map.put("MAC", mac);
     map.put("RISKCONTROLINFO", riskInfoJson);
     String result = ApiUtils.post(yi_payOrder, map);
-    // System.out.println(result);
+    if (LogUtil.isDebugEnabled(PayUtil.class)) {
+      LogUtil.debug(PayUtil.class, "PayUtil", "PayUtil result.param: %s, result: %s",
+          map.toString(), result);
+    }
     String res[] = result.split("&");
     if ("00".equals(res[0])) {
       Map<String, Object> resMap = new HashMap<String, Object>();
@@ -181,6 +186,7 @@ public class PayUtil {
       resMap.put("MERCHANTID", yi_merchantId);
       resMap.put("MERCHANTPWD", yi_merchantPwd);
       resMap.put("BACKMERCHANTURL", yi_notify_url);
+      resMap.put("SIGNTYPE", "MD5");
 
       resMap.put("ORDERSEQ", order_sn);
       resMap.put("ORDERREQTRANSEQ", orderReqTranSeq);
@@ -202,9 +208,10 @@ public class PayUtil {
       String tempStr =
           "SERVICE=" + resMap.get("SERVICE") + "&MERCHANTID=" + resMap.get("MERCHANTID")
               + "&MERCHANTPWD=" + resMap.get("MERCHANTPWD") + "&SUBMERCHANTID=" + ""
-              + "&BACKMERCHANTURL=" + resMap.get("BACKMERCHANTURL") + "&ORDERSEQ="
-              + resMap.get("ORDERSEQ") + "&ORDERREQTRANSEQ=" + resMap.get("ORDERREQTRANSEQ")
-              + "&ORDERTIME=" + resMap.get("ORDERTIME") + "&ORDERVALIDITYTIME=" + "" + "&CURTYPE="
+              + "&BACKMERCHANTURL=" + resMap.get("BACKMERCHANTURL") + "&SIGNTYPE="
+              + resMap.get("SIGNTYPE") + "&ORDERSEQ=" + resMap.get("ORDERSEQ")
+              + "&ORDERREQTRANSEQ=" + resMap.get("ORDERREQTRANSEQ") + "&ORDERTIME="
+              + resMap.get("ORDERTIME") + "&ORDERVALIDITYTIME=" + "" + "&CURTYPE="
               + resMap.get("CURTYPE") + "&ORDERAMOUNT=" + resMap.get("ORDERAMOUNT") + "&SUBJECT="
               + resMap.get("SUBJECT") + "&PRODUCTID=" + resMap.get("PRODUCTID") + "&PRODUCTDESC="
               + resMap.get("PRODUCTDESC") + "&CUSTOMERID=" + resMap.get("CUSTOMERID")
