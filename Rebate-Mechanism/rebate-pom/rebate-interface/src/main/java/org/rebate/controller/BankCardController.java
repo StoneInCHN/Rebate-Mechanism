@@ -360,7 +360,9 @@ public class BankCardController extends MobileBaseController {
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter userFilter = new Filter("endUser", Operator.eq, userId);
+    Filter statusFilter = new Filter("delStatus", Operator.eq, false);
     filters.add(userFilter);
+    filters.add(statusFilter);
 
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("isDefault"));

@@ -62,6 +62,11 @@ public class BankCard extends BaseEntity {
   private Boolean isDefault;
 
   /**
+   * 是否删除
+   */
+  private Boolean delStatus = false;
+
+  /**
    * 预留手机号
    */
   private String reservedMobile;
@@ -71,6 +76,14 @@ public class BankCard extends BaseEntity {
    */
   private String bankLogo;
 
+
+  public Boolean getDelStatus() {
+    return delStatus;
+  }
+
+  public void setDelStatus(Boolean delStatus) {
+    this.delStatus = delStatus;
+  }
 
   @Column(length = 200)
   public String getBankLogo() {

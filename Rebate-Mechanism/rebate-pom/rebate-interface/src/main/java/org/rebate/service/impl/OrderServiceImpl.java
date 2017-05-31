@@ -290,9 +290,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     // scoreRecord.setRemark(order.getPaymentType());
     // scoreRecord.setAmount(order.getSellerIncome());
     // scoreRecord.setUserCurLeScore(sellerEndUser.getCurLeScore().add(scoreRecord.getAmount()));
-    sellerEndUser.setCurLeScore(sellerEndUser.getCurLeScore().add(order.getSellerIncome()));
-    sellerEndUser.setTotalLeScore(sellerEndUser.getTotalLeScore().add(order.getSellerIncome()));
-    sellerEndUser.setIncomeLeScore(sellerEndUser.getIncomeLeScore().add(order.getSellerIncome()));
+    // sellerEndUser.setCurLeScore(sellerEndUser.getCurLeScore().add(order.getSellerIncome()));
+    // sellerEndUser.setTotalLeScore(sellerEndUser.getTotalLeScore().add(order.getSellerIncome()));
+    // sellerEndUser.setIncomeLeScore(sellerEndUser.getIncomeLeScore().add(order.getSellerIncome()));
     // sellerEndUser.getLeScoreRecords().add(scoreRecord);
 
     // endUserDao.merge(sellerEndUser);
