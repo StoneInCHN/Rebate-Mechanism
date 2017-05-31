@@ -171,7 +171,9 @@ public class CommonEnum {
     /** 提现手续费占提现金额的百分比 18 */
     TRANSACTION_FEE_PERCENTAGE,
     /** 每笔提现固定手续费 19 */
-    TRANSACTION_FEE_PERTIME
+    TRANSACTION_FEE_PERTIME,
+    /** 乐心分红value值 20 */
+    MIND_VALUE
   }
 
   /**
