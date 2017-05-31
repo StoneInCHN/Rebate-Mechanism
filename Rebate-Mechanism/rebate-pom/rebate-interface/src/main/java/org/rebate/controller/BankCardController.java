@@ -198,7 +198,20 @@ public class BankCardController extends MobileBaseController {
       response.setDesc(message("rebate.request.param.missing"));
       return response;
     }
-
+    //如果存在，表示以前已经验证过了，不用再验证
+	boolean exist = bankCardService.exists(Filter.eq("cardNum", cardNum),
+			Filter.eq("ownerName", ownerName),
+			Filter.eq("idCard", idcard),
+			Filter.eq("reservedMobile", reservedMobile));
+	if (exist) {
+	    String newtoken = TokenGenerator.generateToken(token);
+	    endUserService.createEndUserToken(newtoken, userId);
+	    response.setToken(newtoken);
+	    response.setDesc(message("rebate.bankCard.verify.success"));
+	    response.setCode(CommonAttributes.SUCCESS);
+	    return response;
+	}
+    
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("key", setting.getJuheKey());
     params.put("bankcard", cardNum);
@@ -269,6 +282,17 @@ public class BankCardController extends MobileBaseController {
     String smsCode = request.getSmsCode();
     String reservedMobile = request.getReservedMobile();
 
+    String ownerName = request.getOwnerName();
+    String cardNum = request.getCardNum();
+    String idcard = request.getIdCard();
+
+    // 添加银行卡,四元素,都不能为空
+    if (ownerName == null || cardNum == null || idcard == null || reservedMobile == null) {
+      response.setCode(CommonAttributes.MISSING_REQUIRE_PARAM);
+      response.setDesc(message("rebate.request.param.missing"));
+      return response;
+    }
+    
     SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(reservedMobile);
     if (smsVerficationCode == null) {
       response.setCode(CommonAttributes.FAIL_COMMON);
@@ -284,6 +308,12 @@ public class BankCardController extends MobileBaseController {
           response.setDesc(Message.error("rebate.sms.token.error").getContent());
           return response;
         } else {
+          boolean existBankCard = bankCardService.exists(Filter.eq("cardNum", request.getCardNum()),Filter.eq("delStatus", false));
+          if (existBankCard) {//不能添加重复的银行卡
+              response.setCode(CommonAttributes.FAIL_COMMON);
+              response.setDesc(Message.error("rebate.bankCard.exists.error").getContent());
+              return response;
+		  }
           endUserService.deleteSmsCode(reservedMobile);
           bankCardService.addCard(request);
           if (LogUtil.isDebugEnabled(BankCardController.class)) {

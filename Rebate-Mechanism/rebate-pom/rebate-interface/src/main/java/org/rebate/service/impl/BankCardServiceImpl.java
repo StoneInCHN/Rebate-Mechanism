@@ -70,19 +70,34 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
   @Override
   public BankCard addCard(BankCardRequest req) {
     EndUser endUser = endUserDao.find(req.getUserId());
-    BankCard bankCard = new BankCard();
-    bankCard.setEndUser(endUser);
-    bankCard.setOwnerName(req.getOwnerName());
-    bankCard.setBankName(req.getBankName());
-    bankCard.setCardNum(req.getCardNum());
-    bankCard.setIdCard(req.getIdCard());
-    bankCard.setCardType(req.getCardType());
-    bankCard.setIsDefault(req.getIsDefault());
-    bankCard.setReservedMobile(req.getReservedMobile());
-    bankCard.setBankLogo(req.getBankLogo());
-
     List<BankCard> mergeCards = new ArrayList<BankCard>();
-    mergeCards.add(bankCard);
+//    //是否是已逻辑删的银行卡，如果是，则恢复，否者新添加
+//	List<Filter> filterList = new ArrayList<Filter>();
+//	filterList.add(Filter.eq("cardNum", req.getCardNum()));
+//	filterList.add(Filter.eq("ownerName", req.getOwnerName()));
+//	filterList.add(Filter.eq("idCard", req.getIdCard()));
+//	filterList.add(Filter.eq("reservedMobile", req.getReservedMobile()));
+//	filterList.add(Filter.eq("delStatus", true));
+//	List<BankCard> bankCards = findList(1, filterList, null);
+//    if (bankCards != null && bankCards.size() > 0) {
+//    	BankCard bankCard = bankCards.get(0);
+//    	bankCard.setDelStatus(false);
+//    	bankCard.setEndUser(endUser);
+//    	mergeCards.add(bankCard);
+//	}else {
+	    BankCard bankCard = new BankCard();
+	    bankCard.setEndUser(endUser);
+	    bankCard.setOwnerName(req.getOwnerName());
+	    bankCard.setBankName(req.getBankName());
+	    bankCard.setCardNum(req.getCardNum());
+	    bankCard.setIdCard(req.getIdCard());
+	    bankCard.setCardType(req.getCardType());
+	    bankCard.setIsDefault(req.getIsDefault());
+	    bankCard.setReservedMobile(req.getReservedMobile());
+	    bankCard.setBankLogo(req.getBankLogo());
+	    bankCard.setDelStatus(false);
+	    mergeCards.add(bankCard);
+//	}
 
     if (req.getIsDefault() != null && req.getIsDefault()) {
       List<Filter> filters = new ArrayList<Filter>();
