@@ -327,7 +327,8 @@ public class OrderController extends MobileBaseController {
         // 支付宝直接支付
         Map<String, Object> map = new HashMap<String, Object>();
         String orderStr =
-            PayUtil.alipay(orderSn, seller.getName(), seller.getName(), totalFee.toString());
+            PayUtil.alipay(orderSn, seller.getName(), seller.getName(),
+                totalFee.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         map.put("orderStr", orderStr);
         map.put("out_trade_no", orderSn);
         response.setMsg(map);

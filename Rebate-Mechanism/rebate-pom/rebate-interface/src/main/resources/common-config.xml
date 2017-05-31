@@ -64,7 +64,7 @@
 		<!--支付用户注册url -->
 		<setting name="tlRegUserUrl" value="https://cashier.allinpay.com/usercenter/merchant/UserInfo/reg.do" />
 		<!--支付完成后同步跳转url -->
-		<setting name="tlPickupUrl" value="http://www.baidu.com"/>
+		<setting name="tlPickupUrl" value="111111"/>
 		<!--银行卡支付H5回调url -->
 		<setting name="tlPayNotifyH5Url" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_allinpay_H5.jhtml"/>
 		<!--H5页面提交订单接口url -->
