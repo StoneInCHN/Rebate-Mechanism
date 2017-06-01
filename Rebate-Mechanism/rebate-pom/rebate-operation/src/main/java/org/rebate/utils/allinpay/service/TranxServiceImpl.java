@@ -70,7 +70,7 @@ public class TranxServiceImpl {
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
     trans_sum.setBUSINESS_CODE(tranxContants.getBusinessCode()); 
-    trans_sum.setMERCHANT_ID(tranxContants.merchantId);
+    trans_sum.setMERCHANT_ID(tranxContants.getMerchantId());
     trans_sum.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
     trans_sum.setTOTAL_ITEM(totalItem);
     trans_sum.setTOTAL_SUM(totalSum);
@@ -91,7 +91,8 @@ public class TranxServiceImpl {
       trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
       trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
       trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-      trans_detail.setAMOUNT(record.getAmount().multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
+      BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());
+      trans_detail.setAMOUNT(payAmount.multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
       //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
       trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
@@ -135,7 +136,7 @@ public class TranxServiceImpl {
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
     trans_sum.setBUSINESS_CODE("10600");
-    trans_sum.setMERCHANT_ID(tranxContants.merchantId);
+    trans_sum.setMERCHANT_ID(tranxContants.getMerchantId());
     trans_sum.setTOTAL_ITEM("3");
     trans_sum.setTOTAL_SUM("100002");
     body.setTRANS_SUM(trans_sum);
@@ -196,10 +197,10 @@ public class TranxServiceImpl {
 
     InfoReq info = new InfoReq();
     info.setTRX_CODE(trxcod);
-    info.setREQ_SN(tranxContants.merchantId + String.valueOf(System.currentTimeMillis()));
-    info.setUSER_NAME(tranxContants.userName);
-    info.setUSER_PASS(tranxContants.password);
-    info.setMERCHANT_ID(tranxContants.merchantId);
+    info.setREQ_SN(tranxContants.getMerchantId() + String.valueOf(System.currentTimeMillis()));
+    info.setUSER_NAME(tranxContants.getUserName());
+    info.setUSER_PASS(tranxContants.getPassword());
+    info.setMERCHANT_ID(tranxContants.getMerchantId());
     info.setLEVEL("5");
     info.setDATA_TYPE("2");
     info.setVERSION("03");
@@ -212,7 +213,7 @@ public class TranxServiceImpl {
     String resp = XmlTools.send(url, new String(xml.getBytes(), "UTF-8"));
     System.out.println("======================响应内容======================");
     // System.out.println(new String(resp.getBytes(),"GBK")) ;
-    boolean flag = this.verifyMsg(resp, tranxContants.tltcerPath, isFront);
+    boolean flag = this.verifyMsg(resp, tranxContants.getTltcerPath(), isFront);
     if (flag) {
       System.out.println("响应内容验证通过");
     } else {
@@ -243,7 +244,7 @@ public class TranxServiceImpl {
    * @throws Exception
    */
   public String signMsg(String xml) throws Exception {
-    xml = XmlTools.signMsg(xml, tranxContants.pfxPath, tranxContants.pfxPassword, false);
+    xml = XmlTools.signMsg(xml, tranxContants.getPfxPath(), tranxContants.getPfxPassword(), false);
     return xml;
   }
 
@@ -273,7 +274,7 @@ public class TranxServiceImpl {
     aipgReq.setINFO(info);
     aipgReq.addTrx(dqr);
     dqr.setSTATUS(2);
-    dqr.setMERCHANT_ID(tranxContants.merchantId);
+    dqr.setMERCHANT_ID(tranxContants.getMerchantId());
     dqr.setTYPE(1);
     dqr.setSTART_DAY("20121217");
     dqr.setEND_DAY("20121218");
@@ -313,7 +314,7 @@ public class TranxServiceImpl {
    * 下载简单对账文件
    */
   public void downSimpleBills(String uRL11, boolean isTLTFront) throws Exception {
-    String MERID = tranxContants.merchantId;
+    String MERID = tranxContants.getMerchantId();
     String SETTDAY = "20130527";
     String REQTIME = "20130527121212";// df.format(new Date());
     String CONTFEE = "";
@@ -344,7 +345,7 @@ public class TranxServiceImpl {
     aipg.setINFO(info);
     Trans trans = new Trans();
     trans.setBUSINESS_CODE("00600");
-    trans.setMERCHANT_ID(tranxContants.merchantId);
+    trans.setMERCHANT_ID(tranxContants.getMerchantId());
     trans.setSUBMIT_TIME(df.format(new Date()));
     trans.setACCOUNT_NAME("测试试");
     trans.setACCOUNT_NO("622588121251757643");
@@ -378,7 +379,7 @@ public class TranxServiceImpl {
     aipgReq.setINFO(info);
     TransQueryReq dr = new TransQueryReq();
     aipgReq.addTrx(dr);
-    dr.setMERCHANT_ID(tranxContants.merchantId);
+    dr.setMERCHANT_ID(tranxContants.getMerchantId());
     dr.setQUERY_SN(reqsn);
     dr.setSTATUS(2);
     dr.setTYPE(1);

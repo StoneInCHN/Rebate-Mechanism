@@ -125,6 +125,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 			 List<SellerClearingRecord> records = new ArrayList<SellerClearingRecord>();
 			 
 			 BigDecimal totalClearingAmount = new BigDecimal(0);//货款结算总金额
+			 BigDecimal totalHandlingCharge = new BigDecimal(0);//手续费总金额
 			 
 			 for (Map.Entry<Long, BigDecimal> entry : sellerAmountMap.entrySet()) {
 				 
@@ -154,8 +155,10 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 					 record.setAmount(totalSellerIncome);
 				 }
 				 totalClearingAmount = totalClearingAmount.add(record.getAmount());//累加结算金额
-				  
+				 
 				 record.setHandlingCharge(getHandlingCharge(totalOrderAmount));//手续费
+				 totalHandlingCharge = totalHandlingCharge.add(record.getHandlingCharge()); //累加手续费
+				 
 				 record.setClearingSn(snService.generate(Type.SELLER_CLEARING_RECORD));//结算货款单编号（用于显示）
 				 record.setIsClearing(false);//未结算
 				 
@@ -175,11 +178,12 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 			 if (records.size() > 0) {
 				    TranxServiceImpl tranxService = new TranxServiceImpl();
 				    try {
-				    	String totalAmount = totalClearingAmount.multiply(new BigDecimal(100)).setScale(0).toString();//金额单位：分
+				    	BigDecimal totalPay = totalClearingAmount.subtract(totalHandlingCharge);//总共代付的金额
+				    	String totalPayStr = totalPay.multiply(new BigDecimal(100)).setScale(0).toString();//金额单位：分
 				    	String totalItem = records.size() + "";//单数量
 				    	tranxService.init();//初始化通联基础数据
 				    	//开始批量代付
-				    	List<SellerClearingRecord> recordList = tranxService.batchDaiFu(false, totalItem,  totalAmount, records, bankCardService);
+				    	List<SellerClearingRecord> recordList = tranxService.batchDaiFu(false, totalItem,  totalPayStr, records, bankCardService);
 						if (recordList == null) {
 							/**
 							 * 代付失败,回滚当前的事物
@@ -205,7 +209,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
      */
 	private BigDecimal getHandlingCharge(BigDecimal totalOrderAmount) {
 	    //手续费，优先考虑 每笔提现固定手续费（通联固定每笔是1.5元？？），后考虑提现手续费占提现金额的百分比 
-		BigDecimal handlingCharge = null;
+		BigDecimal handlingCharge = new BigDecimal(0);
 		try {
 			SystemConfig feePertime = systemConfigService.getConfigByKey(SystemConfigKey.TRANSACTION_FEE_PERTIME);
 			if (feePertime != null && feePertime.getConfigValue() != null) {
@@ -218,7 +222,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 			}
 		} catch (Exception e) {
 			LogUtil.debug(this.getClass(), "getHandlingCharge", "Catch exception: %s", e.getMessage());
-			return null;
+			return handlingCharge;
 		}
 		return handlingCharge;
 	}

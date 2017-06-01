@@ -7,14 +7,14 @@ public class TranxCon {
 	  /**
 	   * XML参数
 	   */    
-	  public String url;
-	  public String pfxPassword;
-	  public String userName;
-	  public String merchantId;
-	  public String password;
-	  public String businessCode;
-	  public String pfxPath;
-	  public String tltcerPath;
+	  private String url;
+	  private String pfxPassword;
+	  private String userName;
+	  private String merchantId;
+	  private String password;
+	  private String businessCode;
+	  private String pfxPath;
+	  private String tltcerPath;
 
 	  public String getMerchantId() {
 	    return merchantId;
