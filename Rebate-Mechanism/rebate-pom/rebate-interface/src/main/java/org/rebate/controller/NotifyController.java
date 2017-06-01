@@ -138,8 +138,8 @@ public class NotifyController extends MobileBaseController {
    * @return
    * @throws IOException
    */
-  @RequestMapping(value = "/notify_batch", method = RequestMethod.POST)
-  public @ResponseBody TxnResultNotify notify_batchDaiFu(HttpServletRequest request)
+  @RequestMapping(value = "/notify_allinpay_batchDaiFu", method = RequestMethod.POST)
+  public @ResponseBody TxnResultNotify notify_allinpay_batchDaiFu(HttpServletRequest request)
       throws Exception {
 
     TxnResultNotify notify = new TxnResultNotify();

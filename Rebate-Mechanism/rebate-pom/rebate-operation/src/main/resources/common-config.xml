@@ -43,12 +43,43 @@
 	<!-- 密码 -->
 	<setting name="smsPwd" value="552233" />
 	
-	<!-- 通联支付URL 测试环境 -->
+	<!-- 通联 测试环境 -->
+	<!-- 通联支付URL -->
 	<setting name="allinpayUrl" value="https://113.108.182.3/aipg/ProcessServlet" />
-	<!-- 通联支付URL 生产环境 -->
+	<!-- 公钥证书 -->
+	<setting name="tltcerPath" value="allinpayConfig\\test\\allinpay-pds.cer" />	
+	<!-- 私钥证书 -->
+	<setting name="pfxPath" value="allinpayConfig\\test\\20060400000044502.p12" />	
+	<!-- 私钥密码 -->
+	<setting name="pfxPassword" value="111111" />
+	<!-- 商户号-->
+	<setting name="allinpayMerchantId" value="200604000000445" />
+	<!-- 用户名 -->
+	<setting name="allinpayUserName" value="20060400000044502" />
+	<!-- 用户名密码 -->
+	<setting name="allinpayPassword" value="`12qwe" />
+	<!-- 代付 业务代码：测试环境：虚拟账户取现-->
+	<setting name="allinpayBusinessCode" value="09400" />	
+	
+	<!-- 通联 生产环境 -->
+	<!-- 通联支付URL -->
 	<!-- <setting name="allinpayUrl" value="https://tlt.allinpay.com/aipg/ProcessServlet" /> -->	
-	
-	
+	<!-- 公钥证书 -->
+	<!-- <setting name="tltcerPath" value="allinpayConfig\\product\\allinpay-pds.cer" /> -->	
+	<!-- 私钥证书 -->
+	<!-- <setting name="pfxPath" value="allinpayConfig\\product\\20070100000440901.p12" /> -->	
+	<!-- 私钥密码 -->
+	<!-- <setting name="pfxPassword" value="111111" /> -->
+	<!-- 商户号-->
+	<!-- <setting name="allinpayMerchantId" value="200701000004409" /> -->
+	<!-- 用户名 -->
+	<!-- <setting name="allinpayUserName" value="20070100000440901" /> -->
+	<!-- 用户名密码 -->
+	<!-- <setting name="allinpayPassword" value="allinpay_123" /> -->
+	<!-- 代付 业务代码：生产环境：代付-->
+	<!-- <setting name="allinpayBusinessCode" value="09900" /> -->	
+
+
 	<logConfig operation="系统管理修改角色" urlPattern="/console/role/update.jhtml" />
 	<logConfig operation="系统管理添加角色" urlPattern="/console/role/save.jhtml" />
 	<logConfig operation="系统管理删除角色" urlPattern="/console/role/delete.jhtml" />

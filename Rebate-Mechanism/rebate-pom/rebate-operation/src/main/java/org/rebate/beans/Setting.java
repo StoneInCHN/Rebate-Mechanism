@@ -232,6 +232,35 @@ public class Setting implements Serializable {
    */
   private String allinpayUrl;
   
+  /**
+   * 通联公钥证书
+   */
+  private String tltcerPath; 
+  /**
+   * 通联私钥证书
+   */
+  private String pfxPath; 
+  /**
+   * 通联私钥密码
+   */
+  private String pfxPassword;
+  /**
+   * 通联商户号
+   */
+  private String allinpayMerchantId; 
+  /**
+   * 通联用户名
+   */
+  private String allinpayUserName; 
+  /**
+   * 通联用户名密码
+   */
+  private String allinpayPassword; 
+  /**
+   * 通联代付 业务代码
+   */
+  private String allinpayBusinessCode; 
+  
   
   public String getServerIp() {
     return serverIp;
@@ -601,6 +630,62 @@ public class Setting implements Serializable {
 	
 	public void setAllinpayUrl(String allinpayUrl) {
 		this.allinpayUrl = allinpayUrl;
+	}
+
+	public String getTltcerPath() {
+		return tltcerPath;
+	}
+
+	public void setTltcerPath(String tltcerPath) {
+		this.tltcerPath = tltcerPath;
+	}
+
+	public String getPfxPath() {
+		return pfxPath;
+	}
+
+	public void setPfxPath(String pfxPath) {
+		this.pfxPath = pfxPath;
+	}
+
+	public String getPfxPassword() {
+		return pfxPassword;
+	}
+
+	public void setPfxPassword(String pfxPassword) {
+		this.pfxPassword = pfxPassword;
+	}
+
+	public String getAllinpayMerchantId() {
+		return allinpayMerchantId;
+	}
+
+	public void setAllinpayMerchantId(String allinpayMerchantId) {
+		this.allinpayMerchantId = allinpayMerchantId;
+	}
+
+	public String getAllinpayUserName() {
+		return allinpayUserName;
+	}
+
+	public void setAllinpayUserName(String allinpayUserName) {
+		this.allinpayUserName = allinpayUserName;
+	}
+
+	public String getAllinpayPassword() {
+		return allinpayPassword;
+	}
+
+	public void setAllinpayPassword(String allinpayPassword) {
+		this.allinpayPassword = allinpayPassword;
+	}
+
+	public String getAllinpayBusinessCode() {
+		return allinpayBusinessCode;
+	}
+
+	public void setAllinpayBusinessCode(String allinpayBusinessCode) {
+		this.allinpayBusinessCode = allinpayBusinessCode;
 	}
   
 }

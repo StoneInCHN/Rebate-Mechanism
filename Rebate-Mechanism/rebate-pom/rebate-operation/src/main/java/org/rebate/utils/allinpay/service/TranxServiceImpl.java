@@ -1,33 +1,24 @@
 package org.rebate.utils.allinpay.service;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.rebate.dao.SellerClearingRecordDao;
+import org.rebate.beans.Setting;
 import org.rebate.entity.BankCard;
-import org.rebate.entity.EndUser;
 import org.rebate.entity.SellerClearingRecord;
-import org.rebate.framework.filter.Filter;
 import org.rebate.service.BankCardService;
-import org.rebate.service.SellerClearingRecordService;
-import org.rebate.utils.SpringUtils;
+import org.rebate.utils.SettingUtils;
 import org.rebate.utils.TimeUtils;
 import org.rebate.utils.allinpay.pojo.TranxCon;
 import org.rebate.utils.allinpay.tools.FileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import com.aipg.common.AipgReq;
 import com.aipg.common.InfoReq;
@@ -41,18 +32,36 @@ import com.aipg.transquery.TransQueryReq;
 import com.allinpay.XmlTools;
 
 public class TranxServiceImpl {
-  
-  TranxCon tranxContants = new TranxCon();
+	
+  TranxCon tranxContants = null;
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+  Setting setting = SettingUtils.get();
+	
+  public void init(){//初始化通联基础数据
+	  tranxContants = new TranxCon();
+	  String path = tranxContants.getClass().getResource("/").getPath();
+	  String pfxPath = path + File.separator + setting.getPfxPath();
+	  String tltcerPath = path + File.separator + setting.getTltcerPath(); 
+	  tranxContants.setPfxPath(pfxPath);  
+	  tranxContants.setTltcerPath(tltcerPath);
+	  tranxContants.setUrl(setting.getAllinpayUrl());
+	  tranxContants.setPfxPassword(setting.getPfxPassword());
+	  tranxContants.setUserName(setting.getAllinpayUserName());
+	  tranxContants.setPassword(setting.getAllinpayPassword());
+	  tranxContants.setMerchantId(setting.getAllinpayMerchantId());
+	  tranxContants.setBusinessCode(setting.getAllinpayBusinessCode());
+  }
+  
+
 
   /**
    * 批量代付
    * 
    * @throws Exception
    */
-  public List<SellerClearingRecord> batchDaiFu(String url, boolean isTLTFront, String totalItem, String totalSum,
+  public List<SellerClearingRecord> batchDaiFu(boolean isTLTFront, String totalItem, String totalSum,
       List<SellerClearingRecord> records, BankCardService bankCardService) throws Exception {
-
+    
     String xmlRequest = "";
     AipgReq aipg = new AipgReq();
     InfoReq info = makeReq("100002");//批量代付的交易代码：100002
@@ -60,7 +69,7 @@ public class TranxServiceImpl {
     
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
-    trans_sum.setBUSINESS_CODE("09400"); // 提款类：虚拟账户取现
+    trans_sum.setBUSINESS_CODE(tranxContants.getBusinessCode()); 
     trans_sum.setMERCHANT_ID(tranxContants.merchantId);
     trans_sum.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
     trans_sum.setTOTAL_ITEM(totalItem);
@@ -93,7 +102,7 @@ public class TranxServiceImpl {
 
     xmlRequest = XmlTools.buildXml(aipg, true);
     
-    String xmlResponse = isFront(xmlRequest, isTLTFront, url);
+    String xmlResponse = isFront(xmlRequest, isTLTFront, tranxContants.getUrl());
     
     if (xmlResponse != null) {
         Document doc = DocumentHelper.parseText(xmlResponse);

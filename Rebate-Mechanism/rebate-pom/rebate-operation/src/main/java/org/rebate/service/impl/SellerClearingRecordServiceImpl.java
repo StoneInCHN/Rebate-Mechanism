@@ -150,9 +150,8 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				 
 				 record.setAmount(endUser.getIncomeLeScore());//结算金额
 				 if (totalSellerIncome.compareTo(endUser.getIncomeLeScore()) != 0) {
-					 record.setAmount(totalSellerIncome);
-				 }else {
 					 LogUtil.debug(this.getClass(), "sellerClearing", "Total seller income is not equals endUser IncomeLeScore !!!");
+					 record.setAmount(totalSellerIncome);
 				 }
 				 totalClearingAmount = totalClearingAmount.add(record.getAmount());//累加结算金额
 				  
@@ -176,11 +175,11 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 			 if (records.size() > 0) {
 				    TranxServiceImpl tranxService = new TranxServiceImpl();
 				    try {
-				    	Setting setting = SettingUtils.get();
 				    	String totalAmount = totalClearingAmount.multiply(new BigDecimal(100)).setScale(0).toString();//金额单位：分
-				    	String totalItem = records.size() + "";
+				    	String totalItem = records.size() + "";//单数量
+				    	tranxService.init();//初始化通联基础数据
 				    	//开始批量代付
-				    	List<SellerClearingRecord> recordList = tranxService.batchDaiFu(setting.getAllinpayUrl(), false, totalItem,  totalAmount, records, bankCardService);
+				    	List<SellerClearingRecord> recordList = tranxService.batchDaiFu(false, totalItem,  totalAmount, records, bankCardService);
 						if (recordList == null) {
 							/**
 							 * 代付失败,回滚当前的事物
