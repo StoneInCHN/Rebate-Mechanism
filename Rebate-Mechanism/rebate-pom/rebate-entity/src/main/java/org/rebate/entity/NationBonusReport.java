@@ -99,6 +99,11 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal sellerRecommendCommission;
 
+  /**
+   * 全国公益商家
+   */
+  private Integer sellerNum;
+
   @Column(scale = 4, precision = 18)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
@@ -250,6 +255,15 @@ public class NationBonusReport extends BaseEntity {
 
   public void setEncourageConsume(BigDecimal encourageConsume) {
     this.encourageConsume = encourageConsume;
+  }
+
+  @JsonProperty
+  public Integer getSellerNum() {
+    return sellerNum;
+  }
+
+  public void setSellerNum(Integer sellerNum) {
+    this.sellerNum = sellerNum;
   }
 
 

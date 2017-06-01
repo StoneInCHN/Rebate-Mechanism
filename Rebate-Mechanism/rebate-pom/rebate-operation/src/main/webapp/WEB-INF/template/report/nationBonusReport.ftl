@@ -82,6 +82,9 @@
 						<a href="javascript:;" name="platformIncome">${message("rebate.nationBonusReport.platformIncome")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="sellerNum">${message("rebate.nationBonusReport.sellerNum")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" name="leMindByDay">${message("rebate.nationBonusReport.leMindByDay")}</a>
 					</th>
 					<th>
@@ -100,13 +103,13 @@
 						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.ventureFund")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.agentCommission")}</a>
+						<a href="javascript:;" name="agentCommission">${message("rebate.nationBonusReport.agentCommission")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.userRecommendCommission")}</a>
+						<a href="javascript:;" name="userRecommendCommission">${message("rebate.nationBonusReport.userRecommendCommission")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="ventureFund">${message("rebate.nationBonusReport.sellerRecommendCommission")}</a>
+						<a href="javascript:;" name="sellerRecommendCommission">${message("rebate.nationBonusReport.sellerRecommendCommission")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" name="encourageConsume">${message("rebate.nationBonusReport.encourageConsume")}</a>
@@ -130,6 +133,9 @@
 					</td>
 					<td>
 						${report.platformIncome}
+					</td>
+					<td>
+						${report.sellerNum}
 					</td>
 					<td>
 						${report.leMindByDay}
