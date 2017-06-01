@@ -65,6 +65,7 @@ import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.service.UserAuthService;
 import org.rebate.service.UserRecommendRelationService;
+import org.rebate.utils.ApiUtils;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.LatLonUtil;
@@ -79,6 +80,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller("endUserController")
 @RequestMapping("/endUser")
@@ -1787,6 +1790,39 @@ public class EndUserController extends MobileBaseController {
       response.setCode(CommonAttributes.FAIL_COMMON);
       response.setDesc(Message.error("rebate.userAuth.idCard.isAuthed").getContent());
       return response;
+    }
+
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("key", setting.getJuheKeyCertificates());
+    params.put("cardType", "2");
+    params.put("pic", cardFrontPic);
+
+    try {
+      String result = ApiUtils.post(setting.getJuheVerifyCertificates(), params);
+      ObjectMapper objectMapper = new ObjectMapper();
+      Map<String, Object> map = objectMapper.readValue(result, Map.class);
+      if (LogUtil.isDebugEnabled(EndUserController.class)) {
+        LogUtil.debug(EndUserController.class, "doIdentityAuth",
+            "doIdentityAuth by juhe api. error_code: %s,reason: %s, result: %s",
+            map.get("error_code"), map.get("reason"), map.get("result"));
+      }
+      if (map.get("result") == null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(message("rebate.auth.idcard.failed") + ":" + map.get("reason"));
+        return response;
+      }
+      Map<String, String> info = (HashMap<String, String>) map.get("result");
+      String idcardJh = info.get("公民身份号码");
+      String nameJh = info.get("姓名");
+      if (cardNo.equals(idcardJh) && realName.equals(nameJh)) {
+        // verify pass. Continue
+      } else {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(message("rebate.auth.idcard.authDiff"));
+        return response;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
     userAuthService.doAuth(userId, realName, cardNo, cardFrontPic, cardBackPic);

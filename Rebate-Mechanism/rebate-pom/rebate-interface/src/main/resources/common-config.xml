@@ -127,6 +127,12 @@
 		<!-- 聚合数据 银行卡四元素验证URL -->
 		<setting name="juheVerifyBankcard4" value="http://v.juhe.cn/verifybankcard4/query"/>		
 		<!-- 聚合数据 申请的key -->
-		<setting name="juheKey" value="f79edf87ef4384ce64eb53bad54b415f"/>	
+		<setting name="juheKey" value="f79edf87ef4384ce64eb53bad54b415f"/>
+		
+		<!-- 聚合数据 证件识别URL -->
+		<setting name="juheVerifyCertificates" value="http://v.juhe.cn/certificates/query.php"/>		
+		<!-- 聚合数据 证件识别key -->
+		<setting name="juheKeyCertificates" value="2d9d7b151bac90697359a1677414fb66"/>		
+		
 	</rebate>	
 	

@@ -214,13 +214,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         return;
       } else {
         for (Order order : orders) {
-          updateSellerOrderforPayCallBack(order);
+          // updateSellerOrderforPayCallBack(order);
+          updateOrderforPayCallBack(order);
         }
       }
     } else {
       Order order = getOrderBySn(sn);
-      if (BooleanUtils.isTrue(order.getIsSallerOrder())) {// 录单订单支付后回调只更新支付时间和订单状态
-        updateSellerOrderforPayCallBack(order);
+      if (BooleanUtils.isTrue(order.getIsSallerOrder())) {// 录单订单支付后回调
+        updateOrderforPayCallBack(order);
+        // updateSellerOrderforPayCallBack(order);
       } else {// 普通订单支付后更新订单及相关收益信息
         updateOrderforPayCallBack(order);
       }
@@ -255,8 +257,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     if (!OrderStatus.UNPAID.equals(order.getStatus())) {
       if (LogUtil.isDebugEnabled(OrderServiceImpl.class)) {
         LogUtil.debug(OrderServiceImpl.class, "updateOrderforPayCallBack",
-            "The common order already deal with. orderSn: %s, orderStatus: %s", order.getSn(),
-            order.getStatus().toString());
+            "The order already deal with. orderSn: %s, orderStatus: %s", order.getSn(), order
+                .getStatus().toString());
       }
       return order;
     }
@@ -273,11 +275,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Seller seller = order.getSeller();
     EndUser sellerEndUser = seller.getEndUser();
 
-    seller
-        .setTotalOrderNum((seller.getTotalOrderNum() != null ? seller.getTotalOrderNum() : 0) + 1);
-    seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getSellerIncome()));
-    seller.setUnClearingAmount(seller.getUnClearingAmount().add(order.getSellerIncome()));
-    sellerDao.merge(seller);
+    if (BooleanUtils.isNotTrue(order.getIsSallerOrder())) {
+      seller
+          .setTotalOrderNum((seller.getTotalOrderNum() != null ? seller.getTotalOrderNum() : 0) + 1);
+      seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getSellerIncome()));
+      seller.setUnClearingAmount(seller.getUnClearingAmount().add(order.getSellerIncome()));
+      sellerDao.merge(seller);
+    }
+
 
     /**
      * 消费后商家的直接收益
@@ -638,6 +643,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     evaluate.setOrder(order);
     evaluate.setContent(content);
     evaluate.setSeller(seller);
+    evaluate.setStatus(CommonStatus.ACITVE);
 
     List<SellerEvaluateImage> sellerEvaluateImages = new ArrayList<SellerEvaluateImage>();
     if (!CollectionUtils.isEmpty(evaluateImages)) {

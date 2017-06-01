@@ -350,6 +350,31 @@ public class Setting implements Serializable {
    */
   private String juheKey;
 
+  /**
+   * 聚合数据 证件识别URL
+   */
+  private String juheVerifyCertificates;
+  /**
+   * 聚合数据 证件识别key
+   */
+  private String juheKeyCertificates;
+
+
+  public String getJuheVerifyCertificates() {
+    return juheVerifyCertificates;
+  }
+
+  public void setJuheVerifyCertificates(String juheVerifyCertificates) {
+    this.juheVerifyCertificates = juheVerifyCertificates;
+  }
+
+  public String getJuheKeyCertificates() {
+    return juheKeyCertificates;
+  }
+
+  public void setJuheKeyCertificates(String juheKeyCertificates) {
+    this.juheKeyCertificates = juheKeyCertificates;
+  }
 
   public String getTlMerchantH5Key() {
     return tlMerchantH5Key;

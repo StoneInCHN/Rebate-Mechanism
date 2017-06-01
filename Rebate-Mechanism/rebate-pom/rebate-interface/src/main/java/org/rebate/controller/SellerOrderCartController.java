@@ -91,8 +91,10 @@ public class SellerOrderCartController extends MobileBaseController {
       sellerOrderCartService.save(sellerOrderCart);
     }
 
+    Filter sellerFilter = new Filter("seller", Operator.eq, request.getSellerId());
+
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put("count", sellerOrderCartService.count());
+    map.put("count", sellerOrderCartService.count(sellerFilter));
 
     response.setMsg(map);
     String newtoken = TokenGenerator.generateToken(token);
@@ -191,11 +193,11 @@ public class SellerOrderCartController extends MobileBaseController {
     }
     List<Order> orders = orderService.createSellerOrder(sellerOrderCarts);
 
-    taskExecutor.execute(new Runnable() {
-      public void run() {
-        orderService.updateSellerOrderBeforePay(orders.get(0).getBatchSn());
-      }
-    });
+    // taskExecutor.execute(new Runnable() {
+    // public void run() {
+    // orderService.updateSellerOrderBeforePay(orders.get(0).getBatchSn());
+    // }
+    // });
     // orderService.updateSellerOrderBeforePay(orders.get(0).getBatchSn());
 
     Map<String, Object> map = new HashMap<String, Object>();

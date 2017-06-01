@@ -308,12 +308,12 @@ public class OrderController extends MobileBaseController {
       orders = orderService.getOrderByBatchSn(orderSn);
       for (Order order : orders) {
 
-        totalFee = totalFee.add(order.getAmount());
+        totalFee = totalFee.add(order.getRebateAmount());
         order.setPaymentType(payType);
       }
     } else {
       Order order = orderService.getOrderBySn(orderSn);
-      totalFee = order.getAmount();
+      totalFee = order.getRebateAmount();
       order.setPaymentType(payType);
       orders.add(order);
     }
@@ -769,11 +769,11 @@ public class OrderController extends MobileBaseController {
           sellerId);
     }
 
-    taskExecutor.execute(new Runnable() {
-      public void run() {
-        orderService.updateSellerOrderBeforePay(order.getSn());
-      }
-    });
+    // taskExecutor.execute(new Runnable() {
+    // public void run() {
+    // orderService.updateSellerOrderBeforePay(order.getSn());
+    // }
+    // });
 
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("orderSn", order.getSn());
