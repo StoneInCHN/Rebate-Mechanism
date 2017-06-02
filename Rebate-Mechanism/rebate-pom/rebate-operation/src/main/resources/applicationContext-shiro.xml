@@ -23,6 +23,32 @@
 				
 				/console/admin/** = perms["rebate:admin"]
 				/console/role/** = perms["rebate:role"]
+				/console/account/** = perms["rebate:account"]
+				/console/systemConfig/** = perms["rebate:systemConfig"]
+				/console/settingConfig/** = perms["rebate:settingConfig"]
+				/console/operationLog/** = perms["rebate:operationLog"]
+				/console/topBanner/** = perms["rebate:topBanner"]
+				/console/userHelp/** = perms["rebate:userHelp"]
+				/console/holidayConfig/** = perms["rebate:holidayConfig"]
+				/console/messageInfo/** = perms["rebate:messageInfo"]
+				/console/agentCommission/** = perms["rebate:agentCommission"]
+				/console/agent/** = perms["rebate:agent"]
+				/console/sellerCategory/** = perms["rebate:sellerCategory"]
+				/console/sellerApply/** = perms["rebate:sellerApply"]
+				/console/seller/** = perms["rebate:seller"]
+				/console/sellerEvaluate/** = perms["rebate:sellerEvaluate"]
+				/console/leScoreRecord/** = perms["rebate:withdraw"]
+				/console/endUser/** = perms["rebate:endUser"]
+				/console/endUser/score/** = perms["rebate:scoreRecord"]
+				/console/endUser/leMind/** = perms["rebate:leMindRecord"]
+				/console/endUser/leScore/** = perms["rebate:leScoreRecord"]
+				/console/endUser/leBean/** = perms["rebate:leBeanRecord"]
+				/console/order/** = perms["rebate:order"]
+				/console/sallerOrder/** = perms["rebate:sallerOrder"]
+				/console/bonusParam/** = perms["rebate:bonusParam"]
+				/console/report/** = perms["rebate:report"]
+				/console/apkVersion/** = perms["rebate:version"]
+				
 				/console/** = authc 
 			</value>
 		</property>

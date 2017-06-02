@@ -97,22 +97,85 @@ $().ready(function() {
 									<td>
 										<span class="fieldSet">
 											<label>
-												<input type="checkbox" name="authorities" value="rebate:admin" /><span>${message("rebate.role.admin")}</span>
-											</label>
-											<label>
-												<input type="checkbox" name="authorities" value="rebate:role" /><span>${message("rebate.role.role")}</span>
-											</label>
-											<label>
 												<input type="checkbox" name="authorities" value="rebate:account" /><span>${message("rebate.account.settingGroup")}</span>
 											</label>
 											<label>
-												<input type="checkbox" name="authorities" value="rebate:sellerApply" /><span>${message("rebate.main.sellerApply")}</span>
+												<input type="checkbox" name="authorities" value="rebate:admin" /><span>${message("rebate.main.admin")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:role" /><span>${message("rebate.main.role")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:systemConfig" /><span>${message("rebate.main.systemConfig")}</span>
 											</label>
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:area" /><span>${message("rebate.main.area")}</span>
 											</label>
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:operationLog" /><span>${message("rebate.main.operation.log")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:topBanner" /><span>${message("rebate.main.topBanner")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:userHelp" /><span>${message("rebate.main.userHelp")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:holidayConfig" /><span>${message("rebate.main.holidayConfig")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:messageInfo" /><span>${message("rebate.main.messageInfo")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:agentCommission" /><span>${message("rebate.main.agentCommission")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:agent" /><span>${message("rebate.main.agent")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:sellerCategory" /><span>${message("rebate.main.sellerCategory")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:sellerApply" /><span>${message("rebate.main.sellerApply")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:seller" /><span>${message("rebate.main.seller")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:sellerEvaluate" /><span>${message("rebate.main.sellerEvaluate")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:withdraw" /><span>${message("rebate.main.leScoreRecord.withdraw")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:endUser" /><span>${message("rebate.endUser.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:scoreRecord" /><span>${message("rebate.endUser.score.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:leMindRecord" /><span>${message("rebate.endUser.leMind.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:leScoreRecord" /><span>${message("rebate.endUser.leScore.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:leBeanRecord" /><span>${message("rebate.endUser.leBean.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:order" /><span>${message("rebate.order.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:sallerOrder" /><span>${message("rebate.sallerOrder.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:version" /><span>${message("rebate.apkVersion.info")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:report" /><span>${message("rebate.main.reportManager")}</span>
+											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:bonusParam" /><span>${message("rebate.main.bonusParam")}</span>
 											</label>
 										</span>
 									</td>

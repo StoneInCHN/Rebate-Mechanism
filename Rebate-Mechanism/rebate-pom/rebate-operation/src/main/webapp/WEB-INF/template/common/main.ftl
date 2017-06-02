@@ -287,7 +287,7 @@
 		                           </a>
 		                       </div>
 		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
-		                     	  [@shiro.hasPermission name="rebate:order"]
+		                     	  [@shiro.hasPermission name="rebate:bonusParam"]
 		                           <li>
 		                               <a href="../bonusParam/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.bonusParam.perDay")}</span></a>
 
