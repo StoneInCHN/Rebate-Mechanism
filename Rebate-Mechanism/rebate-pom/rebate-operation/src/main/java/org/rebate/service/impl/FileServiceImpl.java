@@ -304,10 +304,13 @@ public class FileServiceImpl implements FileService {
       multipartFile.transferTo(tempFile);
       try {
         File destFile = new File(destPath);
+        destFile.delete();
+        destFile = new File(destPath);
+
         File downloadApkFile = new File(downloadApkPath);
         try {
           FileUtils.moveFile(tempFile, destFile);
-          downloadApkFile.deleteOnExit();
+          downloadApkFile.delete();
           downloadApkFile = new File(downloadApkPath);
           FileUtils.copyFile(destFile, downloadApkFile);
         } catch (IOException e) {

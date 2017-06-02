@@ -90,11 +90,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               .debug(
                   EndUserServiceImpl.class,
                   "dailyBonusCalJob",
-                  "daily Bonus calculate job failed! Timer Period: %s, The date for calculating is holiday!",
+                  "daily Bonus calculate 每日分红运算失败! Timer Period: %s, The date for calculating is holiday!",
                   startTime + "-" + endTime);
         }
-        msg =
-            "Job Failed!\n" + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "为法定节假日,不计算分红!";
+        msg = "每日分红运算失败!\n" + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "为法定节假日,不计算分红!";
         bonusParamPerDay.setRemark(msg);
         return;
       }
@@ -109,10 +108,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               .debug(
                   EndUserServiceImpl.class,
                   "dailyBonusCalJob",
-                  "daily Bonus calculate job failed! Timer Period: %s, total bonus percentage config no exist!",
+                  "daily Bonus calculate 每日分红运算失败! Timer Period: %s, total bonus percentage config no exist!",
                   startTime + "-" + endTime);
         }
-        msg = "Job Failed!\n参数未配置：每日分红总金额占平台每日总收益的比例";
+        msg = "每日分红运算失败!\n参数未配置：每日分红总金额占平台每日总收益的比例";
         bonusParamPerDay.setRemark(msg);
         return;
       }
@@ -129,10 +128,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
               .debug(
                   EndUserServiceImpl.class,
                   "dailyBonusCalJob",
-                  "daily Bonus calculate job failed! Timer Period: %s, bonus leScore percentage config no exist!",
+                  "daily Bonus calculate 每日分红运算失败! Timer Period: %s, bonus leScore percentage config no exist!",
                   startTime + "-" + endTime);
         }
-        msg = "Job Failed!\n参数未配置：激励收益后乐分乐豆比例";
+        msg = "每日分红运算失败!\n参数未配置：激励收益后乐分乐豆比例";
         bonusParamPerDay.setRemark(msg);
         return;
       }
@@ -149,10 +148,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (CollectionUtils.isEmpty(orders)) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate job failed! Timer Period: %s, search orders no exist!",
+              "daily Bonus calculate 每日分红运算失败! Timer Period: %s, search orders no exist!",
               startTime + "-" + endTime);
         }
-        msg = "Job Failed!\n当日平台未产生有效的支付订单，无法计算分红";
+        msg = "每日分红运算失败!\n当日平台未产生有效的支付订单，无法计算分红";
         bonusParamPerDay.setOrderCount(0);
         bonusParamPerDay.setRemark(msg);
         return;
@@ -166,10 +165,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (totalBonus.compareTo(new BigDecimal("0")) <= 0) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate job failed! Timer Period: %s, the platform total income<=0",
+              "daily Bonus calculate 每日分红运算失败! Timer Period: %s, the platform total income<=0",
               startTime + "-" + endTime);
         }
-        msg = "Job Failed!\n当日平台总收益金额为" + totalBonus.toString() + "元,无法计算分红";
+        msg = "每日分红运算失败!\n当日平台总收益金额为" + totalBonus.toString() + "元,无法计算分红";
         bonusParamPerDay.setRebateTotalAmount(totalBonus.toString());
         bonusParamPerDay.setRemark(msg);
         return;
@@ -192,10 +191,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       // if (CollectionUtils.isEmpty(endUsers)) {
       // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
       // LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-      // "daily Bonus calculate job failed! Timer Period: %s, no users exchange leMind",
+      // "daily Bonus calculate 每日分红运算失败! Timer Period: %s, no users exchange leMind",
       // startTime + "-" + endTime);
       // }
-      // msg = "Job Failed!\n当日平台消费产生乐心大于等于1的用户数量为0,无法计算分红";
+      // msg = "每日分红运算失败!\n当日平台消费产生乐心大于等于1的用户数量为0,无法计算分红";
       // bonusParamPerDay.setRemark(msg);
       // bonusParamPerDay.setLeMindUserCount(0);
       // return;
@@ -220,10 +219,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (CollectionUtils.isEmpty(leMindRecords)) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate Job failed! Timer Period: %s, no active leMind records",
+              "daily Bonus calculate 每日分红运算失败! Timer Period: %s, no active leMind records",
               startTime + "-" + endTime);
         }
-        msg = "Job Failed!\n当日平台无可产生用户分红的乐心,无法计算分红";
+        msg = "每日分红运算失败!\n当日平台无可产生用户分红的乐心,无法计算分红";
         bonusParamPerDay.setRemark(msg);
         bonusParamPerDay.setAvlLeMindCount(0);
         return;
@@ -336,19 +335,19 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
 
       msg =
-          "Job Success!\n服务器地址:" + setting.getServerIp() + "\n日期:"
+          "每日分红运算成功!\n服务器地址:" + setting.getServerIp() + "\n日期:"
               + TimeUtils.format("yyyy-MM-dd", startTime.getTime()) + "\n当日平台收益总金额：" + totalBonus
               + "\n当日平台分红参数value值：" + value + "\n当日平台分红总乐豆：" + totalBonusAmountByMind;
-      bonusParamPerDay.setRemark("Job Success!");
+      bonusParamPerDay.setRemark("每日分红运算成功!");
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
       // "yxsh:daily bonus calculate job successfully!", "服务器地址:" + setting.getServerIp()
       // + "\n日期:" + startTime + "\n当日平台用于分红的总金额：" + totalBonus + "\n当日消费产生乐心大于等于1的用户数量："
       // + endUsers.size() + "\n当日平台分红参数value值：" + value);
     } catch (Exception e) {
-      msg = "Job Failed!\nRuntime Exception:" + e.getMessage();
+      msg = "每日分红运算失败!\nRuntime Exception:" + e.getMessage();
       bonusParamPerDay.setRemark(msg);
       // mailService.send("sujinxuan123@163.com,sj_msc@163.com",
-      // "yxsh:daily bonus calculate job failed!", e.getMessage());
+      // "yxsh:daily bonus calculate 每日分红运算失败!", e.getMessage());
     } finally {
       bonusParamPerDayDao.persist(bonusParamPerDay);
       mailService.send(emailTo, subject, msg);
