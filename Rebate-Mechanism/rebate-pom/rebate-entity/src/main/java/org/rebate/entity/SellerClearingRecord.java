@@ -54,7 +54,7 @@ public class SellerClearingRecord extends BaseEntity {
 
 
   /**
-   * 是否已结算
+   * 是否已结算, true结算成功,false结算失败
    */
   private Boolean isClearing;
   /**
@@ -74,6 +74,11 @@ public class SellerClearingRecord extends BaseEntity {
    * 记录序号，例如：0001
    */
   private String sn;
+
+  /**
+   * 货款记录是否有效, true:有效  false:失效(货款记录作废)
+   */
+  private Boolean valid;
 
   /**
    * 备注
@@ -176,6 +181,14 @@ public class SellerClearingRecord extends BaseEntity {
 
 	public void setSn(String sn) {
 		this.sn = sn;
+	}
+
+	public Boolean getValid() {
+		return valid;
+	}
+
+	public void setValid(Boolean valid) {
+		this.valid = valid;
 	}
 
 }
