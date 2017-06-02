@@ -148,6 +148,9 @@ $().ready(function() {
 												<input type="checkbox" name="authorities" value="rebate:withdraw" /><span>${message("rebate.main.leScoreRecord.withdraw")}</span>
 											</label>
 											<label>
+												<input type="checkbox" name="authorities" value="rebate:sellerClearingRecord" /><span>${message("rebate.main.sellerClearingRecord")}</span>
+											</label>
+											<label>
 												<input type="checkbox" name="authorities" value="rebate:endUser" /><span>${message("rebate.endUser.info")}</span>
 											</label>
 											<label>

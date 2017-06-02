@@ -165,19 +165,24 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-					 [#list ["rebate:withdraw"] as permission]
+					 [#list ["rebate:withdraw","rebate:sellerClearingRecord"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
 		                           <a href="#">
 		                               <i class="fa fa-user"></i>
-		                               <span class="text-normal">${message("rebate.main.leScoreRecord")}</span>
+		                               <span class="text-normal">${message("rebate.main.withdraw")}</span>
 		                           </a>
 		                       </div>
 		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
 		                     	  [@shiro.hasPermission name="rebate:withdraw"]
 		                           <li>
 		                               <a href="../leScoreRecord/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.leScoreRecord.withdraw")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+									[@shiro.hasPermission name="rebate:sellerClearingRecord"]
+		                           <li>
+		                               <a href="../sellerClearingRecord/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.sellerClearingRecord")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>

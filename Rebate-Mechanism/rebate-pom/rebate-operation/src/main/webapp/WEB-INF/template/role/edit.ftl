@@ -151,6 +151,9 @@ $().ready(function() {
 												<input type="checkbox" name="authorities" value="rebate:withdraw" [#if role.authorities?seq_contains("rebate:withdraw")] checked="checked"[/#if] /><span>${message("rebate.main.leScoreRecord.withdraw")}</span>
 											</label>
 											<label>
+												<input type="checkbox" name="authorities" value="rebate:sellerClearingRecord" [#if role.authorities?seq_contains("rebate:sellerClearingRecord")] checked="checked"[/#if]  /><span>${message("rebate.main.sellerClearingRecord")}</span>
+											</label>
+											<label>
 												<input type="checkbox" name="authorities" value="rebate:endUser" [#if role.authorities?seq_contains("rebate:endUser")] checked="checked"[/#if] /><span>${message("rebate.endUser.info")}</span>
 											</label>
 											<label>

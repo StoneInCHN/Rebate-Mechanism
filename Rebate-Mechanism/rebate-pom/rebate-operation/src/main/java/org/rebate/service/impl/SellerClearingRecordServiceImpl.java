@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.rebate.beans.Message;
 import org.rebate.beans.Setting;
 import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.BankCard;
@@ -226,4 +227,18 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		}
 		return handlingCharge;
 	}
+    @Override
+    public Message singlePay(Long id) {
+      
+      try {
+        for (int i = 0; i < 5; i++) {
+          Thread.sleep(1000);
+          System.out.println(i);
+        }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      
+      return Message.success("rebate.message.success");
+    }
 }
