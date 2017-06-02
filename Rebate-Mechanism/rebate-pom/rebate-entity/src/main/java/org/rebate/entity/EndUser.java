@@ -255,11 +255,29 @@ public class EndUser extends BaseEntity {
   private Seller seller;
 
   /**
+   * 商户申请
+   */
+  private SellerApplication sellerApplication;
+
+  /**
    * 是否为业务员
    */
   private Boolean isSalesman = false;
 
 
+
+  public SellerApplication getSellerApplication() {
+    if (this.getSellerApplications() != null) {
+      for (SellerApplication sellerApplication : this.getSellerApplications()) {
+        return sellerApplication;
+      }
+    }
+    return sellerApplication;
+  }
+
+  public void setSellerApplication(SellerApplication sellerApplication) {
+    this.sellerApplication = sellerApplication;
+  }
 
   public Boolean getIsSalesman() {
     return isSalesman;

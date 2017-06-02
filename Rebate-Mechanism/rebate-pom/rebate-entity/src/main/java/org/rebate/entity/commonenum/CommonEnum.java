@@ -201,7 +201,13 @@ public class CommonEnum {
     /** 店铺货款说明 8 */
     SELLER_PAYMENT_DESC,
     /** 实名认证说明 9 */
-    USER_AUTH_DESC
+    USER_AUTH_DESC,
+    /** 银行卡持卡人说明 10 */
+    BANKCARD_OWNER_DESC,
+    /** 银行卡手机号说明 11 */
+    BANKCARD_MOBILE_DESC,
+    /** 银行卡服务协议 12 */
+    BANKCARD_SERVICE_AGREEMENT
   }
 
   /**

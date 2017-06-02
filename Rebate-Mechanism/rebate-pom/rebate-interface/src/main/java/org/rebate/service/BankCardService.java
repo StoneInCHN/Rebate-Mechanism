@@ -31,9 +31,18 @@ public interface BankCardService extends BaseService<BankCard, Long> {
 
   /**
    * 更新为默认银行卡
+   * 
    * @param bankCard
    */
   void updateCardDefault(BankCard bankCard, Long userId);
+
+  /**
+   * 判断用户是否拥有可用银行卡
+   * 
+   * @param userId
+   * @return
+   */
+  Boolean userHasBankCard(Long userId);
 
 
 

@@ -51,7 +51,8 @@ public class SettingConfigController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getConfigByKey", method = RequestMethod.POST)
-  public @ResponseBody ResponseOne<Map<String, Object>> selectArea(@RequestBody UserRequest request) {
+  public @ResponseBody ResponseOne<Map<String, Object>> getConfigByKey(
+      @RequestBody UserRequest request) {
 
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
 

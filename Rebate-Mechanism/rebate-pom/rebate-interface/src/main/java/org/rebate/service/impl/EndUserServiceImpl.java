@@ -233,6 +233,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
           } else if (ApplyStatus.AUDIT_FAILED.equals(application.getApplyStatus())) {
             map.put("sellerStatus", "AUDIT_FAILED"); // 审核失败
             map.put("applyId", application.getId());
+            map.put("failReason", application.getNotes());
             map.put("salesmanCellphone",
                 salesmanSellerRelationDao.getRelationBySellerApplication(application).getEndUser()
                     .getCellPhoneNum());

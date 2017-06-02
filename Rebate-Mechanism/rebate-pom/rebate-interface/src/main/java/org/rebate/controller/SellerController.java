@@ -422,6 +422,7 @@ public class SellerController extends MobileBaseController {
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, seller);
     map.put("envImgs", envImgs);
     map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
+    map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(token);

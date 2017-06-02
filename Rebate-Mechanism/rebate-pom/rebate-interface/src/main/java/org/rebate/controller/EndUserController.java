@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
@@ -32,6 +35,7 @@ import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserAuth;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
+import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
@@ -52,6 +56,7 @@ import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
 import org.rebate.service.AgentCommissionConfigService;
 import org.rebate.service.AreaService;
+import org.rebate.service.BankCardService;
 import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
 import org.rebate.service.LeBeanRecordService;
@@ -80,8 +85,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Controller("endUserController")
 @RequestMapping("/endUser")
@@ -132,6 +136,9 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "userAuthServiceImpl")
   private UserAuthService userAuthService;
+
+  @Resource(name = "bankCardServiceImpl")
+  private BankCardService bankCardService;
 
   /**
    * 测试
@@ -890,6 +897,7 @@ public class EndUserController extends MobileBaseController {
             "wechatNickName", "isSalesman"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
+    map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
     map.putAll(endUserService.isUserHasSeller(endUser));
     map.put("isSetLoginPwd", false);
     map.put("isSetPayPwd", false);
@@ -1037,8 +1045,8 @@ public class EndUserController extends MobileBaseController {
     String[] propertys =
         {"id", "createDate", "sellerApplication.sellerName", "sellerApplication.id",
             "sellerApplication.applyStatus", "sellerApplication.storePhoto",
-            "sellerApplication.contactCellPhone", "totalRecommendLeScore", "seller.name",
-            "seller.storePictureUrl"};
+            "sellerApplication.notes", "sellerApplication.contactCellPhone",
+            "totalRecommendLeScore", "seller.name", "seller.storePictureUrl"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -1792,13 +1800,17 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("key", setting.getJuheKeyCertificates());
-    params.put("cardType", "2");
-    params.put("pic", cardFrontPic);
-
     try {
-      String result = ApiUtils.post(setting.getJuheVerifyCertificates(), params);
+      Map<String, String> params = new HashMap<String, String>();
+      params.put("key", setting.getJuheKeyCertificates());
+      params.put("cardType", "2");
+      params.put("url", setting.getJuheVerifyCertificates());
+
+      CommonsMultipartFile cf = (CommonsMultipartFile) cardFrontPic;
+      DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+      File f = fi.getStoreLocation();
+
+      String result = ApiUtils.post(params, f);
       ObjectMapper objectMapper = new ObjectMapper();
       Map<String, Object> map = objectMapper.readValue(result, Map.class);
       if (LogUtil.isDebugEnabled(EndUserController.class)) {
@@ -1869,6 +1881,12 @@ public class EndUserController extends MobileBaseController {
       if (endUser.getSeller() != null) {
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(Message.error("rebate.seller.apply.cellPhone.ownSeller").getContent());
+        return response;
+      }
+      if (endUser.getSellerApplication() != null
+          && !endUser.getSellerApplication().getApplyStatus().equals(ApplyStatus.AUDIT_PASSED)) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.seller.apply.cellPhone.audit").getContent());
         return response;
       }
       response.setCode(CommonAttributes.FAIL_USER_EXIST);
