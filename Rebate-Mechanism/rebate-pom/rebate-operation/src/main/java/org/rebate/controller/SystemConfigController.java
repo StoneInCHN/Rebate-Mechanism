@@ -101,6 +101,7 @@ public class SystemConfigController extends BaseController {
     payMentTypeFilter.add(Filter.eq("configKey", SystemConfigKey.PAYMENTTYPE));
     model.addAttribute("paymentTypes", systemConfigService.findList(null, payMentTypeFilter, null));
     List<SettingConfig> temps = new ArrayList<SettingConfig>();
+    List<SettingConfig> descInfos = new ArrayList<SettingConfig>();
     List<SettingConfig> settingConfigs = settingConfigService.findAll();
     if (settingConfigs != null && settingConfigs.size() > 0) {
       for (SettingConfig settingConfig : settingConfigs) {
@@ -108,15 +109,22 @@ public class SystemConfigController extends BaseController {
           model.addAttribute("about", settingConfig);
         } else if (SettingConfigKey.LICENSE_AGREEMENT == settingConfig.getConfigKey()) {
           model.addAttribute("license", settingConfig);
-        }
-        // else if (SettingConfigKey.WITHDRAW_RULE == settingConfig.getConfigKey()) {
-        // model.addAttribute("withdrawRule",settingConfig);
-        // }
-        else {
+        }else if (SettingConfigKey.SELLER_PAYMENT_DESC == settingConfig.getConfigKey()) {
+          descInfos.add(settingConfig);
+        }else if (SettingConfigKey.USER_AUTH_DESC == settingConfig.getConfigKey()) {
+          descInfos.add(settingConfig);
+        }else if (SettingConfigKey.BANKCARD_MOBILE_DESC == settingConfig.getConfigKey()) {
+          descInfos.add(settingConfig);
+        }else if (SettingConfigKey.BANKCARD_OWNER_DESC == settingConfig.getConfigKey()) {
+          descInfos.add(settingConfig);
+        }else if (SettingConfigKey.BANKCARD_SERVICE_AGREEMENT == settingConfig.getConfigKey()) {
+          descInfos.add(settingConfig);
+        }else {
           temps.add(settingConfig);
         }
       }
     }
+    model.addAttribute("descInfos", descInfos);
     model.addAttribute("settingConfigs", temps);
     return "/systemConfig/list";
   }
@@ -163,6 +171,31 @@ public class SystemConfigController extends BaseController {
    */
   @RequestMapping(value = "/updateOther", method = RequestMethod.POST)
   public String updateOther(SettingConfig config) {
+    SettingConfig temp = settingConfigService.find(config.getId());
+    if (temp != null) {
+      temp.setIsEnabled(config.getIsEnabled());
+      temp.setRemark(config.getRemark());
+      temp.setConfigValue(config.getConfigValue());
+      settingConfigService.update(temp);
+    }
+    return "redirect:list.jhtml";
+  }
+  
+  
+  /**
+   * 编辑
+   */
+  @RequestMapping(value = "/editDescInfo", method = RequestMethod.GET)
+  public String editDescInfo(Long id, ModelMap model) {
+    model.addAttribute("settingConfig", settingConfigService.find(id));
+    return "/systemConfig/editDescInfo";
+  }
+  
+  /**
+   * 更新
+   */
+  @RequestMapping(value = "/updateDescInfo", method = RequestMethod.POST)
+  public String updateDescInfo(SettingConfig config) {
     SettingConfig temp = settingConfigService.find(config.getId());
     if (temp != null) {
       temp.setIsEnabled(config.getIsEnabled());

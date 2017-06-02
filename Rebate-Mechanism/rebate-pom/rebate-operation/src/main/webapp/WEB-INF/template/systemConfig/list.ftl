@@ -31,7 +31,7 @@
 		    <li role="presentation"><a href="#paymenttype" aria-controls="paymenttype" role="tab" data-toggle="tab">支付方式</a></li>
 		    <li role="presentation"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">关于</a></li>
 		    <li role="presentation"><a href="#license" aria-controls="license" role="tab" data-toggle="tab">许可协议</a></li>
-		   <!-- <li role="presentation"><a href="#withdrawRule" aria-controls="withdrawRule" role="tab" data-toggle="tab">提现规则</a></li> -->
+		    <li role="presentation"><a href="#descInfo" aria-controls="descInfo" role="tab" data-toggle="tab">说明信息配置</a></li>
 		    <li role="presentation"><a href="#other" aria-controls="other" role="tab" data-toggle="tab">其他</a></li>
 		  </ul>
 		  <!-- Tab panes -->
@@ -142,7 +142,7 @@
 								
 							</td>
 							<td>
-								<a href="editPay.jhtml?id=${systemConfig.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+								<a href="editPay.jhtml?id=${systemConfig.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
 							</td>
 						</tr>
 						[/#list]
@@ -171,19 +171,49 @@
 				</p>
 				<p>${license.configValue}</p>
 		    </div>
-			<!--
-		     <div role="tabpanel" class="tab-pane" id="withdrawRule">
-		       <a  id="editLicense" class="btn btn-default" href="editSettingConfig.jhtml?configKey=WITHDRAW_RULE&id=${withdrawRule.id}"><i class="fa fa-edit"></i><span>修改</span></a>	
-				<p style="margin:10px">
-					[#if  withdrawRule.isEnabled]
-						<span class="label label-success">${message("rebate.systemConfig.isEnabled.true")}</span>
-					[#else]
-						<span class="label label-danger">${message("rebate.systemConfig.isEnabled.false")}</span>
-					[/#if]
-				</p>
-				<p>${withdrawRule.configValue}</p>
+		     <div role="tabpanel" class="tab-pane" id="descInfo">
+		       <table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
+					<thead>
+						<tr>
+							<th>
+								<a href="javascript:;" class="sort" name="configKey">${message("rebate.settingConfig.configKey")}</a>
+							</th>
+							<th>
+								<a href="javascript:;" class="sort" name="configValue">${message("rebate.settingConfig.configValue")}</a>
+							</th>
+							<th>
+								<a href="javascript:;" class="sort" name="isEnabled">${message("rebate.settingConfig.isEnabled")}</a>
+							</th>
+							<th>
+								<span>${message("rebate.common.handle")}</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+							[#list descInfos as settingConfig]
+							<tr>
+								<td>
+									<span data-toggle="tooltip" data-placement="top" title="${settingConfig.remark}">${message("rebate.settingConfig.configKey."+settingConfig.configKey)}</span>
+								</td>
+								<td>
+									${settingConfig.configValue}
+								</td>
+								<td>
+									[#if  settingConfig.isEnabled]
+										<span class="label label-success">${message("rebate.settingConfig.isEnabled.true")}</span>
+									[#else]
+										<span class="label label-danger">${message("rebate.settingConfig.isEnabled.false")}</span>
+									[/#if]
+									
+								</td>
+								<td>
+									<a href="editDescInfo.jhtml?id=${settingConfig.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+								</td>
+							</tr>
+						[/#list]
+					</tbody>
+				</table>
 		    </div>
-			-->
 			 <div role="tabpanel" class="tab-pane" id="other">
 			 	<table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
 					<thead>
@@ -220,14 +250,12 @@
 									
 								</td>
 								<td>
-									<a href="editOther.jhtml?id=${settingConfig.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+									<a href="editOther.jhtml?id=${settingConfig.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
 								</td>
 							</tr>
 						[/#list]
 					</tbody>
 				</table>
-			 
-		      
 		    </div>
 		  </div>
 		</div>
