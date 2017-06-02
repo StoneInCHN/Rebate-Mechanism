@@ -191,7 +191,7 @@ public class PayUtil {
       resMap.put("ORDERSEQ", order_sn);
       resMap.put("ORDERREQTRANSEQ", orderReqTranSeq);
       resMap.put("ORDERTIME", orderTime);
-      BigDecimal orderAmount = total_fee.setScale(2, BigDecimal.ROUND_HALF_UP);
+      String orderAmount = total_fee.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
       resMap.put("ORDERAMOUNT", orderAmount);
       resMap.put("CURTYPE", "RMB");
       resMap.put("PRODUCTID", "04");
@@ -208,10 +208,9 @@ public class PayUtil {
       String tempStr =
           "SERVICE=" + resMap.get("SERVICE") + "&MERCHANTID=" + resMap.get("MERCHANTID")
               + "&MERCHANTPWD=" + resMap.get("MERCHANTPWD") + "&SUBMERCHANTID=" + ""
-              + "&BACKMERCHANTURL=" + resMap.get("BACKMERCHANTURL") + "&SIGNTYPE="
-              + resMap.get("SIGNTYPE") + "&ORDERSEQ=" + resMap.get("ORDERSEQ")
-              + "&ORDERREQTRANSEQ=" + resMap.get("ORDERREQTRANSEQ") + "&ORDERTIME="
-              + resMap.get("ORDERTIME") + "&ORDERVALIDITYTIME=" + "" + "&CURTYPE="
+              + "&BACKMERCHANTURL=" + resMap.get("BACKMERCHANTURL") + "&ORDERSEQ="
+              + resMap.get("ORDERSEQ") + "&ORDERREQTRANSEQ=" + resMap.get("ORDERREQTRANSEQ")
+              + "&ORDERTIME=" + resMap.get("ORDERTIME") + "&ORDERVALIDITYTIME=" + "" + "&CURTYPE="
               + resMap.get("CURTYPE") + "&ORDERAMOUNT=" + resMap.get("ORDERAMOUNT") + "&SUBJECT="
               + resMap.get("SUBJECT") + "&PRODUCTID=" + resMap.get("PRODUCTID") + "&PRODUCTDESC="
               + resMap.get("PRODUCTDESC") + "&CUSTOMERID=" + resMap.get("CUSTOMERID")
