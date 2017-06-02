@@ -529,6 +529,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     evaluate.setOrder(order);
     evaluate.setContent(content);
     evaluate.setSeller(seller);
+    evaluate.setStatus(CommonStatus.ACITVE);
 
     List<SellerEvaluateImage> sellerEvaluateImages = new ArrayList<SellerEvaluateImage>();
     if (!CollectionUtils.isEmpty(evaluateImages)) {
