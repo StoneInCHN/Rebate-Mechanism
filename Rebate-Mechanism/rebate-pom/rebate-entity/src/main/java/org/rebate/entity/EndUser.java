@@ -265,7 +265,7 @@ public class EndUser extends BaseEntity {
   private Boolean isSalesman = false;
 
 
-
+  @Transient
   public SellerApplication getSellerApplication() {
     if (this.getSellerApplications() != null) {
       for (SellerApplication sellerApplication : this.getSellerApplications()) {
