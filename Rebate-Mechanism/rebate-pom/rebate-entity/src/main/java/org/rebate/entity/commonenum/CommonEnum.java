@@ -330,4 +330,18 @@ public class CommonEnum {
      */
     NO_REPLAY_STATUS
   }
+  /**
+   * 货款结算状态
+   * @author luzhang
+   *
+   */
+  public enum ClearingStatus{
+	  /** 处理中 **/
+	  PROCESSING,
+	  /** 处理成功 **/
+	  SUCCESS,
+	  /** 处理失败 **/
+	  FAILED
+	 
+  }
 }

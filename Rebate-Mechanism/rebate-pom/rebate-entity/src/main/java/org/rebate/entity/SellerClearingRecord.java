@@ -11,6 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
+import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 
 /**
  * 商户货款结算记录
@@ -51,8 +52,10 @@ public class SellerClearingRecord extends BaseEntity {
    * 结算手续费
    */
   private BigDecimal handlingCharge;
-
-
+  /**
+   * 货款结算状态
+   */
+  private ClearingStatus clearingStatus;
   /**
    * 是否已结算, true结算成功,false结算失败
    */
@@ -189,6 +192,14 @@ public class SellerClearingRecord extends BaseEntity {
 
 	public void setValid(Boolean valid) {
 		this.valid = valid;
+	}
+
+	public ClearingStatus getClearingStatus() {
+		return clearingStatus;
+	}
+
+	public void setClearingStatus(ClearingStatus clearingStatus) {
+		this.clearingStatus = clearingStatus;
 	}
 
 }
