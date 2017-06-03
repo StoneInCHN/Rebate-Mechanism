@@ -1546,7 +1546,12 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
-    endUserService.userWithdraw(userId, entityId, remark);
+    EndUser user = endUserService.userWithdraw(userId, entityId, remark);
+    if (user == null) {
+      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+      response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
+      return response;
+    }
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);

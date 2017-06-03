@@ -64,9 +64,9 @@
 								<td>
 									<select  name="clearingStatus">
 										<option value="">${message("rebate.common.All")}</option>
-										<option [#if clearingStatus == "PROCESSING"] selected="selected" [/#if] value="PROCESSING">${message("rebate.common.auditStatus.PROCESSING")}</option>
-										<option [#if clearingStatus == "SUCCESS"] selected="selected" [/#if] value="SUCCESS">${message("rebate.common.auditStatus.SUCCESS")}</option>
-										<option [#if clearingStatus == "FAILED"] selected="selected" [/#if] value="FAILED">${message("rebate.common.auditStatus.FAILED")}</option>
+										<option [#if clearingStatus == "PROCESSING"] selected="selected" [/#if] value="PROCESSING">${message("rebate.sellerClearingRecord.clearingStatus.PROCESSING")}</option>
+										<option [#if clearingStatus == "SUCCESS"] selected="selected" [/#if] value="SUCCESS">${message("rebate.sellerClearingRecord.clearingStatus.SUCCESS")}</option>
+										<option [#if clearingStatus == "FAILED"] selected="selected" [/#if] value="FAILED">${message("rebate.sellerClearingRecord.clearingStatus.FAILED")}</option>
 									</select>
 								</td>
 								<th>

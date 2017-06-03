@@ -310,6 +310,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   public EndUser userWithdraw(Long userId, Long bankCardId, String remark) {
     EndUser endUser = endUserDao.find(userId);
     Map<String, BigDecimal> map = getAvlLeScore(endUser);
+    if (map.get("avlLeScore").compareTo(new BigDecimal(0)) <= 0) {
+      return null;
+    }
 
     LeScoreRecord leScoreRecord = new LeScoreRecord();
     leScoreRecord.setRemark(remark);
