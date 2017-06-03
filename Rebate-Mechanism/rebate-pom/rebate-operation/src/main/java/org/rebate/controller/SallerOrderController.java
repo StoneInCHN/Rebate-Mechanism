@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
-import org.rebate.entity.EndUser;
 import org.rebate.entity.Order;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
@@ -26,8 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller("sallerOrderController")
 @RequestMapping("/console/sallerOrder")
-public class SallerOrderController extends BaseController{
-  
+public class SallerOrderController extends BaseController {
+
   @Resource(name = "orderServiceImpl")
   private OrderService orderService;
 
@@ -85,18 +84,16 @@ public class SallerOrderController extends BaseController{
     model.addAttribute("order", order);
     return "/sallerOrder/details";
   }
-  
+
   /**
-   * 设置业务员
+   * 更新录单订单状态
    */
   @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
-  public @ResponseBody Message updateStatus(Long id ,OrderStatus status) {
-     if(id==null||status==null){
-       return ERROR_MESSAGE;
-     }
-    Order order = orderService.find(id);
-    order.setStatus(status);
-    orderService.update(order);
+  public @ResponseBody Message updateStatus(Long id, OrderStatus status) {
+    if (id == null || status == null) {
+      return ERROR_MESSAGE;
+    }
+    orderService.updateSallerOrderStatus(id, status);
     return SUCCESS_MESSAGE;
   }
 }

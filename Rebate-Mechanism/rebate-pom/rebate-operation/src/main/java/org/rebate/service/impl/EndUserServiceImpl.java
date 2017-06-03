@@ -13,6 +13,7 @@ import org.rebate.dao.EndUserDao;
 import org.rebate.dao.LeMindRecordDao;
 import org.rebate.dao.OrderDao;
 import org.rebate.dao.SystemConfigDao;
+import org.rebate.entity.Area;
 import org.rebate.entity.BonusByMindPerDay;
 import org.rebate.entity.BonusParamPerDay;
 import org.rebate.entity.EndUser;
@@ -408,6 +409,12 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   @Override
   public List<EndUser> getMindUsersByDay(Date startTime, Date endTime) {
     return endUserDao.getMindUsersByDay(startTime, endTime);
+  }
+
+
+  @Override
+  public EndUser getAgentByArea(Area area) {
+    return endUserDao.getAgentByArea(area);
   }
 
 

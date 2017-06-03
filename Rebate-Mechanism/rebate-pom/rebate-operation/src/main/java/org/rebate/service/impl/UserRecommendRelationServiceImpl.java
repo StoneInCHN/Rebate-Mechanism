@@ -1,19 +1,28 @@
-package org.rebate.service.impl; 
+package org.rebate.service.impl;
 
-import javax.annotation.Resource; 
+import javax.annotation.Resource;
 
-import org.springframework.stereotype.Service; 
-
-import org.rebate.entity.UserRecommendRelation;
 import org.rebate.dao.UserRecommendRelationDao;
-import org.rebate.service.UserRecommendRelationService;
+import org.rebate.entity.EndUser;
+import org.rebate.entity.UserRecommendRelation;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.service.UserRecommendRelationService;
+import org.springframework.stereotype.Service;
 
 @Service("userRecommendRelationServiceImpl")
-public class UserRecommendRelationServiceImpl extends BaseServiceImpl<UserRecommendRelation,Long> implements UserRecommendRelationService {
+public class UserRecommendRelationServiceImpl extends BaseServiceImpl<UserRecommendRelation, Long>
+    implements UserRecommendRelationService {
 
-      @Resource(name="userRecommendRelationDaoImpl")
-      public void setBaseDao(UserRecommendRelationDao userRecommendRelationDao) {
-         super.setBaseDao(userRecommendRelationDao);
+  @Resource(name = "userRecommendRelationDaoImpl")
+  private UserRecommendRelationDao userRecommendRelationDao;
+
+  @Resource(name = "userRecommendRelationDaoImpl")
+  public void setBaseDao(UserRecommendRelationDao userRecommendRelationDao) {
+    super.setBaseDao(userRecommendRelationDao);
+  }
+
+  @Override
+  public UserRecommendRelation findByUser(EndUser endUser) {
+    return userRecommendRelationDao.findByUser(endUser);
   }
 }

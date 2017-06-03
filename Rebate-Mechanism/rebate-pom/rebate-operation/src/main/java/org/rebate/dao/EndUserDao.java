@@ -3,6 +3,7 @@ package org.rebate.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.framework.dao.BaseDao;
@@ -61,4 +62,11 @@ public interface EndUserDao extends BaseDao<EndUser, Long> {
    * @return
    */
   List<EndUser> getMindUsersByDay(Date startTime, Date endTime);
+
+  /**
+   * 根据区域获取代理商
+   * 
+   * @return
+   */
+  EndUser getAgentByArea(Area area);
 }
