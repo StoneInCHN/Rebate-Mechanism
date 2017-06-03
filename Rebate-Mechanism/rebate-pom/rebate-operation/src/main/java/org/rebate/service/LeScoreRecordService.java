@@ -12,7 +12,7 @@ public interface LeScoreRecordService extends BaseService<LeScoreRecord,Long>{
    * @param ids
    * @return
    */
-  Message batchWithdrawal(Long[] ids);
+  String batchWithdrawal(Long[] ids);
   
   
 }

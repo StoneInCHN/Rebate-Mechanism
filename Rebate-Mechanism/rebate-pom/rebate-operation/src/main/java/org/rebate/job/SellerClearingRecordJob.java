@@ -61,7 +61,7 @@ public class SellerClearingRecordJob {
   private ParamConfigService paramConfigService;
 
   // @Scheduled(cron="0 30 21 * * ?")
-  @Scheduled(cron = "${job.daily_sellerClearing_cal.cron }")// 每天1点0分0秒执行 0 0 2 * * ?
+  @Scheduled(cron = "${job.daily_sellerClearing_cal.cron}")// 每天1点0分0秒执行 0 0 1 * * ?
   public void sellerClearingCalculate() {
     if (date == null) {
       date = new Date();

@@ -13,6 +13,7 @@ import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.job.LeScoreRecordJob;
 import org.rebate.request.LeScoreRecordReq;
 import org.rebate.service.LeScoreRecordService;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,10 @@ public class LeScoreRecordController extends BaseController {
 
   @Resource(name = "leScoreRecordServiceImpl")
   private LeScoreRecordService leScoreRecordService;
-
+  
+  @Resource(name = "leScoreRecordJob")
+  private LeScoreRecordJob leScoreRecordJob;
+  
 
   /**
    * 列表
@@ -98,6 +102,19 @@ public class LeScoreRecordController extends BaseController {
    */
   @RequestMapping(value = "/batchWithdrawal", method = RequestMethod.POST)
   public @ResponseBody Message batchWithdrawal(Long[] ids) {
-    return leScoreRecordService.batchWithdrawal(ids);
+	if (ids == null || ids.length == 0) {
+		return Message.error("请至少选择一条记录！");
+	}
+	
+    String reqSn = leScoreRecordService.batchWithdrawal(ids);
+    
+    if (reqSn != null) {
+    	
+    	leScoreRecordJob.updateRecordStatus(reqSn);
+    	
+    	return Message.success("批量提现执行成功!");
+	}else {
+		return Message.success("批量提现执行失败!");
+	}
   }
 }

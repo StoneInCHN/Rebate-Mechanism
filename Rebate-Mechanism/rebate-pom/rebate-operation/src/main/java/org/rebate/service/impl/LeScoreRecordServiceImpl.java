@@ -129,10 +129,8 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public Message batchWithdrawal(Long[] ids) {
-	if (ids == null || ids.length == 0) {
-		return Message.error("请至少选择一条记录！");
-	}
+  public String batchWithdrawal(Long[] ids) {
+
 	List<LeScoreRecord> records = new ArrayList<LeScoreRecord>();
 	BigDecimal totalClearingAmount = new BigDecimal(0);//乐分提现总金额
 	BigDecimal totalHandlingCharge = new BigDecimal(0);//手续费总金额
@@ -174,7 +172,8 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 		}
     }
     if (records.size() == 0) {
-    	return Message.success("没有符合批量提现的记录");
+    	LogUtil.debug(this.getClass(), "batchWithdrawal", "没有符合批量提现的记录");
+    	return null;
 	}
 
     TranxServiceImpl tranxService = new TranxServiceImpl();
@@ -192,85 +191,11 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 	        String reqSn = recordList.get(0).getReqSn();
 	        //隔一段时间请求交易结果查询接口，去更新商家货款记录的状态
 	        if (reqSn != null) {
-	            Timer timer=new Timer();
-	            long delay = getDelayVal();//延迟10分钟后
-	            long period = getPeriodVal();//每5分钟执行一次
-	           
-	    		  TimerTask task = new TimerTask(){
-	    			public void run(){
-	    				  try {
-	    					    String xmlResponse = tranxService.queryTradeNew(reqSn, false);
-	    					    if (xmlResponse != null) {
-	    					    	//LogUtil.debug(this.getClass(), "sellerClearingCalculate", "queryTradeNew: %s", xmlResponse);
-	    					        Document doc = DocumentHelper.parseText(xmlResponse);
-	    					        Element root = doc.getRootElement();// AIPG
-	    					        Element infoElement = root.element("INFO");
-	    					        String ret_code = infoElement.elementText("RET_CODE");
-	    					        String req_sn = infoElement.elementText("REQ_SN");
-	    					        if ("0000".equals(ret_code)) {//处理完毕
-	    					        @SuppressWarnings("unchecked")
-	  								Iterator<Element> qtdetails = root.element("QTRANSRSP").elementIterator("QTDETAIL");
-	    					        	while (qtdetails.hasNext()) {
-	    					        		Element qtdetail = (Element) qtdetails.next();
-	    					        		String sn = qtdetail.elementText("SN");
-	    					        		String qtdetail_ret_code = qtdetail.elementText("RET_CODE");
-	    					        		String qtdetail_err_msg = qtdetail.elementText("ERR_MSG");
-	    					        		LeScoreRecord record = findNeedLeScoreRecord(reqSn, sn);
-	    					        		if (record != null) {
-	    			  					    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
-	    			  					    		record.setIsWithdraw(true);
-		    			  					    	record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
-		    			  					    	update(record);
-	    			  					    	}else {//处理失败
-	    			  					    		LogUtil.debug(this.getClass(), "batchWithdrawal", qtdetail_err_msg +" for LeScoreRecord(Id): %s", record.getId());
-	    			  					    		record.setIsWithdraw(false);
-		    			  					    	record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
-		    			  					    	update(record);
-	    			  					    		// 提现失败 把 乐分还回到用户手中
-	    			  					    		EndUser endUser = null;
-	    			  					    		if (record.getEndUser().getId() != null) {
-	    			  					    			endUser = endUserService.find(record.getEndUser().getId());
-													}
-	    			  					    		if (endUser != null) {
-		    			  					    		// 当前乐分
-		    			  					    		BigDecimal curLeScore = record.getAmount();
-		    			  					    		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
-		    			  					    		BigDecimal motivateLeScore = record.getMotivateLeScore();
-		    			  					    		// 商家直接收益乐分
-		    			  					    		// BigDecimal incomeLeScore = record.getIncomeLeScore();
-		    			  					    		// 代理商提成乐分
-		    			  					    		BigDecimal agentLeScore = record.getAgentLeScore();
-		    			  					    		if (endUser.getCurLeScore() != null) {
-		    			  					    			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore));
-														}
-		    			  					    		if (endUser.getMotivateLeScore() != null) {
-		    			  					    			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore));
-														}
-		    			  					    		if (endUser.getAgentLeScore() != null) {
-		    			  					    			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore));
-														}
-		    			  					    		// endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
-		    			  					    		endUserService.update(endUser);
-													}
-
-	    			  					    	}
-	    			  					    	
-	    					        		}
-	    					        		LogUtil.debug(this.getClass(), "batchWithdrawal", "req_sn: %s, sn: %s", req_sn, sn);
-	    					            }
-	    					        	cancel();//结束
-	    							}
-	    						}
-	    				} catch (Exception e) {
-	    					LogUtil.debug(this.getClass(), "batchWithdrawal", "Catch Exception: %s", e.getMessage());
-	    				}
-	    			}
-	    		};
-	    		timer.schedule(task, delay, period);//延迟20分钟后，每5分钟执行一次
-	  	  }
+	        	return reqSn;
+	        }
     	}else {
     		LogUtil.debug(this.getClass(), "batchWithdrawal", "Batch Withdrawal failed, recordList is null or size=0");
-    		return Message.success("批量提现执行失败");
+    		return null;
 		}
 	} catch (Exception e) {
 		e.printStackTrace();
@@ -278,7 +203,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚当前的事物
 	}
     
-    return Message.success("批量提现执行成功");
+    return null;
   }
   /**
    * 获取通联货款结算手续费
@@ -304,56 +229,4 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 		}
 		return handlingCharge;
 	}
-  /**
-   * 根据reqSn和sn，获取需要更新提现状态的乐分提现记录
-   * @return
-   */
-  private LeScoreRecord findNeedLeScoreRecord(String reqSn, String sn){
-	  LeScoreRecord record = null;
-	  List<Filter> filters = new ArrayList<Filter>();
-	  filters.add(Filter.eq("reqSn", reqSn));//批量代付总单号
-	  filters.add(Filter.eq("sn", sn));//子单号
-	  //filters.add(Filter.eq("isWithdraw", false));//未结算
-	  List<LeScoreRecord> records = leScoreRecordDao.findList(null, null, filters, null);
-	  if (records != null && records.size() > 0) {
-		  if (records.size() > 1) {
-			  //这种情况不应该出现
-			  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "Find more than one record by req_sn: %s, sn: %s", reqSn, sn);
-		  }
-		  record = records.get(0);
-	  }
-	  return record;
-  }
-  /**
-   * 交易结果查询  延迟查询时间
-   * @return
-   */
-  private long getDelayVal(){
-	  long delay = 600000;//10分钟
-	  try {
-	      ParamConfig config = paramConfigService.getConfigByKey(ParamConfigKey.ALLINPAY_QUERY_DELAY);
-	      if (config != null && config.getConfigValue() != null) {
-	    	  delay = new Long(config.getConfigValue());
-	      }
-	  } catch (Exception e) {
-		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
-	  }
-      return delay;
-  }
-  /**
-   * 交易结果查询  间隔时间(每五分钟)
-   * @return
-   */
-  private long getPeriodVal(){
-	  long period = 300000;//5分钟
-	  try {
-	      ParamConfig periodConfig = paramConfigService.getConfigByKey(ParamConfigKey.ALLINPAY_QUERY_PERIOD);
-	      if (periodConfig != null && periodConfig.getConfigValue() != null) {
-	    	  period = new Long(periodConfig.getConfigValue());
-	      } 
-	  } catch (Exception e) {
-		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
-	  }
-      return period;
-  }
 }
