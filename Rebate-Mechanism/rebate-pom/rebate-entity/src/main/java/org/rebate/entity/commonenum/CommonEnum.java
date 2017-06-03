@@ -331,7 +331,7 @@ public class CommonEnum {
     NO_REPLAY_STATUS
   }
   /**
-   * 货款结算状态
+   * 货款结算（提现）状态
    *
    */
   public enum ClearingStatus{
@@ -353,4 +353,5 @@ public class CommonEnum {
 	    /** 交易结果查询  间隔时间(每五分钟) 1*/
 	    ALLINPAY_QUERY_PERIOD
   }
+
 }

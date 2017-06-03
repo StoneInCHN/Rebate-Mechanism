@@ -93,7 +93,7 @@ public class TranxServiceImpl {
 	      trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
 	      trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
 	      trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-	      BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
+	      BigDecimal payAmount = record.getAmount().negate().subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
 	      trans_detail.setAMOUNT(payAmount.multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
 	      //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
 	      trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
@@ -161,7 +161,8 @@ public class TranxServiceImpl {
       BankCard bankCard = bankCardService.find(record.getBankCardId());
       if (bankCard == null) {//批量代付的话，是整批次成功或整批次失败，不允许某一单银行卡为空
     	System.out.println("TranxServiceImpl.batchDaiFu-->Cannot find BankCard:"+record.getBankCardId());
-		return null;
+    	records.remove(record);
+    	continue;
 	  }
       Trans_Detail trans_detail = new Trans_Detail();
       String sn = genSn(i);

@@ -15,6 +15,7 @@ import org.dom4j.Element;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.ParamConfig;
+import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 import org.rebate.entity.commonenum.CommonEnum.ParamConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.service.BankCardService;
@@ -82,13 +83,15 @@ public class LeScoreRecordJob {
 					        		if (record != null) {
 			  					    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
 			  					    		record.setIsWithdraw(true);
-  			  					    	record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
-  			  					    	mergeList.add(record);
+			  					    		record.setStatus(ClearingStatus.SUCCESS);
+			  					    		record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
+			  					    		mergeList.add(record);
 			  					    	}else {//处理失败
 			  					    		LogUtil.debug(this.getClass(), "batchWithdrawal", qtdetail_err_msg +" for LeScoreRecord(Id): %s", record.getId());
 			  					    		record.setIsWithdraw(false);
-  			  					    	record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
-  			  					    	mergeList.add(record);
+			  					    		record.setStatus(ClearingStatus.FAILED);
+			  					    		record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
+			  					    		mergeList.add(record);
 			  					    		// 提现失败 把 乐分还回到用户手中
 			  					    		EndUser endUser = null;
 			  					    		if (record.getEndUser().getId() != null) {
@@ -104,13 +107,13 @@ public class LeScoreRecordJob {
   			  					    		// 代理商提成乐分
   			  					    		BigDecimal agentLeScore = record.getAgentLeScore();
   			  					    		if (endUser.getCurLeScore() != null) {
-  			  					    			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore));
+  			  					    			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
 												}
   			  					    		if (endUser.getMotivateLeScore() != null) {
-  			  					    			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore));
+  			  					    			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
 												}
   			  					    		if (endUser.getAgentLeScore() != null) {
-  			  					    			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore));
+  			  					    			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
 												}
   			  					    		// endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
   			  					    		endUserService.update(endUser);

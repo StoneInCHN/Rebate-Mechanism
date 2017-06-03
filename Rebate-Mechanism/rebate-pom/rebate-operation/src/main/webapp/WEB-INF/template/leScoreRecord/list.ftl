@@ -108,6 +108,9 @@
 						<span>${message("rebate.leScoreRecord.withdraw.isWithdraw")}</span>
 					</th>
 					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.status")}</span>
+					</th>
+					<th>
 						<span>${message("rebate.leScoreRecord.withdraw.handlingChange")}</span>
 					</th>	
 					<th>
@@ -128,7 +131,7 @@
 				[#list page.content as leScoreRecord]
 				<tr>
 						<td>
-							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus != "AUDIT_PASSED" || leScoreRecord.isWithdraw] disabled="disabled" [/#if]/>
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus != "AUDIT_PASSED" || leScoreRecord.isWithdraw || leScoreRecord.status == "PROCESSING" || leScoreRecord.status == "FAILED"] disabled="disabled" [/#if]/>
 						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
@@ -146,7 +149,7 @@
 					</td>
 					<td>
 						[#if  leScoreRecord.amount??]
-							${leScoreRecord.amount}
+							${leScoreRecord.amount * -1}
 						[#else]
 							--
 						[/#if]
@@ -173,6 +176,17 @@
 							--
 						[/#if]
 					</td>
+					<td>
+						[#if  leScoreRecord.status =="PROCESSING"]
+							<span class="label label-info">${message("rebate.leScoreRecord.withdraw.status.PROCESSING")}</span>
+						[#elseif leScoreRecord.status =="SUCCESS"]
+							<span class="label label-success">${message("rebate.leScoreRecord.withdraw.status.SUCCESS")}</span>
+						[#elseif leScoreRecord.status =="FAILED"]
+							<span class="label label-warning">${message("rebate.leScoreRecord.withdraw.status.FAILED")}</span>
+						[#else]
+							--
+						[/#if]
+					</td>					
 					<td>
 						[#if  leScoreRecord.handlingCharge??]
 							${leScoreRecord.handlingCharge}

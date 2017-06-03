@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 
 /**
@@ -41,7 +42,7 @@ public class LeScoreRecord extends BaseEntity {
   private EndUser endUser;
 
   /**
-   * 乐分数量
+   * 乐分数量（保存负数）
    */
   private BigDecimal amount;
   /**
@@ -92,6 +93,10 @@ public class LeScoreRecord extends BaseEntity {
    * 提现失败时返回的错误信息
    */
   private String withdrawMsg;
+  /**
+   * 提现状态
+   */
+  private ClearingStatus status;
 
   /**
    * 是否已提现
@@ -304,4 +309,13 @@ public class LeScoreRecord extends BaseEntity {
 	public void setSn(String sn) {
 		this.sn = sn;
 	}
+
+	public ClearingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ClearingStatus status) {
+		this.status = status;
+	}
+	
 }

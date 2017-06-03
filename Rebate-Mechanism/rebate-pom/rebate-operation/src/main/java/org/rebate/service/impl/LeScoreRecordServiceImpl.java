@@ -20,6 +20,7 @@ import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.ParamConfig;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 import org.rebate.entity.commonenum.CommonEnum.ParamConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -149,22 +150,23 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 				LogUtil.debug(this.getClass(), "batchWithdrawal", "Cannot find withdrawal bankcard for LeScoreRecord(id): %s",record.getId());
 				record.setWithdrawMsg("未找到提现银行卡！");
 				update(record);
-			}else {
-				totalClearingAmount = totalClearingAmount.add(record.getAmount());
-				BigDecimal handingCharge = getAllinpayHandlingCharge(record.getAmount());
- 				if (record.getAmount() != null && handingCharge != null) {
+			}else if(record.getAmount() != null) {
+				totalClearingAmount = totalClearingAmount.add(record.getAmount().abs());
+				BigDecimal handingCharge = getAllinpayHandlingCharge(record.getAmount().abs());
+ 				if (handingCharge != null) {
   					 //因为手续费要在提现金额里面扣除，所以提现金额应该至少多余手续费一分钱
   					 //否者放弃提现此单，标明备注：提现金额不够支付手续费！
-  					 BigDecimal payAmount = record.getAmount().subtract(handingCharge);
+  					 BigDecimal payAmount = record.getAmount().abs().subtract(handingCharge);
   					 if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
-  						 LogUtil.debug(this.getClass(), "batchWithdrawal", "Withdrawal Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handingCharge);
+  						 LogUtil.debug(this.getClass(), "batchWithdrawal", "Withdrawal Amount: %s is less than Handling Charge: %s !!!", record.getAmount().abs(), handingCharge);
   						 record.setWithdrawMsg("提现金额不够支付手续费！");
   						 update(record);
   						 continue;
   					 }
   				}
  				record.setHandlingCharge(handingCharge);//手续费
- 				record.setIsWithdraw(true);//暂时先标记为已提现
+ 				record.setIsWithdraw(false);//暂时先标记为已提现
+ 				record.setStatus(ClearingStatus.PROCESSING);
  				record.setWithdrawMsg("处理中...");//处理中...
  				totalHandlingCharge = totalHandlingCharge.add(record.getHandlingCharge()); //累加手续费
 				records.add(record);
@@ -195,6 +197,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 	        }
     	}else {
     		LogUtil.debug(this.getClass(), "batchWithdrawal", "Batch Withdrawal failed, recordList is null or size=0");
+    		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚当前的事物
     		return null;
 		}
 	} catch (Exception e) {
