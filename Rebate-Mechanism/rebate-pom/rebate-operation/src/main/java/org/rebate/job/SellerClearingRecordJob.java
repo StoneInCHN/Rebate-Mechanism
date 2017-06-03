@@ -30,6 +30,7 @@ import org.rebate.utils.DateUtils;
 import org.rebate.utils.LogUtil;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +61,7 @@ public class SellerClearingRecordJob {
   private ParamConfigService paramConfigService;
 
   // @Scheduled(cron="0 30 21 * * ?")
-  // @Scheduled(cron = "${job.daily_sellerClearing_cal.cron }")// 每天2点0分0秒执行 0 0 2 * * ?
+  @Scheduled(cron = "${job.daily_sellerClearing_cal.cron }")// 每天1点0分0秒执行 0 0 2 * * ?
   public void sellerClearingCalculate() {
     if (date == null) {
       date = new Date();
