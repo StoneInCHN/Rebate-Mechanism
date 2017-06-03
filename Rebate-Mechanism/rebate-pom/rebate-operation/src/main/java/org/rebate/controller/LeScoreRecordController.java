@@ -94,10 +94,10 @@ public class LeScoreRecordController extends BaseController {
   }
 
   /**
-   * 删除
+   * 通联批量提现
    */
-  @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
-  public @ResponseBody Message withdraw(Long[] ids) {
-    return leScoreRecordService.batchWithdraw(ids);
+  @RequestMapping(value = "/batchWithdrawal", method = RequestMethod.POST)
+  public @ResponseBody Message batchWithdrawal(Long[] ids) {
+    return leScoreRecordService.batchWithdrawal(ids);
   }
 }

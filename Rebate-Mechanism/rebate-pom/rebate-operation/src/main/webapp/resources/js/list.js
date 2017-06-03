@@ -83,7 +83,7 @@ $().ready( function() {
 			cancel: message("admin.dialog.cancel"),
 			onOk: function() {
 				$.ajax({
-					url: "withdraw.jhtml",
+					url: "batchWithdrawal.jhtml",
 					type: "POST",
 					data: $checkedIds.serialize(),
 					dataType: "json",

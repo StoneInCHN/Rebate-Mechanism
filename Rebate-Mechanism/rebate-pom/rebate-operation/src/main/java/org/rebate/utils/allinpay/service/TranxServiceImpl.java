@@ -16,6 +16,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.rebate.beans.Setting;
 import org.rebate.entity.BankCard;
+import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.service.BankCardService;
 import org.rebate.utils.SettingUtils;
@@ -54,11 +55,88 @@ public class TranxServiceImpl {
 	  tranxContants.setMerchantId(setting.getAllinpayMerchantId());
 	  tranxContants.setBusinessCode(setting.getAllinpayBusinessCode());
   }
-  
+  /**
+   * 乐分批量提现（批量代付）
+   * @return
+   */
+  public List<LeScoreRecord> batchWithdrawalLeScore(boolean isTLTFront, String totalItem, String totalSum, 
+		  List<LeScoreRecord> records, BankCardService bankCardService) throws Exception {
+	    
+	    String xmlRequest = "";
+	    AipgReq aipg = new AipgReq();
+	    InfoReq info = makeReq("100002");//批量代付的交易代码：100002
+	    aipg.setINFO(info);
+	    
+	    Body body = new Body();
+	    Trans_Sum trans_sum = new Trans_Sum();
+	    trans_sum.setBUSINESS_CODE(tranxContants.getBusinessCode()); 
+	    trans_sum.setMERCHANT_ID(tranxContants.getMerchantId());
+	    trans_sum.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
+	    trans_sum.setTOTAL_ITEM(totalItem);
+	    trans_sum.setTOTAL_SUM(totalSum);
+	    body.setTRANS_SUM(trans_sum);
+	    Map<String, LeScoreRecord> recordMap = new HashMap<String, LeScoreRecord>();
+	    List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
+	    for (int i = 0; i < records.size(); i++) {
+	      LeScoreRecord record = records.get(i);
+	      record.setReqSn(info.getREQ_SN());
+	      BankCard bankCard = bankCardService.find(record.getWithDrawType());
+	      if (bankCard == null) {//批量提现的话，是整批次成功或整批次失败，不允许某一单银行卡为空
+	    	System.out.println("TranxServiceImpl.batchWithdrawalLeScore-->Cannot find BankCard:"+record.getWithDrawType());
+			return null;
+		  }
+	      Trans_Detail trans_detail = new Trans_Detail();
+	      String sn = genSn(i);
+	      trans_detail.setSN(sn);//记录序号，同一个请求内必须唯一，从0001,0002..开始递增
+	      record.setSn(sn);
+	      recordMap.put(sn, record);
+	      trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
+	      trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
+	      trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
+	      BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
+	      trans_detail.setAMOUNT(payAmount.multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
+	      if ("张三".equals(bankCard.getOwnerName())) {
+	    	  trans_detail.setBANK_CODE("12423");
+		  }
+	      //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
+	      trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
+	      transList.add(trans_detail);
+	    }
+	    body.setDetails(transList);
+	    aipg.addTrx(body);
+
+	    xmlRequest = XmlTools.buildXml(aipg, true);
+	    
+	    String xmlResponse = isFront(xmlRequest, isTLTFront, tranxContants.getUrl());
+	    
+	    if (xmlResponse != null) {
+	        Document doc = DocumentHelper.parseText(xmlResponse);
+	        Element root = doc.getRootElement();// AIPG
+	        Element infoElement = root.element("INFO");
+	        String ret_code = infoElement.elementText("RET_CODE");
+	        String err_msg = infoElement.elementText("ERR_MSG");
+	        if ("0000".equals(ret_code)) {//0000表示通联接受请求
+	        	Element detailsElement = root.element("BODY").element("RET_DETAILS");
+	        	Iterator<Element> details = detailsElement.elementIterator("RET_DETAIL");
+	        	while (details.hasNext()) {
+	        		Element detail = (Element) details.next();
+	        		String sn = detail.elementText("SN");
+	        		if (!"0000".equals(detail.elementText("RET_CODE"))) {
+	        			records.remove(recordMap.get(sn));
+					}
+	            }
+	        	System.out.println("乐分批量提现成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+	        	return records;
+			}else {
+				System.out.println("乐分批量提现失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+			}
+		}
+	    return null;
+  }
 
   /**
-   * 批量代付
+   * 商家货款批量代付
    * 
    * @throws Exception
    */
@@ -85,6 +163,7 @@ public class TranxServiceImpl {
       record.setReqSn(info.getREQ_SN());
       BankCard bankCard = bankCardService.find(record.getBankCardId());
       if (bankCard == null) {//批量代付的话，是整批次成功或整批次失败，不允许某一单银行卡为空
+    	System.out.println("TranxServiceImpl.batchDaiFu-->Cannot find BankCard:"+record.getBankCardId());
 		return null;
 	  }
       Trans_Detail trans_detail = new Trans_Detail();
@@ -100,7 +179,7 @@ public class TranxServiceImpl {
       //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
       trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
-        transList.add(trans_detail);
+      transList.add(trans_detail);
     }
     body.setDetails(transList);
     aipg.addTrx(body);
@@ -425,4 +504,6 @@ public class TranxServiceImpl {
     }
     return sn;
   }
+
+
 }

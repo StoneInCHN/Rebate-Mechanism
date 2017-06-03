@@ -36,6 +36,7 @@ import org.rebate.service.SnService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.utils.LogUtil;
 import org.rebate.utils.SettingUtils;
+import org.rebate.utils.SpringUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +98,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				orders.add(order);
   			}
   		}
-  		
+  		LogUtil.debug(this.getClass(), "sellerClearing", "orderList size: %s, orders size: %s", orderList.size(), orders.size());
   		//将orders以seller分组
   		for (int i = 0; i < orders.size(); i++) {
   			Order order = orders.get(i);
@@ -133,7 +134,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   			 for (Map.Entry<Long, BigDecimal> entry : sellerAmountMap.entrySet()) {
   				 
   				 Seller seller = sellerService.find(entry.getKey());//根据sellerId获取Seller
-  				 BigDecimal totalOrderAmount = entry.getValue(); //当天订单总金额
+  				 BigDecimal totalOrderAmount = entry.getValue(); //当天商家订单总金额
   				 BigDecimal totalSellerIncome = sellerIncomeMap.get(seller.getId()); //当天商家收入金额（折扣后的结算金额）
   				 
   				 EndUser endUser = seller.getEndUser();
@@ -159,20 +160,28 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				 }
   				 totalClearingAmount = totalClearingAmount.add(record.getAmount());//累加结算金额
   				 
-  				 BigDecimal handingCharge = getHandlingCharge(totalOrderAmount);
+  				 BigDecimal handingCharge = getAllinpayHandlingCharge(totalOrderAmount);
   				 if (record.getAmount() != null && handingCharge != null) {
   					 //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
-  					 //否者放弃代付此单，同时将其设置为处理失败，方便后台手动处理
+  					 //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理
   					 BigDecimal payAmount = record.getAmount().subtract(handingCharge);
   					 if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
   						 record.setClearingStatus(ClearingStatus.FAILED);
   						 record.setIsClearing(false);
-  						 record.setRemark("提现金额不足手续费，放弃提现");
+  						 record.setRemark(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
   						 save(record);
+  						 Set<Order> orderSet = sellerOrdersMap.get(record.getSeller().getId());
+						 for (Order order : orderSet) {
+							ClearingOrderRelation relation = new ClearingOrderRelation();
+							relation.setClearingRecId(record.getId());
+							relation.setOrder(order);
+							clearingOrderRelationService.save(relation);//保存商家货款结算记录与订单的关系
+						 }
+						 LogUtil.debug(this.getClass(), "sellerClearing", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handingCharge);
   						 continue;
   					 }
   					 
-  				}
+  				 }
   				 record.setHandlingCharge(handingCharge);//手续费
   				 totalHandlingCharge = totalHandlingCharge.add(record.getHandlingCharge()); //累加手续费
   				 
@@ -237,11 +246,11 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   		return null;
   	}
     /**
-     * 获取货款结算手续费
+     * 获取通联货款结算手续费
      * @param totalOrderAmount
      * @return
      */
-	private BigDecimal getHandlingCharge(BigDecimal totalOrderAmount) {
+	private BigDecimal getAllinpayHandlingCharge(BigDecimal totalOrderAmount) {
 	    //手续费，优先考虑 每笔提现固定手续费（通联固定每笔是1.5元？？），后考虑提现手续费占提现金额的百分比 
 		BigDecimal handlingCharge = new BigDecimal(0);
 		try {

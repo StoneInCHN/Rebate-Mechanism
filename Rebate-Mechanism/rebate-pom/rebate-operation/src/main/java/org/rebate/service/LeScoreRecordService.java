@@ -7,8 +7,12 @@ import org.rebate.framework.service.BaseService;
 public interface LeScoreRecordService extends BaseService<LeScoreRecord,Long>{
 
   Message auditWithdraw(LeScoreRecord leScoreRecord);
-  
-  Message batchWithdraw(Long[] ids);
+  /**
+   * 通联批量提现（代付）
+   * @param ids
+   * @return
+   */
+  Message batchWithdrawal(Long[] ids);
   
   
 }

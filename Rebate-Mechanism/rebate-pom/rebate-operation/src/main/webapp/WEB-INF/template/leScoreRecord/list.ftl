@@ -108,6 +108,12 @@
 						<span>${message("rebate.leScoreRecord.withdraw.isWithdraw")}</span>
 					</th>
 					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.handlingChange")}</span>
+					</th>	
+					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.withdrawMsg")}</span>
+					</th>						
+					<th>
 						<span>${message("rebate.leScoreRecord.remark")}</span>
 					</th>
 					<th>
@@ -122,7 +128,7 @@
 				[#list page.content as leScoreRecord]
 				<tr>
 						<td>
-							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus == "AUDIT_FAILED" || leScoreRecord.isWithdraw] disabled="disabled" [/#if]/>
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus != "AUDIT_PASSED" || leScoreRecord.isWithdraw] disabled="disabled" [/#if]/>
 						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
@@ -166,7 +172,20 @@
 						[#else]
 							--
 						[/#if]
-						
+					</td>
+					<td>
+						[#if  leScoreRecord.handlingCharge??]
+							${leScoreRecord.handlingCharge}
+						[#else]
+							--
+						[/#if]
+					</td>	
+					<td>
+						[#if  leScoreRecord.withdrawMsg??]
+						<span data-toggle="tooltip" data-placement="left" title="${leScoreRecord.withdrawMsg}">${leScoreRecord.withdrawMsg}</span>
+						[#else]
+							--
+						[/#if]
 					</td>
 					<td>
 						[#if  leScoreRecord.remark??]

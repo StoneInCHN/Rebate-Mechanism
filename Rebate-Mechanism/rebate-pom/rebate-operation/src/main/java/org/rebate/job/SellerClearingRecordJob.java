@@ -100,12 +100,13 @@ public class SellerClearingRecordJob {
   					        		Element qtdetail = (Element) qtdetails.next();
   					        		String sn = qtdetail.elementText("SN");
   					        		String qtdetail_ret_code = qtdetail.elementText("RET_CODE");
+  					        		String qtdetail_err_msg = qtdetail.elementText("ERR_MSG");
   					        		SellerClearingRecord record = findNeedClearingRecord(reqSn, sn);
   					        		if (record != null) {
   			  					    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
-  			  					    		updateRecord(record, ClearingStatus.SUCCESS);
+  			  					    		updateRecord(record, ClearingStatus.SUCCESS, qtdetail_err_msg);
 										}else {//处理失败
-											updateRecord(record, ClearingStatus.FAILED);
+											updateRecord(record, ClearingStatus.FAILED, qtdetail_err_msg);
 										}
 									}
   					        		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "req_sn: %s, sn: %s", req_sn, sn);
@@ -136,12 +137,12 @@ public class SellerClearingRecordJob {
    * @param status
    */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
-  private void updateRecord(SellerClearingRecord record, ClearingStatus status){
+  private void updateRecord(SellerClearingRecord record, ClearingStatus status, String errMsg){
 	  LogUtil.debug(this.getClass(), "updateRecord", "Update SellerClearingRecord-->ClearingStatus to be: %s", status.toString());
 	  if (status == ClearingStatus.SUCCESS) {
 	    	record.setClearingStatus(ClearingStatus.SUCCESS);
 	    	record.setIsClearing(true);
-	    	record.setRemark("success");
+	    	record.setRemark(errMsg);
 	    	sellerClearingRecordService.update(record);
 	    	
 			List<Filter> filters = new ArrayList<Filter>();
@@ -162,7 +163,7 @@ public class SellerClearingRecordJob {
 	  }else if (status == ClearingStatus.FAILED) {
 	    	record.setClearingStatus(ClearingStatus.FAILED);
 	    	record.setIsClearing(false);
-	    	record.setRemark("failed");
+	    	record.setRemark(errMsg);
 	    	sellerClearingRecordService.update(record);
 	  }
   	  EndUser endUser = record.getEndUser();

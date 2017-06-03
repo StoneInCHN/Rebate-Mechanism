@@ -161,7 +161,7 @@ public class SellerClearingRecord extends BaseEntity {
     this.clearingSn = clearingSn;
   }
   
-  @Column(scale = 4, precision = 12)
+  	@Column(scale = 4, precision = 12)
 	public BigDecimal getHandlingCharge() {
 		return handlingCharge;
 	}
