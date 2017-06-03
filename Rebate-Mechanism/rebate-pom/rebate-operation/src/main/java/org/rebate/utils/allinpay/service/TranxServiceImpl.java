@@ -95,9 +95,6 @@ public class TranxServiceImpl {
 	      trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
 	      BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
 	      trans_detail.setAMOUNT(payAmount.multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
-	      if ("张三".equals(bankCard.getOwnerName())) {
-	    	  trans_detail.setBANK_CODE("12423");
-		  }
 	      //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
 	      trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
