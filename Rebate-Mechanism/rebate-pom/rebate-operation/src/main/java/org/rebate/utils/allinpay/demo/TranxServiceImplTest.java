@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -60,15 +61,15 @@ public class TranxServiceImplTest {
     aipg.setINFO(info);
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
-    trans_sum.setBUSINESS_CODE("09400"); // 提款类：虚拟账户取现
+    trans_sum.setBUSINESS_CODE(tranxContants.getBusinessCode());
     trans_sum.setMERCHANT_ID(tranxContants.merchantId);
     trans_sum.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
     trans_sum.setTOTAL_ITEM(totalItem);
     trans_sum.setTOTAL_SUM(totalSum);
     body.setTRANS_SUM(trans_sum);
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
-    for (int i = 0; i < records.size(); i++) {
-      SellerClearingRecord record = records.get(i);
+    for (int i = 0; i < 1; i++) {
+      //SellerClearingRecord record = records.get(i);
       BankCard bankCard = new BankCard();
       bankCard.setCardNum("6222629530005276796");
       bankCard.setOwnerName("陈贵川");
@@ -78,7 +79,13 @@ public class TranxServiceImplTest {
         trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
         trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
         trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-        trans_detail.setAMOUNT("2");
+        trans_detail.setAMOUNT("8");
+//        if (i == 1) {
+//        	trans_detail.setBANK_CODE("12345");
+//        	trans_detail.setACCOUNT_NAME("李四");
+//        	trans_detail.setACCOUNT_NO("6222629530005276796");
+//        	trans_detail.setAMOUNT("8.0");
+//		}
         //trans_detail.setBANK_CODE(bankCard.getBankCode());
         trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 
@@ -99,6 +106,14 @@ public class TranxServiceImplTest {
         String ret_code = infoElement.element("RET_CODE").getText();
         String err_msg = infoElement.element("ERR_MSG").getText();
         if ("0000".equals(ret_code)) {//0000表示通联接受请求并处理成功，RET_CODE是一个中间状态
+        	Element detailsElement = root.element("BODY").element("RET_DETAILS");
+        	Iterator<Element> details = detailsElement.elementIterator("RET_DETAIL");
+        	while (details.hasNext()) {
+        		Element detail = (Element) details.next();
+        		String sn = detail.elementText("SN");
+        		String detail_ret_code = detail.elementText("RET_CODE");
+        		System.out.println(sn+":"+detail_ret_code);
+            }
         	System.out.println("批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
 		}else {
 			System.out.println("批量代付失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
@@ -356,7 +371,7 @@ public class TranxServiceImplTest {
    * @throws Exception
    */
 
-  public void QueryTradeNew(String url, String reqsn, boolean isTLTFront) throws Exception {
+  public void queryTradeNew(String url, String reqsn, boolean isTLTFront) throws Exception {
 
     String xml = "";
     AipgReq aipgReq = new AipgReq();
@@ -366,7 +381,7 @@ public class TranxServiceImplTest {
     aipgReq.addTrx(dr);
     dr.setMERCHANT_ID(tranxContants.merchantId);
     dr.setQUERY_SN(reqsn);
-    dr.setSTATUS(2);
+    dr.setSTATUS(1);
     dr.setTYPE(1);
     // dr.setSTATUS(2);
     dr.setSTART_DAY("");

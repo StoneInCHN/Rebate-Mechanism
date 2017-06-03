@@ -10,7 +10,7 @@ public interface SellerClearingRecordService extends BaseService<SellerClearingR
     /**
      * 商家货款结算
      */
-	void sellerClearing(Date startDate, Date endDate);
+	String sellerClearing(Date startDate, Date endDate);
 	
 	/**
 	 * 货款单笔支付

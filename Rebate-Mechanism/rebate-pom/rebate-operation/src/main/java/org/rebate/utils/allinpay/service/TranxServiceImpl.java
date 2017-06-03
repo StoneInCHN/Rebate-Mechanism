@@ -6,7 +6,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -75,7 +78,7 @@ public class TranxServiceImpl {
     trans_sum.setTOTAL_ITEM(totalItem);
     trans_sum.setTOTAL_SUM(totalSum);
     body.setTRANS_SUM(trans_sum);
-    
+    Map<String, SellerClearingRecord> recordMap = new HashMap<String, SellerClearingRecord>();
     List<Trans_Detail> transList = new ArrayList<Trans_Detail>();
     for (int i = 0; i < records.size(); i++) {
       SellerClearingRecord record = records.get(i);
@@ -88,10 +91,11 @@ public class TranxServiceImpl {
       String sn = genSn(i);
       trans_detail.setSN(sn);//记录序号，同一个请求内必须唯一，从0001,0002..开始递增
       record.setSn(sn);
+      recordMap.put(sn, record);
       trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
       trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
       trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
-      BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());
+      BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
       trans_detail.setAMOUNT(payAmount.multiply(new BigDecimal(100)).setScale(0).toString());//金额单位：分
       //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
       trans_detail.setCURRENCY("CNY");//人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
@@ -109,9 +113,18 @@ public class TranxServiceImpl {
         Document doc = DocumentHelper.parseText(xmlResponse);
         Element root = doc.getRootElement();// AIPG
         Element infoElement = root.element("INFO");
-        String ret_code = infoElement.element("RET_CODE").getText();
-        String err_msg = infoElement.element("ERR_MSG").getText();
-        if ("0000".equals(ret_code)) {//0000表示通联接受请求并处理成功，RET_CODE是一个中间状态
+        String ret_code = infoElement.elementText("RET_CODE");
+        String err_msg = infoElement.elementText("ERR_MSG");
+        if ("0000".equals(ret_code)) {//0000表示通联接受请求
+        	Element detailsElement = root.element("BODY").element("RET_DETAILS");
+        	Iterator<Element> details = detailsElement.elementIterator("RET_DETAIL");
+        	while (details.hasNext()) {
+        		Element detail = (Element) details.next();
+        		String sn = detail.elementText("SN");
+        		if (!"0000".equals(detail.elementText("RET_CODE"))) {
+        			records.remove(recordMap.get(sn));
+				}
+            }
         	System.out.println("批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
         	return records;
 		}else {
@@ -210,7 +223,7 @@ public class TranxServiceImpl {
   public String sendXml(String xml, String url, boolean isFront)
       throws UnsupportedEncodingException, Exception {
     System.out.println("======================发送报文======================：\n" + xml);
-    String resp = XmlTools.send(url, new String(xml.getBytes(), "UTF-8"));
+    String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
     System.out.println("======================响应内容======================");
     // System.out.println(new String(resp.getBytes(),"GBK")) ;
     boolean flag = this.verifyMsg(resp, tranxContants.getTltcerPath(), isFront);
@@ -371,7 +384,7 @@ public class TranxServiceImpl {
    * @throws Exception
    */
 
-  public void QueryTradeNew(String url, String reqsn, boolean isTLTFront) throws Exception {
+  public String queryTradeNew(String reqsn, boolean isTLTFront) throws Exception {
 
     String xml = "";
     AipgReq aipgReq = new AipgReq();
@@ -390,7 +403,8 @@ public class TranxServiceImpl {
     xml = XmlTools.buildXml(aipgReq, true);// .replaceAll("</INFO>",
                                            // "</INFO><BODY>").replaceAll("</AIPG>",
                                            // "</BODY></AIPG>");
-    isFront(xml, isTLTFront, url);
+    String xmlResponse = isFront(xml, isTLTFront, tranxContants.getUrl());
+    return xmlResponse;
   }
 
 

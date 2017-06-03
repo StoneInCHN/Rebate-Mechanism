@@ -332,7 +332,6 @@ public class CommonEnum {
   }
   /**
    * 货款结算状态
-   * @author luzhang
    *
    */
   public enum ClearingStatus{
@@ -343,5 +342,15 @@ public class CommonEnum {
 	  /** 处理失败 **/
 	  FAILED
 	 
+  }
+  /**
+   * 系统参数配置
+   *
+   */
+  public enum ParamConfigKey{
+	    /** 交易结果查询  延迟查询时间 0 */
+	    ALLINPAY_QUERY_DELAY,
+	    /** 交易结果查询  间隔时间(每五分钟) 1*/
+	    ALLINPAY_QUERY_PERIOD
   }
 }

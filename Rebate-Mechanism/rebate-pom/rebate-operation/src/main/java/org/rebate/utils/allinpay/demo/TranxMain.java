@@ -27,7 +27,7 @@ public class TranxMain {
     record.setRemark("1");
     records.add(record);
     //批量代付
-    tranxService.batchDaiFu(tranxContants.getUrl(), isfront, "1", "1", records);
+    tranxService.batchDaiFu(tranxContants.getUrl(), isfront, "1", "8", records);
     
     
     // 单笔实时代付
@@ -40,7 +40,7 @@ public class TranxMain {
     // 简单对账文件下载
     // tranxService.downSimpleBills(URLbill, true);
     // 交易查询
-    // tranxService.QueryTradeNew(URL11, reqsn, isfront);
+    // tranxService.queryTradeNew(tranxContants.getUrl(), "2007010000044091496379790353", isfront);
 
   }
 }
