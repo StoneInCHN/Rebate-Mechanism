@@ -94,7 +94,7 @@
 						<a href="javascript:;" name="bonusLeScoreByDay">${message("rebate.nationBonusReport.bonusLeScoreByDay")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="bonusByDay">${message("rebate.nationBonusReport.bonusByDay")}</a>
+						<a href="javascript:;" name="totalBonus">${message("rebate.nationBonusReport.totalBonus")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" name="ProfitByDay">${message("rebate.nationBonusReport.ProfitByDay")}</a>
@@ -147,7 +147,7 @@
 						${report.bonusLeScoreByDay}
 					</td>
 					<td>
-						${report.bonusByDay}
+						${report.totalBonus}
 					</td>
 					<td>
 						${report.profitByDay}

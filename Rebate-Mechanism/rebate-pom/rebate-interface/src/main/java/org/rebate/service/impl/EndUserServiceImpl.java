@@ -307,7 +307,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public EndUser userWithdraw(Long userId, String remark) {
+  public EndUser userWithdraw(Long userId, Long bankCardId, String remark) {
     EndUser endUser = endUserDao.find(userId);
     Map<String, BigDecimal> map = getAvlLeScore(endUser);
 
@@ -321,6 +321,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     // leScoreRecord.setIncomeLeScore(map.get("incomeLeScore"));
     leScoreRecord.setAgentLeScore(map.get("agentLeScore"));
     leScoreRecord.setWithDrawSn(snDao.generate(Type.WITHDRAW));
+    leScoreRecord.setWithDrawType(bankCardId);
     leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
     // leScoreRecordDao.persist(leScoreRecord);
 

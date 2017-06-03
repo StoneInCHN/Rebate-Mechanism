@@ -164,13 +164,14 @@ function nationChartDate(formId){
 			var consumeTotalAmountData=new Array();
 			var consumePeopleNumData=new Array();
 			var sellerNumData=new Array();
-			var publicTotalAmountData=new Array();
+			//var publicTotalAmountData=new Array();
+			var totalBonusData=new Array();
 			var leMindByDayData=new Array();
 			var consumeByDayData=new Array();
 			var bonusLeScoreByDayData=new Array();
-			var publicAmountByDayData=new Array();
+			//var publicAmountByDayData=new Array();
 			var platformIncomeData=new Array();
-			var awardData=new Array();
+			//var awardData=new Array();
 			var ventureFundData = new Array();
 			var agentCommissionData = new Array();
 			var userRecommendCommissionData = new Array();
@@ -180,13 +181,14 @@ function nationChartDate(formId){
 				consumeTotalAmountData.push(result[i].consumeTotalAmount/1000);
 				consumePeopleNumData.push(result[i].consumePeopleNum);
 				sellerNumData.push(result[i].sellerNum);
-				publicTotalAmountData.push(result[i].publicTotalAmount/1000);
+				//publicTotalAmountData.push(result[i].publicTotalAmount/1000);
 				leMindByDayData.push(result[i].leMindByDay);
 				consumeByDayData.push(result[i].consumeByDay);
 				bonusLeScoreByDayData.push(result[i].bonusLeScoreByDay/1000);
-				publicAmountByDayData.push(result[i].publicAmountByDay);
+				totalBonusData.push(result[i].totalBonus/1000);
+				//publicAmountByDayData.push(result[i].publicAmountByDay);
 				platformIncomeData.push(result[i].platformIncome);
-				awardData.push(result[i].award)
+				//awardData.push(result[i].award)
 				ventureFundData.push(result[i].ventureFund)
 				agentCommissionData.push(result[i].agentCommission)
 				userRecommendCommissionData.push(result[i].userRecommendCommission)
@@ -238,10 +240,10 @@ function nationChartDate(formId){
 									name : '全国公益商家',
 									data : sellerNumData
 								} ,
-								{
-									name : '公益总金额(k)',
-									data : publicTotalAmountData
-								},
+//								{
+//									name : '公益总金额(k)',
+//									data : publicTotalAmountData
+//								},
 								{
 									name : '当日累计分红乐心',
 									data : leMindByDayData
@@ -251,21 +253,25 @@ function nationChartDate(formId){
 									data : consumeByDayData
 								},
 								{
-									name : '当日分红乐豆(k)',
+									name : '当日分红金额(k)',
 									data : bonusLeScoreByDayData
 								},
 								{
-									name : '公益金额',
-									data : publicAmountByDayData
+									name : '累计分红(k)',
+									data : totalBonusData
 								},
+//								{
+//									name : '公益金额',
+//									data : publicAmountByDayData
+//								},
 								{
 									name : '平台收益',
 									data : platformIncomeData
 								},
-								{
-									name : '奖池',
-									data : awardData
-								},
+//								{
+//									name : '奖池',
+//									data : awardData
+//								},
 								{
 									name : '创业基金',
 									data : ventureFundData

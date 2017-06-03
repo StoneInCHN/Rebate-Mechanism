@@ -300,6 +300,13 @@ public class EndUserController extends MobileBaseController {
         e.printStackTrace();
       }
 
+      // 密码rsa解密后非空验证
+      if (password == null) {
+        response.setCode(CommonAttributes.FAIL_LOGIN);
+        response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
+        return response;
+      }
+
       // 密码长度验证
       if (password.length() < setting.getPasswordMinlength()) {
         response.setCode(CommonAttributes.FAIL_LOGIN);
@@ -1490,6 +1497,7 @@ public class EndUserController extends MobileBaseController {
     String token = request.getToken();
     String password = request.getPassword();
     String remark = request.getRemark();
+    Long entityId = request.getEntityId();
 
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
@@ -1499,6 +1507,12 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
+    // 银行卡非空验证
+    if (entityId == null) {
+      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+      response.setDesc(Message.error("rebate.request.param.missing").getContent());
+      return response;
+    }
     EndUser endUser = endUserService.find(userId);
     // 密码非空验证
     if (StringUtils.isEmpty(password)) {
@@ -1532,7 +1546,7 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
-    endUserService.userWithdraw(userId, remark);
+    endUserService.userWithdraw(userId, entityId, remark);
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);

@@ -47,12 +47,17 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal consumeByDay;
   /**
-   * 当日分红乐分（改完乐豆）
+   * 当日分红总额
    */
   private BigDecimal bonusLeScoreByDay;
 
   /**
-   * 每日分红金额
+   * 累计分红总额
+   */
+  private BigDecimal totalBonus;
+
+  /**
+   * 每日参与分红计算金额
    */
   private BigDecimal bonusByDay;
 
@@ -103,6 +108,17 @@ public class NationBonusReport extends BaseEntity {
    * 全国公益商家
    */
   private Integer sellerNum;
+
+
+  @JsonProperty
+  @Column(scale = 4, precision = 18)
+  public BigDecimal getTotalBonus() {
+    return totalBonus;
+  }
+
+  public void setTotalBonus(BigDecimal totalBonus) {
+    this.totalBonus = totalBonus;
+  }
 
   @Column(scale = 4, precision = 18)
   @JsonProperty

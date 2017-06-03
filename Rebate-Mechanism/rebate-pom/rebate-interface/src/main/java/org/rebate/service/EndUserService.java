@@ -128,7 +128,7 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @param remark
    * @return
    */
-  EndUser userWithdraw(Long userId, String remark);
+  EndUser userWithdraw(Long userId, Long bankCardId, String remark);
 
   /**
    * 推荐是否被限制

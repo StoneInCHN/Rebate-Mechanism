@@ -75,11 +75,11 @@
 		
 		<!-- 微信支付平台 -->
 		<!-- 秘钥 -->
-		<setting name="wechatKey" value="0xtkBKi7PXCeTZBoUB0Zkr1BCE3rYlcU" />
+		<setting name="wechatKey" value="4301467162C78D73625BC196A2EA254E" />
 		<!-- 微信分配的公众账号ID(企业号corpid即为此appId) -->
-		<setting name="wechatAppid" value="wxf120b070d4d9567a" />
+		<setting name="wechatAppid" value="wx8a45d94b37c548c7" />
 		<!-- 商户ID -->
-		<setting name="wechatMchId" value="1465116102" />
+		<setting name="wechatMchId" value="1481245182" />
 		<!-- 交易类型 -->
 		<setting name="wechatTradeType" value="APP" />
 		<!-- 通知地址 -->

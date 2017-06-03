@@ -32,14 +32,14 @@
 	<!-- 微信企业向个人付款接口 -->
 	<setting name="wechatTransfersUrl" value="https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers" />
 		
-	
+		
 	<!-- 短信平台-->
 	<!-- 发送短信URL -->
 	<setting name="smsUrl" value="http://124.172.234.157:8180/Service.asmx/SendMessage" />
 	<!-- 机构代码 -->
 	<setting name="smsOrgId" value="1801" />
 	<!-- 用户名 -->
-	<setting name="smsUserName" value="翼享生活" />
+	<setting name="smsUserName" value="享乐购" />
 	<!-- 密码 -->
 	<setting name="smsPwd" value="552233" />
 	
