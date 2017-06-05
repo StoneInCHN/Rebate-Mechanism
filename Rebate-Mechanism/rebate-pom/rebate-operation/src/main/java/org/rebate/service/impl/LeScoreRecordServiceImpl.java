@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,6 +19,7 @@ import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.ParamConfig;
+import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
@@ -31,6 +33,7 @@ import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.ParamConfigService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.utils.LogUtil;
+import org.rebate.utils.SpringUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -208,6 +211,48 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
     
     return null;
   }
+	/**
+	 * 单笔实时提现（代付）
+	 */
+	@Override
+	public Message singlePay(LeScoreRecord record, BankCard bankCard) {
+	      try {
+			    TranxServiceImpl tranxService = new TranxServiceImpl();
+			    tranxService.init();//初始化通联基础数据
+			    BigDecimal handingCharge = getAllinpayHandlingCharge(record.getAmount());//手续费
+			    BigDecimal payAmount = record.getAmount().abs().subtract(handingCharge);
+			    //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
+			    //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理
+			    if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
+			    	record.setStatus(ClearingStatus.FAILED);
+			    	record.setIsWithdraw(false);
+			    	record.setRemark(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
+			    	update(record);
+			    	LogUtil.debug(this.getClass(), "singlePay", "Withdraw Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handingCharge);
+			    	return Message.success("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge");
+			    }
+					 
+			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getBankName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0).toString());
+			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
+			    	String status = resultMap.get("status");
+			    	if ("success".equals(status)) {
+			    		record.setStatus(ClearingStatus.SUCCESS);
+				    	record.setIsWithdraw(true);
+					}else if ("error".equals(status)) {
+						record.setStatus(ClearingStatus.FAILED);
+						record.setIsWithdraw(false);
+					}
+			    	record.setReqSn(resultMap.get("req_sn"));
+			    	record.setSn(null);//单笔不像批量，没有sn号
+			    	record.setRemark(resultMap.get("err_msg"));
+			    	update(record);
+				}
+	        } catch (Exception e) {
+	          e.printStackTrace();
+	          return Message.error("rebate.common.system.error");
+	        }
+	        return Message.success("rebate.message.success");
+	}
   /**
    * 获取通联货款结算手续费
    * @param totalOrderAmount

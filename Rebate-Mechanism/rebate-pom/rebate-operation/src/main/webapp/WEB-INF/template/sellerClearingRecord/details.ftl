@@ -153,7 +153,7 @@
 									&nbsp;
 								</th>
 								<td>
-									[#if  sellerClearingRecord.clearingStatus == "FAILED"]
+									[#if  sellerClearingRecord.clearingStatus == "FAILED" && sellerClearingRecord.valid == true]
 										<input type="button" id="singlePay" class="btn btn-info" value="${message("rebate.sellerClearingRecord.singlePay")}" />
 									[/#if]
 									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />

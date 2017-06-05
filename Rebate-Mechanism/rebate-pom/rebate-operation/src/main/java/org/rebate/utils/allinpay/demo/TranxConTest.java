@@ -16,11 +16,10 @@ public class TranxConTest {
   public String merchantId = "200604000000445";
   public String password = "`12qwe";
   public String businessCode = "09400";//测试环境：虚拟账户取现
-//  public String pfxPath = "src\\main\\resources\\allinpayConfig\\test\\20060400000044502.p12";
-//  public String tltcerPath = "src\\main\\resources\\allinpayConfig\\test\\allinpay-pds.cer";
-  
-  public String pfxPath = "D:\\certs\\allinpayConfig\\test\\20060400000044502.p12";
-  public String tltcerPath = "D:\\certs\\allinpayConfig\\test\\allinpay-pds.cer";
+  public String pfxPath = "src\\main\\resources\\allinpayConfig\\test\\20060400000044502.p12";
+  public String tltcerPath = "src\\main\\resources\\allinpayConfig\\test\\allinpay-pds.cer";
+//  public String pfxPath = "D:\\certs\\allinpayConfig\\test\\20060400000044502.p12";
+//  public String tltcerPath = "D:\\certs\\allinpayConfig\\test\\allinpay-pds.cer";
   //生产环境
 //  public String url = "https://tlt.allinpay.com/aipg/ProcessServlet";
 //  public String pfxPassword = "111111";

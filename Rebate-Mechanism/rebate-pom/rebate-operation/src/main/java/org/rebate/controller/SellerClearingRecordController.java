@@ -8,14 +8,14 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
-import org.rebate.entity.Order;
+import org.rebate.entity.BankCard;
 import org.rebate.entity.SellerClearingRecord;
-import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.SellerClearingRecordReq;
 import org.rebate.service.SellerClearingRecordService;
+import org.rebate.service.BankCardService;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -29,7 +29,9 @@ public class SellerClearingRecordController extends BaseController {
 
   @Resource(name = "sellerClearingRecordServiceImpl")
   private SellerClearingRecordService sellerClearingRecordService;
-
+  
+  @Resource(name = "bankCardServiceImpl")
+  private BankCardService bankCardService;
 
   /**
    * 列表
@@ -89,13 +91,22 @@ public class SellerClearingRecordController extends BaseController {
   }
 
   /**
-   * 设置业务员
+   * 单笔实时结算
    */
   @RequestMapping(value = "/singlePay", method = RequestMethod.POST)
   public @ResponseBody Message singlePay(Long id) {
-     if(id==null){
+	 SellerClearingRecord sellerClearingRecord = null;
+     if(id == null){
        return ERROR_MESSAGE;
      }
-    return sellerClearingRecordService.singlePay(id);
+     sellerClearingRecord = sellerClearingRecordService.find(id);
+	 if (sellerClearingRecord == null) {
+		 return ERROR_MESSAGE;
+	 }
+	 BankCard bankCard = bankCardService.find(sellerClearingRecord.getBankCardId());
+	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
+		 return Message.error("无效的银行卡");
+	 }	 
+     return sellerClearingRecordService.singlePay(sellerClearingRecord, bankCard);
   }
 }

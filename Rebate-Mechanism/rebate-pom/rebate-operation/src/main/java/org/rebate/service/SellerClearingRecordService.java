@@ -1,8 +1,12 @@
 package org.rebate.service; 
 
 import java.util.Date;
+import java.util.List;
 
 import org.rebate.beans.Message;
+import org.rebate.entity.BankCard;
+import org.rebate.entity.ClearingOrderRelation;
+import org.rebate.entity.Order;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.framework.service.BaseService;
 
@@ -14,8 +18,10 @@ public interface SellerClearingRecordService extends BaseService<SellerClearingR
 	
 	/**
 	 * 货款单笔支付
-	 * @param id
 	 * @return
 	 */
-	Message singlePay(Long id);
+	Message singlePay(SellerClearingRecord sellerClearingRecord,
+			BankCard bankCard);
+	
+	List<ClearingOrderRelation> getRelationListByRecordId(Long recordId);
 }

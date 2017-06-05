@@ -160,13 +160,16 @@
 					<td>
 						[#if leScoreRecord.endUser??]
 					    	[#if leScoreRecord.endUser.seller != null]
-					    		${message("rebate.endUser.seller")}
-					    	[#elseif leScoreRecord.endUser.agent != null]
-					    		${message("rebate.endUser.agent")}
-					    	[#elseif leScoreRecord.endUser.isSalesman == true]	
-					    		${message("rebate.endUser.salesman")}
-					    	[#else]
-					    		${message("rebate.endUser.normal")}
+					    		${message("rebate.endUser.seller")}&nbsp;&nbsp;
+					    	[/#if]	
+					    	[#if leScoreRecord.endUser.agent != null]
+					    		${message("rebate.endUser.agent")}&nbsp;&nbsp;
+					    	[/#if]	
+					    	[#if leScoreRecord.endUser.isSalesman == true]	
+					    		${message("rebate.endUser.salesman")}&nbsp;&nbsp;
+					    	[/#if]	
+					    	[#if leScoreRecord.endUser.seller == null && leScoreRecord.endUser.agent == null && leScoreRecord.endUser.isSalesman == false]
+					    		${message("rebate.endUser.normal")}&nbsp;&nbsp;
 					    	[/#if]
 						[#else]
 							--

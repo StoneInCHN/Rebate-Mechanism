@@ -27,11 +27,11 @@ public class TranxMain {
     record.setRemark("1");
     records.add(record);
     //批量代付
-    tranxService.batchDaiFu(tranxContants.getUrl(), isfront, "1", "8", records);
+    //tranxService.batchDaiFu(tranxContants.getUrl(), isfront, "1", "8", records);
     
     
     // 单笔实时代付
-    // tranxService.singleDaiFushi(URL11, isfront);
+    tranxService.singleDaiFushi(tranxContants.getUrl(), isfront);
     // tranxService.batchDaiShou(URL11https, isfront);
     
     // tranxService.downBills(URL11, isfront);

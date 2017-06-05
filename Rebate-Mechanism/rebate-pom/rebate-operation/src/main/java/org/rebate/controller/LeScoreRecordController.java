@@ -7,7 +7,9 @@ import javax.annotation.Resource;
 
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.BankCard;
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -15,6 +17,7 @@ import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.job.LeScoreRecordJob;
 import org.rebate.request.LeScoreRecordReq;
+import org.rebate.service.BankCardService;
 import org.rebate.service.LeScoreRecordService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -31,6 +34,9 @@ public class LeScoreRecordController extends BaseController {
   
   @Resource(name = "leScoreRecordJob")
   private LeScoreRecordJob leScoreRecordJob;
+  
+  @Resource(name = "bankCardServiceImpl")
+  private BankCardService bankCardService;
   
 
   /**
@@ -117,4 +123,23 @@ public class LeScoreRecordController extends BaseController {
 		return Message.success("批量提现执行失败!");
 	}
   }
+  /**
+   * 单笔实时提现
+   */
+//  @RequestMapping(value = "/singlePay", method = RequestMethod.POST)
+//  public @ResponseBody Message singlePay(Long id) {
+//	 LeScoreRecord record = null;
+//     if(id == null){
+//       return ERROR_MESSAGE;
+//     }
+//     record = leScoreRecordService.find(id);
+//	 if (record == null) {
+//		 return ERROR_MESSAGE;
+//	 }
+//	 BankCard bankCard = bankCardService.find(record.getWithDrawType());
+//	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
+//		 return Message.error("无效的银行卡");
+//	 }	 
+//     return leScoreRecordService.singlePay(record, bankCard);
+//  }
 }

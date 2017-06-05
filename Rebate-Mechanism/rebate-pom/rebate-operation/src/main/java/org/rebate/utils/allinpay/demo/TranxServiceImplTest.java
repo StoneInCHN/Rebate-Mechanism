@@ -344,18 +344,18 @@ public class TranxServiceImplTest {
     InfoReq info = makeReq("100014");
     aipg.setINFO(info);
     Trans trans = new Trans();
-    trans.setBUSINESS_CODE("00600");
+    trans.setBUSINESS_CODE(tranxContants.getBusinessCode());
     trans.setMERCHANT_ID(tranxContants.merchantId);
     trans.setSUBMIT_TIME(df.format(new Date()));
-    trans.setACCOUNT_NAME("测试试");
-    trans.setACCOUNT_NO("622588121251757643");
+    trans.setACCOUNT_NAME("陈贵川");
+    trans.setACCOUNT_NO("6222629530005276796");
     trans.setACCOUNT_PROP("0");
     // trans.setACCOUNT_TYPE("01");
-    trans.setAMOUNT("2222");
-    trans.setBANK_CODE("0105");
+    trans.setAMOUNT("130");
+    //trans.setBANK_CODE("0105");
     trans.setCURRENCY("CNY");
-    trans.setCUST_USERID("252523524253xx");
-    trans.setTEL("13434245846");
+    trans.setCUST_USERID("单笔实时付款");
+    //trans.setTEL("13434245846");
     aipg.addTrx(trans);
 
     xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",

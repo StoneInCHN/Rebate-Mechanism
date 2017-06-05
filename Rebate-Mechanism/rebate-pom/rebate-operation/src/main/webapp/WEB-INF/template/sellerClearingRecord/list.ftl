@@ -105,7 +105,7 @@
               <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>-->
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
-        <table id="listTable" class="table table-striped table-bsellerClearingRecorded table-hover table-nowrap">
+        <table id="listTable" class="table table-responsive table-condensed table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
 					<th class="check">
@@ -115,14 +115,12 @@
 						${message("rebate.sellerClearingRecord.seller")}
 					</th>
 					<th>
-						${message("rebate.sellerClearingRecord.endUser")}
+						<a href="javascript:;" name="totalOrderAmount">${message("rebate.sellerClearingRecord.totalOrderAmount")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" name="amount">${message("rebate.sellerClearingRecord.amount")}</a>
 					</th>
-					<th>
-						<a href="javascript:;" name="totalOrderAmount">${message("rebate.sellerClearingRecord.totalOrderAmount")}</a>
-					</th>
+
 					<th>
 						<a href="javascript:;" class="sort" name="handlingCharge">${message("rebate.sellerClearingRecord.handlingCharge")}</a>
 					</th>
@@ -154,19 +152,16 @@
 			</thead>
 			<tbody>
 				[#list page.content as sellerClearingRecord]
-				<tr>
+				<tr [#if sellerClearingRecord.valid == null || sellerClearingRecord.valid == false ] class="greyColor" [/#if]/>
 					<td>
-						<input type="checkbox"  name="ids" value="${sellerClearingRecord.id}" />
-					</td>
-					<td>
-						<span title="${sellerClearingRecord.sn}">${sellerClearingRecord.sn}</sapn>
+						<input type="checkbox"  name="ids" value="${sellerClearingRecord.id}" [#if sellerClearingRecord.valid == null || sellerClearingRecord.valid == false ] disabled="disabled" [/#if]/>
 					</td>
 					<td>
 						${sellerClearingRecord.seller.name}
 					</td>
 					<td>
-						${sellerClearingRecord.endUser.nickName}
-					</td>
+						${sellerClearingRecord.totalOrderAmount}
+					</td>					
 					<td>
 						${sellerClearingRecord.amount}
 					</td>
@@ -188,13 +183,13 @@
 						${sellerClearingRecord.bankCardId}
 					</td>
 					<td>
-						${sellerClearingRecord.clearingSn}
+						<span title="${sellerClearingRecord.clearingSn}">${sellerClearingRecord.clearingSn}</sapn>
 					</td>
 					<td>
-						${sellerClearingRecord.sn}
+						<span title="${sellerClearingRecord.sn}">${sellerClearingRecord.sn}</sapn>
 					</td>
 					<td>
-						${sellerClearingRecord.reqSn}
+						<span title="${sellerClearingRecord.reqSn}">${sellerClearingRecord.reqSn}</sapn>
 					</td>
 					<td>
 						[#if sellerClearingRecord.valid ??]

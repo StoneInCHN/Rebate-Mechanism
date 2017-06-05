@@ -211,7 +211,96 @@ public class TranxServiceImpl {
     return null;
     
   }
+  /**
+   * 单笔实时付款（单笔实时代付）
+   * @throws Exception
+   */
 
+  public Map<String, String> singleDaiFushi(boolean isTLTFront, String accountName, String accountNo, String amount) throws Exception {
+    String xml = "";
+    AipgReq aipg = new AipgReq();
+    InfoReq info = makeReq("100014");
+    aipg.setINFO(info);
+    Trans trans = new Trans();
+    trans.setBUSINESS_CODE(tranxContants.getBusinessCode());
+    trans.setMERCHANT_ID(tranxContants.getMerchantId());
+    trans.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
+    trans.setACCOUNT_NAME(accountName);// 银行卡姓名
+    trans.setACCOUNT_NO(accountNo);
+    trans.setACCOUNT_PROP("0");// 0私人，1公司。不填时，默认为私人0。
+    // trans.setACCOUNT_TYPE("01");
+    trans.setAMOUNT(amount);
+    //trans.setBANK_CODE("0105");
+    trans.setCURRENCY("CNY");
+    //trans.setCUST_USERID("252523524253xx");
+    //trans.setTEL("13434245846");
+    aipg.addTrx(trans);
+
+    xml = XmlTools.buildXml(aipg, true);
+    
+    String xmlResponse = isFront(xml, isTLTFront, tranxContants.getUrl());
+    
+    Map<String, String> resultMap = new HashMap<String, String>(); 
+    
+    if (xmlResponse != null) {
+        Document doc = DocumentHelper.parseText(xmlResponse);
+        Element root = doc.getRootElement();// AIPG
+        Element infoElement = root.element("INFO");
+        String ret_code = infoElement.elementText("RET_CODE");
+        String err_msg = infoElement.elementText("ERR_MSG");
+        String req_sn = infoElement.elementText("REQ_SN");
+        resultMap.put("req_sn", req_sn);
+        Element transretElement = root.element("TRANSRET");
+        if ("0000".equals(ret_code) || "4000".equals(ret_code)) {
+        	String tran_ret_code = transretElement.elementText("RET_CODE");
+        	String tran_err_msg = transretElement.elementText("ERR_MSG");
+        	if ("0000".equals(tran_ret_code) || "4000".equals(tran_ret_code)) {
+            	System.out.println("单笔实时付款成功！TRANSRET RET_CODE= " + tran_ret_code + ", ERR_MSG=" + tran_err_msg);
+            	resultMap.put("status", "success");
+			}else {
+				System.out.println("单笔实时付款失败！TRANSRET RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
+				resultMap.put("status", "error");
+			}
+        	resultMap.put("err_msg", tran_err_msg);
+		}else {
+			System.out.println("单笔实时付款失败！INFO RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
+			resultMap.put("status", "error");
+			resultMap.put("err_msg", err_msg);
+		}
+	}
+    return resultMap;
+  }
+  /**
+   * 日期：Sep 4, 2012 功能：实时单笔代收付，100011是实时代笔代收，100014是实时单笔代付
+   * 
+   * @throws Exception
+   */
+
+  public void singleDaiShoushi(String url, boolean isTLTFront) throws Exception {
+    String xml = "";
+    AipgReq aipg = new AipgReq();
+    InfoReq info = makeReq("100011");
+    aipg.setINFO(info);
+    Trans trans = new Trans();
+    trans.setBUSINESS_CODE("00600");
+    trans.setMERCHANT_ID(tranxContants.getMerchantId());
+    trans.setSUBMIT_TIME(df.format(new Date()));
+    trans.setACCOUNT_NAME("测试试");
+    trans.setACCOUNT_NO("622588121251757643");
+    trans.setACCOUNT_PROP("0");
+    // trans.setACCOUNT_TYPE("01");
+    trans.setAMOUNT("2222");
+    trans.setBANK_CODE("0105");
+    trans.setCURRENCY("CNY");
+    trans.setCUST_USERID("252523524253xx");
+    trans.setTEL("13434245846");
+    aipg.addTrx(trans);
+
+    xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",
+                                        // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
+    isFront(xml, isTLTFront, url);
+
+  }
   /**
    * 日期：Sep 4, 2012 功能：
    * 
@@ -422,37 +511,7 @@ public class TranxServiceImpl {
     FileUtil.saveToFile(CONTFEE, "bill.txt", "UTF-8");
   }
 
-  /**
-   * 日期：Sep 4, 2012 功能：实时单笔代收付，100011是实时代笔代收，100014是实时单笔代付
-   * 
-   * @throws Exception
-   */
 
-  public void singleDaiFushi(String url, boolean isTLTFront) throws Exception {
-    String xml = "";
-    AipgReq aipg = new AipgReq();
-    InfoReq info = makeReq("100014");
-    aipg.setINFO(info);
-    Trans trans = new Trans();
-    trans.setBUSINESS_CODE("00600");
-    trans.setMERCHANT_ID(tranxContants.getMerchantId());
-    trans.setSUBMIT_TIME(df.format(new Date()));
-    trans.setACCOUNT_NAME("测试试");
-    trans.setACCOUNT_NO("622588121251757643");
-    trans.setACCOUNT_PROP("0");
-    // trans.setACCOUNT_TYPE("01");
-    trans.setAMOUNT("2222");
-    trans.setBANK_CODE("0105");
-    trans.setCURRENCY("CNY");
-    trans.setCUST_USERID("252523524253xx");
-    trans.setTEL("13434245846");
-    aipg.addTrx(trans);
-
-    xml = XmlTools.buildXml(aipg, true);// .replaceAll("</INFO>",
-                                        // "</INFO><BODY>").replaceAll("</AIPG>", "</BODY></AIPG>");
-    isFront(xml, isTLTFront, url);
-
-  }
 
   /**
    * @param reqsn 交易流水号
