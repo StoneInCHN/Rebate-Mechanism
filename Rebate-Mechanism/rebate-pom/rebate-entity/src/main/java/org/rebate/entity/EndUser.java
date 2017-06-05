@@ -264,6 +264,11 @@ public class EndUser extends BaseEntity {
    */
   private Boolean isSalesman = false;
 
+  /**
+   * 业务员上传商家权限是否开启
+   */
+  private Boolean isSalesmanApply;
+
 
   @Transient
   public SellerApplication getSellerApplication() {
@@ -277,6 +282,15 @@ public class EndUser extends BaseEntity {
 
   public void setSellerApplication(SellerApplication sellerApplication) {
     this.sellerApplication = sellerApplication;
+  }
+
+
+  public Boolean getIsSalesmanApply() {
+    return isSalesmanApply;
+  }
+
+  public void setIsSalesmanApply(Boolean isSalesmanApply) {
+    this.isSalesmanApply = isSalesmanApply;
   }
 
   public Boolean getIsSalesman() {

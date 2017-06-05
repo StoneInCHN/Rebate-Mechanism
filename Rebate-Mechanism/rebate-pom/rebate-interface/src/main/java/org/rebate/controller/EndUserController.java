@@ -368,7 +368,8 @@ public class EndUserController extends MobileBaseController {
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
-            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat", "isSalesman"};
+            "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
+            "isSalesman", "isSalesmanApply"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, loginUser);
     map.putAll(endUserService.isUserHasSeller(loginUser));
     map.put("isSetLoginPwd", false);
@@ -901,7 +902,7 @@ public class EndUserController extends MobileBaseController {
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
             "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
-            "wechatNickName", "isSalesman"};
+            "wechatNickName", "isSalesman", "isSalesmanApply"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
     map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
