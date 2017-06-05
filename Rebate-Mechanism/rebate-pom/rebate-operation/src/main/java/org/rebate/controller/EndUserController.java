@@ -286,6 +286,21 @@ public class EndUserController extends BaseController {
      }
     EndUser endUser = endUserService.find(id);
     endUser.setIsSalesman(isSalesman);
+    endUser.setIsSalesmanApply(true);
+    endUserService.update(endUser);
+    return SUCCESS_MESSAGE;
+  }
+  
+  /**
+   * 设置业务员上传商家审核功能
+   */
+  @RequestMapping(value = "/updateSalesManApply", method = RequestMethod.POST)
+  public @ResponseBody Message updateSalesManApply(Long id ,Boolean isSalesmanApply) {
+     if(id==null||isSalesmanApply==null){
+       return ERROR_MESSAGE;
+     }
+    EndUser endUser = endUserService.find(id);
+    endUser.setIsSalesmanApply(isSalesmanApply);
     endUserService.update(endUser);
     return SUCCESS_MESSAGE;
   }

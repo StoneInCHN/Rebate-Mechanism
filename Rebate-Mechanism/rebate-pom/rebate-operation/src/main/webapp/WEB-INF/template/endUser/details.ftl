@@ -220,7 +220,14 @@
 								</th>
 								<td>
 									[#if endUser.isSalesman]
-									 	<input type="button" id="salesInActive" class="btn btn-danger" value="${message("rebate.endUser.salesMan.inActive")}" />
+									 	<!--
+									 		<input type="button" id="salesInActive" class="btn btn-danger" value="${message("rebate.endUser.salesMan.inActive")}" />
+										-->
+										[#if endUser.isSalesmanApply]
+									 		<input type="button" id="applyInActive" class="btn btn-danger" value="${message("rebate.endUser.salesmanApply.inActive")}" />
+										[#else] 	
+										  	<input type="button" id="applyActive" class="btn btn-info" value="${message("rebate.endUser.salesmanApply.active")}" />
+										[/#if]
 									[#else] 	
 									  	<input type="button" id="salesActive" class="btn btn-info" value="${message("rebate.endUser.salesMan.active")}" />
 									[/#if]
@@ -241,6 +248,12 @@
 		});
 		$("#salesInActive").click(function(){
 			setSalesMan(false);
+		});
+		$("#applyInActive").click(function(){
+			setSalesManApply(false);
+		});
+		$("#applyActive").click(function(){
+			setSalesManApply(true);
 		});
 		
 		function setSalesMan(flag){
@@ -264,6 +277,48 @@
 						data: {
 							id:${endUser.id},
 							isSalesman:flag
+						},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if(message.type == "success"){
+									alert(message.content);
+									setTimeout(function() {
+										location.reload();
+									}, 1000);
+							}else{
+								alert(message.content);
+							}
+						}
+					});
+				},
+				cancelValue: '取消',
+				cancel: function () {}
+			});
+			d.show();
+		}
+
+		function setSalesManApply(flag){
+			var content = "";
+			if(flag == "undefined"){
+				return false;
+			}else if(flag){
+				content= "确定要开启当前业务员上传商家审核资料的资格吗?";
+			}else{
+				content= "确定要取消当前业务员上传商家审核资料的资格吗?";
+			}
+			
+			var d = dialog({
+				title: '提示',
+				content: content,
+				okValue: '确定',
+				ok: function () {
+					$.ajax({
+						url: "updateSalesManApply.jhtml",
+						type: "POST",
+						data: {
+							id:${endUser.id},
+							isSalesmanApply:flag
 						},
 						dataType: "json",
 						cache: false,
