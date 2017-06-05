@@ -62,6 +62,7 @@ public class OrderController extends BaseController {
           TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getOrderDateTo()))));
       model.addAttribute("orderDateTo", request.getOrderDateTo());
     }
+    filters.add(Filter.eq("isSallerOrder", false));
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
@@ -69,6 +70,7 @@ public class OrderController extends BaseController {
     model.addAttribute("page", orderService.findPage(pageable));
     return "/order/list";
   }
+
   /**
    * 查看
    */
