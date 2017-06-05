@@ -47,7 +47,7 @@
 								</th>
 								<td>
 									[#if  leScoreRecord.amount??]
-										${leScoreRecord.amount}
+										${leScoreRecord.amount * -1}
 									[#else]
 										--
 									[/#if]

@@ -131,7 +131,7 @@
 				[#list page.content as leScoreRecord]
 				<tr>
 						<td>
-							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus != "AUDIT_PASSED" || leScoreRecord.isWithdraw || leScoreRecord.status == "PROCESSING" || leScoreRecord.status == "FAILED"] disabled="disabled" [/#if]/>
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus != "AUDIT_PASSED" || leScoreRecord.isWithdraw || leScoreRecord.status != null ] disabled="disabled" [/#if]/>
 						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
