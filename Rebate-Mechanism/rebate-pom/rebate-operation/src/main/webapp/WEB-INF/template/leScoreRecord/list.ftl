@@ -102,6 +102,9 @@
 						<a href="javascript:;" class="sort" name="amount">${message("rebate.leScoreRecord.amount")}</a>
 					</th>
 					<th>
+						<span>${message("rebate.leScoreRecord.endUser.role")}</span>
+					</th>					
+					<th>
 						<a href="javascript:;" class="sort" name="withdrawStatus">${message("rebate.leScoreRecord.withdrawStatus")}</a>
 					</th>
 					<th>
@@ -154,6 +157,21 @@
 							--
 						[/#if]
 					</td>
+					<td>
+						[#if leScoreRecord.endUser??]
+					    	[#if leScoreRecord.endUser.seller != null]
+					    		${message("rebate.endUser.seller")}
+					    	[#elseif leScoreRecord.endUser.agent != null]
+					    		${message("rebate.endUser.agent")}
+					    	[#elseif leScoreRecord.endUser.isSalesman == true]	
+					    		${message("rebate.endUser.salesman")}
+					    	[#else]
+					    		${message("rebate.endUser.normal")}
+					    	[/#if]
+						[#else]
+							--
+						[/#if]
+					</td>	
 					<td>
 						[#if  leScoreRecord.withdrawStatus =="AUDIT_WAITING"]
 							<span class="label label-info">${message("rebate.leScoreRecord.withdrawStatus.AUDIT_WAITING")}</span>

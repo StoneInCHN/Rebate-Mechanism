@@ -55,6 +55,26 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.leScoreRecord.endUser.role")}:
+								</th>
+								<td>
+									[#if leScoreRecord.endUser??]
+								    	[#if leScoreRecord.endUser.seller != null]
+								    		${message("rebate.endUser.seller")}
+								    	[#elseif leScoreRecord.endUser.agent != null]
+								    		${message("rebate.endUser.agent")}
+								    	[#elseif leScoreRecord.endUser.isSalesman == true]	
+								    		${message("rebate.endUser.salesman")}
+								    	[#else]
+								    		${message("rebate.endUser.normal")}
+								    	[/#if]
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.leScoreRecord.userCurLeScore")}:
 								</th>
 								<td>
