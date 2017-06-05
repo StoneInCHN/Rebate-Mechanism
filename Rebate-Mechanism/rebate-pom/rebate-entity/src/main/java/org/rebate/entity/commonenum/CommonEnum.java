@@ -146,7 +146,7 @@ public class CommonEnum {
     RECOMMEND_DIRECT_USER,
     /** 消费用户的间接推荐人收益百分比 8 */
     RECOMMEND_INDIRECT_USER,
-    /** 消费商户的推荐人收益百分比 9 */
+    /** 推荐商家提成占总让利百分比 9 */
     RECOMMEND_SELLER,
     /** 公益金额百分比 10 */
     PUBLIC_BENEFIT,
@@ -170,8 +170,6 @@ public class CommonEnum {
     AGENT_COMMISSION_PERCENTAGE,
     /** 用户推荐提成占总让利百分比 20 */
     USER_RECOMMEND_COMMISSION_PERCENTAGE,
-    /** 商家联盟提成占总让利百分比 21 */
-    SELLER_RECOMMEND_COMMISSION_PERCENTAGE,
   }
 
   /**

@@ -97,6 +97,9 @@
                         <a href="javascript:;" name="bonusLeScoreByDay">${message("rebate.nationBonusReport.bonusLeScoreByDay")}</a>
                     </th>
                     <th>
+                        <a href="javascript:;" name="totalBonus">${message("rebate.nationBonusReport.totalBonus")}</a>
+                    </th>
+                    <th>
                         <a href="javascript:;" name="publicAmountByDay">${message("rebate.nationBonusReport.publicAmountByDay")}</a>
                     </th>
                     <th>
@@ -153,6 +156,9 @@
                     </td>
                     <td>
 					${report.bonusLeScoreByDay}
+                    </td>
+                    <td>
+					${report.totalBonus}
                     </td>
                     <td>
 					${report.publicAmountByDay}
@@ -230,7 +236,7 @@
             </div>
             <div id="nationBonusReportDivId" style="height:400px;width:99%;"></div>
     </div>
-    </form
+    </form>
 </div>
 
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>

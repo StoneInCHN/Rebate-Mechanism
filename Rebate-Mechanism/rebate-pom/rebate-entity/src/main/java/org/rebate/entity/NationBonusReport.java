@@ -107,6 +107,22 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal sellerRecommendCommission;
 
+  /**
+   * 累计分红总额
+   */
+  private BigDecimal totalBonus;
+
+
+  @Column(scale = 4, precision = 18)
+  @JsonProperty
+  public BigDecimal getTotalBonus() {
+    return totalBonus;
+  }
+
+  public void setTotalBonus(BigDecimal totalBonus) {
+    this.totalBonus = totalBonus;
+  }
+
   @Column(scale = 4, precision = 18)
   @JsonProperty
   public BigDecimal getConsumeTotalAmount() {
