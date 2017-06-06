@@ -290,7 +290,9 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   public EndUser userWithdraw(Long userId, String remark) {
     EndUser endUser = endUserDao.find(userId);
     Map<String, BigDecimal> map = getAvlLeScore(endUser);
-
+    if (map.get("avlLeScore").compareTo(new BigDecimal(0)) <= 0) {
+      return null;
+    }
     LeScoreRecord leScoreRecord = new LeScoreRecord();
     leScoreRecord.setRemark(remark);
     leScoreRecord.setEndUser(endUser);
@@ -310,13 +312,12 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     endUser.setCurLeScore(endUser.getCurLeScore().subtract(map.get("avlLeScore")));
     endUserDao.merge(endUser);
 
-    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
-      for (Seller seller : endUser.getSellers()) {
-        seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeLeScore")));
-        sellerDao.merge(seller);
-        break;
-      }
+    if (map.get("incomeLeScore").compareTo(new BigDecimal(0)) > 0) {
+      Seller seller = endUser.getSeller();
+      seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeLeScore")));
+      sellerDao.merge(seller);
     }
+
     return endUser;
   }
 

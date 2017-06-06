@@ -250,9 +250,9 @@ public class EndUser extends BaseEntity {
   private Boolean isLimitRecommend;
 
   /**
-   * 商户名称
+   * 商户
    */
-  private String sellerName;
+  private Seller seller;
 
   // /**
   // * 商户图片
@@ -288,17 +288,21 @@ public class EndUser extends BaseEntity {
   }
 
   @Transient
-  public String getSellerName() {
+  public Seller getSeller() {
     if (this.getSellers() != null) {
-      for (Seller seller : this.getSellers()) {
-        return seller.getName();
+      if (this.getSellers() != null) {
+        for (Seller seller : this.getSellers()) {
+          if (!AccountStatus.DELETE.equals(seller.getAccountStatus())) {
+            return seller;
+          }
+        }
       }
     }
-    return sellerName;
+    return seller;
   }
 
-  public void setSellerName(String sellerName) {
-    this.sellerName = sellerName;
+  public void setSeller(Seller seller) {
+    this.seller = seller;
   }
 
 
