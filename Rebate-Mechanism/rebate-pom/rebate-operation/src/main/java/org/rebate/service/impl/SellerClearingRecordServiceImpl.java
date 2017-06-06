@@ -87,8 +87,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   		List<Filter> filters = new ArrayList<Filter>();
   		filters.add(Filter.ne("status", OrderStatus.UNPAID));//订单不等于未支付，即已支付 或者 评价后
   		filters.add(Filter.eq("isClearing", false));//订单未结算
-          Date[] queryDates = {startDate, endDate};
-          filters.add(Filter.between("paymentTime", queryDates));//订单支付时间在开始查询和结束查询之间
+  		filters.add(Filter.eq("isSallerOrder", false));//不是录单订单
+        Date[] queryDates = {startDate, endDate};
+        filters.add(Filter.between("paymentTime", queryDates));//订单支付时间在开始查询和结束查询之间
   		List<Order> orderList = orderService.findList(null, filters, null);
   		List<Order> orders = new ArrayList<Order>();
   		for (int i = 0; i < orderList.size(); i++) {
