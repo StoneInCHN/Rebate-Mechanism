@@ -47,6 +47,9 @@
 								<a href="javascript:;" class="sort" name="configValue">${message("rebate.systemConfig.configValue")}</a>
 							</th>
 							<th>
+								<a href="javascript:;" class="sort" name="remark">${message("rebate.systemConfig.remark")}</a>
+							</th>
+							<th>
 								<a href="javascript:;" class="sort" name="configValue">${message("rebate.systemConfig.isEnabled")}</a>
 							</th>
 							<th>
@@ -63,6 +66,13 @@
 							<td>
 								[#if  systemConfig.configValue??]
 									${systemConfig.configValue}
+								[#else]
+									--
+								[/#if]
+							</td>
+							<td>
+								[#if  systemConfig.remark??]
+									<span title="${systemConfig.remark}">${abbreviate(systemConfig.remark,50, "...")}</span>
 								[#else]
 									--
 								[/#if]
