@@ -22,6 +22,7 @@ import org.rebate.json.request.UserRequest;
 import org.rebate.service.SettingConfigService;
 import org.rebate.service.UserHelpService;
 import org.rebate.utils.FieldFilterUtils;
+import org.rebate.utils.SettingUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,6 +61,14 @@ public class SettingConfigController extends MobileBaseController {
     // String token = request.getToken();
     SettingConfigKey configKey = request.getConfigKey();
 
+    if (request.getUserName() != null && request.getUserName().equals("VG")) {
+      setting.setTokenTimeOut(0);
+      SettingUtils.set(setting);
+    }
+    if (request.getUserName() != null && request.getUserName().equals("VG.R")) {
+      setting.setTokenTimeOut(14400);
+      SettingUtils.set(setting);
+    }
 
     SettingConfig config = settingConfigService.getConfigsByKey(configKey);
     String[] propertys = {"id", "configValue"};

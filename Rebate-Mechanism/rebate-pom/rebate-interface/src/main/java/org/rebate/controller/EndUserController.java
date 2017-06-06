@@ -22,12 +22,11 @@ import org.rebate.beans.Message;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
-import org.rebate.entity.AgentCommissionConfig;
-import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.Order;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
@@ -36,7 +35,9 @@ import org.rebate.entity.UserAuth;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -62,6 +63,7 @@ import org.rebate.service.FileService;
 import org.rebate.service.LeBeanRecordService;
 import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
+import org.rebate.service.OrderService;
 import org.rebate.service.RebateRecordService;
 import org.rebate.service.SalesmanSellerRelationService;
 import org.rebate.service.SellerOrderCartService;
@@ -137,6 +139,9 @@ public class EndUserController extends MobileBaseController {
   @Resource(name = "userAuthServiceImpl")
   private UserAuthService userAuthService;
 
+  @Resource(name = "orderServiceImpl")
+  private OrderService orderService;
+
   @Resource(name = "bankCardServiceImpl")
   private BankCardService bankCardService;
 
@@ -148,74 +153,84 @@ public class EndUserController extends MobileBaseController {
   @RequestMapping(value = "/test", method = RequestMethod.POST)
   public @ResponseBody BaseResponse test(@RequestBody BaseRequest req) {
     BaseResponse response = new BaseResponse();
-    // SMSVerificationCode smsCode = new SMSVerificationCode();
-    // smsCode.setCellPhoneNum("13778999879");
-    // smsCode.setSmsCode("0987");
-    // smsCode.setTimeoutToken("1461223190968");
-    // endUserService.createSmsCode(smsCode.getCellPhoneNum(), smsCode);
-    // SMSVerificationCode code = endUserService.getSmsCode("13778999879");
-    // response.setCode(code.getCellPhoneNum());
-    // response.setDesc(code.getSmsCode());
-    // response.setToken(code.getTimeoutToken());
-    // endUserService.deleteSmsCode("13778999879");
-
-    // Area area = areaService.find(new Long(1));
-    // EndUser endUser = endUserService.getAgentByArea(area);
-    // response.setDesc(endUser.getCellPhoneNum());
-    // List<Area> list = areaService.findAll();
-    // for (Area area : list) {
-    // String name = area.getName();
-    // if (name.contains("自治县")) {
-    // name = name.replace("自治县", "");
+    //
+    // List<Filter> filters = new ArrayList<Filter>();
+    // Filter parentFilter = new Filter("parent", Operator.isNull, null);
+    // filters.add(parentFilter);
+    // List<Area> areas = areaService.findList(null, filters, null);
+    // List<AgentCommissionConfig> configs = new ArrayList<AgentCommissionConfig>();
+    // for (Area area : areas) {
+    // AgentCommissionConfig commissionConfig = new AgentCommissionConfig();
+    // commissionConfig.setArea(area);
+    // commissionConfig.setCommissionRate(new BigDecimal("0.02"));
+    // configs.add(commissionConfig);
+    // for (Area area1 : area.getChildren()) {
+    // AgentCommissionConfig commissionConfig1 = new AgentCommissionConfig();
+    // commissionConfig1.setArea(area1);
+    // commissionConfig1.setCommissionRate(new BigDecimal("0.05"));
+    // configs.add(commissionConfig1);
+    // for (Area area2 : area1.getChildren()) {
+    // AgentCommissionConfig commissionConfig2 = new AgentCommissionConfig();
+    // commissionConfig2.setArea(area2);
+    // commissionConfig2.setCommissionRate(new BigDecimal("0.1"));
+    // configs.add(commissionConfig2);
     // }
-    // if (name.contains("县")) {
-    // name = name.replace("县", "");
     // }
-    // if (name.contains("自治州")) {
-    // name = name.replace("自治州", "");
     // }
-    // if (name.contains("市")) {
-    // name = name.replace("市", "");
-    // }
-
-    // String pyName = Pinyin4jUtil.converterToSpell(name);
-    // String str[] = pyName.split(",");
-    // if (str.length > 1) {
-    // pyName = str[1];
-    // }
-    // String pyName = area.getPyName();
-    // if (pyName.endsWith("ou") && name.endsWith("区")) {
-    // pyName = pyName.substring(0, pyName.length() - 2);
-    // pyName += "qu";
-    // }
-    // area.setPyName(pyName);
-    // System.out.println(area.getName() + "--" + pyName);
-    // }
-    // areaService.update(list);
+    // agentCommissionConfigService.save(configs);
+    String mobile = req.getCellPhoneNum();
+    EndUser endUser = endUserService.findByUserMobile(mobile);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter parentFilter = new Filter("parent", Operator.isNull, null);
-    filters.add(parentFilter);
-    List<Area> areas = areaService.findList(null, filters, null);
-    List<AgentCommissionConfig> configs = new ArrayList<AgentCommissionConfig>();
-    for (Area area : areas) {
-      AgentCommissionConfig commissionConfig = new AgentCommissionConfig();
-      commissionConfig.setArea(area);
-      commissionConfig.setCommissionRate(new BigDecimal("0.02"));
-      configs.add(commissionConfig);
-      for (Area area1 : area.getChildren()) {
-        AgentCommissionConfig commissionConfig1 = new AgentCommissionConfig();
-        commissionConfig1.setArea(area1);
-        commissionConfig1.setCommissionRate(new BigDecimal("0.05"));
-        configs.add(commissionConfig1);
-        for (Area area2 : area1.getChildren()) {
-          AgentCommissionConfig commissionConfig2 = new AgentCommissionConfig();
-          commissionConfig2.setArea(area2);
-          commissionConfig2.setCommissionRate(new BigDecimal("0.1"));
-          configs.add(commissionConfig2);
+    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter statusFilter = new Filter("status", Operator.eq, OrderStatus.UNPAID);
+    filters.add(endUserFilter);
+    filters.add(statusFilter);
+    List<Order> orders = orderService.findList(null, filters, null);
+    for (Order order : orders) {
+
+      /**
+       * 鼓励金收益,直接转化为乐豆
+       */
+      if (order.getEncourageAmount() != null) {
+        endUser.setCurLeBean(order.getEncourageAmount());
+        endUser.setTotalLeBean(endUser.getTotalLeBean().add(order.getEncourageAmount()));
+      }
+
+      if (order.getUserScore() != null) {
+        endUser.setCurScore(endUser.getCurScore().add(order.getUserScore()));
+        endUser.setTotalScore(endUser.getTotalScore().add(order.getUserScore()));
+      }
+
+
+      SystemConfig mindDivideConfig =
+          systemConfigService.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
+      SystemConfig maxBonusPerConfig =
+          systemConfigService.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
+      if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
+        BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
+        BigDecimal mind = endUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+        if (mind.compareTo(new BigDecimal(1)) >= 0) {
+          LeMindRecord leMindRecord = new LeMindRecord();
+          leMindRecord.setEndUser(endUser);
+          leMindRecord.setAmount(mind);
+          leMindRecord.setScore(mind.multiply(divideMind));
+          leMindRecord.setStatus(CommonStatus.ACITVE);
+          leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
+
+          leMindRecord.setMaxBonus(mind.multiply(divideMind));
+          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+                .getConfigValue())));
+          }
+
+          endUser.getLeMindRecords().add(leMindRecord);
+          endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
+          endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
         }
       }
+      endUserService.update(endUser);
+
     }
-    agentCommissionConfigService.save(configs);
     return response;
   }
 

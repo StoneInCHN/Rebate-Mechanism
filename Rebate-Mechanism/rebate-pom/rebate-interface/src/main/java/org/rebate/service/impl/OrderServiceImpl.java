@@ -683,12 +683,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Date startTime = TimeUtils.formatDate2Day0(curDate);
     Date endTime = TimeUtils.formatDate2Day59(curDate);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter start = new Filter("paymentTime", Operator.ge, startTime);
-    Filter end = new Filter("paymentTime", Operator.le, endTime);
-    Filter status = new Filter("status", Operator.ne, OrderStatus.UNPAID);
-    filters.add(status);
-    filters.add(start);
-    filters.add(end);
+    Filter startFilter = new Filter("paymentTime", Operator.ge, startTime);
+    Filter endFilter = new Filter("paymentTime", Operator.le, endTime);
+    Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    Filter sellerFilter = new Filter("seller", Operator.eq, sellerId);
+    filters.add(statusFilter);
+    filters.add(startFilter);
+    filters.add(endFilter);
+    filters.add(sellerFilter);
     List<Order> orders = orderDao.findList(null, null, filters, null);
     BigDecimal curTotalOrderAmount = new BigDecimal("0");
     try {
