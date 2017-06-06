@@ -332,7 +332,9 @@ public class EndUser extends BaseEntity {
   public Seller getSeller() {
     if (this.getSellers() != null) {
       for (Seller seller : this.getSellers()) {
-        return seller;
+        if (!AccountStatus.DELETE.equals(seller.getAccountStatus())) {
+          return seller;
+        }
       }
     }
     return seller;
