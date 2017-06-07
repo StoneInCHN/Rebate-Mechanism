@@ -67,8 +67,13 @@ public class UserValidCheckAspect {
         } else {
           Seller seller = null;
           for (Seller s : sellers) {
-            seller = s;
-            break;
+            if (!AccountStatus.DELETE.equals(s.getAccountStatus())) {
+              seller = s;
+              break;
+            }
+          }
+          if (seller == null) {
+            validFlag = "sellerNoexist";
           }
           if (AccountStatus.DELETE.equals(seller.getAccountStatus())
               || AccountStatus.LOCKED.equals(seller.getAccountStatus())) {
@@ -126,7 +131,6 @@ public class UserValidCheckAspect {
     return joinPoint.proceed();
 
   }
-
 
   /**
    * 获取注解中对方法的参数信息 用于Controller层注解

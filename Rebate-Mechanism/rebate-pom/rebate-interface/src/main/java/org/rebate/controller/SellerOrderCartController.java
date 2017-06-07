@@ -70,7 +70,7 @@ public class SellerOrderCartController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/add", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseOne<Map<String, Object>> add(@RequestBody OrderRequest request) {
 
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();

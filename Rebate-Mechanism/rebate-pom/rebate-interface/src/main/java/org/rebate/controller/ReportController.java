@@ -120,8 +120,8 @@ public class ReportController extends MobileBaseController {
 
     List<NationBonusReport> list = nationBonusReportService.findList(1, filters, orderings);
     String[] propertys =
-        {"id", "consumeTotalAmount", "consumePeopleNum", "sellerNum", "leMindByDay",
-            "consumeByDay", "bonusLeScoreByDay", "totalBonus", "reportDate"};
+        {"id", "consumeTotalAmount", "consumePeopleNum", "sellerNum", "calValue", "consumeByDay",
+            "totalBonus", "reportDate"};
     if (list != null && list.size() > 0) {
       Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, list.get(0));
       response.setMsg(result);

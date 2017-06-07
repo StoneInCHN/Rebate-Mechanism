@@ -83,6 +83,17 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     String msg = "";
     BonusParamPerDay bonusParamPerDay = new BonusParamPerDay();
     bonusParamPerDay.setBonusDate(startTime);
+    /**
+     * 乐心分红value值
+     */
+    SystemConfig mindValueConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_VALUE);
+    BigDecimal value = new BigDecimal("0");
+    if (mindValueConfig != null && mindValueConfig.getConfigValue() != null) {
+      // 系统配置的value值
+      value = new BigDecimal(mindValueConfig.getConfigValue());
+      bonusParamPerDay.setCalValue(value.toString());
+    }
+
     try {
       Boolean isHoliday = holidayConfigService.isHoliday(startTime);
       if (isHoliday) {
@@ -235,20 +246,15 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
 
       /**
-       * 乐心分红value值
+       * 计算乐心分红value值
        */
-      SystemConfig mindValueConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_VALUE);
-      BigDecimal value = new BigDecimal("0");
-      if (mindValueConfig != null && mindValueConfig.getConfigValue() != null) {
-        // 系统配置的value值
-        value = new BigDecimal(mindValueConfig.getConfigValue());
-      } else {
+      if (mindValueConfig == null) {
         // 计算的value值
         value = totalBonusPer.divide(leMindSize, 4, BigDecimal.ROUND_HALF_UP);
+        bonusParamPerDay.setCalValue(value.toString());
       }
 
 
-      bonusParamPerDay.setCalValue(value.toString());
       bonusParamPerDay.setAvlLeMindCount(leMindSize.intValue());
 
       BigDecimal totalBonusAmountByMind = new BigDecimal("0");

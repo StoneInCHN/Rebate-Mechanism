@@ -109,6 +109,19 @@ public class NationBonusReport extends BaseEntity {
    */
   private Integer sellerNum;
 
+  /**
+   * 乐心的每天的市值
+   */
+  private String calValue;
+
+  @Column(length = 30)
+  public String getCalValue() {
+    return calValue;
+  }
+
+  public void setCalValue(String calValue) {
+    this.calValue = calValue;
+  }
 
   @JsonProperty
   @Column(scale = 4, precision = 18)

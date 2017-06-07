@@ -533,8 +533,8 @@ public class OrderController extends MobileBaseController {
     Page<Order> page = orderService.findPage(pageable);
     String[] propertys =
         {"id", "seller.name", "createDate", "endUser.nickName", "sellerScore", "amount",
-            "endUser.cellPhoneNum", "endUser.userPhoto", "sn", "remark", "userScore", "status",
-            "evaluate.sellerReply"};
+            "endUser.cellPhoneNum", "endUser.userPhoto", "sn", "rebateAmount", "isSallerOrder",
+            "remark", "userScore", "status", "evaluate.sellerReply"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -670,7 +670,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/getSallerOrder", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> getSallerOrder(
       @RequestBody OrderRequest request) {
 
@@ -736,7 +736,7 @@ public class OrderController extends MobileBaseController {
    * @return
    */
   @RequestMapping(value = "/generateSellerOrder", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseOne<Map<String, Object>> generateSellerOrder(
       @RequestBody OrderRequest req, HttpServletRequest httpReq) {
 
