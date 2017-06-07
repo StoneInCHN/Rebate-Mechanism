@@ -89,5 +89,12 @@
 	<logConfig operation="系统管理添加地区" urlPattern="/console/area/save.jhtml" />
 	<logConfig operation="系统管理修改地区" urlPattern="/console/area/update.jhtml" />
 	<logConfig operation="系统管理删除地区" urlPattern="/console/area/delete.jhtml" />
+	
+	<logConfig operation="基础数据配置修改支付方式" urlPattern="/console/systemConfig/updatePay.jhtml" />
+	<logConfig operation="基础数据配置修改" urlPattern="/console/systemConfig/update.jhtml" />
+	<logConfig operation="基础数据配置修改许可协议以及about(关于)信息" urlPattern="/console/systemConfig/updateSettingConfig.jhtml" />
+	<logConfig operation="基础数据配置修改其他配置" urlPattern="/console/systemConfig/updateOther.jhtml" />
+	<logConfig operation="基础数据配置修改说明信息" urlPattern="/console/systemConfig/updateDescInfo.jhtml" />
+
 </rebate>	
 	
