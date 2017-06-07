@@ -389,7 +389,8 @@ public class TranxServiceImpl {
   public String sendXml(String xml, String url, boolean isFront)
       throws UnsupportedEncodingException, Exception {
     System.out.println("======================发送报文======================：\n" + xml);
-    String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
+    String resp = XmlTools.send(url, new String(xml.getBytes(), "UTF-8"));
+    //String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
     System.out.println("======================响应内容======================");
     // System.out.println(new String(resp.getBytes(),"GBK")) ;
     boolean flag = this.verifyMsg(resp, tranxContants.getTltcerPath(), isFront);
