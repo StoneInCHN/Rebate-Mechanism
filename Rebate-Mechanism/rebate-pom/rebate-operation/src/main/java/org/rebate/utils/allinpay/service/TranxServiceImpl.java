@@ -19,6 +19,7 @@ import org.rebate.entity.BankCard;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.service.BankCardService;
+import org.rebate.utils.LogUtil;
 import org.rebate.utils.SettingUtils;
 import org.rebate.utils.TimeUtils;
 import org.rebate.utils.allinpay.pojo.TranxCon;
@@ -82,8 +83,9 @@ public class TranxServiceImpl {
 	      record.setReqSn(info.getREQ_SN());
 	      BankCard bankCard = bankCardService.find(record.getWithDrawType());
 	      if (bankCard == null) {//批量提现的话，是整批次成功或整批次失败，不允许某一单银行卡为空
-	    	System.out.println("TranxServiceImpl.batchWithdrawalLeScore-->Cannot find BankCard:"+record.getWithDrawType());
-			return null;
+	    	LogUtil.debug(this.getClass(), "batchWithdrawalLeScore", "TranxServiceImpl.batchWithdrawalLeScore-->Cannot find BankCard:"+record.getWithDrawType());
+	    	records.remove(record);
+	    	continue;
 		  }
 	      Trans_Detail trans_detail = new Trans_Detail();
 	      String sn = genSn(i);
@@ -123,10 +125,10 @@ public class TranxServiceImpl {
 	        			records.remove(recordMap.get(sn));
 					}
 	            }
-	        	System.out.println("乐分批量提现成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+	        	LogUtil.debug(this.getClass(), "batchWithdrawalLeScore", "乐分批量提现成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
 	        	return records;
 			}else {
-				System.out.println("乐分批量提现失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+				LogUtil.debug(this.getClass(), "batchWithdrawalLeScore", "乐分批量提现失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
 			}
 		}
 	    return null;
@@ -160,7 +162,7 @@ public class TranxServiceImpl {
       record.setReqSn(info.getREQ_SN());
       BankCard bankCard = bankCardService.find(record.getBankCardId());
       if (bankCard == null) {//批量代付的话，是整批次成功或整批次失败，不允许某一单银行卡为空
-    	System.out.println("TranxServiceImpl.batchDaiFu-->Cannot find BankCard:"+record.getBankCardId());
+    	  LogUtil.debug(this.getClass(), "batchDaiFu", "TranxServiceImpl.batchDaiFu-->Cannot find BankCard:"+record.getBankCardId());
     	records.remove(record);
     	continue;
 	  }
@@ -182,7 +184,7 @@ public class TranxServiceImpl {
     body.setDetails(transList);
     aipg.addTrx(body);
 
-    xmlRequest = XmlTools.buildXml(aipg, true);
+    xmlRequest = XmlTools.buildXml(aipg, true);    
     
     String xmlResponse = isFront(xmlRequest, isTLTFront, tranxContants.getUrl());
     
@@ -202,10 +204,10 @@ public class TranxServiceImpl {
         			records.remove(recordMap.get(sn));
 				}
             }
-        	System.out.println("批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+        	LogUtil.debug(this.getClass(), "batchDaiFu", "批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
         	return records;
 		}else {
-			System.out.println("批量代付失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
+			LogUtil.debug(this.getClass(), "batchDaiFu", "批量代付失败！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
 		}
 	}
     return null;
@@ -255,15 +257,15 @@ public class TranxServiceImpl {
         	String tran_ret_code = transretElement.elementText("RET_CODE");
         	String tran_err_msg = transretElement.elementText("ERR_MSG");
         	if ("0000".equals(tran_ret_code) || "4000".equals(tran_ret_code)) {
-            	System.out.println("单笔实时付款成功！TRANSRET RET_CODE= " + tran_ret_code + ", ERR_MSG=" + tran_err_msg);
+        		LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款成功！TRANSRET RET_CODE= " + tran_ret_code + ", ERR_MSG=" + tran_err_msg);
             	resultMap.put("status", "success");
 			}else {
-				System.out.println("单笔实时付款失败！TRANSRET RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
+				LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款失败！TRANSRET RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
 				resultMap.put("status", "error");
 			}
         	resultMap.put("err_msg", tran_err_msg);
 		}else {
-			System.out.println("单笔实时付款失败！INFO RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
+			LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款失败！INFO RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
 			resultMap.put("status", "error");
 			resultMap.put("err_msg", err_msg);
 		}
@@ -388,21 +390,25 @@ public class TranxServiceImpl {
 
   public String sendXml(String xml, String url, boolean isFront)
       throws UnsupportedEncodingException, Exception {
-    System.out.println("======================发送报文======================：\n" + xml);
+	LogUtil.debug(this.getClass(), "sendXml", "xmlRequest after sign: \n======================发送报文======================：\n%s", xml);
+	//System.out.println("======================发送报文======================：\n" + xml);
     String resp = XmlTools.send(url, new String(xml.getBytes(), "UTF-8"));
     //String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
-    System.out.println("======================响应内容======================");
+    //System.out.println("======================响应内容======================");
+    LogUtil.debug(this.getClass(), "sendXml", "xmlRequest after send, xmlResponse: \n======================响应内容======================：\n%s", resp);
     // System.out.println(new String(resp.getBytes(),"GBK")) ;
     boolean flag = this.verifyMsg(resp, tranxContants.getTltcerPath(), isFront);
     if (flag) {
-      System.out.println("响应内容验证通过");
+    	LogUtil.debug(this.getClass(), "sendXml", "响应内容验证通过");
     } else {
-      System.out.println("响应内容验证不通过");
+    	LogUtil.debug(this.getClass(), "sendXml", "响应内容验证不通过");
     }
     return resp;
   }
 
   public String isFront(String xml, boolean flag, String url) {
+	LogUtil.debug(this.getClass(), "isFront", "isTLTFront: %s, url: %s", flag, url);
+    LogUtil.debug(this.getClass(), "isFront", "xmlRequest before sign: \n%s", xml);
     try {
       if (!flag) {
         xml = this.signMsg(xml);
@@ -412,6 +418,7 @@ public class TranxServiceImpl {
       return sendXml(xml, url, flag);
     } catch (Exception e) {
       e.printStackTrace();
+      LogUtil.debug(this.getClass(), "isFront", "Catch Exception:" + e.getMessage());
     }
     return null;
   }
@@ -437,7 +444,7 @@ public class TranxServiceImpl {
    */
   public boolean verifyMsg(String msg, String cer, boolean isFront) throws Exception {
     boolean flag = XmlTools.verifySign(msg, cer, false, isFront);
-    System.out.println("验签结果[" + flag + "]");
+    LogUtil.debug(this.getClass(), "verifyMsg", "验签结果[" + flag + "]");
     return flag;
   }
 
