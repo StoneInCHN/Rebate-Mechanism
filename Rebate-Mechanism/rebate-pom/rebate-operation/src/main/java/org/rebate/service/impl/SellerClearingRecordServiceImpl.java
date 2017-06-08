@@ -144,23 +144,34 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				 record.setSeller(seller);
   				 record.setEndUser(endUser);
   				 
-  				 BankCard defaultCard = bankCardService.getDefaultCard(endUser);
-  				 if (defaultCard != null) {
-  					 record.setBankCardId(defaultCard.getId());
-  				 }else {
-  					LogUtil.debug(this.getClass(), "sellerClearing", "Cannot find default card for endUserId:", endUser != null? endUser.getId() : "");
-  					//是否需要短信或邮件通知商家用户去配置默认银行卡？？
-  				 }
-  				 
   				 record.setTotalOrderAmount(totalOrderAmount); //订单总金额
   				 
   				 record.setAmount(endUser.getIncomeLeScore());//结算金额
+                 BankCard defaultCard = bankCardService.getDefaultCard(endUser);
+                 if (defaultCard != null) {
+                      record.setBankCardId(defaultCard.getId());
+                 }else {
+                     LogUtil.debug(this.getClass(), "sellerClearing", "Cannot find default card for endUserId:", endUser != null? endUser.getId() : "");
+                     //是否需要短信或邮件通知商家用户去配置默认银行卡？？
+                     record.setClearingStatus(ClearingStatus.FAILED);
+                     record.setIsClearing(false);
+                     record.setValid(true);//标记货款记录是否有效
+                     record.setRemark("商家未添加默认银行卡,待添加银行卡后执行单笔货款提现!");
+                     save(record);
+                     Set<Order> orderSet = sellerOrdersMap.get(record.getSeller().getId());
+                     for (Order order : orderSet) {
+                       ClearingOrderRelation relation = new ClearingOrderRelation();
+                       relation.setClearingRecId(record.getId());
+                       relation.setOrder(order);
+                       clearingOrderRelationService.save(relation);//保存商家货款结算记录与订单的关系
+                     }
+                     LogUtil.debug(this.getClass(), "sellerClearing", "商家未添加默认银行卡,待添加银行卡后执行单笔货款提现!");
+                     continue;//绕开银行卡为空的商家货款结算
+                 }
   				 if (totalSellerIncome.compareTo(endUser.getIncomeLeScore()) != 0) {
   					 LogUtil.debug(this.getClass(), "sellerClearing", "Total seller income is not equals endUser IncomeLeScore !!!");
   					 record.setAmount(totalSellerIncome);
   				 }
-  				 totalClearingAmount = totalClearingAmount.add(record.getAmount());//累加结算金额
-  				 
   				 BigDecimal handingCharge = getAllinpayHandlingCharge(totalOrderAmount);
   				 if (record.getAmount() != null && handingCharge != null) {
   					 //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
@@ -183,6 +194,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   					 }
   					 
   				 }
+  				 totalClearingAmount = totalClearingAmount.add(record.getAmount());//累加结算金额
   				 record.setHandlingCharge(handingCharge);//手续费
   				 totalHandlingCharge = totalHandlingCharge.add(record.getHandlingCharge()); //累加手续费
   				 
@@ -191,17 +203,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				 record.setIsClearing(false);
   				 record.setValid(true);//标记货款记录是否有效
   				 
-  				 //save(record);//保存商家货款结算记录
-  				 
   				 records.add(record);
-  				 
-//  				 Set<Order> orderSet = sellerOrdersMap.get(seller.getId());
-//  				 for (Order order : orderSet) {
-//  					ClearingOrderRelation relation = new ClearingOrderRelation();
-//  					relation.setClearingRecId(record.getId());
-//  					relation.setOrder(order);
-//  					clearingOrderRelationService.save(relation);//保存商家货款结算记录与订单的关系
-//  				}
   			 }
   			 
   			 if (records.size() > 0) {
@@ -255,6 +257,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   			    TranxServiceImpl tranxService = new TranxServiceImpl();
   			    tranxService.init();//初始化通联基础数据
   			    BigDecimal handlingCharge = getAllinpayHandlingCharge(record.getAmount());//手续费
+  			    record.setHandlingCharge(handlingCharge);
   			    BigDecimal payAmount = record.getAmount().abs().subtract(handlingCharge);
   			    //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
   			    //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理

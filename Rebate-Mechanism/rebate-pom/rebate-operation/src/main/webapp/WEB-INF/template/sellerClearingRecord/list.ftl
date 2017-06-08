@@ -157,7 +157,7 @@
 						<input type="checkbox"  name="ids" value="${sellerClearingRecord.id}" [#if sellerClearingRecord.valid == null || sellerClearingRecord.valid == false ] disabled="disabled" [/#if]/>
 					</td>
 					<td>
-						${sellerClearingRecord.seller.name}
+						<span title="${sellerClearingRecord.seller.name}">${sellerClearingRecord.seller.name}</sapn>
 					</td>
 					<td>
 						${sellerClearingRecord.totalOrderAmount}

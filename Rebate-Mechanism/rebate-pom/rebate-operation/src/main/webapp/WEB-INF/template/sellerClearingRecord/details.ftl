@@ -164,6 +164,9 @@
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
 <script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
+<script type="text/javascript" src="${base}/resources/js/common.js"></script>
+<script type="text/javascript" src="${base}/resources/js/input.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$('.viewer-images').viewer();
