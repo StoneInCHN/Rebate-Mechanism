@@ -48,8 +48,11 @@ $(function() {
 				cache:false,
 				success:function(message){
 					$.message(message);
-					$submit.attr("disabled",false);
-					setTimeout("location.href='details.jhtml?id=${sellerApply.id}'",1000);
+					if(message.type =="success"){
+						setTimeout("location.href='details.jhtml?id=${sellerApply.id}'",1000);
+					}else{
+						$submit.attr("disabled",false);
+					}
 				}
 			});
 		}

@@ -119,6 +119,8 @@ public class SystemConfigController extends BaseController {
           descInfos.add(settingConfig);
         }else if (SettingConfigKey.BANKCARD_SERVICE_AGREEMENT == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
+        }else if (SettingConfigKey.LEBEAN_PAY_DESC == settingConfig.getConfigKey()) {
+          descInfos.add(settingConfig);
         }else {
           temps.add(settingConfig);
         }
