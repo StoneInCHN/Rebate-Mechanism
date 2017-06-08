@@ -331,6 +331,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       }
       leScoreRecord.setAmount(payAmount.negate());
       leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+      if (endUser.getMotivateLeScore().compareTo(payAmount) >= 0) {// 乐分支付优先消耗激励乐分
+        endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(payAmount));
+      } else {
+        BigDecimal diff = endUser.getMotivateLeScore().subtract(payAmount);
+        endUser.setMotivateLeScore(new BigDecimal(0));
+        endUser.setAgentLeScore(endUser.getAgentLeScore().add(diff));
+      }
       endUser.setCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
       endUser.getLeScoreRecords().add(leScoreRecord);
       endUserDao.merge(endUser);
