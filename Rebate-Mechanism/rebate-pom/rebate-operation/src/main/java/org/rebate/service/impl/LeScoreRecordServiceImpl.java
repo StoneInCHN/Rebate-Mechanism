@@ -140,8 +140,8 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 	BigDecimal totalHandlingCharge = new BigDecimal(0);//手续费总金额
     for (Long id : ids) {
     	  LeScoreRecord record = leScoreRecordDao.find(id);
-    	  if (record != null && record.getIsWithdraw() == false 
-    			  && record.getWithdrawStatus() == ApplyStatus.AUDIT_PASSED) {//未提现并且审核通过的乐分记录
+    	  if (record != null && record.getWithdrawStatus() == ApplyStatus.AUDIT_PASSED && 
+    	      (record.getIsWithdraw() == null || record.getIsWithdraw() == false) ) {//未提现并且审核通过的乐分记录
     		//如果乐分记录里面没有记录银行卡，那就用用户默认的银行
 			if (record.getWithDrawType() == null && record.getEndUser() != null) {
 				BankCard defaultBankCard = bankCardService.getDefaultCard(record.getEndUser());
