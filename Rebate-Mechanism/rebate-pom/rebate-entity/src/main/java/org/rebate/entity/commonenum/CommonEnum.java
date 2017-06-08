@@ -216,8 +216,8 @@ public class CommonEnum {
    * 乐分类型
    */
   public enum LeScoreType {
-    /** 消费直接返商户的收益 */
-    CONSUME_SELLER,
+    /** 乐分消费 */
+    CONSUME,
     // /** 用户消费鼓励金收益 */
     // ENCOURAGE,
     /** 乐心（积分）产生的分红 */

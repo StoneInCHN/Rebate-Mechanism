@@ -63,6 +63,20 @@ public class OrderRequest extends BaseRequest {
    */
   private String sn;
 
+  /**
+   * 抵扣的乐豆
+   */
+  private BigDecimal deductLeBean;
+
+
+
+  public BigDecimal getDeductLeBean() {
+    return deductLeBean;
+  }
+
+  public void setDeductLeBean(BigDecimal deductLeBean) {
+    this.deductLeBean = deductLeBean;
+  }
 
   public String getSn() {
     return sn;

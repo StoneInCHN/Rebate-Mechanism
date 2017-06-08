@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
@@ -21,7 +20,9 @@ import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SellerEvaluateImage;
+import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
+import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering.Direction;
@@ -40,14 +41,12 @@ import org.rebate.service.FileService;
 import org.rebate.service.OrderService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerService;
+import org.rebate.service.SystemConfigService;
 import org.rebate.utils.FieldFilterUtils;
-import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.PayUtil;
-import org.rebate.utils.RSAHelper;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,8 +71,91 @@ public class OrderController extends MobileBaseController {
   private SellerEvaluateService sellerEvaluateService;
   @Resource(name = "fileServiceImpl")
   private FileService fileService;
+  @Resource(name = "systemConfigServiceImpl")
+  private SystemConfigService systemConfigService;
   @Resource(name = "taskExecutor")
   private TaskExecutor taskExecutor;
+
+
+  /**
+   * 普通支付获取支付信息
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/getPayInfo", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> getPayInfo(@RequestBody OrderRequest request) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    SystemConfigKey configKey = request.getConfigKey();
+
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("isBeanPay", false);
+    List<SystemConfig> configList = systemConfigService.getConfigsByKey(configKey);
+    List<SystemConfig> payTypes = new ArrayList<SystemConfig>();
+    for (SystemConfig systemConfig : configList) {
+      if (systemConfig.getId().intValue() == 4) {// 乐豆支付id固定为4
+        map.put("isBeanPay", true);
+      } else {
+        payTypes.add(systemConfig);
+      }
+    }
+    String[] propertys = {"id", "configValue"};
+    List<Map<String, Object>> result = FieldFilterUtils.filterCollectionMap(propertys, payTypes);
+    map.put("payType", result);
+    EndUser endUser = endUserService.find(userId);
+    map.put("userCurLeScore", endUser.getCurLeScore());
+    map.put("userCurLeBean", endUser.getCurLeBean());
+    response.setMsg(map);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+  /**
+   * 计算用户可抵扣的乐豆
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/calLeBeanDeduction", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> calLeBeanDeduction(
+      @RequestBody OrderRequest request) {
+
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    Long sellerId = request.getSellerId();
+    BigDecimal amount = request.getAmount();
+
+    EndUser endUser = endUserService.find(userId);
+    Seller seller = sellerService.find(sellerId);
+    BigDecimal curLeBean = endUser.getCurLeBean();
+    BigDecimal deductLeBean =
+        amount.multiply(
+            new BigDecimal(10).subtract(seller.getDiscount()).divide(new BigDecimal(10))).setScale(
+            4, BigDecimal.ROUND_HALF_UP);
+
+    Map<String, Object> map = new HashMap<String, Object>();
+    if (curLeBean.compareTo(deductLeBean) >= 0) {
+      map.put("deductLeBean", deductLeBean);
+    } else {
+      map.put("deductLeBean", curLeBean);
+    }
+
+    response.setMsg(map);
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
 
   /**
    * 立即下单
@@ -96,14 +178,8 @@ public class OrderController extends MobileBaseController {
     Long sellerId = req.getSellerId();
     String remark = req.getRemark();
     Boolean isBeanPay = req.getIsBeanPay();
-    String password = req.getPayPwd();
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
+    // String password = req.getPayPwd();
+    BigDecimal deductLeBean = req.getDeductLeBean();
 
     if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
       response.setCode(CommonAttributes.FAIL_COMMON);
@@ -111,56 +187,43 @@ public class OrderController extends MobileBaseController {
       return response;
     }
 
-
-    if (isBeanPay) {// 乐豆支付需要验证支付密码
+    BigDecimal payAmount = req.getAmount();
+    if (isBeanPay) {// 支付中使用了乐豆抵扣
+      if (deductLeBean.compareTo(new BigDecimal(0)) <= 0) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.payOrder.deductLeBean.error").getContent());
+        return response;
+      }
+      payAmount = amount.subtract(deductLeBean);
       EndUser endUser = endUserService.find(userId);
-      if (endUser.getCurLeBean().compareTo(amount) < 0) {
+      if (endUser.getCurLeBean().compareTo(deductLeBean) < 0) {
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(Message.error("rebate.payOrder.curLeBean.insufficient").getContent());
         return response;
       }
-      String serverPrivateKey = setting.getServerPrivateKey();
-      // 密码非空验证
-      if (StringUtils.isEmpty(password)) {
-        response.setCode(CommonAttributes.FAIL_COMMON);
-        response.setDesc(Message.error("rebate.pwd.null.error").getContent());
-        return response;
-      }
-      // 支付密码未设置
-      if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
-        response.setCode(CommonAttributes.FAIL_COMMON);
-        response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
-        return response;
-      }
-      try {
-        password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
 
-      // 密码长度验证
-      if (password.length() < setting.getPasswordMinlength()) {
+    }
+    if ("5".equals(payTypeId)) {// 乐分支付
+      EndUser endUser = endUserService.find(userId);
+      if (endUser.getCurLeScore().compareTo(amount) < 0) {
         response.setCode(CommonAttributes.FAIL_COMMON);
-        response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
-            .getContent());
-        return response;
-      }
-
-      if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
-        response.setCode(CommonAttributes.FAIL_COMMON);
-        response.setDesc(Message.error("rebate.payPwd.error").getContent());
+        response.setDesc(Message.error("rebate.payOrder.curLeScore.insufficient",
+            endUser.getCurLeScore()).getContent());
         return response;
       }
     }
-    Order order = orderService.create(userId, payType, amount, sellerId, remark, isBeanPay);
+
+    Order order =
+        orderService.create(userId, payTypeId, payType, amount, sellerId, remark, isBeanPay,
+            deductLeBean);
 
     if (LogUtil.isDebugEnabled(OrderController.class)) {
       LogUtil
           .debug(
               OrderController.class,
               "pay",
-              "pay order. userId: %s,payType: %s,payTypeId: %s,amount: %s,sellerId: %s,remark: %s,isBeanPay: %s",
-              userId, payType, payTypeId, amount, sellerId, remark, isBeanPay);
+              "pay order. userId: %s,payType: %s,payTypeId: %s,amount: %s,sellerId: %s,remark: %s,isBeanPay: %s,deductLeBean: %s",
+              userId, payType, payTypeId, amount, sellerId, remark, isBeanPay, deductLeBean);
     }
 
     try {
@@ -170,7 +233,7 @@ public class OrderController extends MobileBaseController {
         // PayUtil.allinPay(order.getSn(), order.getSeller().getName(), weChatPrice.intValue()
         // + "");
         // response.getMsg().put("encourageAmount", order.getEncourageAmount());
-        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        BigDecimal weChatPrice = payAmount.multiply(new BigDecimal(100));
         response =
             PayUtil.wechat(order.getSn(), order.getSeller().getName(), httpReq.getRemoteAddr(),
                 order.getId().toString(), weChatPrice.intValue() + "");
@@ -181,7 +244,7 @@ public class OrderController extends MobileBaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         String orderStr =
             PayUtil.alipay(order.getSn(), order.getSeller().getName(), order.getSeller().getName(),
-                amount.toString());
+                payAmount.toString());
         map.put("orderStr", orderStr);
         map.put("out_trade_no", order.getSn());
         map.put("encourageAmount", order.getEncourageAmount());
@@ -194,7 +257,7 @@ public class OrderController extends MobileBaseController {
         // + "");
         // response.getMsg().put("encourageAmount", order.getEncourageAmount());
       } else if ("3".equals(payTypeId)) {// 银行卡快捷支付
-        BigDecimal weChatPrice = amount.multiply(new BigDecimal(100));
+        BigDecimal weChatPrice = payAmount.multiply(new BigDecimal(100));
         response =
             PayUtil.allinpayH5(order.getSn(), order.getSeller().getName(), userId.toString(), order
                 .getId().toString(), weChatPrice.intValue() + "");
@@ -205,7 +268,7 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-    if (isBeanPay) {// 乐豆支付
+    if ("5".equals(payTypeId)) {// 乐分支付
       taskExecutor.execute(new Runnable() {
         public void run() {
           orderService.callbackAfterPay(order.getSn());
@@ -214,7 +277,9 @@ public class OrderController extends MobileBaseController {
       });
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("out_trade_no", order.getSn());
-      map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
+      // map.put("user_cur_leBean", order.getEndUser().getCurLeBean());
+      // map.put("user_cur_leScore", order.getEndUser().getCurLeScore());
+      map.put("encourageAmount", order.getEncourageAmount());
       response.setMsg(map);
       // response.setCode(CommonAttributes.SUCCESS);
 
@@ -315,6 +380,7 @@ public class OrderController extends MobileBaseController {
       Order order = orderService.getOrderBySn(orderSn);
       totalFee = order.getRebateAmount();
       order.setPaymentType(payType);
+      order.setPaymentTypeId(payTypeId);
       orders.add(order);
     }
 
@@ -518,9 +584,8 @@ public class OrderController extends MobileBaseController {
     // return response;
     // }
 
-    Seller seller = sellerService.find(entityId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    Filter sellerFilter = new Filter("seller", Operator.eq, entityId);
     filters.add(sellerFilter);
 
     Pageable pageable = new Pageable();
@@ -610,7 +675,6 @@ public class OrderController extends MobileBaseController {
     String token = request.getToken();
     Integer pageNumber = request.getPageNumber();
     Integer pageSize = request.getPageSize();
-    EndUser endUser = endUserService.find(userId);
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
@@ -625,7 +689,7 @@ public class OrderController extends MobileBaseController {
     // }
 
     List<Filter> filters = new ArrayList<Filter>();
-    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(endUserFilter);
 
     if (request.getOrderStatus() != null) {
@@ -680,7 +744,6 @@ public class OrderController extends MobileBaseController {
     String token = request.getToken();
     Integer pageNumber = request.getPageNumber();
     Integer pageSize = request.getPageSize();
-    EndUser endUser = endUserService.find(userId);
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
@@ -695,7 +758,7 @@ public class OrderController extends MobileBaseController {
     // }
 
     List<Filter> filters = new ArrayList<Filter>();
-    Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(endUserFilter);
 
     // Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);

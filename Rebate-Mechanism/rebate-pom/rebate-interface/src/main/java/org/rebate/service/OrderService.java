@@ -21,8 +21,8 @@ public interface OrderService extends BaseService<Order, Long> {
    * @param remark
    * @return
    */
-  Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
-      Boolean isBeanPay);
+  Order create(Long userId, String payTypeId, String payType, BigDecimal amount, Long sellerId,
+      String remark, Boolean isBeanPay, BigDecimal deductAmount);
 
 
   // /**
@@ -87,8 +87,8 @@ public interface OrderService extends BaseService<Order, Long> {
   Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount);
 
 
-  Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
-      Boolean isBeanPay, Boolean isSallerOrder);
+  // Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
+  // Boolean isBeanPay, Boolean isSallerOrder);
 
 
   Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId);

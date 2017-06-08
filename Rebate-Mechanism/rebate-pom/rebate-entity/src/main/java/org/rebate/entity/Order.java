@@ -54,6 +54,11 @@ public class Order extends BaseEntity {
   private String paymentType;
 
   /**
+   * 支付方式ID
+   */
+  private String paymentTypeId;
+
+  /**
    * 支付时间
    */
   private Date paymentTime;
@@ -135,6 +140,28 @@ public class Order extends BaseEntity {
   private String batchSn;
 
 
+  /**
+   * 抵扣金额
+   */
+  private BigDecimal deductAmount;
+
+  @Column(length = 5)
+  public String getPaymentTypeId() {
+    return paymentTypeId;
+  }
+
+  public void setPaymentTypeId(String paymentTypeId) {
+    this.paymentTypeId = paymentTypeId;
+  }
+
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getDeductAmount() {
+    return deductAmount;
+  }
+
+  public void setDeductAmount(BigDecimal deductAmount) {
+    this.deductAmount = deductAmount;
+  }
 
   @Column(length = 40)
   public String getBatchSn() {

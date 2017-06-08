@@ -121,7 +121,7 @@ public class SellerOrderCartController extends MobileBaseController {
     Integer pageNumber = request.getPageNumber();
 
     EndUser endUser = endUserService.find(userId);
-    Seller seller = endUser.getSellers().iterator().next();
+    Seller seller = endUser.getSeller();
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);

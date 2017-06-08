@@ -174,7 +174,7 @@ public class EndUser extends BaseEntity {
   private BigDecimal curLeScore = new BigDecimal("0");
 
   /**
-   * 激励乐分(包括消费鼓励金乐分，推荐获得乐分)
+   * 激励乐分(包括消费分红乐分，推荐获得乐分)
    */
   private BigDecimal motivateLeScore = new BigDecimal("0");
 

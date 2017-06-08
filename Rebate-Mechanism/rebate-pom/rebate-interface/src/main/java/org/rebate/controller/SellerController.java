@@ -298,9 +298,8 @@ public class SellerController extends MobileBaseController {
       LogUtil.debug(SellerController.class, "evaluateList", "seller evaluate list. sellerId: %s",
           sellerId, pageSize, pageNumber);
     }
-    Seller seller = sellerService.find(sellerId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    Filter sellerFilter = new Filter("seller", Operator.eq, sellerId);
     Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
     filters.add(statusFilter);
     filters.add(sellerFilter);

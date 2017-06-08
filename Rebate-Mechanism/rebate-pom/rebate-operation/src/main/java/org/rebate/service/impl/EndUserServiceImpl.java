@@ -297,6 +297,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
           leScoreRecord.setAmount(curBonus.multiply(leScorePer));
           leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
           endUser.getLeScoreRecords().add(leScoreRecord);
+          endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
           endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
           endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
         }

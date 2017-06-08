@@ -95,10 +95,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     super.setBaseDao(orderDao);
   }
 
-  @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
-      Boolean isBeanPay, Boolean isSallerOrder) {
+  public Order create(Long userId, String payTypeId, String payType, BigDecimal amount,
+      Long sellerId, String remark, Boolean isBeanPay, Boolean isSallerOrder,
+      BigDecimal deductAmount) {
 
     Order order = new Order();
     EndUser endUser = endUserDao.find(userId);
@@ -109,10 +109,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setAmount(amount);
     order.setSellerIncome(amount.multiply(seller.getDiscount().divide(new BigDecimal("10"))));
     order.setPaymentType(payType);
+    order.setPaymentTypeId(payTypeId);
     order.setRemark(remark);
     order.setStatus(OrderStatus.UNPAID);
     order.setSn(snDao.generate(Type.ORDER));
-    order.setIsBeanPay(isBeanPay);
+    order.setIsBeanPay(isBeanPay);// 是否使用了乐豆抵扣支付
+    order.setDeductAmount(deductAmount);
 
     // BigDecimal transactionFeeConfig =
     // new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.TRANSACTION_FEE_PERCENTAGE)
@@ -128,39 +130,39 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     if (isSallerOrder) {
       order.setIsSallerOrder(true);
     }
-    if (!isBeanPay) {
-      BigDecimal rebateUserScoreConfig =
-          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER)
-              .getConfigValue());
-      BigDecimal rebateSellerScoreConfig =
-          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
-              .getConfigValue());
-      // BigDecimal rebateSellerOrderPercentageConfig =
-      // new BigDecimal(systemConfigDao.getConfigByKey(
-      // SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
-      BigDecimal encourageAmountConfig =
-          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
-              .getConfigValue());
+    // if (!isBeanPay) {
+    BigDecimal rebateUserScoreConfig =
+        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER)
+            .getConfigValue());
+    BigDecimal rebateSellerScoreConfig =
+        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
+            .getConfigValue());
+    // BigDecimal rebateSellerOrderPercentageConfig =
+    // new BigDecimal(systemConfigDao.getConfigByKey(
+    // SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
+    BigDecimal encourageAmountConfig =
+        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
+            .getConfigValue());
 
-      BigDecimal encourageAmount =
-          (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
-              .setScale(4, BigDecimal.ROUND_HALF_UP);
-      order.setEncourageAmount(encourageAmount);
+    BigDecimal encourageAmount =
+        (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
+            .setScale(4, BigDecimal.ROUND_HALF_UP);
+    order.setEncourageAmount(encourageAmount);
 
-      BigDecimal rebateUserScore =
-          amount.subtract(order.getSellerIncome()).multiply(rebateUserScoreConfig);
-      if (rebateUserScore.compareTo(order.getAmount()) > 0) {
-        rebateUserScore = order.getAmount();
-      }
-
-      BigDecimal rebateSellerScore =
-          amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
-      // rebateSellerScore =
-      // rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
-
-      order.setUserScore(rebateUserScore);
-      order.setSellerScore(rebateSellerScore);
+    BigDecimal rebateUserScore =
+        amount.subtract(order.getSellerIncome()).multiply(rebateUserScoreConfig);
+    if (rebateUserScore.compareTo(order.getAmount()) > 0) {
+      rebateUserScore = order.getAmount();
     }
+
+    BigDecimal rebateSellerScore =
+        amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
+    // rebateSellerScore =
+    // rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
+
+    order.setUserScore(rebateUserScore);
+    order.setSellerScore(rebateSellerScore);
+    // }
 
     orderDao.persist(order);
     return order;
@@ -169,9 +171,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
-      Boolean isBeanPay) {
-    return create(userId, payType, amount, sellerId, remark, isBeanPay, false);
+  public Order create(Long userId, String payTypeId, String payType, BigDecimal amount,
+      Long sellerId, String remark, Boolean isBeanPay, BigDecimal deductAmount) {
+    return create(userId, payTypeId, payType, amount, sellerId, remark, isBeanPay, false,
+        deductAmount);
   }
 
   /**
@@ -303,10 +306,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     // endUserDao.merge(sellerEndUser);
 
 
-    if (order.getIsBeanPay()) {// 乐豆支付
+    if (order.getIsBeanPay() && order.getDeductAmount().compareTo(new BigDecimal(0)) > 0) {// 支付中含有乐豆抵扣
       LeBeanRecord leBeanRecord = new LeBeanRecord();
       leBeanRecord.setOrderId(orderId);
-      leBeanRecord.setAmount(order.getAmount().negate());
+      leBeanRecord.setAmount(order.getDeductAmount().negate());
       leBeanRecord.setEndUser(endUser);
       leBeanRecord.setSeller(seller);
 
@@ -317,10 +320,24 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       endUserDao.merge(endUser);
     }
 
+    if ("5".equals(order.getPaymentTypeId())) {// 乐分支付
+      LeScoreRecord leScoreRecord = new LeScoreRecord();
+      leScoreRecord.setOrderId(orderId);
+      leScoreRecord.setEndUser(endUser);
+      leScoreRecord.setLeScoreType(LeScoreType.CONSUME);
+      BigDecimal payAmount = order.getAmount();
+      if (order.getIsBeanPay() && order.getDeductAmount().compareTo(new BigDecimal(0)) > 0) {
+        payAmount = payAmount.subtract(order.getDeductAmount());
+      }
+      leScoreRecord.setAmount(payAmount.negate());
+      leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+      endUser.setCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+      endUser.getLeScoreRecords().add(leScoreRecord);
+      endUserDao.merge(endUser);
+    }
+
     SystemConfig mindDivideConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
     SystemConfig maxBonusPerConfig = systemConfigDao.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
-
-
 
     /**
      * 消费后用户积分返利 (乐豆消费无积分返利)
@@ -723,7 +740,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Override
   public Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId) {
 
-    return create(userId, null, amount, sellerId, null, false, true);
+    return create(userId, null, null, amount, sellerId, null, false, true, null);
   }
 
   @Override
@@ -791,6 +808,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   public List<Order> getOrderByBatchSn(String batchSn) {
     return orderDao.getOrderByBatchSn(batchSn);
   }
+
 
 
 }

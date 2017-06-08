@@ -1112,9 +1112,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
 
     Pageable pageable = new Pageable();
@@ -1176,9 +1175,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
 
     Pageable pageable = new Pageable();
@@ -1232,9 +1230,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
     Filter typeFilter = new Filter("leScoreType", Operator.eq, leScoreType);
     filters.add(typeFilter);
@@ -1295,9 +1292,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
 
     Pageable pageable = new Pageable();
@@ -1622,6 +1618,12 @@ public class EndUserController extends MobileBaseController {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    // 密码rsa解密后非空验证
+    if (password == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
+      return response;
+    }
 
     // 密码长度验证
     if (password.length() < setting.getPasswordMinlength()) {
@@ -1853,9 +1855,13 @@ public class EndUserController extends MobileBaseController {
       ObjectMapper objectMapper = new ObjectMapper();
       Map<String, Object> map = objectMapper.readValue(result, Map.class);
       if (LogUtil.isDebugEnabled(EndUserController.class)) {
-        LogUtil.debug(EndUserController.class, "doIdentityAuth",
-            "doIdentityAuth by juhe api. error_code: %s,reason: %s, result: %s",
-            map.get("error_code"), map.get("reason"), map.get("result"));
+        LogUtil
+            .debug(
+                EndUserController.class,
+                "doIdentityAuth",
+                "doIdentityAuth by juhe api. userId: %s,realName: %s,cardNo: %s,error_code: %s,reason: %s, result: %s",
+                userId, realName, cardNo, map.get("error_code"), map.get("reason"),
+                map.get("result"));
       }
       if (map.get("result") == null) {
         response.setCode(CommonAttributes.FAIL_COMMON);
