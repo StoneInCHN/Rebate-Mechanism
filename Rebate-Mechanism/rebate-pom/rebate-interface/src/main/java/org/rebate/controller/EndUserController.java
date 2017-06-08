@@ -37,6 +37,7 @@ import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
@@ -1213,7 +1214,7 @@ public class EndUserController extends MobileBaseController {
   @RequestMapping(value = "/leScoreRec", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> leScoreRec(
-      @RequestBody BaseRequest request) {
+      @RequestBody UserRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
@@ -1221,6 +1222,7 @@ public class EndUserController extends MobileBaseController {
     String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
+    LeScoreType leScoreType = request.getLeScoreType();
 
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
@@ -1234,6 +1236,8 @@ public class EndUserController extends MobileBaseController {
     List<Filter> filters = new ArrayList<Filter>();
     Filter userFilter = new Filter("endUser", Operator.eq, endUser);
     filters.add(userFilter);
+    Filter typeFilter = new Filter("leScoreType", Operator.eq, leScoreType);
+    filters.add(typeFilter);
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);

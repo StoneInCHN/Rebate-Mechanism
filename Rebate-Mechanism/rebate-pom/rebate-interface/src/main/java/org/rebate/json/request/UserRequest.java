@@ -1,5 +1,6 @@
 package org.rebate.json.request;
 
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.json.base.BaseRequest;
@@ -73,6 +74,19 @@ public class UserRequest extends BaseRequest {
    */
   private String wxNickName;
 
+  /**
+   * 乐分记录类型
+   */
+  private LeScoreType leScoreType;
+
+
+  public LeScoreType getLeScoreType() {
+    return leScoreType;
+  }
+
+  public void setLeScoreType(LeScoreType leScoreType) {
+    this.leScoreType = leScoreType;
+  }
 
   public String getWxNickName() {
     return wxNickName;

@@ -31,11 +31,11 @@ public class BaseRequest {
   /**
    * 分页-页面大小
    */
-  private Integer pageSize;
+  private Integer pageSize = 10;
   /**
    * 分页-当前页码
    */
-  private Integer pageNumber;
+  private Integer pageNumber = 1;
 
 
 

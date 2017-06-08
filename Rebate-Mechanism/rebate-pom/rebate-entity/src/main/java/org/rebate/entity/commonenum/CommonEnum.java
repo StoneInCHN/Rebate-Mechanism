@@ -207,7 +207,9 @@ public class CommonEnum {
     /** 银行卡手机号说明 11 */
     BANKCARD_MOBILE_DESC,
     /** 银行卡服务协议 12 */
-    BANKCARD_SERVICE_AGREEMENT
+    BANKCARD_SERVICE_AGREEMENT,
+    /** 乐豆抵扣说明 13 */
+    LEBEAN_PAY_DESC
   }
 
   /**
@@ -334,24 +336,24 @@ public class CommonEnum {
    * 货款结算（提现）状态
    *
    */
-  public enum ClearingStatus{
-	  /** 处理中 **/
-	  PROCESSING,
-	  /** 处理成功 **/
-	  SUCCESS,
-	  /** 处理失败 **/
-	  FAILED
-	 
+  public enum ClearingStatus {
+    /** 处理中 **/
+    PROCESSING,
+    /** 处理成功 **/
+    SUCCESS,
+    /** 处理失败 **/
+    FAILED
+
   }
   /**
    * 系统参数配置
    *
    */
-  public enum ParamConfigKey{
-	    /** 交易结果查询  延迟查询时间 0 */
-	    ALLINPAY_QUERY_DELAY,
-	    /** 交易结果查询  间隔时间(每五分钟) 1*/
-	    ALLINPAY_QUERY_PERIOD
+  public enum ParamConfigKey {
+    /** 交易结果查询 延迟查询时间 0 */
+    ALLINPAY_QUERY_DELAY,
+    /** 交易结果查询 间隔时间(每五分钟) 1 */
+    ALLINPAY_QUERY_PERIOD
   }
 
 }

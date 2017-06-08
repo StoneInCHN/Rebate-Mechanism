@@ -24,7 +24,8 @@ public class SellerDaoImpl extends BaseDaoImpl<Seller, Long> implements SellerDa
       return null;
     }
     try {
-      String jpql = "select seller from Seller seller where seller.endUser.id = :userId";
+      String jpql =
+          "select seller from Seller seller where seller.accountStatus=0 and seller.endUser.id = :userId";
       return entityManager.createQuery(jpql, Seller.class).setFlushMode(FlushModeType.COMMIT)
           .setParameter("userId", userId).getSingleResult();
     } catch (NoResultException e) {
