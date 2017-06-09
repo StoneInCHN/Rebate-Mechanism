@@ -8,46 +8,6 @@
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
-<script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
-<script type="text/javascript" src="${base}/resources/js/common.js"></script>
-<script type="text/javascript" src="${base}/resources/js/input.js"></script>
-
-<script type="text/javascript">
-$(function() {
-
-	var $inputForm = $("#inputForm");
-	var $submit = $("#submit");	
-	
-	// 表单验证
-	$inputForm.validate({
-		rules: {
-			withdrawStatus: "required",
-			remark: "required"
-		},
-		submitHandler:function(form){
-			$submit.attr("disabled",true);
-			$.ajax({
-				url:$inputForm.attr("action"),
-				type:"POST",
-				data:$inputForm.serialize(),
-				dataType:"json",
-				cache:false,
-				success:function(message){
-					alert(message.content);
-					if(message.type == "success"){
-						setTimeout("location.href='details.jhtml?id=${leScoreRecord.id}'",1000);
-					}else{
-						$submit.attr("disabled",false);
-					}
-					
-				}
-			});
-		}
-	});
-
-});
-</script>
 </head>
 <body>
 	 <div class="content">
@@ -89,7 +49,7 @@ $(function() {
 								</th>
 								<td>
 									[#if  leScoreRecord.amount??]
-										${leScoreRecord.amount}
+										${leScoreRecord.amount * -1}
 									[#else]
 										--
 									[/#if]
@@ -132,7 +92,11 @@ $(function() {
 									${message("rebate.leScoreRecord.recommender")}:
 								</th>
 								<td>
+									[#if leScoreRecord.recommender??]
 									${leScoreRecord.recommender}
+									[#else]
+									--
+									[/#if]
 								</td>
 							</tr>
 							<tr>
@@ -141,7 +105,7 @@ $(function() {
 								</th>
 								<td>
 									<ul  class="viewer-images clearfix">
-										 <li><img class="img-lazy img-rounded" src="${leScoreRecord.recommenderPhoto}" alt="${message("rebate.leScoreRecord.recommenderPhoto")}"></li>
+										 <li><img class="img-lazy img-rounded" data-original=="${leScoreRecord.recommenderPhoto}" alt="${message("rebate.leScoreRecord.recommenderPhoto")}"></li>
 									</ul>	
 								</td>
 							</tr>
@@ -185,5 +149,51 @@ $(function() {
 						</table>
 					</form>
      </div>
+<script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
+<script type="text/javascript" src="${base}/resources/js/common.js"></script>
+<script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+
+	$('.viewer-images').viewer();
+	$('.img-lazy').lazyload();
+	
+	var $inputForm = $("#inputForm");
+	var $submit = $("#submit");	
+	
+	// 表单验证
+	$inputForm.validate({
+		rules: {
+			withdrawStatus: "required",
+			remark: "required"
+		},
+		submitHandler:function(form){
+			$submit.attr("disabled",true);
+			$.ajax({
+				url:$inputForm.attr("action"),
+				type:"POST",
+				data:$inputForm.serialize(),
+				dataType:"json",
+				cache:false,
+				success:function(message){
+					alert(message.content);
+					if(message.type == "success"){
+						setTimeout("location.href='details.jhtml?id=${leScoreRecord.id}'",1000);
+					}else{
+						$submit.attr("disabled",false);
+					}
+					
+				}
+			});
+		}
+	});
+
+
+});
+</script>     
 </body>
 </html>

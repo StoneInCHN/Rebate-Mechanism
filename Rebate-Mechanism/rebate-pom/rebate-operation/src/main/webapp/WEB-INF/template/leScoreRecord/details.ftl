@@ -47,7 +47,30 @@
 								</th>
 								<td>
 									[#if  leScoreRecord.amount??]
-										${leScoreRecord.amount}
+										${leScoreRecord.amount * -1}
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.leScoreRecord.endUser.role")}:
+								</th>
+								<td>
+									[#if leScoreRecord.endUser??]
+								    	[#if leScoreRecord.endUser.seller != null]
+								    		${message("rebate.endUser.seller")},
+								    	[/#if]	
+								    	[#if leScoreRecord.endUser.agent != null]
+								    		${message("rebate.endUser.agent")},
+								    	[/#if]	
+								    	[#if leScoreRecord.endUser.isSalesman == true]	
+								    		${message("rebate.endUser.salesman")},
+								    	[/#if]	
+								    	[#if leScoreRecord.endUser.seller == null && leScoreRecord.endUser.agent == null && leScoreRecord.endUser.isSalesman == false]
+								    		${message("rebate.endUser.normal")},
+								    	[/#if]
 									[#else]
 										--
 									[/#if]
@@ -90,7 +113,11 @@
 									${message("rebate.leScoreRecord.recommender")}:
 								</th>
 								<td>
+									[#if leScoreRecord.recommender??]
 									${leScoreRecord.recommender}
+									[#else]
+									--
+									[/#if]
 								</td>
 							</tr>
 							<tr>
@@ -99,7 +126,7 @@
 								</th>
 								<td>
 									<ul  class="viewer-images clearfix">
-										 <li><img class="img-lazy img-rounded" src="${leScoreRecord.recommenderPhoto}" alt="${message("rebate.leScoreRecord.recommenderPhoto")}"></li>
+										 <li><img class="img-lazy img-rounded" data-original="${leScoreRecord.recommenderPhoto}" alt="${message("rebate.leScoreRecord.recommenderPhoto")}"></li>
 									</ul>	
 								</td>
 							</tr>
@@ -143,6 +170,20 @@
 								<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 							</td>
 						</tr>
-						</table>				
+						</table>
+<script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
+<script type="text/javascript" src="${base}/resources/js/common.js"></script>
+<script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>							
+<script type="text/javascript">
+$(function() {
+
+	$('.viewer-images').viewer();
+	$('.img-lazy').lazyload();	
+
+});
+</script>   									
 </body>
 </html>

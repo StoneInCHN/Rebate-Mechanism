@@ -144,4 +144,42 @@ public final class DateUtils implements ApplicationContextAware, DisposableBean 
       return null;
     }
   }
+  /**
+   * 获取一天的开始时间
+   * day为整数，表示在date的基础上加day天，day为负数，表示在date的基础上减day天
+   * @param now
+   * @return
+   */
+  public static Date startOfDay(Date date, int day){
+    if (date == null) {
+    	date = new Date();
+    }
+    Calendar startTime = Calendar.getInstance();
+    startTime.setTime(date);
+    startTime.add(Calendar.DATE, day);
+    startTime.set(Calendar.HOUR_OF_DAY, 0);
+    startTime.set(Calendar.MINUTE, 0);
+    startTime.set(Calendar.SECOND, 0);
+    startTime.set(Calendar.MILLISECOND, 0);
+    return startTime.getTime();
+  }
+  /**
+   * 获取一天的结束时间
+   * day为整数，表示在date的基础上加day天，day为负数，表示在date的基础上减day天
+   * @param now
+   * @return
+   */
+  public static Date endOfDay(Date date, int day){
+    if (date == null) {
+    	date = new Date();
+    }
+    Calendar endTime = Calendar.getInstance();
+    endTime.setTime(date);
+    endTime.add(Calendar.DATE, day);
+    endTime.set(Calendar.HOUR_OF_DAY, 23);
+    endTime.set(Calendar.MINUTE, 59);
+    endTime.set(Calendar.SECOND, 59);
+    endTime.set(Calendar.MILLISECOND, 999);
+    return endTime.getTime();
+  }
 }

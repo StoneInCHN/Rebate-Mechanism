@@ -82,7 +82,7 @@
              </div>
          </div>
  		 <div class="button-group">
-              <a  id="withdrawButton" class="btn btn-default"> <i class="fa fa-money"></i><span>提现</span></a>
+              <a  id="withdrawButton" class="btn btn-default disabled" > <i class="fa fa-money"></i><span>提现</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
          <div>
@@ -102,11 +102,23 @@
 						<a href="javascript:;" class="sort" name="amount">${message("rebate.leScoreRecord.amount")}</a>
 					</th>
 					<th>
+						<span>${message("rebate.leScoreRecord.endUser.role")}</span>
+					</th>					
+					<th>
 						<a href="javascript:;" class="sort" name="withdrawStatus">${message("rebate.leScoreRecord.withdrawStatus")}</a>
 					</th>
 					<th>
 						<span>${message("rebate.leScoreRecord.withdraw.isWithdraw")}</span>
 					</th>
+					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.status")}</span>
+					</th>
+					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.handlingChange")}</span>
+					</th>	
+					<th>
+						<span>${message("rebate.leScoreRecord.withdraw.withdrawMsg")}</span>
+					</th>						
 					<th>
 						<span>${message("rebate.leScoreRecord.remark")}</span>
 					</th>
@@ -122,7 +134,7 @@
 				[#list page.content as leScoreRecord]
 				<tr>
 						<td>
-							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus == "AUDIT_FAILED" || leScoreRecord.isWithdraw] disabled="disabled" [/#if]/>
+							<input type="checkbox"  name="ids" value="${leScoreRecord.id}" [#if  leScoreRecord.withdrawStatus != "AUDIT_PASSED" || leScoreRecord.isWithdraw || leScoreRecord.status != null ] disabled="disabled" [/#if]/>
 						</td>
 					<td>
 						[#if  leScoreRecord.endUser??]
@@ -140,11 +152,29 @@
 					</td>
 					<td>
 						[#if  leScoreRecord.amount??]
-							${leScoreRecord.amount}
+							${leScoreRecord.amount * -1}
 						[#else]
 							--
 						[/#if]
 					</td>
+					<td>
+						[#if leScoreRecord.endUser??]
+					    	[#if leScoreRecord.endUser.seller != null]
+					    		${message("rebate.endUser.seller")}&nbsp;
+					    	[/#if]	
+					    	[#if leScoreRecord.endUser.agent != null]
+					    		${message("rebate.endUser.agent")}&nbsp;
+					    	[/#if]	
+					    	[#if leScoreRecord.endUser.isSalesman == true]	
+					    		${message("rebate.endUser.salesman")}&nbsp;
+					    	[/#if]	
+					    	[#if leScoreRecord.endUser.seller == null && leScoreRecord.endUser.agent == null && leScoreRecord.endUser.isSalesman == false]
+					    		${message("rebate.endUser.normal")}&nbsp;
+					    	[/#if]
+						[#else]
+							--
+						[/#if]
+					</td>	
 					<td>
 						[#if  leScoreRecord.withdrawStatus =="AUDIT_WAITING"]
 							<span class="label label-info">${message("rebate.leScoreRecord.withdrawStatus.AUDIT_WAITING")}</span>
@@ -166,7 +196,31 @@
 						[#else]
 							--
 						[/#if]
-						
+					</td>
+					<td>
+						[#if  leScoreRecord.status =="PROCESSING"]
+							<span class="label label-info">${message("rebate.leScoreRecord.withdraw.status.PROCESSING")}</span>
+						[#elseif leScoreRecord.status =="SUCCESS"]
+							<span class="label label-success">${message("rebate.leScoreRecord.withdraw.status.SUCCESS")}</span>
+						[#elseif leScoreRecord.status =="FAILED"]
+							<span class="label label-warning">${message("rebate.leScoreRecord.withdraw.status.FAILED")}</span>
+						[#else]
+							--
+						[/#if]
+					</td>					
+					<td>
+						[#if  leScoreRecord.handlingCharge??]
+							${leScoreRecord.handlingCharge}
+						[#else]
+							--
+						[/#if]
+					</td>	
+					<td>
+						[#if  leScoreRecord.withdrawMsg??]
+						<span data-toggle="tooltip" data-placement="left" title="${leScoreRecord.withdrawMsg}">${leScoreRecord.withdrawMsg}</span>
+						[#else]
+							--
+						[/#if]
 					</td>
 					<td>
 						[#if  leScoreRecord.remark??]

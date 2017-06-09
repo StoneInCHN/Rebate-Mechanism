@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 
 /**
@@ -110,6 +111,25 @@ public class LeScoreRecord extends BaseEntity {
    * 提现流水号
    */
   private String withDrawSn;
+  
+  /**
+   * 提现状态
+   */
+  private ClearingStatus status;
+  
+  /**
+   * 提现手续费
+   */
+  private BigDecimal handlingCharge;
+  
+  /**
+   * 交易批次号（批量代付号）
+   */
+  private String reqSn;
+  /**
+   * 记录序号，例如：0001
+   */
+  private String sn;
 
 
   @Column(length = 30)
@@ -265,5 +285,35 @@ public class LeScoreRecord extends BaseEntity {
   public void setIsWithdraw(Boolean isWithdraw) {
     this.isWithdraw = isWithdraw;
   }
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getHandlingCharge() {
+	return handlingCharge;
+  }
+	
+  public void setHandlingCharge(BigDecimal handlingCharge) {
+	this.handlingCharge = handlingCharge;
+  }
+	public String getReqSn() {
+		return reqSn;
+	}
+	
+	public void setReqSn(String reqSn) {
+		this.reqSn = reqSn;
+	}
 
+	public String getSn() {
+		return sn;
+	}
+
+	public void setSn(String sn) {
+		this.sn = sn;
+	}
+
+	public ClearingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ClearingStatus status) {
+		this.status = status;
+	}
 }

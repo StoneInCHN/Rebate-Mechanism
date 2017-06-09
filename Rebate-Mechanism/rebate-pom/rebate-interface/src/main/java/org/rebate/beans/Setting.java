@@ -342,7 +342,58 @@ public class Setting implements Serializable {
    * 商户H5 key
    */
   private String tlMerchantH5Key;
+  
+  /**
+   * 聚合数据 银行卡四元素验证URL
+   */
+  private String juheVerifyBankcard4;
+  /**
+   * 聚合数据 申请的key
+   */
+  private String juheKey;
 
+  /**
+   * 聚合数据 证件识别URL
+   */
+  private String juheVerifyCertificates;
+  /**
+   * 聚合数据 证件识别key
+   */
+  private String juheKeyCertificates;
+  
+  
+
+  public String getJuheVerifyBankcard4() {
+	return juheVerifyBankcard4;
+  }
+
+  public void setJuheVerifyBankcard4(String juheVerifyBankcard4) {
+	this.juheVerifyBankcard4 = juheVerifyBankcard4;
+  }
+
+  public String getJuheKey() {
+	return juheKey;
+  }
+
+  public void setJuheKey(String juheKey) {
+	this.juheKey = juheKey;
+  }
+
+  public String getJuheVerifyCertificates() {
+	return juheVerifyCertificates;
+  }
+
+  public void setJuheVerifyCertificates(String juheVerifyCertificates) {
+	this.juheVerifyCertificates = juheVerifyCertificates;
+  }
+
+  public String getJuheKeyCertificates() {
+	return juheKeyCertificates;
+  }
+
+  public void setJuheKeyCertificates(String juheKeyCertificates) {
+	this.juheKeyCertificates = juheKeyCertificates;
+  }
 
   public String getTlRegUserUrl() {
     return tlRegUserUrl;

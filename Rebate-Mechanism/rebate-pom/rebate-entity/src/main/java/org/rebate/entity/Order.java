@@ -116,6 +116,28 @@ public class Order extends BaseEntity {
    * 鼓励金额
    */
   private BigDecimal encourageAmount;
+  
+
+  /**
+   * 是否为录单订单
+   */
+  private Boolean isSallerOrder = false;
+
+  /**
+   * 商家折扣
+   */
+  private BigDecimal sellerDiscount;
+
+  /**
+   * 订单直接收益是否结算(提取)
+   */
+  private Boolean isClearing = false;
+
+  /**
+   * 批量录单时流水号
+   */
+  private String batchSn;
+
 
   /**
    * 抵扣金额
@@ -300,6 +322,35 @@ public class Order extends BaseEntity {
     this.seller = seller;
   }
 
+  public Boolean getIsSallerOrder() {
+	return isSallerOrder;
+  }
 
+  public void setIsSallerOrder(Boolean isSallerOrder) {
+	this.isSallerOrder = isSallerOrder;
+  }
+  @Transient
+  public BigDecimal getSellerDiscount() {
+    sellerDiscount = sellerIncome.divide(amount, 1, BigDecimal.ROUND_HALF_UP);
+    return sellerDiscount;
+  }
 
+  public void setSellerDiscount(BigDecimal sellerDiscount) {
+    this.sellerDiscount = sellerDiscount;
+  }
+  public Boolean getIsClearing() {
+	return isClearing;
+  }
+
+  public void setIsClearing(Boolean isClearing) {
+	this.isClearing = isClearing;
+  }
+  @Column(length = 40)
+  public String getBatchSn() {
+    return batchSn;
+  }
+
+  public void setBatchSn(String batchSn) {
+    this.batchSn = batchSn;
+  }  
 }

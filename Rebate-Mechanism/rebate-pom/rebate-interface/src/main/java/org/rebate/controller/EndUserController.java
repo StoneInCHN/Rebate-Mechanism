@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
@@ -28,6 +31,7 @@ import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.RebateRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SystemConfig;
+import org.rebate.entity.UserAuth;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
@@ -45,6 +49,7 @@ import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
+import org.rebate.json.request.AuthRequest;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
@@ -62,6 +67,7 @@ import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.service.UserAuthService;
 import org.rebate.service.UserRecommendRelationService;
+import org.rebate.utils.ApiUtils;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.LatLonUtil;
@@ -76,6 +82,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Controller("endUserController")
 @RequestMapping("/endUser")
@@ -1621,6 +1628,94 @@ public class EndUserController extends MobileBaseController {
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
     response.setToken(newtoken);
+    return response;
+  }
+  /**
+   * 用户实名认证
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/doIdentityAuth", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse doIdentityAuth(AuthRequest req) {
+    BaseResponse response = new BaseResponse();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    MultipartFile cardFrontPic = req.getCardFrontPic();
+    MultipartFile cardBackPic = req.getCardBackPic();
+    String realName = req.getRealName();
+    String cardNo = req.getCardNo();
+
+
+    UserAuth userAuthByUserId = userAuthService.getUserAuth(userId, true);
+    if (userAuthByUserId != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.userAuth.user.isAuthed").getContent());
+      return response;
+    }
+
+    UserAuth userAuthByIdCard = userAuthService.getUserAuthByIdCard(cardNo, true);
+    if (userAuthByIdCard != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.userAuth.idCard.isAuthed").getContent());
+      return response;
+    }
+
+    try {
+      Map<String, String> params = new HashMap<String, String>();
+      params.put("key", setting.getJuheKeyCertificates());
+      params.put("cardType", "2");
+      params.put("url", setting.getJuheVerifyCertificates());
+
+      CommonsMultipartFile cf = (CommonsMultipartFile) cardFrontPic;
+      DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+      File f = fi.getStoreLocation();
+
+      String result = ApiUtils.post(params, f);
+      ObjectMapper objectMapper = new ObjectMapper();
+      Map<String, Object> map = objectMapper.readValue(result, Map.class);
+      if (LogUtil.isDebugEnabled(EndUserController.class)) {
+        LogUtil
+            .debug(
+                EndUserController.class,
+                "doIdentityAuth",
+                "doIdentityAuth by juhe api. userId: %s,realName: %s,cardNo: %s,error_code: %s,reason: %s, result: %s",
+                userId, realName, cardNo, map.get("error_code"), map.get("reason"),
+                map.get("result"));
+      }
+      if (map.get("result") == null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(message("rebate.auth.idcard.failed") + ":" + map.get("reason"));
+        return response;
+      }
+      Map<String, String> info = (HashMap<String, String>) map.get("result");
+      String idcardJh = info.get("公民身份号码");
+      String nameJh = info.get("姓名");
+      if (cardNo.equals(idcardJh) && realName.equals(nameJh)) {
+        // verify pass. Continue
+      } else {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(message("rebate.auth.idcard.authDiff"));
+        return response;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    userAuthService.doAuth(userId, realName, cardNo, cardFrontPic, cardBackPic);
+    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+      LogUtil.debug(EndUserController.class, "doIdentityAuth",
+          "endUser do Identity Auth. userId: %s, realName: %s, idCardNo: %s", userId, realName,
+          cardNo);
+    }
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setDesc(realName);
     return response;
   }
 }
