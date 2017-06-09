@@ -205,7 +205,7 @@ public class OrderController extends MobileBaseController {
     }
     if ("5".equals(payTypeId)) {// 乐分支付
       EndUser endUser = endUserService.find(userId);
-      if (endUser.getCurLeScore().compareTo(amount) < 0) {
+      if (endUser.getCurLeScore().compareTo(payAmount) < 0) {
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(Message.error("rebate.payOrder.curLeScore.insufficient",
             endUser.getCurLeScore()).getContent());
