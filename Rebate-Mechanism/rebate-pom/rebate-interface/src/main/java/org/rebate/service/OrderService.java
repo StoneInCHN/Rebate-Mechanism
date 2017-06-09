@@ -20,8 +20,8 @@ public interface OrderService extends BaseService<Order, Long> {
    * @param remark
    * @return
    */
-  Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
-      Boolean isBeanPay);
+  Order create(Long userId, String payTypeId, String payType, BigDecimal amount, Long sellerId,
+      String remark, Boolean isBeanPay, BigDecimal deductAmount);
 
 
   /**

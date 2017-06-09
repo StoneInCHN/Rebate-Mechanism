@@ -53,6 +53,19 @@ public class OrderRequest extends BaseRequest {
    */
   private String payPwd;
 
+  /**
+   * 抵扣乐豆
+   */
+  private BigDecimal deductLeBean;
+
+
+  public BigDecimal getDeductLeBean() {
+    return deductLeBean;
+  }
+
+  public void setDeductLeBean(BigDecimal deductLeBean) {
+    this.deductLeBean = deductLeBean;
+  }
 
   public String getPayPwd() {
     return payPwd;

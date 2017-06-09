@@ -413,6 +413,22 @@
 				<groupId>com.google.zxing</groupId>
 				<artifactId>core</artifactId>
 		</dependency>
+		<!-- 通联支付 -->
+		<dependency>
+			<groupId>allinpay</groupId>
+			<artifactId>pdsinter</artifactId>
+			<version>1.0.0-release</version>
+		</dependency>
+		<dependency>
+			<groupId>allinpay</groupId>
+			<artifactId>signtool</artifactId>
+			<version>0.0.1-release</version>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.1</version>
+		</dependency>
 		<!-- chinese convert pingyin -->
 		 <!-- <dependency>
 	    	<groupId>hanzi2pingyin</groupId>

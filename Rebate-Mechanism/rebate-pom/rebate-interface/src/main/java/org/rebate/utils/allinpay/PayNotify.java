@@ -2,6 +2,7 @@ package org.rebate.utils.allinpay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,23 +13,63 @@ public class PayNotify {
 
   public static Setting setting = SettingUtils.get();
 
+
+
   /**
    * 验证消息是否是合法消息
    * 
    * @param params 通知返回来的参数数组
    * @return 验证结果
    */
-  public static boolean verify(Map<String, String> params) {
+  public static boolean verifySignH5(Map<String, String> map) {
+    LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
+    params.put("merchantId", map.get("merchantId"));
+    params.put("version", map.get("version"));
+    params.put("language", map.get("language"));
+    params.put("signType", map.get("signType"));
+    params.put("payType", map.get("payType"));
+    params.put("issuerId", map.get("issuerId"));
+    params.put("paymentOrderId", map.get("paymentOrderId"));
+    params.put("orderNo", map.get("orderNo"));
+    params.put("orderDatetime", map.get("orderDatetime"));
+    params.put("orderAmount", map.get("orderAmount"));
+    params.put("payDatetime", map.get("payDatetime"));
+    params.put("payAmount", map.get("payAmount"));
+    params.put("ext1", map.get("ext1"));
+    params.put("ext2", map.get("ext2"));
+    params.put("payResult", map.get("payResult"));
+    params.put("errorCode", map.get("errorCode"));
+    params.put("returnDatetime", map.get("returnDatetime"));
 
-    String sign = "";
-    if (params.get("signMsg") != null) {
-      sign = params.get("signMsg");
-    }
-    boolean isSign = getSignVeryfy(params, sign, setting.getAllinpayMd5Key());
+    params.put("signMsg", map.get("signMsg"));
 
-    return isSign;
+    return verify(params);
   }
 
+  /**
+   * 验证消息是否是合法消息
+   * 
+   * @param params 通知返回来的参数数组
+   * @return 验证结果
+   */
+  public static boolean verify(LinkedHashMap<String, String> params) {
+    try {
+      String sign = "";
+      if (params.get("signMsg") != null) {
+        sign = params.remove("signMsg");
+      }
+      // boolean isSign = getSignVeryfy(params, sign, setting.getTlMerchantH5Key());
+      // System.out.println(params);
+      String signVerify = SybUtil.sign(params, setting.getTlMerchantH5Key());
+      if (sign.equals(signVerify)) {
+        return true;
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
 
   /**
    * 根据反馈回来的信息，生成签名结果
@@ -40,8 +81,11 @@ public class PayNotify {
   private static boolean getSignVeryfy(Map<String, String> Params, String sign, String md5Key) {
     // 过滤空值、sign与sign_type参数
     Map<String, String> sParaNew = paraFilter(Params);
+    System.out.println(sParaNew);
     // 获取待签名字符串
     String preSignStr = createLinkString(sParaNew, md5Key);
+    System.out.println(preSignStr);
+
     // 获得签名验证结果
     boolean isSign = false;
     String verifySign = SunMd5.md5(preSignStr).toUpperCase().trim();

@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -42,17 +41,79 @@ public class NotifyController extends MobileBaseController {
   @Resource(name = "taskExecutor")
   private TaskExecutor taskExecutor;
 
+  // /**
+  // * 通联支付回调接口
+  // *
+  // * @param req
+  // * @return
+  // * @throws IOException
+  // */
+  // @RequestMapping(value = "/notify_allinpay", method = RequestMethod.POST)
+  // public @ResponseBody String notify_allinpay(HttpServletRequest request) throws Exception {
+  // // 获取支付宝POST过来反馈信息
+  // Map<String, String> params = new LinkedHashMap<String, String>();
+  // Map requestParams = request.getParameterMap();
+  // for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+  // String name = (String) iter.next();
+  // String[] values = (String[]) requestParams.get(name);
+  // String valueStr = "";
+  // for (int i = 0; i < values.length; i++) {
+  // valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+  // }
+  // // 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+  // // valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
+  // params.put(name, valueStr);
+  // }
+  // if (LogUtil.isDebugEnabled(NotifyController.class)) {
+  // LogUtil.debug(NotifyController.class, "notify_allinpay",
+  // "allin pay notify callback method. response: %s", params);
+  // }
+  //
+  //
+  // // 商户订单号
+  // String out_trade_no =
+  // new String(request.getParameter("orderNo").getBytes("ISO-8859-1"), "UTF-8");
+  // // 交易金额
+  // String total_fee =
+  // new String(request.getParameter("payAmount").getBytes("ISO-8859-1"), "UTF-8");
+  // // 加密类型
+  // String sign_type = new String(request.getParameter("signType").getBytes("ISO-8859-1"),
+  // "UTF-8");
+  // if ("0".equals(sign_type) && PayNotify.verify(params)) {// sign_type:0 MD5加密 sign_type:1 RSA加密
+  // if (LogUtil.isDebugEnabled(NotifyController.class)) {
+  // LogUtil
+  // .debug(
+  // NotifyController.class,
+  // "notify_allinpay",
+  // "user pay order call back successfully with allin pay. orderSn: %s, amount: %s,sign_type: %s",
+  // out_trade_no, total_fee, sign_type);
+  // }
+  // orderService.updateOrderforPayCallBack(out_trade_no);
+  // return "success";
+  // } else {// 验证失败
+  // if (LogUtil.isDebugEnabled(NotifyController.class)) {
+  // LogUtil
+  // .debug(
+  // NotifyController.class,
+  // "notify_allinpay",
+  // "user pay order call back verify sign failed with allin pay. orderSn: %s,sign_type: %s",
+  // out_trade_no, sign_type);
+  // }
+  // return "fail";
+  // }
+  // }
+
   /**
-   * 通联支付回调接口
+   * 通联H5支付回调接口
    * 
    * @param req
    * @return
    * @throws IOException
    */
-  @RequestMapping(value = "/notify_allinpay", method = RequestMethod.POST)
-  public @ResponseBody String notify_allinpay(HttpServletRequest request) throws Exception {
+  @RequestMapping(value = "/notify_allinpay_H5", method = RequestMethod.POST)
+  public @ResponseBody String notify_allinpay_H5(HttpServletRequest request) throws Exception {
     // 获取支付宝POST过来反馈信息
-    Map<String, String> params = new LinkedHashMap<String, String>();
+    Map<String, String> params = new HashMap<String, String>();
     Map requestParams = request.getParameterMap();
     for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
       String name = (String) iter.next();
@@ -66,10 +127,9 @@ public class NotifyController extends MobileBaseController {
       params.put(name, valueStr);
     }
     if (LogUtil.isDebugEnabled(NotifyController.class)) {
-      LogUtil.debug(NotifyController.class, "notify_allinpay",
-          "allin pay notify callback method. response: %s", params);
+      LogUtil.debug(NotifyController.class, "notify_allinpay_H5",
+          "allin pay H5 notify callback method. response: %s", params);
     }
-
 
     // 商户订单号
     String out_trade_no =
@@ -79,28 +139,33 @@ public class NotifyController extends MobileBaseController {
         new String(request.getParameter("payAmount").getBytes("ISO-8859-1"), "UTF-8");
     // 加密类型
     String sign_type = new String(request.getParameter("signType").getBytes("ISO-8859-1"), "UTF-8");
-    if ("0".equals(sign_type) && PayNotify.verify(params)) {// sign_type:0 MD5加密 sign_type:1 RSA加密
+    if ("0".equals(sign_type) && PayNotify.verifySignH5(params)) {// sign_type:0 MD5加密 sign_type:1
+                                                                  // RSA加密
       if (LogUtil.isDebugEnabled(NotifyController.class)) {
         LogUtil
             .debug(
                 NotifyController.class,
-                "notify_allinpay",
-                "user pay order call back successfully with allin pay. orderSn: %s, amount: %s,sign_type: %s",
+                "notify_allinpay_H5",
+                "user pay order call back successfully with allin pay H5. orderSn: %s, amount: %s,sign_type: %s",
                 out_trade_no, total_fee, sign_type);
       }
-      orderService.updateOrderforPayCallBack(out_trade_no);
-      return "success";
+      taskExecutor.execute(new Runnable() {
+        public void run() {
+          orderService.updateOrderforPayCallBack(out_trade_no);
+        }
+      });
+
     } else {// 验证失败
       if (LogUtil.isDebugEnabled(NotifyController.class)) {
         LogUtil
             .debug(
                 NotifyController.class,
-                "notify_allinpay",
-                "user pay order call back verify sign failed with allin pay. orderSn: %s,sign_type: %s",
+                "notify_allinpay_H5",
+                "user pay order call back verify sign failed with allin pay H5. orderSn: %s,sign_type: %s",
                 out_trade_no, sign_type);
       }
-      return "fail";
     }
+    return "success";
   }
 
   /**

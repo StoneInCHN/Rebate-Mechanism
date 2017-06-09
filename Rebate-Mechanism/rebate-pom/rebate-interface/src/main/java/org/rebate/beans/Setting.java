@@ -312,11 +312,85 @@ public class Setting implements Serializable {
    */
   private String yiPayNotifyUrl;
 
-  /**
-   * 通联支付-商户md5 key
-   */
-  private String allinpayMd5Key;
 
+  /**
+   * 通联支付用户注册url
+   */
+  private String tlRegUserUrl;
+
+  /**
+   * 通联商户的H5支付号
+   */
+  private String tlMerchantH5Id;
+
+  /**
+   * 通联支付支付后同步跳转url
+   */
+  private String tlPickupUrl;
+
+  /**
+   * H5页面提交订单接口url
+   */
+  private String tlH5OrderUrl;
+
+  /**
+   * 银行卡支付H5回调url
+   */
+  private String tlPayNotifyH5Url;
+
+  /**
+   * 商户H5 key
+   */
+  private String tlMerchantH5Key;
+
+
+  public String getTlRegUserUrl() {
+    return tlRegUserUrl;
+  }
+
+  public void setTlRegUserUrl(String tlRegUserUrl) {
+    this.tlRegUserUrl = tlRegUserUrl;
+  }
+
+  public String getTlMerchantH5Id() {
+    return tlMerchantH5Id;
+  }
+
+  public void setTlMerchantH5Id(String tlMerchantH5Id) {
+    this.tlMerchantH5Id = tlMerchantH5Id;
+  }
+
+  public String getTlPickupUrl() {
+    return tlPickupUrl;
+  }
+
+  public void setTlPickupUrl(String tlPickupUrl) {
+    this.tlPickupUrl = tlPickupUrl;
+  }
+
+  public String getTlH5OrderUrl() {
+    return tlH5OrderUrl;
+  }
+
+  public void setTlH5OrderUrl(String tlH5OrderUrl) {
+    this.tlH5OrderUrl = tlH5OrderUrl;
+  }
+
+  public String getTlPayNotifyH5Url() {
+    return tlPayNotifyH5Url;
+  }
+
+  public void setTlPayNotifyH5Url(String tlPayNotifyH5Url) {
+    this.tlPayNotifyH5Url = tlPayNotifyH5Url;
+  }
+
+  public String getTlMerchantH5Key() {
+    return tlMerchantH5Key;
+  }
+
+  public void setTlMerchantH5Key(String tlMerchantH5Key) {
+    this.tlMerchantH5Key = tlMerchantH5Key;
+  }
 
   public String getYiMerchantPwd() {
     return yiMerchantPwd;
@@ -326,13 +400,6 @@ public class Setting implements Serializable {
     this.yiMerchantPwd = yiMerchantPwd;
   }
 
-  public String getAllinpayMd5Key() {
-    return allinpayMd5Key;
-  }
-
-  public void setAllinpayMd5Key(String allinpayMd5Key) {
-    this.allinpayMd5Key = allinpayMd5Key;
-  }
 
   public String getYiPayNotifyUrl() {
     return yiPayNotifyUrl;

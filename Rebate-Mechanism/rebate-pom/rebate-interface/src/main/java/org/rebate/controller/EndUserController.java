@@ -31,6 +31,7 @@ import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -49,6 +50,7 @@ import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
 import org.rebate.service.AgentCommissionConfigService;
 import org.rebate.service.AreaService;
+import org.rebate.service.BankCardService;
 import org.rebate.service.EndUserService;
 import org.rebate.service.FileService;
 import org.rebate.service.LeBeanRecordService;
@@ -58,6 +60,7 @@ import org.rebate.service.RebateRecordService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SettingConfigService;
 import org.rebate.service.SystemConfigService;
+import org.rebate.service.UserAuthService;
 import org.rebate.service.UserRecommendRelationService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.KeyGenerator;
@@ -110,6 +113,12 @@ public class EndUserController extends MobileBaseController {
 
   @Resource(name = "settingConfigServiceImpl")
   private SettingConfigService settingConfigService;
+
+  @Resource(name = "bankCardServiceImpl")
+  private BankCardService bankCardService;
+
+  @Resource(name = "userAuthServiceImpl")
+  private UserAuthService userAuthService;
 
   @Resource(name = "agentCommissionConfigServiceImpl")
   private AgentCommissionConfigService agentCommissionConfigService;
@@ -274,6 +283,12 @@ public class EndUserController extends MobileBaseController {
         e.printStackTrace();
       }
 
+      // 密码rsa解密后非空验证
+      if (password == null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
+        return response;
+      }
       // 密码长度验证
       if (password.length() < setting.getPasswordMinlength()) {
         response.setCode(CommonAttributes.FAIL_LOGIN);
@@ -868,6 +883,8 @@ public class EndUserController extends MobileBaseController {
             "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
             "wechatNickName"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
+    map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
+    map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
     map.putAll(endUserService.isUserHasSeller(endUser));
     map.put("isSetLoginPwd", false);
     map.put("isSetPayPwd", false);
@@ -1005,9 +1022,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
 
     Pageable pageable = new Pageable();
@@ -1069,9 +1085,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
 
     Pageable pageable = new Pageable();
@@ -1107,7 +1122,7 @@ public class EndUserController extends MobileBaseController {
   @RequestMapping(value = "/leScoreRec", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> leScoreRec(
-      @RequestBody BaseRequest request) {
+      @RequestBody UserRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
@@ -1115,6 +1130,7 @@ public class EndUserController extends MobileBaseController {
     String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
+    LeScoreType leScoreType = request.getLeScoreType();
 
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
@@ -1124,10 +1140,11 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
+    Filter typeFilter = new Filter("leScoreType", Operator.eq, leScoreType);
+    filters.add(typeFilter);
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
@@ -1185,9 +1202,8 @@ public class EndUserController extends MobileBaseController {
     // return response;
     // }
 
-    EndUser endUser = endUserService.find(userId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, endUser);
+    Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
 
     Pageable pageable = new Pageable();
@@ -1504,6 +1520,12 @@ public class EndUserController extends MobileBaseController {
       password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
     } catch (Exception e) {
       e.printStackTrace();
+    }
+    // 密码rsa解密后非空验证
+    if (password == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
+      return response;
     }
 
     // 密码长度验证

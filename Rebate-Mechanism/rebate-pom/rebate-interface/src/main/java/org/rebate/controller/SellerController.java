@@ -14,8 +14,11 @@ import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.entity.BankCard;
+import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerCategory;
+import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SystemConfig;
@@ -35,13 +38,17 @@ import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.SellerRequest;
+import org.rebate.service.BankCardService;
+import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.EndUserService;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
+import org.rebate.service.SellerClearingRecordService;
 import org.rebate.service.SellerEvaluateService;
 import org.rebate.service.SellerJdbcService;
 import org.rebate.service.SellerService;
 import org.rebate.service.SystemConfigService;
+import org.rebate.service.UserAuthService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.LatLonUtil;
 import org.rebate.utils.QRCodeGenerator;
@@ -78,6 +85,18 @@ public class SellerController extends MobileBaseController {
 
   @Resource(name = "systemConfigServiceImpl")
   private SystemConfigService systemConfigService;
+
+  @Resource(name = "sellerClearingRecordServiceImpl")
+  private SellerClearingRecordService sellerClearingRecordService;
+
+  @Resource(name = "clearingOrderRelationServiceImpl")
+  private ClearingOrderRelationService clearingOrderRelationService;
+
+  @Resource(name = "bankCardServiceImpl")
+  private BankCardService bankCardService;
+
+  @Resource(name = "userAuthServiceImpl")
+  private UserAuthService userAuthService;
 
 
   /**
@@ -277,9 +296,8 @@ public class SellerController extends MobileBaseController {
       LogUtil.debug(SellerController.class, "evaluateList", "seller evaluate list. sellerId: %s",
           sellerId, pageSize, pageNumber);
     }
-    Seller seller = sellerService.find(sellerId);
     List<Filter> filters = new ArrayList<Filter>();
-    Filter sellerFilter = new Filter("seller", Operator.eq, seller);
+    Filter sellerFilter = new Filter("seller", Operator.eq, sellerId);
     Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
     filters.add(statusFilter);
     filters.add(sellerFilter);
@@ -394,6 +412,8 @@ public class SellerController extends MobileBaseController {
     }
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, seller);
     map.put("envImgs", envImgs);
+    map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
+    map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(token);
@@ -489,4 +509,103 @@ public class SellerController extends MobileBaseController {
     return response;
   }
 
+
+  /**
+   * 店铺货款列表
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/paymentList", method = RequestMethod.POST)
+  public @ResponseBody ResponseMultiple<Map<String, Object>> paymentList(
+      @RequestBody SellerRequest request) {
+
+    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
+
+    Long userId = request.getUserId();
+    String token = request.getToken();
+    Integer pageSize = request.getPageSize();
+    Integer pageNumber = request.getPageNumber();
+
+
+    Pageable pageable = new Pageable();
+    pageable.setPageNumber(pageNumber);
+    pageable.setPageSize(pageSize);
+
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
+    filters.add(endUserFilter);
+    pageable.setFilters(filters);
+    pageable.setOrderDirection(Direction.desc);
+    pageable.setOrderProperty("createDate");
+
+    Page<SellerClearingRecord> page = sellerClearingRecordService.findPage(pageable);
+    String[] propertys = {"id", "clearingSn", "isClearing", "createDate", "amount"};
+    List<Map<String, Object>> result =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+
+    PageResponse pageInfo = new PageResponse();
+    pageInfo.setPageNumber(pageNumber);
+    pageInfo.setPageSize(pageSize);
+    pageInfo.setTotal((int) page.getTotal());
+    response.setPage(pageInfo);
+    response.setMsg(result);
+
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
+
+
+
+  /**
+   * 货款明细
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/paymentDetail", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody ResponseOne<Map<String, Object>> paymentDetail(@RequestBody SellerRequest req) {
+    ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    Long entityId = req.getEntityId();
+    Integer pageSize = req.getPageSize();
+    Integer pageNumber = req.getPageNumber();
+
+    SellerClearingRecord sellerClearingRecord = sellerClearingRecordService.find(entityId);
+    String[] pro = {"id", "clearingSn", "isClearing", "createDate", "amount", "totalOrderAmount"};
+    Map<String, Object> result = FieldFilterUtils.filterEntityMap(pro, sellerClearingRecord);
+
+    Page<ClearingOrderRelation> page =
+        clearingOrderRelationService.getOrdersByClearingId(entityId, pageSize, pageNumber);
+    String[] propertys =
+        {"order.sn", "order.createDate", "order.amount", "order.sellerIncome",
+            "order.rebateAmount", "order.sellerDiscount"};
+    List<Map<String, Object>> orderMap =
+        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+    result.put("orders", orderMap);
+    // BigDecimal totalIncome = new BigDecimal("0");
+    // for (ClearingOrderRelation relation : page.getContent()) {
+    // totalIncome = totalIncome.add(relation.getOrder().getAmount());
+    // }
+    // result.put("totalIncome", totalIncome);
+
+
+    BankCard bankCard = bankCardService.find(sellerClearingRecord.getBankCardId());
+    String[] bankCardPro = {"cardNum", "bankName", "cardType", "bankLogo"};
+    Map<String, Object> bankCardMap = FieldFilterUtils.filterEntityMap(bankCardPro, bankCard);
+    result.put("bankCard", bankCardMap);
+
+    response.setMsg(result);
+
+    response.setCode(CommonAttributes.SUCCESS);
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    return response;
+  }
 }

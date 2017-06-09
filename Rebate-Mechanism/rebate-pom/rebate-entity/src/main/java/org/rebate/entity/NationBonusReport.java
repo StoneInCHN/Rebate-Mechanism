@@ -56,7 +56,7 @@ public class NationBonusReport extends BaseEntity {
    */
   private BigDecimal consumeByDay;
   /**
-   * 当日分红乐分（改完乐豆）
+   * 当日分红
    */
   private BigDecimal bonusLeScoreByDay;
   /**

@@ -193,19 +193,29 @@ public class CommonEnum {
     /** 安卓下载地址 6 */
     ANDROID_DOWNLOAD_URL,
     /** IOS下载地址 7 */
-    IOS_DOWNLOAD_URL
+    IOS_DOWNLOAD_URL,
+    /** 店铺货款说明 8 */
+    SELLER_PAYMENT_DESC,
+    /** 实名认证说明 9 */
+    USER_AUTH_DESC,
+    /** 银行卡持卡人说明 10 */
+    BANKCARD_OWNER_DESC,
+    /** 银行卡手机号说明 11 */
+    BANKCARD_MOBILE_DESC,
+    /** 银行卡服务协议 12 */
+    BANKCARD_SERVICE_AGREEMENT,
+    /** 乐豆抵扣说明 13 */
+    LEBEAN_PAY_DESC
   }
 
   /**
    * 乐分类型
    */
   public enum LeScoreType {
-    /** 消费直接返商户的收益 */
-    CONSUME_SELLER,
+    /** 消费乐分 */
+    CONSUME,
     // /** 用户消费鼓励金收益 */
     // ENCOURAGE,
-    // /** 乐心（积分）产生的分红 */
-    // BONUS,
     /** 推荐好友消费返利 */
     RECOMMEND_USER,
     /** 推荐店铺收益返利 */
@@ -214,6 +224,8 @@ public class CommonEnum {
     AGENT,
     /** 提现 */
     WITHDRAW
+    // /** 乐心（积分）产生的分红 */
+    // BONUS,
   }
 
   /**
@@ -254,7 +266,9 @@ public class CommonEnum {
     /** 店铺列表展示图片 */
     STORE_SIGN,
     /** 订单评论图片 */
-    ORDER_EVALUATE
+    ORDER_EVALUATE,
+    /** 身份证照片 */
+    AUTH_IDCARD
   }
 
   public enum FileType {
@@ -313,5 +327,29 @@ public class CommonEnum {
      * 未回复
      */
     NO_REPLAY_STATUS
+  }
+  /**
+   * 货款结算（提现）状态
+   *
+   */
+  public enum ClearingStatus {
+    /** 处理中 **/
+    PROCESSING,
+    /** 处理成功 **/
+    SUCCESS,
+    /** 处理失败 **/
+    FAILED
+
+  }
+
+  /**
+   * 系统参数配置
+   *
+   */
+  public enum ParamConfigKey {
+    /** 交易结果查询 延迟查询时间 0 */
+    ALLINPAY_QUERY_DELAY,
+    /** 交易结果查询 间隔时间(每五分钟) 1 */
+    ALLINPAY_QUERY_PERIOD
   }
 }
