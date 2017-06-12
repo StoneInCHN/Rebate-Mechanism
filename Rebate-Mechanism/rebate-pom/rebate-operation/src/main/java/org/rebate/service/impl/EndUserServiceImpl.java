@@ -418,7 +418,6 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   @Override
   public EndUser findByUserMobile(String mobileNo) {
-    // TODO Auto-generated method stub
     return null;
   }
 
