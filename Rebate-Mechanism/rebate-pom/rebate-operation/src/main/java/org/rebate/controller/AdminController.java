@@ -150,6 +150,7 @@ public class AdminController extends BaseController {
       filters.add(Filter.eq("adminStatus", adminStatus));
       model.addAttribute("adminStatus", adminStatus);
     }
+    filters.add(Filter.ne("username", "superadmin"));
     pageable.setFilters(filters);
     model.addAttribute("page", adminService.findPage(pageable));
     return "/admin/list";

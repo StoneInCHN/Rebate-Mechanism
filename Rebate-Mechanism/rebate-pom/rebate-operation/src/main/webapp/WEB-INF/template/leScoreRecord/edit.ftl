@@ -25,7 +25,7 @@
 								</th>
 								<td>
 									[#if  leScoreRecord.endUser??]
-										${leScoreRecord.endUser.userName}
+										${leScoreRecord.endUser.nickName}
 									[#else]
 										--
 									[/#if]

@@ -7,9 +7,7 @@ import javax.annotation.Resource;
 
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
-import org.rebate.entity.BankCard;
 import org.rebate.entity.LeScoreRecord;
-import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -31,13 +29,13 @@ public class LeScoreRecordController extends BaseController {
 
   @Resource(name = "leScoreRecordServiceImpl")
   private LeScoreRecordService leScoreRecordService;
-  
+
   @Resource(name = "leScoreRecordJob")
   private LeScoreRecordJob leScoreRecordJob;
-  
+
   @Resource(name = "bankCardServiceImpl")
   private BankCardService bankCardService;
-  
+
 
   /**
    * 列表
@@ -47,7 +45,7 @@ public class LeScoreRecordController extends BaseController {
     List<Filter> filters = new ArrayList<Filter>();
     filters.add(Filter.eq("leScoreType", LeScoreType.WITHDRAW));
     if (req.getUserName() != null) {
-      filters.add(Filter.like("endUser&userName", "%" + req.getUserName() + "%"));
+      filters.add(Filter.like("endUser&nickName", "%" + req.getUserName() + "%"));
     }
     if (req.getCellPhoneNum() != null) {
       filters.add(Filter.like("endUser&cellPhoneNum", "%" + req.getCellPhoneNum() + "%"));
@@ -108,38 +106,38 @@ public class LeScoreRecordController extends BaseController {
    */
   @RequestMapping(value = "/batchWithdrawal", method = RequestMethod.POST)
   public @ResponseBody Message batchWithdrawal(Long[] ids) {
-	if (ids == null || ids.length == 0) {
-		return Message.error("请至少选择一条记录！");
-	}
-	
+    if (ids == null || ids.length == 0) {
+      return Message.error("请至少选择一条记录！");
+    }
+
     String reqSn = leScoreRecordService.batchWithdrawal(ids);
-    
+
     if (reqSn != null) {
-    	
-    	leScoreRecordJob.updateRecordStatus(reqSn);
-    	
-    	return Message.success("批量提现执行成功!");
-	}else {
-		return Message.success("批量提现执行失败!");
-	}
+
+      leScoreRecordJob.updateRecordStatus(reqSn);
+
+      return Message.success("批量提现执行成功!");
+    } else {
+      return Message.success("批量提现执行失败!");
+    }
   }
   /**
    * 单笔实时提现
    */
-//  @RequestMapping(value = "/singlePay", method = RequestMethod.POST)
-//  public @ResponseBody Message singlePay(Long id) {
-//	 LeScoreRecord record = null;
-//     if(id == null){
-//       return ERROR_MESSAGE;
-//     }
-//     record = leScoreRecordService.find(id);
-//	 if (record == null) {
-//		 return ERROR_MESSAGE;
-//	 }
-//	 BankCard bankCard = bankCardService.find(record.getWithDrawType());
-//	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
-//		 return Message.error("无效的银行卡");
-//	 }	 
-//     return leScoreRecordService.singlePay(record, bankCard);
-//  }
+  // @RequestMapping(value = "/singlePay", method = RequestMethod.POST)
+  // public @ResponseBody Message singlePay(Long id) {
+  // LeScoreRecord record = null;
+  // if(id == null){
+  // return ERROR_MESSAGE;
+  // }
+  // record = leScoreRecordService.find(id);
+  // if (record == null) {
+  // return ERROR_MESSAGE;
+  // }
+  // BankCard bankCard = bankCardService.find(record.getWithDrawType());
+  // if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
+  // return Message.error("无效的银行卡");
+  // }
+  // return leScoreRecordService.singlePay(record, bankCard);
+  // }
 }

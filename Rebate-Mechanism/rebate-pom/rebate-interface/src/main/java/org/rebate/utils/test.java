@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.Setting;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
@@ -30,7 +31,8 @@ public class test {
     // System.out.println(pwd);
     // String pwd1 = KeyGenerator.encrypt("111111", RSAHelper.getPublicKey(serverPublicKey));
     // System.out.println(pwd1);
-    System.out.println(KeyGenerator.encrypt("123456", RSAHelper.getPublicKey(serverPublicKey)));
+    System.out.println(DigestUtils.md5Hex("luyBL3"));
+    System.out.println(KeyGenerator.encrypt("luyBL3", RSAHelper.getPublicKey(serverPublicKey)));
     String password =
         "Od3XgLxsVHCeIPzx4oikeT3HH02iOzAHimS8xQTDr8Veq66O2u8ZCskmq5ewXQD3PD7xHwCTOLJfPpIMKXJMhUrogJLVXvDMqUOm7u5L2TF7fIGAYjzS6RRIgzSUtZE+3o+sejo5PvDoRqLPDy1s9svUznLYZkyPIIhv8VhGguU=";
     System.out.println(KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey)));

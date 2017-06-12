@@ -258,7 +258,10 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       bonusParamPerDay.setAvlLeMindCount(leMindSize.intValue());
 
       BigDecimal totalBonusAmountByMind = new BigDecimal("0");
+      BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
       List<EndUser> userList = new ArrayList<EndUser>();
+      List<LeScoreRecord> leScoreList = new ArrayList<LeScoreRecord>();
+      List<LeBeanRecord> leBeanList = new ArrayList<LeBeanRecord>();
       for (LeMindRecord leMindRecord : leMindRecords) {
         EndUser endUser = leMindRecord.getEndUser();
         BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
@@ -289,29 +292,51 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         bonusByMindPerDay.setBonusAmount(curBonus);
         leMindRecord.getBonusByDays().add(bonusByMindPerDay);
 
-        BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
+
         if (leScorePer.compareTo(new BigDecimal("0")) > 0) {
-          LeScoreRecord leScoreRecord = new LeScoreRecord();
-          leScoreRecord.setEndUser(endUser);
-          leScoreRecord.setLeScoreType(LeScoreType.BONUS);
-          leScoreRecord.setAmount(curBonus.multiply(leScorePer));
-          leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
-          endUser.getLeScoreRecords().add(leScoreRecord);
-          endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
-          endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
-          endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+          BigDecimal leScoreBonus = curBonus.multiply(leScorePer);
+          LeScoreRecord leScoreRecord = compareEndUserLeScore(leScoreList, endUser);
+          if (leScoreRecord != null) {
+            leScoreRecord.setAmount(leScoreRecord.getAmount().add(leScoreBonus));
+            leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreBonus));
+            endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreBonus));
+            endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+            endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreBonus));
+
+          } else {
+            leScoreRecord = new LeScoreRecord();
+            leScoreRecord.setEndUser(endUser);
+            leScoreRecord.setLeScoreType(LeScoreType.BONUS);
+            leScoreRecord.setAmount(leScoreBonus);
+            leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+            endUser.getLeScoreRecords().add(leScoreRecord);
+            endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
+            endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+            endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+          }
+          leScoreList.add(leScoreRecord);
         }
 
         if (leScorePer.compareTo(new BigDecimal("1")) < 0) {
-          LeBeanRecord leBeanRecord = new LeBeanRecord();
-          leBeanRecord.setAmount(curBonus.subtract(curBonus.multiply(leScorePer)));
-          // leBeanRecord.setAmount(curBonus);
-          leBeanRecord.setEndUser(endUser);
-          leBeanRecord.setType(LeBeanChangeType.BONUS);
-          leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
-          endUser.getLeBeanRecords().add(leBeanRecord);
-          endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
-          endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
+          BigDecimal leBeanBonus = curBonus.subtract(curBonus.multiply(leScorePer));
+          LeBeanRecord leBeanRecord = compareEndUserLeBean(leBeanList, endUser);
+          if (leBeanRecord != null) {
+            leBeanRecord.setAmount(leBeanRecord.getAmount().add(leBeanBonus));
+            leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanBonus));
+            endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+            endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanBonus));
+          } else {
+            leBeanRecord = new LeBeanRecord();
+            leBeanRecord.setAmount(leBeanBonus);
+            // leBeanRecord.setAmount(curBonus);
+            leBeanRecord.setEndUser(endUser);
+            leBeanRecord.setType(LeBeanChangeType.BONUS);
+            leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+            endUser.getLeBeanRecords().add(leBeanRecord);
+            endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+            endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
+          }
+          leBeanList.add(leBeanRecord);
         }
 
 
@@ -362,6 +387,28 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     }
 
 
+  }
+
+  private LeScoreRecord compareEndUserLeScore(List<LeScoreRecord> leScoreRecords, EndUser endUser) {
+    LeScoreRecord leScoreRecord = null;
+    for (LeScoreRecord record : leScoreRecords) {
+      if (endUser.getId().equals(record.getEndUser().getId())) {
+        leScoreRecord = record;
+        break;
+      }
+    }
+    return leScoreRecord;
+  }
+
+  private LeBeanRecord compareEndUserLeBean(List<LeBeanRecord> leBeanRecords, EndUser endUser) {
+    LeBeanRecord leBeanRecord = null;
+    for (LeBeanRecord record : leBeanRecords) {
+      if (endUser.getId().equals(record.getEndUser().getId())) {
+        leBeanRecord = record;
+        break;
+      }
+    }
+    return leBeanRecord;
   }
 
   @Override
