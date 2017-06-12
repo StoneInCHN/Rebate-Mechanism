@@ -19,6 +19,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.AdminStatus;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 @Entity
 @Table(name = "rm_admin")
@@ -59,7 +61,10 @@ public class Admin extends BaseEntity {
    */
   private Boolean isSystem;
 
-
+  /**
+   * 预留手机号
+   */
+  private String cellPhoneNum;
 
   /**
    * 获取用户名
@@ -231,6 +236,16 @@ public class Admin extends BaseEntity {
 
   public void setIsSystem(Boolean isSystem) {
     this.isSystem = isSystem;
+  }
+  
+  @Column(length = 20)
+  @JsonProperty
+  public String getCellPhoneNum() {
+    return cellPhoneNum;
+  }
+
+  public void setCellPhoneNum(String cellPhoneNum) {
+    this.cellPhoneNum = cellPhoneNum;
   }
 
   /*

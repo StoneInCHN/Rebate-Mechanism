@@ -27,7 +27,10 @@ $().ready(function() {
 				email: true
 			},
 			roleIds: "required",
-			adminStatus: "required"
+			adminStatus: "required",
+			cellPhoneNum:{
+					isMobile:true
+			}
 		}
 	});
 
@@ -92,6 +95,16 @@ $().ready(function() {
 									<input type="radio" value="locked" name="adminStatus" [#if admin.adminStatus== "locked" ]checked="checked"[/#if] />${message("rebate.admin.adminStatus.locked")}
 								</td>
 							</tr>
+							[#if admin.isSystem == true]
+							<tr>
+								<th>
+									${message("rebate.admin.cellPhoneNum")}:
+								</th>
+								<td>
+									<input type="text" name="cellPhoneNum" class="text" maxlength="20" value="${admin.cellPhoneNum}" />
+								</td>
+							</tr>							
+							[/#if]
 						</table>
 						<table class="input">
 							<tr>

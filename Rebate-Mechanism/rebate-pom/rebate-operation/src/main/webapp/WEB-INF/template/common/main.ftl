@@ -165,7 +165,7 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-					 [#list ["rebate:withdraw","rebate:sellerClearingRecord"] as permission]
+					 [#list ["rebate:withdraw","rebate:sellerClearingRecord","rebate:systemWithdrawal"] as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -183,6 +183,11 @@
 									[@shiro.hasPermission name="rebate:sellerClearingRecord"]
 		                           <li>
 		                               <a href="../sellerClearingRecord/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.sellerClearingRecord")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:systemWithdrawal"]
+		                           <li>
+		                               <a href="../systemWithdrawRecord/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.systemWithdrawal")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>

@@ -50,6 +50,11 @@ public class BankCard extends BaseEntity {
    * 用户
    */
   private EndUser endUser;
+  
+  /**
+   * Admin用户
+   */
+  private Admin admin; 
 
   /**
    * 身份证号
@@ -165,6 +170,15 @@ public class BankCard extends BaseEntity {
 
   public void setIdCard(String idCard) {
     this.idCard = idCard;
+  }
+  
+  @ManyToOne(fetch = FetchType.LAZY)
+  public Admin getAdmin() {
+    return admin;
+  }
+
+  public void setAdmin(Admin admin) {
+    this.admin = admin;
   }
 
 
