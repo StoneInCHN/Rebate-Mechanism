@@ -700,16 +700,16 @@ public class OrderController extends MobileBaseController {
       filters.add(statusFilter);
     }
 
-    Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.ne, true);
-    filters.add(sellerOrderFilter);
+    // Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.ne, true);
+    // filters.add(sellerOrderFilter);
 
     pageable.setFilters(filters);
 
     Page<Order> orderPage = orderService.findPage(pageable);
     String[] propertys =
         {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
-            "evaluate.content", "evaluate.sellerReply", "status", "seller.storePictureUrl",
-            "seller.address"};
+            "evaluate.content", "evaluate.sellerReply", "status", "isSallerOrder",
+            "seller.storePictureUrl", "seller.address"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
