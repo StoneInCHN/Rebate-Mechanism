@@ -46,11 +46,18 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public Message applyUpdate(SellerApplication sellerApply) {
+  public synchronized Message applyUpdate(SellerApplication sellerApply) {
     String message= "";
     //业务员
     EndUser salesMan = new EndUser();
     SellerApplication apply = this.find(sellerApply.getId());
+    //商家所属用户
+    EndUser endUser = apply.getEndUser();
+    
+    if (endUser!=null&&endUser.getSeller()!=null) {
+      return Message.error("rebate.message.error");
+    }
+    
     try {
       apply.setApplyStatus(sellerApply.getApplyStatus());
       apply.setNotes(sellerApply.getNotes());
@@ -58,7 +65,6 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
       if (ApplyStatus.AUDIT_PASSED == sellerApply.getApplyStatus()) {
         Seller seller = new Seller();
         SellerCategory sellerCategory = apply.getSellerCategory();
-        EndUser endUser = apply.getEndUser();
         if (endUser != null) {
           seller.setEndUser(endUser);
         }
