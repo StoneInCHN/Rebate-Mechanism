@@ -11,6 +11,7 @@ import java.util.Map;
 import org.rebate.beans.Setting;
 import org.rebate.utils.alipay.config.AlipayConfig;
 import org.rebate.utils.alipay.sign.RSA;
+import org.rebate.utils.allinpay.PayNotify;
 import org.rebate.utils.wechat.WeixinUtil;
 
 
@@ -31,7 +32,7 @@ public class test {
     // System.out.println(pwd1);
     System.out.println(KeyGenerator.encrypt("123456", RSAHelper.getPublicKey(serverPublicKey)));
     String password =
-        "D8yiptPFzLrZGBK4FGuTjP44/RF9IqPtbQARc10e2JgW2V0plvJfmHCHRlCw3scfUzkhpGjVuq5fXcjX0wc2F1Hf02cc5IyCoG9u+fRarqbFFyaA4z1hTnJtjqgCzvDyHs66n/dCjvs8TR5j9qFSiCaewk78342CUp2q2nbPdn0=";
+        "Od3XgLxsVHCeIPzx4oikeT3HH02iOzAHimS8xQTDr8Veq66O2u8ZCskmq5ewXQD3PD7xHwCTOLJfPpIMKXJMhUrogJLVXvDMqUOm7u5L2TF7fIGAYjzS6RRIgzSUtZE+3o+sejo5PvDoRqLPDy1s9svUznLYZkyPIIhv8VhGguU=";
     System.out.println(KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey)));
     BigDecimal a = new BigDecimal("22.00");
     System.out.println(a.setScale(0, BigDecimal.ROUND_DOWN));
@@ -73,8 +74,47 @@ public class test {
 
 
     System.out.println(new Date(new Long("1494273600000")));
+    // URLEncoder.encode("");
+    String url = "";
+    // String res = ApiUtils.get(url);
+    // ObjectMapper mapper = new ObjectMapper();
+    // Map<String, Object> resMap = (Map<String, Object>) mapper.readValue(res, Map.class);
 
+    String sn = "90000343434343";
+    if (sn.startsWith("90000")) {
+      System.out.println(sn);
+    }
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("111", "1212");
+    System.out.println(map);
+    System.out.println("" + "11");
+    // PayUtil.allinPay("90000343434343", "导辅导辅导报告", "100");
+    // String allinpay_userId =
+    // SunMd5.allinpayRegister("008510154113610", "1".toLowerCase(), "1234567890",
+    // "https://cashier.allinpay.com/usercenter/merchant/UserInfo/reg.do");
+    // System.out.println(allinpay_userId);
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("merchantId", "008510154113610");
+    params.put("version", "v1.0");
+    params.put("language", "1");
+    params.put("signType", "0");
+    params.put("payType", "33");
+    params.put("issuerId", "");
+    params.put("paymentOrderId", "201705281152510386");
+    params.put("orderNo", "201705288411");
+    params.put("orderDatetime", "20170528115249");
+    params.put("orderAmount", "1");
+    params.put("payDatetime", "20170528115342");
+    params.put("payAmount", "1");
+    params.put("ext1", "<USER>170525864078656</USER>");
+    params.put("ext2", "");
+    params.put("payResult", "1");
+    params.put("errorCode", "");
+    params.put("returnDatetime", "20170528115342");
 
+    params.put("signMsg", "292915306352B007DCD043DFBF3FBB9A");
+    System.out.println(params);
+    System.out.println(PayNotify.verifySignH5(params));
 
   }
 
