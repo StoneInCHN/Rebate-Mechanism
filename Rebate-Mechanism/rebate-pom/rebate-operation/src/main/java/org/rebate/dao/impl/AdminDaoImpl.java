@@ -87,19 +87,19 @@ public class AdminDaoImpl extends BaseDaoImpl<Admin, Long> implements AdminDao {
 
   }
   @Override
-  @CachePut(value = "admin", key = "'admin.smsCode='+#cellPhoneNum")
+  @CachePut(value = "adminSmsCode", key = "'admin.smsCode='+#cellPhoneNum")
   public SMSVerificationCode createSmsCode(String cellPhoneNum, SMSVerificationCode smsCode) {
     return smsCode;
   }
 
   @Override
-  @Cacheable(value = "admin", key = "'admin.smsCode='+#cellPhoneNum")
+  @Cacheable(value = "adminSmsCode", key = "'admin.smsCode='+#cellPhoneNum")
   public SMSVerificationCode getSmsCode(String cellPhoneNum) {
     return null;
   }
 
   @Override
-  @CacheEvict(value = "admin", key = "'admin.smsCode='+#cellPhoneNum")
+  @CacheEvict(value = "adminSmsCode", key = "'admin.smsCode='+#cellPhoneNum")
   public void deleteSmsCode(String cellPhoneNum) {
 
   }

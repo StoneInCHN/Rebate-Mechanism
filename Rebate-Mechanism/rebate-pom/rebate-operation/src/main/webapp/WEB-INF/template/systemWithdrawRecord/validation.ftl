@@ -12,10 +12,11 @@
 </head>
 <body>
 	  <ol class="breadcrumb">
-          <li><a ><i class="fa fa-user"></i> 系统提现</a> </li>
-          <li><a href="list.jhtml">系统提现列表</a></li>
+          <li><a ><i class="fa fa-user"></i> 平台提现</a> </li>
+          <li><a href="list.jhtml">平台提现列表</a></li>
           <li class="active">管理员身份验证</li>
       </ol>
+      <form id="inputForm" action="validationPwdSms.jhtml" method="post" class="form-horizontal" role="form">
       <table class="input">
 				      <tr>
 								<th>
@@ -39,18 +40,19 @@
 								</th>
 								<td>
 									<input type="text" id="smsCode" name="smsCode" class="text" maxlength="20" />
-									<input type="button" class="btn btn-primary" value="请求验证码" onclick="reqeustSmsCode(this)" />
+									<input type="button" id="smsCodeBtn" class="btn btn-primary" value="请求验证码" onclick="reqeustSmsCode(this)" />
 								</td>
 							</tr>																																								
 							<th>
 								&nbsp;
 							</th>
 							<td>
-								<input type="button" class="btn btn-primary" value="继续" onclick="location.href='validationPwdSms.jhtml'" />
+								<input type="submit" class="btn btn-primary" value="继续" />
 								<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 							</td>
 						</tr>
 						</table>
+						</form>
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
@@ -71,21 +73,21 @@ function time(o) {
             },  
             1000); 
         }  
-    }  
-}
+}  
 function reqeustSmsCode(o){
 					$.ajax({
 						url: "reqeustSmsCode.jhtml",
 						type: "POST",
 						beforeSend:function(){
-							$("#singlePay").attr("disabled","disabled");
+							$("#smsCodeBtn").attr("disabled","disabled");
 						},
 						cache: false,
 						success: function(message) {
 							if(message.type == "success"){
+								//alert("success");
 								time(o);
 							}else{
-								
+								alert(message.content);
 							}
 						}
 					});

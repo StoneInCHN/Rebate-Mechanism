@@ -9,12 +9,13 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	  <ol class="breadcrumb">
-          <li><a ><i class="fa fa-user"></i> 系统提现</a> </li>
-          <li><a href="list.jhtml">系统提现列表</a></li>
-          <li class="active">详情</li>
+          <li><a ><i class="fa fa-user"></i> 平台提现</a> </li>
+          <li><a href="list.jhtml">平台提现列表</a></li>
+          <li class="active">提现页面</li>
       </ol>
       <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
@@ -42,7 +43,7 @@
 									银行卡号
 								</th>
 								<td>
-									<input type="text" name="cardNum" class="text" value="${defaultCard.cardNum}" maxlength="20" disabled="disabled"/>
+									<input type="text" id="cardNum" name="cardNum" class="text" value="${defaultCard.cardNum}" maxlength="20" disabled="disabled"/>
 								</td>
 							</tr>
 						</table>
@@ -62,14 +63,58 @@
 								&nbsp;
 							</th>
 							<td>
-								<input type="button" id="singlePay" class="btn btn-info" value="${message("rebate.sellerClearingRecord.singlePay")} onclick="location.href='add.jhtml'" />
+								<input type="button" id="singlePay" class="btn btn-info" value="平台提现"/>
 								<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='add.jhtml'" />
 							</td>
 						</tr>
-						</table>
+						</table>	
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
-<script type="text/javascript" src="${base}/resources/js/input.js"></script>													
+<script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#singlePay").click(function(){
+			var d = dialog({
+				title: '平台提现',
+				content: "请确认提现金额："+ $("#amount").val() +"元，提现银行卡："+ $("#cardNum").val()+"，保证提现后还剩足够的金额用于平台商家货款结算和乐分提现！！",
+				okValue: '确定',
+				ok: function () {
+					var _that = this;
+					_that.content('提交中,请稍等...');
+					_that.cancelDisplay =false;
+					$.ajax({
+						url: "singlePay.jhtml",
+						type: "POST",
+						data: {
+							amount:$("#amount").val()
+						},
+						beforeSend:function(){
+							$("#singlePay").attr("disabled","disabled");
+						},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if(message.type == "success"){
+									_that.content(message.content);
+									setTimeout(function() {
+										location.reload();
+									}, 3000);
+							}else{
+								_that.content(message.content);
+								$("#singlePay").attr("disabled",false);
+							}
+						}
+					});
+				  return false;
+				},
+				cancelValue: '取消',
+				cancel: function () {}
+			});
+			d.showModal();
+		});
+	})
+</script>												
 </body>
 </html>

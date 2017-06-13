@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,8 +120,8 @@ public class SystemWithdrawRecordController extends BaseController {
   /**
    * 请求验证码
    */
-  @RequestMapping(value = "/reqeustSmsCode", method = RequestMethod.GET)
-  public void reqeustSmsCode() {
+  @RequestMapping(value = "/reqeustSmsCode", method = RequestMethod.POST)
+  public @ResponseBody Message reqeustSmsCode() {
 	Admin admin = adminService.getCurrent();
 	if (!adminService.isSystemAdmin(admin)) {//非内置账户admin
 		LogUtil.debug(this.getClass(), "reqeustSmsCode", "非系统内置账户(非admin管理员)");
@@ -128,27 +129,35 @@ public class SystemWithdrawRecordController extends BaseController {
 		LogUtil.debug(this.getClass(), "reqeustSmsCode", "admin管理员未配置预留手机号");
 	}else if (isMobileNumber(admin.getCellPhoneNum())) {
 		String cellPhoneNum = admin.getCellPhoneNum();
-	      SMSVerificationCode smsVerificationCode = adminService.getSmsCode(cellPhoneNum);
-	      if (smsVerificationCode != null) {
+	    SMSVerificationCode smsVerificationCode = adminService.getSmsCode(cellPhoneNum);
+	    if (smsVerificationCode != null) {
 	    	  adminService.deleteSmsCode(cellPhoneNum);
-	      }
-	      Integer smsCode = (int) ((Math.random() * 9 + 1) * 1000);
-	      ToolsUtils.sendSmsMsg(cellPhoneNum, message("rebate.admin.smsCodeContent", smsCode.toString()));// 发送短信验证码
-	      SMSVerificationCode newSmsCode = new SMSVerificationCode();
-	      newSmsCode.setCellPhoneNum(cellPhoneNum);
-	      newSmsCode.setSmsCode(smsCode.toString());
-	      newSmsCode.setTimeoutToken(new Long(new Date().getTime()).toString());
+	    }
+	    Integer smsCode = (int) ((Math.random() * 9 + 1) * 1000);
+	    ToolsUtils.sendSmsMsg(cellPhoneNum, message("rebate.admin.smsCodeContent", smsCode.toString()));// 发送短信验证码
+	    SMSVerificationCode newSmsCode = new SMSVerificationCode();
+	    newSmsCode.setCellPhoneNum(cellPhoneNum);
+	    newSmsCode.setSmsCode(smsCode.toString());
+	    newSmsCode.setTimeoutToken(new Long(new Date().getTime()).toString());
+	    try {
 	      adminService.createSmsCode(cellPhoneNum, newSmsCode);
 	      LogUtil.debug(this.getClass(), "reqeustSmsCode", "Send SmsCode for cellPhone number: %s, smsCode: %s", cellPhoneNum, smsCode.toString());
+	      return SUCCESS_MESSAGE;
+        } catch (Exception e) {
+          e.printStackTrace();
+          LogUtil.debug(this.getClass(), "reqeustSmsCode", "Catch Exception:", e.getMessage());
+          return Message.error(e.getMessage());
+        }
 	}
+	return ERROR_MESSAGE;
   } 
   /**
    * 验证admin密码和手机验证码
    */
-  @RequestMapping(value = "/validationPwdSms", method = RequestMethod.GET)
+  @RequestMapping(value = "/validationPwdSms", method = RequestMethod.POST)
   public String validationPwdSms(String password, String smsCode, ModelMap model) {
 	Admin admin = adminService.getCurrent();
-	if (DigestUtils.md5Hex(password).equals(admin.getPassword())) {//密码有效
+	if (password != null && smsCode != null && DigestUtils.md5Hex(password).equals(admin.getPassword())) {//密码有效
 	    SMSVerificationCode smsVerficationCode = adminService.getSmsCode(admin.getCellPhoneNum());
 	    if (smsVerficationCode != null) {
 	    	String code = smsVerficationCode.getSmsCode();
@@ -169,23 +178,18 @@ public class SystemWithdrawRecordController extends BaseController {
     return "redirect:add.jhtml";
   }  
   /**
-   * 单笔实时提现
+   * 平台单笔实时提现
    */
   @RequestMapping(value = "/singlePay", method = RequestMethod.POST)
-  public @ResponseBody Message singlePay(Long id) {
-	 SystemWithdrawRecord record = null;
-     if(id == null){
-       return ERROR_MESSAGE;
+  public @ResponseBody Message singlePay(BigDecimal amount) {
+     if(amount == null){
+       return Message.error("提现金额无效");
      }
-     record = systemWithdrawRecordService.find(id);
-	 if (record == null) {
-		 return ERROR_MESSAGE;
-	 }
-	 BankCard bankCard = bankCardService.find(record.getBankCardId());
+     Admin admin = adminService.getCurrent();
+     BankCard bankCard = bankCardService.getDefaultCard(admin);
 	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
 		 return Message.error("无效的银行卡");
 	 }	 
-     //return systemWithdrawRecordService.singlePay(record, bankCard);
-	 return null;
+     return systemWithdrawRecordService.singlePay(amount, bankCard);
   }
 }
