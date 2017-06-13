@@ -6,8 +6,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.beans.Message;
+import org.rebate.beans.SMSVerificationCode;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.Admin;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.SystemWithdrawRecord;
 import org.rebate.framework.filter.Filter;
@@ -19,6 +22,8 @@ import org.rebate.request.SystemWithdrawRecordReq;
 import org.rebate.service.AdminService;
 import org.rebate.service.BankCardService;
 import org.rebate.service.SystemWithdrawRecordService;
+import org.rebate.utils.LogUtil;
+import org.rebate.utils.TokenGenerator;
 import org.rebate.utils.ToolsUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -102,19 +107,67 @@ public class SystemWithdrawRecordController extends BaseController {
   /**
    * 添加验证
    */
-  @RequestMapping(value = "/validation", method = RequestMethod.GET)
-  public String validation(ModelMap model) {
-    model.addAttribute("admin",adminService.getCurrent());
-    return "/systemWithdrawRecord/validation";
+  @RequestMapping(value = "/add", method = RequestMethod.GET)
+  public String validationPage(ModelMap model) {
+	Admin admin = adminService.getCurrent();
+	if (!adminService.isSystemAdmin(admin)) {//非内置账户admin
+		return "redirect:list.jhtml";
+	}
+	model.addAttribute("admin",admin);
+	return "/systemWithdrawRecord/validation";
   }  
   /**
    * 请求验证码
    */
   @RequestMapping(value = "/reqeustSmsCode", method = RequestMethod.GET)
-  public void reqeustSmsCode(ModelMap model) {
-
+  public void reqeustSmsCode() {
+	Admin admin = adminService.getCurrent();
+	if (!adminService.isSystemAdmin(admin)) {//非内置账户admin
+		LogUtil.debug(this.getClass(), "reqeustSmsCode", "非系统内置账户(非admin管理员)");
+	}else if (admin.getCellPhoneNum() == null) {
+		LogUtil.debug(this.getClass(), "reqeustSmsCode", "admin管理员未配置预留手机号");
+	}else if (isMobileNumber(admin.getCellPhoneNum())) {
+		String cellPhoneNum = admin.getCellPhoneNum();
+	      SMSVerificationCode smsVerificationCode = adminService.getSmsCode(cellPhoneNum);
+	      if (smsVerificationCode != null) {
+	    	  adminService.deleteSmsCode(cellPhoneNum);
+	      }
+	      Integer smsCode = (int) ((Math.random() * 9 + 1) * 1000);
+	      ToolsUtils.sendSmsMsg(cellPhoneNum, message("rebate.admin.smsCodeContent", smsCode.toString()));// 发送短信验证码
+	      SMSVerificationCode newSmsCode = new SMSVerificationCode();
+	      newSmsCode.setCellPhoneNum(cellPhoneNum);
+	      newSmsCode.setSmsCode(smsCode.toString());
+	      newSmsCode.setTimeoutToken(new Long(new Date().getTime()).toString());
+	      adminService.createSmsCode(cellPhoneNum, newSmsCode);
+	      LogUtil.debug(this.getClass(), "reqeustSmsCode", "Send SmsCode for cellPhone number: %s, smsCode: %s", cellPhoneNum, smsCode.toString());
+	}
   } 
-  
+  /**
+   * 验证admin密码和手机验证码
+   */
+  @RequestMapping(value = "/validationPwdSms", method = RequestMethod.GET)
+  public String validationPwdSms(String password, String smsCode, ModelMap model) {
+	Admin admin = adminService.getCurrent();
+	if (DigestUtils.md5Hex(password).equals(admin.getPassword())) {//密码有效
+	    SMSVerificationCode smsVerficationCode = adminService.getSmsCode(admin.getCellPhoneNum());
+	    if (smsVerficationCode != null) {
+	    	String code = smsVerficationCode.getSmsCode();
+	    	String timeoutToken = smsVerficationCode.getTimeoutToken();
+	    	if (timeoutToken != null && !TokenGenerator.smsCodeTokenTimeOut(timeoutToken, setting.getSmsCodeTimeOut())) {
+	    		if (smsCode.equals(code)) {//验证码有效
+	    			adminService.deleteSmsCode(admin.getCellPhoneNum());
+	    			model.addAttribute("admin",adminService.getCurrent());
+	    			BankCard defaultCard = bankCardService.getDefaultCard(admin);
+	                if (defaultCard != null) {
+	                	model.addAttribute("defaultCard", defaultCard);
+	                }
+	    			return "/systemWithdrawRecord/withdraw";
+	    		}
+	    	}
+	    }
+	}
+    return "redirect:add.jhtml";
+  }  
   /**
    * 单笔实时提现
    */
