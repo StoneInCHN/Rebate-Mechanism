@@ -48,7 +48,7 @@
 				/console/bonusParam/** = perms["rebate:bonusParam"]
 				/console/report/** = perms["rebate:report"]
 				/console/apkVersion/** = perms["rebate:version"]
-				
+				/console/systemWithdrawRecord/** = perms["rebate:systemWithdrawal"]
 				
 				/console/** = authc 
 			</value>

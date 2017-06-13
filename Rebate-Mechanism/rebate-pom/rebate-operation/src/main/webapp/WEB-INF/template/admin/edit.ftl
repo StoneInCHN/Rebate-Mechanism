@@ -1,3 +1,4 @@
+[#assign shiro=JspTaglibs["/WEB-INF/tld/shiro.tld"] /]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -95,6 +96,7 @@ $().ready(function() {
 									<input type="radio" value="locked" name="adminStatus" [#if admin.adminStatus== "locked" ]checked="checked"[/#if] />${message("rebate.admin.adminStatus.locked")}
 								</td>
 							</tr>
+							[@shiro.hasPermission name="rebate:systemWithdrawal"]
 							[#if admin.isSystem == true]
 							<tr>
 								<th>
@@ -103,8 +105,34 @@ $().ready(function() {
 								<td>
 									<input type="text" name="cellPhoneNum" class="text" maxlength="20" value="${admin.cellPhoneNum}" />
 								</td>
-							</tr>							
+							</tr>	
+							<tr>
+								<th>
+									银行卡管理:
+								</th>
+								<td>
+									
+								</td>
+							</tr>								
+							<tr>
+								<th>
+									${message("rebate.admin.password")}:
+								</th>
+								<td>
+									<input type="password" id="password" name="password" class="text" maxlength="20" />
+								</td>
+							</tr>			
+							<tr>
+								<th>
+									短信验证码:
+								</th>
+								<td>
+									<input type="text" id="smsCode" name="smsCode" class="text" maxlength="20" />
+									<input type="button" id="smsCodeBtn" class="btn btn-primary" value="请求验证码" onclick="reqeustSmsCode(this)" />
+								</td>
+							</tr>												
 							[/#if]
+		                     [/@shiro.hasPermission]
 						</table>
 						<table class="input">
 							<tr>

@@ -190,6 +190,6 @@ public class SystemWithdrawRecordController extends BaseController {
 	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
 		 return Message.error("无效的银行卡");
 	 }	 
-     return systemWithdrawRecordService.singlePay(amount, bankCard);
+     return systemWithdrawRecordService.singlePay(admin, amount, bankCard);
   }
 }
