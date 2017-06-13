@@ -37,10 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SystemWithdrawRecordController extends BaseController {
 
   @Resource(name = "systemWithdrawRecordServiceImpl")
-  private SystemWithdrawRecordService systemWithdrawRecordService;
-  
-//  @Resource(name = "leScoreRecordJob")
-//  private SystemWithdrawRecordJob leScoreRecordJob;
+  private SystemWithdrawRecordService systemWithdrawRecordService;  
   
   @Resource(name = "bankCardServiceImpl")
   private BankCardService bankCardService;

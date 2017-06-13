@@ -96,43 +96,6 @@ $().ready(function() {
 									<input type="radio" value="locked" name="adminStatus" [#if admin.adminStatus== "locked" ]checked="checked"[/#if] />${message("rebate.admin.adminStatus.locked")}
 								</td>
 							</tr>
-							[@shiro.hasPermission name="rebate:systemWithdrawal"]
-							[#if admin.isSystem == true]
-							<tr>
-								<th>
-									${message("rebate.admin.cellPhoneNum")}:
-								</th>
-								<td>
-									<input type="text" name="cellPhoneNum" class="text" maxlength="20" value="${admin.cellPhoneNum}" />
-								</td>
-							</tr>	
-							<tr>
-								<th>
-									银行卡管理:
-								</th>
-								<td>
-									
-								</td>
-							</tr>								
-							<tr>
-								<th>
-									${message("rebate.admin.password")}:
-								</th>
-								<td>
-									<input type="password" id="password" name="password" class="text" maxlength="20" />
-								</td>
-							</tr>			
-							<tr>
-								<th>
-									短信验证码:
-								</th>
-								<td>
-									<input type="text" id="smsCode" name="smsCode" class="text" maxlength="20" />
-									<input type="button" id="smsCodeBtn" class="btn btn-primary" value="请求验证码" onclick="reqeustSmsCode(this)" />
-								</td>
-							</tr>												
-							[/#if]
-		                     [/@shiro.hasPermission]
 						</table>
 						<table class="input">
 							<tr>
@@ -141,6 +104,11 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+									[@shiro.hasPermission name="rebate:systemWithdrawal"]
+									[#if admin.isSystem == true]
+									<input type="button" class="button" style="width:130px !important" value="编辑平台提现信息"  onclick="location.href='validation.jhtml'"/>
+									[/#if]
+		                     		[/@shiro.hasPermission]
 									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
