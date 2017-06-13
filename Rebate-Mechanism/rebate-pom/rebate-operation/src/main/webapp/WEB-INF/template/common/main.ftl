@@ -195,7 +195,7 @@
 						   	[#break /]
 					[/@shiro.hasPermission]
 				[/#list]
-				[#list ["rebate:endUser","rebate:scoreRecord","rebate:leScoreRecord","rebate:leMindRecord","rebate:leBeanRecord"] as permission]
+				[#list ["rebate:endUser","rebate:scoreRecord","rebate:leScoreRecord","rebate:leMindRecord","rebate:leBeanRecord","rebate:bankCard"]as permission]
 						[@shiro.hasPermission name = permission]
 		                   <div class="sidebar-nav">
 		                       <div class="sidebar-title">
@@ -228,6 +228,11 @@
 		                            [@shiro.hasPermission name="rebate:leBeanRecord"]
 		                           <li>
 		                               <a href="../endUser/leBean/record.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.endUser.leBean.info")}</span></a>
+		                           </li>
+		                           [/@shiro.hasPermission]
+		                           [@shiro.hasPermission name="rebate:bankCard"]
+		                           <li>
+		                               <a href="../bankCard/list.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.main.bankCard")}</span></a>
 		                           </li>
 		                           [/@shiro.hasPermission]
 		                       </ul>
