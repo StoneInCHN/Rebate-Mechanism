@@ -2,30 +2,20 @@ package org.rebate.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.Resource;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.rebate.beans.Message;
 import org.rebate.dao.LeScoreRecordDao;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
-import org.rebate.entity.ParamConfig;
-import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
-import org.rebate.entity.commonenum.CommonEnum.ParamConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
-import org.rebate.framework.filter.Filter;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.BankCardService;
 import org.rebate.service.EndUserService;

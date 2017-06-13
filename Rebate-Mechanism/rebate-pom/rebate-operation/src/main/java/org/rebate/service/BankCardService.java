@@ -1,5 +1,8 @@
 package org.rebate.service; 
 
+import java.util.List;
+
+import org.rebate.entity.Admin;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.framework.service.BaseService;
@@ -17,4 +20,8 @@ public interface BankCardService extends BaseService<BankCard,Long>{
 	 * @return
 	 */
 	BankCard getDefaultCard(EndUser endUser);
+	
+	BankCard getDefaultCard(Admin admin);
+	
+	List<BankCard> getAllCardList(Admin admin);
 }

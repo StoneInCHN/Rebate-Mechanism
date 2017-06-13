@@ -12,8 +12,8 @@
 </head>
 <body>
 	  <ol class="breadcrumb">
-          <li><a ><i class="fa fa-user"></i> 系统提现</a> </li>
-          <li><a href="list.jhtml">系统提现列表</a></li>
+          <li><a ><i class="fa fa-user"></i> 平台提现</a> </li>
+          <li><a href="list.jhtml">平台提现列表</a></li>
           <li class="active">详情</li>
       </ol>
       <table class="input">

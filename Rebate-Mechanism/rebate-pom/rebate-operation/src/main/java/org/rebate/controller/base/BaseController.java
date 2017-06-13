@@ -2,6 +2,8 @@ package org.rebate.controller.base;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
@@ -9,6 +11,8 @@ import javax.validation.Validator;
 
 import org.rebate.beans.DateEditor;
 import org.rebate.beans.Message;
+import org.rebate.beans.Setting;
+import org.rebate.utils.SettingUtils;
 import org.rebate.utils.SpringUtils;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -33,6 +37,8 @@ public class BaseController{
 
 	/** "验证结果"参数名称 */
 	private static final String CONSTRAINT_VIOLATIONS_ATTRIBUTE_NAME = "constraintViolations";
+	
+	public Setting setting = SettingUtils.get();
 	
 	@Resource(name = "validator")
 	private Validator validator;
@@ -132,5 +138,15 @@ public class BaseController{
 			RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
 			requestAttributes.setAttribute(Log.LOG_CONTENT_ATTRIBUTE_NAME, content, RequestAttributes.SCOPE_REQUEST);
 		}*/
+	}
+	/**
+	 * 验证是否合法手机号
+	 * @param mobile
+	 * @return
+	 */
+	public boolean isMobileNumber(String mobile) {
+		  Pattern p = Pattern.compile(setting.getMobilePattern());
+		  Matcher m = p.matcher(mobile);
+		  return m.matches();
 	}
 }

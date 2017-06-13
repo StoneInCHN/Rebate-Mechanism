@@ -2,6 +2,7 @@ package org.rebate.dao;
 
 import java.util.List;
 
+import org.rebate.beans.SMSVerificationCode;
 import org.rebate.entity.Admin;
 import org.rebate.framework.dao.BaseDao;
 
@@ -52,6 +53,30 @@ public interface AdminDao extends BaseDao<Admin, Long> {
    * @return
    */
   Admin findByNameAccurate(String name);
+
+  /**
+   * 将短信验证码实体对象存入缓存
+   * 
+   * @param smsCode
+   * @return
+   */
+  SMSVerificationCode createSmsCode(String cellPhoneNum, SMSVerificationCode smsCode);
+
+  /**
+   * 根据手机号获取缓存中的短信验证码对象
+   * 
+   * @param smsCode
+   * @return
+   */
+  SMSVerificationCode getSmsCode(String cellPhone);
+
+  /**
+   * 根据手机号删除缓存中的短信验证码对象
+   * 
+   * @param smsCode
+   * @return
+   */
+  void deleteSmsCode(String cellPhone);
 
 
 

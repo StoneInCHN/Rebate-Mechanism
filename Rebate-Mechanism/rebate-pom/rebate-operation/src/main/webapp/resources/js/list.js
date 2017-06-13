@@ -26,6 +26,7 @@ $().ready( function() {
 	var $promptButton = $('#promptButton');
 	var $backButton = $("#backButton");
 	var $deviceProvide = $("#deviceProvide");
+	
 	//添加
 	$addButton.click(function(){
 		location.href="add.jhtml";

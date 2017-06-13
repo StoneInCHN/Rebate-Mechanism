@@ -18,8 +18,8 @@
 <body>
 	<form id="listForm" action="list.jhtml" method="get">
           <ol class="breadcrumb">
-                <li><a ><i class="fa fa-user"></i> 系统提现</a> </li>
-                <li class="active">系统提现列表(${message("rebate.common.page.totalPages", page.total)})</li>
+                <li><a ><i class="fa fa-user"></i> 平台提现</a> </li>
+                <li class="active">平台提现列表(${message("rebate.common.page.totalPages", page.total)})</li>
           </ol>
 		  <div class="content-search accordion-group">
              <div class="accordion-heading" role="tab" id="headingOne">
@@ -87,7 +87,7 @@
              </div>
          </div>
  		 <div class="button-group">
- 		 	  <a  id="addSysWithdrawButton" class="btn btn-default" ><i class="fa fa-plus"></i><span>添加提现</span></a>
+ 		 	  <a  id="addButton" class="btn btn-default" ><i class="fa fa-plus"></i><span>添加提现</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
          <div>

@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service; 
 import org.springframework.util.CollectionUtils;
+import org.rebate.entity.Admin;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.dao.BankCardDao;
@@ -45,6 +46,28 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard,Long> implemen
           return cards.get(0);
         }
         return null;
+	}
+	@Override
+	public BankCard getDefaultCard(Admin admin) {
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(Filter.eq("isDefault", true));
+        filters.add(Filter.eq("admin", admin));
+        List<BankCard> cards = bankCardDao.findList(0, 1, filters, null);
+        if (!CollectionUtils.isEmpty(cards)) {
+          return cards.get(0);
+        }
+        return null;
+	}
+	@Override
+	public List<BankCard> getAllCardList(Admin admin) {
+		List<Filter> filters = new ArrayList<Filter>();
+        filters.add(Filter.eq("isDefault", true));
+        filters.add(Filter.eq("admin", admin));
+        List<BankCard> cards = bankCardDao.findList(0, 1, filters, null);
+        if (!CollectionUtils.isEmpty(cards)) {
+          return cards;
+        }
+		return null;
 	}
 }
     

@@ -120,7 +120,7 @@ public class SellerClearingRecordJob {
   				}
   			}
   		};
-  		timer.schedule(task, delay, period);//延迟20分钟后，每5分钟执行一次
+  		timer.schedule(task, delay, period);//延迟10分钟后，每5分钟执行一次
 	  }
 
     } catch (Exception e) {

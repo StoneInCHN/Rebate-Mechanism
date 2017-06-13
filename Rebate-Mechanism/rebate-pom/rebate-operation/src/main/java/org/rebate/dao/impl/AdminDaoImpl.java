@@ -5,9 +5,13 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
+import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.AdminDao;
 import org.rebate.entity.Admin;
 import org.rebate.framework.dao.impl.BaseDaoImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,5 +86,21 @@ public class AdminDaoImpl extends BaseDaoImpl<Admin, Long> implements AdminDao {
     }
 
   }
+  @Override
+  @CachePut(value = "adminSmsCode", key = "'admin.smsCode='+#cellPhoneNum")
+  public SMSVerificationCode createSmsCode(String cellPhoneNum, SMSVerificationCode smsCode) {
+    return smsCode;
+  }
 
+  @Override
+  @Cacheable(value = "adminSmsCode", key = "'admin.smsCode='+#cellPhoneNum")
+  public SMSVerificationCode getSmsCode(String cellPhoneNum) {
+    return null;
+  }
+
+  @Override
+  @CacheEvict(value = "adminSmsCode", key = "'admin.smsCode='+#cellPhoneNum")
+  public void deleteSmsCode(String cellPhoneNum) {
+
+  }
 }

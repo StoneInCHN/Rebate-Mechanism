@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.rebate.beans.Principal;
+import org.rebate.beans.SMSVerificationCode;
 import org.rebate.dao.AdminDao;
 import org.rebate.entity.Admin;
 import org.rebate.entity.Role;
@@ -80,7 +81,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long> implements Ad
     }
     return false;
   }
-
+  @Override
   @Transactional(readOnly = true)
   public Admin getCurrent() {
     Subject subject = SecurityUtils.getSubject();
@@ -92,7 +93,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long> implements Ad
     }
     return null;
   }
-
+  @Override
   @Transactional(readOnly = true)
   public String getCurrentUsername() {
     Subject subject = SecurityUtils.getSubject();
@@ -160,5 +161,33 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long> implements Ad
     }
     return false;
   }
+  @Transactional(readOnly = true)
+  public boolean isSystemAdmin(Admin admin) {
+	if (admin == null) {
+		return false;
+	}
+    Set<Role> roles = admin.getRoles();
+    Iterator<Role> it = roles.iterator();
+    while (it.hasNext()) {
+      Role role = it.next();
+      if (role.getIsSystem()) {
+        return true;
+      }
+    }
+    return false;
+  }
+  @Override
+  public SMSVerificationCode createSmsCode(String cellPhoneNum, SMSVerificationCode smsCode) {
+    return adminDao.createSmsCode(cellPhoneNum, smsCode);
+  }
 
+  @Override
+  public SMSVerificationCode getSmsCode(String cellPhone) {
+    return adminDao.getSmsCode(cellPhone);
+  }
+
+  @Override
+  public void deleteSmsCode(String cellPhone) {
+	  adminDao.deleteSmsCode(cellPhone);
+  }
 }
