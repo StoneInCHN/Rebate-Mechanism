@@ -78,6 +78,10 @@
 	<setting name="allinpayPassword" value="allinpay_123" />
 	<!-- 代付 业务代码：生产环境：代付-->
 	<setting name="allinpayBusinessCode" value="09900" />	
+	<!-- 聚合数据 银行卡四元素验证URL -->
+	<setting name="juheVerifyBankcard4" value="http://v.juhe.cn/verifybankcard4/query"/>		
+	<!-- 聚合数据 申请的key -->
+	<setting name="juheKey" value="f79edf87ef4384ce64eb53bad54b415f"/>
 
 
 	<logConfig operation="系统管理修改角色" urlPattern="/console/role/update.jhtml" />

@@ -24,4 +24,10 @@ public interface BankCardService extends BaseService<BankCard,Long>{
 	BankCard getDefaultCard(Admin admin);
 	
 	List<BankCard> getAllCardList(Admin admin);
+	
+	long countAllCardList(Admin admin);
+	
+    void updateCardDefault(BankCard bankCard, Admin admin);
+	
+    BankCard saveBankCard(BankCard bankCard, Admin admin);
 }

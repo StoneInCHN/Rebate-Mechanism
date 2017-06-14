@@ -7,7 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.placeholder.js"></script>
@@ -39,7 +41,7 @@ $().ready(function() {
 </script>
 </head>
 <body>
-	 <div class="content">
+	 <div>
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> </li>
                 <li><a href="#">${message("rebate.admin.list")}</a></li>
