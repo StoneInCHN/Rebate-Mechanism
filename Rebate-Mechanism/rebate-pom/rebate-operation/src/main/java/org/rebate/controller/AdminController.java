@@ -202,8 +202,10 @@ public class AdminController extends BaseController {
     Admin admin = adminService.getCurrent();
     if (!adminService.isSystemAdmin(admin)) {//非内置账户admin
         LogUtil.debug(this.getClass(), "reqeustSmsCode", "非系统内置账户(非admin管理员)");
+        return Message.error("非系统内置账户(非admin管理员)");
     }else if (admin.getCellPhoneNum() == null) {
         LogUtil.debug(this.getClass(), "reqeustSmsCode", "admin管理员未配置预留手机号");
+        return Message.error("admin管理员未配置预留手机号");
     }else if (isMobileNumber(admin.getCellPhoneNum())) {
         String cellPhoneNum = admin.getCellPhoneNum();
         SMSVerificationCode smsVerificationCode = adminService.getSmsCode(cellPhoneNum);
@@ -289,16 +291,18 @@ public class AdminController extends BaseController {
     params.put("realname", bankCard.getOwnerName());
     params.put("idcard", bankCard.getIdCard());
     params.put("mobile", bankCard.getReservedMobile());
-    
+    Admin admin = adminService.getCurrent();
     //如果存在，表示以前已经验证过了，不用再验证
     boolean exist = bankCardService.exists(Filter.eq("cardNum", bankCard.getCardNum()),
             Filter.eq("ownerName", bankCard.getOwnerName()),
             Filter.eq("idCard", bankCard.getIdCard()),
             Filter.eq("reservedMobile", bankCard.getReservedMobile()),
-            Filter.eq("delStatus", false));
+            Filter.eq("delStatus", false),
+            Filter.eq("admin", admin));
     if (exist) {
       return Message.error("银行卡已存在，不能重复添加");
     }
+
     try {
       String result = ApiUtils.post(setting.getJuheVerifyBankcard4(), params);
 

@@ -122,8 +122,10 @@ public class SystemWithdrawRecordController extends BaseController {
 	Admin admin = adminService.getCurrent();
 	if (!adminService.isSystemAdmin(admin)) {//非内置账户admin
 		LogUtil.debug(this.getClass(), "reqeustSmsCode", "非系统内置账户(非admin管理员)");
+		return Message.error("非系统内置账户(非admin管理员)");
 	}else if (admin.getCellPhoneNum() == null) {
 		LogUtil.debug(this.getClass(), "reqeustSmsCode", "admin管理员未配置预留手机号");
+		return Message.error("admin管理员未配置预留手机号");
 	}else if (isMobileNumber(admin.getCellPhoneNum())) {
 		String cellPhoneNum = admin.getCellPhoneNum();
 	    SMSVerificationCode smsVerificationCode = adminService.getSmsCode(cellPhoneNum);

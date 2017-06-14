@@ -9,6 +9,7 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	  <ol class="breadcrumb">
@@ -57,6 +58,7 @@
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 <script type="text/javascript">  
 var wait=60;  
 function time(o) {  
@@ -84,10 +86,16 @@ function reqeustSmsCode(o){
 						cache: false,
 						success: function(message) {
 							if(message.type == "success"){
-								//alert("success");
 								time(o);
 							}else{
-								alert(message.content);
+								var error = dialog({
+									title: '管理员身份验证',
+									content: message.content,
+									okValue: '确定',
+									ok: function () {}
+								});
+								error.showModal();
+								$("#smsCodeBtn").attr("disabled",false);
 							}
 						}
 					});

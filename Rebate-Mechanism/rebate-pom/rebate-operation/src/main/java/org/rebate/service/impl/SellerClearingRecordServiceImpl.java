@@ -270,7 +270,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   			    	return Message.success("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge");
   			    }
     					 
-  			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getBankName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0).toString());
+  			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0).toString());
   			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
   			    	String status = resultMap.get("status");
   			    	if ("success".equals(status) || "success".equals(status)){
