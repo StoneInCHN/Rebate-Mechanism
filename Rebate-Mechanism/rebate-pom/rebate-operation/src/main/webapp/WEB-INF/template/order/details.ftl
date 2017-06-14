@@ -43,6 +43,14 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.order.sellerId")}:
+								</th>
+								<td>
+									${order.seller.id}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.order.sellerName")}:
 								</th>
 								<td>

@@ -375,6 +375,7 @@ public class OrderController extends MobileBaseController {
 
         totalFee = totalFee.add(order.getRebateAmount());
         order.setPaymentType(payType);
+        order.setPaymentTypeId(payTypeId);
       }
     } else {
       Order order = orderService.getOrderBySn(orderSn);

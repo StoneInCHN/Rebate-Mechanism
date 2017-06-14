@@ -104,6 +104,9 @@
 						<input type="checkbox" id="selectAll" />
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="id">${message("rebate.seller.id")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="name">${message("rebate.seller.name")}</a>
 					</th>
 					<th>
@@ -149,6 +152,9 @@
 				<tr>
 					<td>
 						<input type="checkbox"  name="ids" value="${seller.id}" />
+					</td>
+					<td>
+						${seller.id}
 					</td>
 					<td>
 						<span title="${seller.name}">${seller.name}</sapn>
@@ -209,8 +215,8 @@
 						[/#if]
 					</td>
 					<td>
-						<a href="edit.jhtml?id=${seller.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
-						<a href="details.jhtml?id=${seller.id}" title="${message("csh.common.details")}"><i class="fa fa-eye"></i></a>
+						<a href="edit.jhtml?id=${seller.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+						<a href="details.jhtml?id=${seller.id}" title="${message("rebate.common.details")}"><i class="fa fa-eye"></i></a>
 					</td>
 				</tr>
 				[/#list]

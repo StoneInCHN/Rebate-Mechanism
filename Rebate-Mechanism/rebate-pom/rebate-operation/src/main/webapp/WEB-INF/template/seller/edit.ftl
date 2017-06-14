@@ -22,6 +22,14 @@
 			<table class="input">
 							<tr>
 								<th>
+									${message("rebate.seller.id")}:
+								</th>
+								<td>
+									${seller.id}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.name")}:
 								</th>
 								<td>
