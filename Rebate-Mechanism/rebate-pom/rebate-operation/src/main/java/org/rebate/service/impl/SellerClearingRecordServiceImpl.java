@@ -273,7 +273,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0).toString());
   			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
   			    	String status = resultMap.get("status");
-  			    	if ("success".equals(status) || "success".equals(status)){
+  			    	if ("success".equals(status) || "error".equals(status)){
   	  			    	String req_sn = resultMap.get("req_sn");
   	  			    	String err_msg = resultMap.get("err_msg");
   	  			    	singlePayHandle(record, status, req_sn, err_msg, handlingCharge);
