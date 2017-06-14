@@ -180,6 +180,9 @@ $().ready(function() {
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:bonusParam" /><span>${message("rebate.main.bonusParam")}</span>
 											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:bankCard" /><span>${message("rebate.main.bankCard")}</span>
+											</label>
 										</span>
 									</td>
 								</tr>

@@ -48,6 +48,7 @@
 				/console/bonusParam/** = perms["rebate:bonusParam"]
 				/console/report/** = perms["rebate:report"]
 				/console/apkVersion/** = perms["rebate:version"]
+				/console/bankCard/** = perms["rebate:bankCard"]
 				
 				
 				/console/** = authc 

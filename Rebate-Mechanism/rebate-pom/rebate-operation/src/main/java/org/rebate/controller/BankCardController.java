@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.BankCard;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.BankCardRequest;
@@ -77,4 +78,15 @@ public class BankCardController extends BaseController{
     model.addAttribute("page", bankCardService.findPage(pageable));
     return "/bankCard/list";
   }
+  
+  /**
+   * 查看
+   */
+  @RequestMapping(value = "/details", method = RequestMethod.GET)
+  public String details(Long id, ModelMap model) {
+    BankCard bankCard = bankCardService.find(id);
+    model.addAttribute("bankCard", bankCard);
+    return "/bankCard/details";
+  }
+  
 }

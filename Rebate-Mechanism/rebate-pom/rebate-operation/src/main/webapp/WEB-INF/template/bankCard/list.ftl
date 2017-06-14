@@ -173,11 +173,9 @@
 					<th>
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
 					</th>
-					<!--
 					<th>
 						<span>${message("rebate.common.handle")}</span>
 					</th>
-					-->
 				</tr>
 			</thead>
 			<tbody>
@@ -235,11 +233,9 @@
 					<td>
 						${bankCard.createDate?string("yyyy-MM-dd HH:mm:ss")}
 					</td>
-					<!--
 					<td>
 						<a href="details.jhtml?id=${bankCard.id}" title="${message("rebate.common.details")}"><i class="fa fa-eye"></i></a>
 					</td>
-					-->
 				</tr>
 				[/#list]
 			</tbody>

@@ -183,6 +183,9 @@ $().ready(function() {
 											<label>
 												<input type="checkbox" name="authorities" value="rebate:bonusParam" [#if role.authorities?seq_contains("rebate:bonusParam")] checked="checked"[/#if] /><span>${message("rebate.main.bonusParam")}</span>
 											</label>
+											<label>
+												<input type="checkbox" name="authorities" value="rebate:bankCard" [#if role.authorities?seq_contains("rebate:bankCard")] checked="checked"[/#if] /><span>${message("rebate.main.bankCard")}</span>
+											</label>
 										</span>
 									</td>
 								</tr>
