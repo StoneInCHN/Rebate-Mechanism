@@ -47,7 +47,7 @@
 									提现状态
 								</th>
 								<td>
-									<select  name="withdrawStatus">
+									<select  name="status">
 										<option value="">${message("rebate.common.All")}</option>
 										<option [#if status == "PROCESSING"] selected="selected" [/#if] value="PROCESSING">处理中</option>
 										<option [#if status == "SUCCESS"] selected="selected" [/#if] value="SUCCESS">处理成功</option>

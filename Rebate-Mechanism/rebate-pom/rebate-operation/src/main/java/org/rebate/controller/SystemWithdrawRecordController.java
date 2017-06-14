@@ -37,10 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SystemWithdrawRecordController extends BaseController {
 
   @Resource(name = "systemWithdrawRecordServiceImpl")
-  private SystemWithdrawRecordService systemWithdrawRecordService;
-  
-//  @Resource(name = "leScoreRecordJob")
-//  private SystemWithdrawRecordJob leScoreRecordJob;
+  private SystemWithdrawRecordService systemWithdrawRecordService;  
   
   @Resource(name = "bankCardServiceImpl")
   private BankCardService bankCardService;
@@ -190,6 +187,6 @@ public class SystemWithdrawRecordController extends BaseController {
 	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
 		 return Message.error("无效的银行卡");
 	 }	 
-     return systemWithdrawRecordService.singlePay(amount, bankCard);
+     return systemWithdrawRecordService.singlePay(admin, amount, bankCard);
   }
 }

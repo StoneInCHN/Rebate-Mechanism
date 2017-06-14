@@ -76,38 +76,52 @@
 <script type="text/javascript">
 	$(function(){
 		$("#singlePay").click(function(){
+		var amount = $("#amount").val();
+		 var numValid = /^[0-9]*[1-9][0-9]*$/; //正整数
+		 if(!numValid.test(amount)){
+		 	var error = dialog({
+				title: '平台提现',
+				content: "请输入正确金额",
+				okValue: '确定',
+				ok: function () {}
+			});
+			error.showModal();
+			return false;
+		 }
 			var d = dialog({
 				title: '平台提现',
 				content: "请确认提现金额："+ $("#amount").val() +"元，提现银行卡："+ $("#cardNum").val()+"，保证提现后还剩足够的金额用于平台商家货款结算和乐分提现！！",
 				okValue: '确定',
 				ok: function () {
 					var _that = this;
+					if(_that.cancelDisplay == true){
 					_that.content('提交中,请稍等...');
+							$.ajax({
+								url: "singlePay.jhtml",
+								type: "POST",
+								data: {
+									amount:amount
+								},
+								beforeSend:function(){
+									$("#singlePay").attr("disabled","disabled");
+								},
+								dataType: "json",
+								cache: false,
+								success: function(message) {
+									if(message.type == "success"){
+											_that.content(message.content);
+											setTimeout(function() {
+													location.href="list.jhtml"
+												}, 5000);
+									}else{
+										_that.content(message.content);
+										$("#singlePay").attr("disabled",false);
+									}
+								}
+							});
+					}
 					_that.cancelDisplay =false;
-					$.ajax({
-						url: "singlePay.jhtml",
-						type: "POST",
-						data: {
-							amount:$("#amount").val()
-						},
-						beforeSend:function(){
-							$("#singlePay").attr("disabled","disabled");
-						},
-						dataType: "json",
-						cache: false,
-						success: function(message) {
-							if(message.type == "success"){
-									_that.content(message.content);
-									setTimeout(function() {
-										location.reload();
-									}, 3000);
-							}else{
-								_that.content(message.content);
-								$("#singlePay").attr("disabled",false);
-							}
-						}
-					});
-				  return false;
+					return false;
 				},
 				cancelValue: '取消',
 				cancel: function () {}

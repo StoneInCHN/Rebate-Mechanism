@@ -115,6 +115,9 @@
 						<a href="javascript:;" name="endUserNickName">${message("rebate.order.endUser.nickName")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="sellerId">${message("rebate.order.sellerId")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" name="sellerName">${message("rebate.order.sellerName")}</a>
 					</th>
 					<th>
@@ -148,6 +151,9 @@
 					</td>
 					<td>
 						${order.endUser.nickName}
+					</td>
+					<td>
+						${order.seller.id}
 					</td>
 					<td>
 						${order.seller.name}

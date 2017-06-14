@@ -1,3 +1,4 @@
+[#assign shiro=JspTaglibs["/WEB-INF/tld/shiro.tld"] /]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -95,16 +96,6 @@ $().ready(function() {
 									<input type="radio" value="locked" name="adminStatus" [#if admin.adminStatus== "locked" ]checked="checked"[/#if] />${message("rebate.admin.adminStatus.locked")}
 								</td>
 							</tr>
-							[#if admin.isSystem == true]
-							<tr>
-								<th>
-									${message("rebate.admin.cellPhoneNum")}:
-								</th>
-								<td>
-									<input type="text" name="cellPhoneNum" class="text" maxlength="20" value="${admin.cellPhoneNum}" />
-								</td>
-							</tr>							
-							[/#if]
 						</table>
 						<table class="input">
 							<tr>
@@ -113,6 +104,11 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+									[@shiro.hasPermission name="rebate:systemWithdrawal"]
+									[#if admin.isSystem == true]
+									<input type="button" class="button" style="width:130px !important" value="编辑平台提现信息"  onclick="location.href='validation.jhtml'"/>
+									[/#if]
+		                     		[/@shiro.hasPermission]
 									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
