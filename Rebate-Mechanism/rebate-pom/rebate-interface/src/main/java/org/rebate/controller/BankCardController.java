@@ -198,20 +198,29 @@ public class BankCardController extends MobileBaseController {
       response.setDesc(message("rebate.request.param.missing"));
       return response;
     }
-    //如果存在，表示以前已经验证过了，不用再验证
-	boolean exist = bankCardService.exists(Filter.eq("cardNum", cardNum),
-			Filter.eq("ownerName", ownerName),
-			Filter.eq("idCard", idcard),
-			Filter.eq("reservedMobile", reservedMobile));
-	if (exist) {
-	    String newtoken = TokenGenerator.generateToken(token);
-	    endUserService.createEndUserToken(newtoken, userId);
-	    response.setToken(newtoken);
-	    response.setDesc(message("rebate.bankCard.verify.success"));
-	    response.setCode(CommonAttributes.SUCCESS);
-	    return response;
-	}
-    
+
+    // 验证失败记录缓存，相同参数的失败记录不向第三方发送请求
+    String localResult =
+        bankCardService.isVerifyFailedRecord(ownerName, cardNum, idcard, reservedMobile);
+    if (localResult != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(localResult);
+      return response;
+    }
+
+    // 如果存在，表示以前已经验证过了，不用再验证
+    boolean exist =
+        bankCardService.exists(Filter.eq("cardNum", cardNum), Filter.eq("ownerName", ownerName),
+            Filter.eq("idCard", idcard), Filter.eq("reservedMobile", reservedMobile));
+    if (exist) {
+      String newtoken = TokenGenerator.generateToken(token);
+      endUserService.createEndUserToken(newtoken, userId);
+      response.setToken(newtoken);
+      response.setDesc(message("rebate.bankCard.verify.success"));
+      response.setCode(CommonAttributes.SUCCESS);
+      return response;
+    }
+
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("key", setting.getJuheKey());
     params.put("bankcard", cardNum);
@@ -242,11 +251,15 @@ public class BankCardController extends MobileBaseController {
         if ("1".equals(verifyBankcardResult.getRes())) {// 验证成功
           desc = verifyBankcardResult.getMessage();
         } else if ("2".equals(verifyBankcardResult.getRes())) {// 验证不匹配
+          bankCardService.genVerifyFailedRecord(ownerName, cardNum, idcard, reservedMobile,
+              verifyBankcardResult.getMessage());
           response.setCode(CommonAttributes.FAIL_COMMON);
           response.setDesc(verifyBankcardResult.getMessage());
           return response;
         }
       } else {
+        bankCardService.genVerifyFailedRecord(ownerName, cardNum, idcard, reservedMobile,
+            verifyBankcardBean.getReason());
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(verifyBankcardBean.getError_code() + ":" + verifyBankcardBean.getReason());
         return response;
@@ -292,7 +305,7 @@ public class BankCardController extends MobileBaseController {
       response.setDesc(message("rebate.request.param.missing"));
       return response;
     }
-    
+
     SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(reservedMobile);
     if (smsVerficationCode == null) {
       response.setCode(CommonAttributes.FAIL_COMMON);
@@ -308,12 +321,14 @@ public class BankCardController extends MobileBaseController {
           response.setDesc(Message.error("rebate.sms.token.error").getContent());
           return response;
         } else {
-          boolean existBankCard = bankCardService.exists(Filter.eq("cardNum", request.getCardNum()),Filter.eq("delStatus", false));
-          if (existBankCard) {//不能添加重复的银行卡
-              response.setCode(CommonAttributes.FAIL_COMMON);
-              response.setDesc(Message.error("rebate.bankCard.exists.error").getContent());
-              return response;
-		  }
+          boolean existBankCard =
+              bankCardService.exists(Filter.eq("cardNum", request.getCardNum()),
+                  Filter.eq("delStatus", false));
+          if (existBankCard) {// 不能添加重复的银行卡
+            response.setCode(CommonAttributes.FAIL_COMMON);
+            response.setDesc(Message.error("rebate.bankCard.exists.error").getContent());
+            return response;
+          }
           endUserService.deleteSmsCode(reservedMobile);
           bankCardService.addCard(request);
           if (LogUtil.isDebugEnabled(BankCardController.class)) {

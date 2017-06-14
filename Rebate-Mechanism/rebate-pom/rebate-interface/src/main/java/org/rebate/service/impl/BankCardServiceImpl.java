@@ -158,4 +158,16 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard, Long> impleme
     }
     return false;
   }
+
+  @Override
+  public String isVerifyFailedRecord(String ownerName, String cardNum, String idcard,
+      String reservedMobile) {
+    return bankCardDao.isVerifyFailedRecord(ownerName, cardNum, idcard, reservedMobile);
+  }
+
+  @Override
+  public String genVerifyFailedRecord(String ownerName, String cardNum, String idcard,
+      String reservedMobile, String result) {
+    return bankCardDao.genVerifyFailedRecord(ownerName, cardNum, idcard, reservedMobile, result);
+  }
 }
