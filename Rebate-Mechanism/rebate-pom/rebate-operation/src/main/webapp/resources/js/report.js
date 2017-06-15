@@ -183,7 +183,7 @@ function nationChartDate(formId){
 				sellerNumData.push(result[i].sellerNum);
 				//publicTotalAmountData.push(result[i].publicTotalAmount/1000);
 				leMindByDayData.push(result[i].leMindByDay);
-				consumeByDayData.push(result[i].consumeByDay);
+				consumeByDayData.push(result[i].consumeByDay/1000);
 				bonusLeScoreByDayData.push(result[i].bonusLeScoreByDay/1000);
 				totalBonusData.push(result[i].totalBonus/1000);
 				//publicAmountByDayData.push(result[i].publicAmountByDay);
@@ -249,7 +249,7 @@ function nationChartDate(formId){
 									data : leMindByDayData
 								},
 								{
-									name : '当日累计消费',
+									name : '当日累计消费(k)',
 									data : consumeByDayData
 								},
 								{
