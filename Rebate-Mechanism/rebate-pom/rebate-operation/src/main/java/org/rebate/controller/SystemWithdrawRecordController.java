@@ -184,6 +184,9 @@ public class SystemWithdrawRecordController extends BaseController {
      if(amount == null){
        return Message.error("提现金额无效");
      }
+     if(amount.compareTo(new BigDecimal(200000)) == 1) {
+       return Message.error("单笔提现金额不能超过20万");
+     }
      Admin admin = adminService.getCurrent();
      BankCard bankCard = bankCardService.getDefaultCard(admin);
 	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {

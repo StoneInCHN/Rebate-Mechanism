@@ -88,6 +88,16 @@
 			error.showModal();
 			return false;
 		 }
+		 if(amount > 200000){
+		 	var error = dialog({
+				title: '平台提现',
+				content: "单笔提现金额不能超过20万",
+				okValue: '确定',
+				ok: function () {}
+			});
+			error.showModal();
+			return false;		 
+		  }
 			var d = dialog({
 				title: '平台提现',
 				content: "请确认提现金额："+ $("#amount").val() +"元，提现银行卡："+ $("#cardNum").val()+"，保证提现后还剩足够的金额用于平台商家货款结算和乐分提现！！",

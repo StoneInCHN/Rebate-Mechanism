@@ -86,6 +86,11 @@ $().ready(function() {
 												<input type="checkbox" name="roleIds" value="${role.id}"[#if admin.roles?seq_contains(role)] checked="checked"[/#if] /><span>${role.name}</span>
 											</label>
 										[/#list]
+										[#if admin.isSystem]
+											<label>
+												<input type="checkbox" name="roleIds"  checked="checked" disabled="disabled" /><span>管理员</span>
+											</label>
+										[/#if]										
 									</span>
 								</td>
 							</tr>

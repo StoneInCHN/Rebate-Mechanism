@@ -77,7 +77,7 @@ public class AdminController extends BaseController {
   @RequestMapping(value = "/add", method = RequestMethod.GET)
   public String add(ModelMap model) {
     List<Filter> filters = new ArrayList<Filter>();
-    filters.add(Filter.ne("", ""));
+    filters.add(Filter.eq("isSystem", false));
     model.addAttribute("roles", roleService.findList(null, filters, null));
     model.addAttribute("adminStatusTypes", AdminStatus.values());
     return "/admin/add";
@@ -106,7 +106,9 @@ public class AdminController extends BaseController {
    */
   @RequestMapping(value = "/edit", method = RequestMethod.GET)
   public String edit(Long id, ModelMap model) {
-    model.addAttribute("roles", roleService.findAll());
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("isSystem", false));
+    model.addAttribute("roles", roleService.findList(null, filters, null));
     model.addAttribute("admin", adminService.find(id));
     model.addAttribute("adminStatusTypes", AdminStatus.values());
     return "/admin/edit";
@@ -117,12 +119,23 @@ public class AdminController extends BaseController {
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String update(Admin admin, Long[] roleIds, RedirectAttributes redirectAttributes) {
-    admin.setRoles(new HashSet<Role>(roleService.findList(roleIds)));
-    if (!isValid(admin)) {
-      return ERROR_VIEW;
-    }
     Admin pAdmin = adminService.find(admin.getId());
     if (pAdmin == null) {
+      return ERROR_VIEW;
+    }
+    if (adminService.isSystemAdmin(pAdmin)) {//如果编辑的是管理员
+      admin.setRoles(new HashSet<Role>(roleService.findList(roleIds)));
+      List<Filter> filters = new ArrayList<Filter>();
+      filters.add(Filter.eq("isSystem", true));
+      List<Role> systemRols = roleService.findList(null, filters, null);
+      if (systemRols == null || systemRols.size() > 1) {
+        return ERROR_VIEW;
+      }
+      admin.getRoles().add(systemRols.get(0));
+    }else {
+      admin.setRoles(new HashSet<Role>(roleService.findList(roleIds)));
+    }
+    if (!isValid(admin)) {
       return ERROR_VIEW;
     }
     if (StringUtils.isNotEmpty(admin.getPassword())) {
@@ -130,7 +143,7 @@ public class AdminController extends BaseController {
     } else {
       admin.setPassword(pAdmin.getPassword());
     }
-    adminService.update(admin, "username", "loginDate", "loginIp", "isSystem");
+    adminService.update(admin, "username", "loginDate", "loginIp", "isSystem", "cellPhoneNum");
 
     return "redirect:list.jhtml";
   }
