@@ -388,7 +388,10 @@ public class OrderController extends MobileBaseController {
     try {
       if ("1".equals(payTypeId)) {// 微信支付
         BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
-        response = PayUtil.allinPay(orderSn, seller.getName(), weChatPrice.intValue() + "");
+        // response = PayUtil.allinPay(orderSn, seller.getName(), weChatPrice.intValue() + "");
+        response =
+            PayUtil.wechat(orderSn, seller.getName(), httpReq.getRemoteAddr(), userId.toString(),
+                weChatPrice.intValue() + "");
       } else if ("2".equals(payTypeId)) {// 支付宝支付
 
         // 支付宝直接支付

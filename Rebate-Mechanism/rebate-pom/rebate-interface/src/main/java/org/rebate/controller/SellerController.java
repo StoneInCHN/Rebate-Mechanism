@@ -518,7 +518,7 @@ public class SellerController extends MobileBaseController {
     Map<String, Object> map = new HashMap<String, Object>();
     if (seller.getQrImage() == null) {
       String content =
-          "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"sellerId\":\"" + sellerId + "\"}";
+          "{\"flag\":\"" + DigestUtils.md5Hex("享个购") + "\",\"sellerId\":\"" + sellerId + "\"}";
       byte[] bytes = QRCodeGenerator.generateQrImage(content);
       seller.setQrImage(bytes);
       sellerService.update(seller);
