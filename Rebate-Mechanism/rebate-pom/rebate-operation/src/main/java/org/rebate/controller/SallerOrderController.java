@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Order;
+import org.rebate.entity.Seller;
+import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
@@ -96,4 +98,21 @@ public class SallerOrderController extends BaseController {
     orderService.updateSallerOrderStatus(id, status);
     return SUCCESS_MESSAGE;
   }
+  
+  /**
+   * 删除
+   */
+  @RequestMapping(value = "/delete", method = RequestMethod.POST)
+  public @ResponseBody Message delete(Long[] ids) {
+    if (ids != null && ids.length > 0) {
+      for (Long id : ids) {
+        Order order = orderService.find(id);
+       if(order.getIsSallerOrder() && OrderStatus.UNPAID.ordinal() == order.getStatus().ordinal()){
+         orderService.delete(id);
+       }
+      }
+    }
+    return SUCCESS_MESSAGE;
+  }
+  
 }

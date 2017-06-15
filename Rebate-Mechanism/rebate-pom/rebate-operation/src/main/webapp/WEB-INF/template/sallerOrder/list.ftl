@@ -95,16 +95,15 @@
              </div>
          </div>
  		 <div class="button-group">
-              <!--<a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>
-              <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>-->
+              <a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
         <table id="listTable" class="table table-striped table-bordered table-hover table-nowrap">
 			<thead>
 				<tr>
-					<!--<th class="check">
+					<th class="check">
 						<input type="checkbox" id="selectAll" />
-					</th>-->
+					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="sn">${message("rebate.order.sn")}</a>
 					</th>
@@ -140,9 +139,9 @@
 			<tbody>
 				[#list page.content as order]
 				<tr>
-					<!--<td>
-						<input type="checkbox"  name="ids" value="${order.id}" />
-					</td>-->
+					<td>
+						<input type="checkbox"  name="ids" value="${order.id}" [#if  order.status !="UNPAID"] disabled[/#if]/>
+					</td>
 					<td>
 						<span title="${order.sn}">${order.sn}</sapn>
 					</td>
