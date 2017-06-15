@@ -54,6 +54,7 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard,Long> implemen
         List<Filter> filters = new ArrayList<Filter>();
         filters.add(Filter.eq("isDefault", true));
         filters.add(Filter.eq("admin", admin));
+        filters.add(Filter.eq("delStatus", false));
         List<BankCard> cards = bankCardDao.findList(0, 1, filters, null);
         if (!CollectionUtils.isEmpty(cards)) {
           return cards.get(0);

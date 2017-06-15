@@ -88,6 +88,16 @@
 			error.showModal();
 			return false;
 		 }
+		 if($("#cardNum").val() == null || $("#cardNum").val() == ""){
+		 	var error = dialog({
+				title: '平台提现',
+				content: "银行卡信息有误，请先配置有效的银行卡",
+				okValue: '确定',
+				ok: function () {}
+			});
+			error.showModal();
+			return false;		 
+		  }		 
 		 if(amount > 200000){
 		 	var error = dialog({
 				title: '平台提现',

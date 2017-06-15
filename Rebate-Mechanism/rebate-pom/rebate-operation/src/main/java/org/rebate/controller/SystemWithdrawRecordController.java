@@ -189,8 +189,8 @@ public class SystemWithdrawRecordController extends BaseController {
      }
      Admin admin = adminService.getCurrent();
      BankCard bankCard = bankCardService.getDefaultCard(admin);
-	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
-		 return Message.error("无效的银行卡");
+	 if (bankCard == null || bankCard.getOwnerName() == null || bankCard.getCardNum() == null) {
+		 return Message.error("请配置有效的银行卡");
 	 }	 
      return systemWithdrawRecordService.singlePay(admin, amount, bankCard);
   }

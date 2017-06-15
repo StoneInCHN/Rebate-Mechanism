@@ -87,7 +87,7 @@
              </div>
          </div>
  		 <div class="button-group">
- 		 	  <a  id="addButton" class="btn btn-default" ><i class="fa fa-plus"></i><span>添加提现</span></a>
+ 		 	  <a  id="addButton" class="btn btn-default"  style="width:100px !important"><i class="fa fa-plus"></i><span>添加提现</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
          <div>
