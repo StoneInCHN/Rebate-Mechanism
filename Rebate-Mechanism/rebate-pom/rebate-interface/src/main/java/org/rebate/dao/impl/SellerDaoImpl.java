@@ -1,6 +1,7 @@
 package org.rebate.dao.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.FlushModeType;
@@ -14,6 +15,7 @@ import org.rebate.framework.paging.Page;
 import org.rebate.framework.paging.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Repository("sellerDaoImpl")
 public class SellerDaoImpl extends BaseDaoImpl<Seller, Long> implements SellerDao {
@@ -56,6 +58,29 @@ public class SellerDaoImpl extends BaseDaoImpl<Seller, Long> implements SellerDa
     } catch (NoResultException e) {
       return null;
     }
+  }
+
+  @Override
+  public Seller findSellerBylicense(String license) {
+    if (license == null) {
+      return null;
+    }
+    try {
+      String jpql =
+          "select seller from Seller seller where seller.accountStatus!=2 and seller.licenseNum = :licenseNum";
+      List<Seller> list =
+          entityManager.createQuery(jpql, Seller.class).setFlushMode(FlushModeType.COMMIT)
+              .setParameter("licenseNum", license).getResultList();
+      if (CollectionUtils.isEmpty(list)) {
+        return null;
+      } else {
+        return list.get(0);
+      }
+
+    } catch (NoResultException e) {
+      return null;
+    }
+
   }
 
 }

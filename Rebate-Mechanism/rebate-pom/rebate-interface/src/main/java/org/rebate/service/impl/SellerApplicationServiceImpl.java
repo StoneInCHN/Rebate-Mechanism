@@ -116,4 +116,9 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
 
     return application;
   }
+
+  @Override
+  public SellerApplication findSellerApplicationBylicense(String license) {
+    return sellerApplicationDao.findSellerApplicationBylicense(license);
+  }
 }

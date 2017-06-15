@@ -30,6 +30,7 @@ import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 @Entity
 @Table(name = "rm_seller_application", indexes = {
     @Index(name = "sellerNameIndex", columnList = "sellerName"),
+    @Index(name = "licenseNumIndex", columnList = "licenseNum"),
     @Index(name = "contactPersonIndex", columnList = "contactPerson"),
     @Index(name = "contactCellPhoneIndex", columnList = "contactCellPhone"),
     @Index(name = "createDateIndex", columnList = "createDate"),

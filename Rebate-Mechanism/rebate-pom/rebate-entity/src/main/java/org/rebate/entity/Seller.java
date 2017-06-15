@@ -34,6 +34,7 @@ import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
  */
 @Entity
 @Table(name = "rm_seller", indexes = {@Index(name = "nameIndex", columnList = "name"),
+    @Index(name = "licenseNumIndex", columnList = "licenseNum"),
     @Index(name = "contactPersonIndex", columnList = "contactPerson"),
     @Index(name = "contactCellPhoneIndex", columnList = "contactCellPhone"),
     @Index(name = "accountStatusIndex", columnList = "accountStatus")})

@@ -94,4 +94,9 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     return sellerDao.userCollectSeller(userId, sellerId);
   }
 
+  @Override
+  public Seller findSellerBylicense(String license) {
+    return sellerDao.findSellerBylicense(license);
+  }
+
 }

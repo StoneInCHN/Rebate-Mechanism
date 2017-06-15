@@ -3,14 +3,13 @@ package org.rebate.request;
 import java.util.Date;
 
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
-import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 
 public class SellerRequest {
   /**
    * 商家名字
    */
   private String name;
-  
+
   /**
    * 联系人
    */
@@ -19,35 +18,49 @@ public class SellerRequest {
    * 联系人手机
    */
   private String contactCellPhone;
-  
+
   /**
    * 申请人手机号
    */
   private String cellPhoneNum;
-  
+
   /** 地区 */
   private Long areaId;
-  
+
   /**
    * 审核状态
    */
   private AccountStatus accountStatus;
-  
+
   /**
    * 提出申请的用户
    */
   private Long endUserId;
-  
+
   /**
    * 商家类别
    */
   private Long sellerCategoryId;
- 
+
   /** 申请起始日期 */
   private Date applyFromDate;
-  
+
   /** 申请结束日期 */
   private Date applyToDate;
+
+  /**
+   * 营业执照号
+   */
+  private String licenseNum;
+
+
+  public String getLicenseNum() {
+    return licenseNum;
+  }
+
+  public void setLicenseNum(String licenseNum) {
+    this.licenseNum = licenseNum;
+  }
 
   public String getName() {
     return name;
@@ -128,5 +141,5 @@ public class SellerRequest {
   public void setCellPhoneNum(String cellPhoneNum) {
     this.cellPhoneNum = cellPhoneNum;
   }
-  
+
 }

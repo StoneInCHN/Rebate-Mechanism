@@ -14,4 +14,12 @@ public interface SellerApplicationService extends BaseService<SellerApplication,
    * @return
    */
   SellerApplication createApplication(SellerRequest req, EndUser sellerUser);
+
+  /**
+   * 根据营业执照号获取商户申请信息
+   * 
+   * @param license
+   * @return
+   */
+  SellerApplication findSellerApplicationBylicense(String license);
 }

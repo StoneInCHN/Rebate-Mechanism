@@ -12,12 +12,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
+import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.Seller;
+import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SellerCategory;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.SellerEnvImage;
@@ -367,6 +369,21 @@ public class SellerController extends MobileBaseController {
     // return response;
     // }
 
+    Seller seller = sellerService.findSellerBylicense(req.getLicenseNum());
+    if (seller != null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.apply.licenseNum.exist").getContent());
+      return response;
+    }
+
+    SellerApplication application =
+        sellerApplicationService.findSellerApplicationBylicense(req.getLicenseNum());
+    if (application != null && !application.getId().equals(req.getApplyId())) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.apply.licenseNum.auditing").getContent());
+      return response;
+    }
+
     sellerApplicationService.createApplication(req, endUser);
     if (LogUtil.isDebugEnabled(SellerController.class)) {
       LogUtil
@@ -412,8 +429,9 @@ public class SellerController extends MobileBaseController {
 
     String[] properties =
         {"id", "name", "storePictureUrl", "address", "storePhone", "businessTime", "avgPrice",
-            "area.id", "latitude", "longitude", "description", "discount", "favoriteNum",
-            "featuredService", "totalOrderNum", "totalOrderAmount", "unClearingAmount"};
+            "area.id", "latitude", "longitude", "description", "discount", "limitAmountByDay",
+            "favoriteNum", "featuredService", "totalOrderNum", "totalOrderAmount",
+            "unClearingAmount"};
     List<String> envImgs = new ArrayList<String>();
     for (SellerEnvImage envImage : seller.getEnvImages()) {
       envImgs.add(envImage.getSource());

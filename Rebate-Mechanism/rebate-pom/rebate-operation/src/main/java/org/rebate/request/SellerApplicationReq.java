@@ -5,12 +5,12 @@ import java.util.Date;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 
 public class SellerApplicationReq {
-  
+
   /**
    * 商家名字
    */
   private String sellerName;
-  
+
   /**
    * 联系人
    */
@@ -19,30 +19,43 @@ public class SellerApplicationReq {
    * 联系人手机
    */
   private String contactCellPhone;
-  
+
   /** 地区 */
   private Long areaId;
-  
+
   /**
    * 审核状态
    */
   private ApplyStatus applyStatus;
-  
+
   /**
    * 提出申请的用户
    */
   private Long endUserId;
-  
+
   /**
    * 商家类别
    */
   private Long sellerCategoryId;
- 
+
   /** 申请起始日期 */
   private Date applyFromDate;
-  
+
   /** 申请结束日期 */
   private Date applyToDate;
+  /**
+   * 营业执照号
+   */
+  private String licenseNum;
+
+
+  public String getLicenseNum() {
+    return licenseNum;
+  }
+
+  public void setLicenseNum(String licenseNum) {
+    this.licenseNum = licenseNum;
+  }
 
   public String getSellerName() {
     return sellerName;
@@ -115,5 +128,5 @@ public class SellerApplicationReq {
   public void setApplyToDate(Date applyToDate) {
     this.applyToDate = applyToDate;
   }
-  
+
 }

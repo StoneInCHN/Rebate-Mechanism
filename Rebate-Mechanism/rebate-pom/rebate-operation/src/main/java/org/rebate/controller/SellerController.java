@@ -37,7 +37,7 @@ public class SellerController extends BaseController {
 
   @Resource(name = "areaServiceImpl")
   private AreaService areaService;
-  
+
   /**
    * 列表
    */
@@ -47,6 +47,10 @@ public class SellerController extends BaseController {
     if (StringUtils.isNotEmpty(request.getName())) {
       filters.add(Filter.like("name", request.getName()));
       model.addAttribute("name", request.getName());
+    }
+    if (StringUtils.isNotEmpty(request.getLicenseNum())) {
+      filters.add(Filter.like("licenseNum", request.getLicenseNum()));
+      model.addAttribute("licenseNum", request.getLicenseNum());
     }
     if (StringUtils.isNotEmpty(request.getContactCellPhone())) {
       filters.add(Filter.like("contactCellPhone", request.getContactCellPhone()));
@@ -96,13 +100,13 @@ public class SellerController extends BaseController {
    * 更新
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
-  public String update(Seller seller,Long areaId) {
+  public String update(Seller seller, Long areaId) {
     Seller temp = sellerService.find(seller.getId());
     temp.setAccountStatus(seller.getAccountStatus());
     temp.setAddress(seller.getAddress());
-    if(areaId!=null){
+    if (areaId != null) {
       Area area = areaService.find(areaId);
-      if(area!=null){
+      if (area != null) {
         temp.setArea(area);
       }
     }

@@ -95,6 +95,12 @@
 										[/#list]
 									</select>
 								</td>
+								<th>
+									${message("rebate.seller.licenseNum")}:
+								</th>
+								<td>
+									<input type="text" name="licenseNum" class="text" value="${licenseNum}" maxlength="200" />
+								</td>
 							</tr>
 						</table>
                   </div>
