@@ -100,7 +100,9 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="radio" value="actived" name="adminStatus" [#if admin.adminStatus== "actived" ]checked="checked"[/#if] />${message("rebate.admin.adminStatus.actived")}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									[#if admin.isSystem == false]
 									<input type="radio" value="locked" name="adminStatus" [#if admin.adminStatus== "locked" ]checked="checked"[/#if] />${message("rebate.admin.adminStatus.locked")}
+									[/#if]
 								</td>
 							</tr>
 						</table>

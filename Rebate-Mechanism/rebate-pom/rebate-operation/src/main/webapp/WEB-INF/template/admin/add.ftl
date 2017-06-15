@@ -5,16 +5,36 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/bootstrap-theme.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
+
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.placeholder.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
+
 <script type="text/javascript">
 $().ready(function() {
-
+	var $saveBtn = $("#saveBtn");
+	$saveBtn.click(function(){
+		var roles = $("input[name='roleIds']");		
+		if(roles.length == 0){
+			var error = dialog({
+					title:'添加管理员账户',
+					content:  '请先在角色菜单添加至少一个自定义角色',
+					okValue: '确定',
+					ok: function () {}
+				});
+			error.showModal();			
+			return false;
+		}
+	});
 	var $inputForm = $("#inputForm");
 	// 表单验证
 	$inputForm.validate({
@@ -60,7 +80,7 @@ $().ready(function() {
 </script>
 </head>
 <body>
- <div class="content">
+ <div>
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.admin")}</a> </li>
                 <li><a href="#">${message("rebate.admin.list")}</a></li>
@@ -138,7 +158,7 @@ $().ready(function() {
 									&nbsp;
 								</th>
 								<td>
-									<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+									<input type="submit" id="saveBtn" class="button" value="${message("rebate.common.submit")}" />
 									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>

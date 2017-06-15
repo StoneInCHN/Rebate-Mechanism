@@ -256,6 +256,7 @@ $defaultCardBtn.click( function() {
 				okValue: '确定',
 				ok: function () {}
 			});
+			error.showModal();
 			return false;
 		}
 		$.dialog({
