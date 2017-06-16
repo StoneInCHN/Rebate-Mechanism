@@ -36,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "rm_end_user", indexes = {
     @Index(name = "cellPhoneNumIndex", columnList = "cellPhoneNum"),
+    @Index(name = "accountStatusIndex", columnList = "accountStatus"),
     @Index(name = "recommenderIdIndex", columnList = "recommenderId"),
     @Index(name = "nickNameIndex", columnList = "nickName")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_end_user_sequence")
@@ -269,6 +270,33 @@ public class EndUser extends BaseEntity {
    */
   private Boolean isSalesmanApply;
 
+  /**
+   * 用户每日分红记录
+   */
+  private Set<BonusForUserPerDay> bonusForUserPerDays = new HashSet<BonusForUserPerDay>();
+
+  /**
+   * 临时记录分红金额,用于计算消除乐心
+   */
+  private BigDecimal tmpBonus = new BigDecimal("0");
+
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getTmpBonus() {
+    return tmpBonus;
+  }
+
+  public void setTmpBonus(BigDecimal tmpBonus) {
+    this.tmpBonus = tmpBonus;
+  }
+
+  @OneToMany(mappedBy = "endUser", cascade = CascadeType.ALL)
+  public Set<BonusForUserPerDay> getBonusForUserPerDays() {
+    return bonusForUserPerDays;
+  }
+
+  public void setBonusForUserPerDays(Set<BonusForUserPerDay> bonusForUserPerDays) {
+    this.bonusForUserPerDays = bonusForUserPerDays;
+  }
 
   @Transient
   public SellerApplication getSellerApplication() {

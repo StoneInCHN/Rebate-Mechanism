@@ -43,7 +43,7 @@
 								<td>
 									<input type="text" name="nickName" class="text" value="${nickName}"  maxlength="50" />
 								</td>
-								<th>
+								<!--<th>
 									${message("rebate.endUser.leMind.status")}:
 								</th>
 								<td>
@@ -52,7 +52,7 @@
 										<option [#if status == "ACITVE"] selected="selected" [/#if] value="ACITVE">${message("rebate.endUser.leMind.status.ACITVE")}</option>
 										<option [#if status == "INACTIVE"] selected="selected" [/#if] value="INACTIVE">${message("rebate.endUser.leMind.status.INACTIVE")}</option>
 									</select>
-								</td>
+								</td>-->
 								<th>
 									&nbsp;
 								</th>
@@ -102,7 +102,7 @@
 					<th>
 						<a href="javascript:;" class="sort" name="score">${message("rebate.endUser.leMind.score")}</a>
 					</th>
-					<th>
+					<!--<th>
 						<a href="javascript:;" class="sort" name="totalBonus">${message("rebate.endUser.leMind.totalBonus")}</a>
 					</th>
 					<th>
@@ -110,7 +110,7 @@
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="status">${message("rebate.endUser.leMind.status")}</a>
-					</th>
+					</th>-->
 					<th>
 						<a href="javascript:;" class="sort" name="userCurLeMind">${message("rebate.endUser.leMind.userCurLeMind")}</a>
 					</th>
@@ -143,7 +143,7 @@
 					<td>
 						${leMind.score}
 					</td>
-					<td>
+					<!--<td>
 						${leMind.totalBonus}
 					</td>
 					<td>
@@ -151,7 +151,7 @@
 					</td>
 					<td>
 						${message("rebate.endUser.leMind.status.${leMind.status}")}
-					</td>
+					</td>-->
 					<td>
 						${leMind.userCurLeMind}
 					</td>

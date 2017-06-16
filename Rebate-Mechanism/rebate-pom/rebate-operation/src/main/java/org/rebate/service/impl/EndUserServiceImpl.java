@@ -14,7 +14,7 @@ import org.rebate.dao.LeMindRecordDao;
 import org.rebate.dao.OrderDao;
 import org.rebate.dao.SystemConfigDao;
 import org.rebate.entity.Area;
-import org.rebate.entity.BonusByMindPerDay;
+import org.rebate.entity.BonusForUserPerDay;
 import org.rebate.entity.BonusParamPerDay;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
@@ -22,8 +22,8 @@ import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Order;
 import org.rebate.entity.SystemConfig;
+import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
-import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
@@ -149,6 +149,26 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       }
       bonusParamPerDay.setLeScorePerConfig(leScorePerConfig.getConfigValue());
 
+      SystemConfig mindDivideConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
+
+      if (mindDivideConfig == null || mindDivideConfig.getConfigValue() == null) {
+        if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+          LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
+              "daily Bonus calculate 每日分红运算失败! Timer Period: %s, bonus maximum config no exist!",
+              startTime + "-" + endTime);
+        }
+        msg = "每日分红运算失败!\n参数未配置：乐心分红上限";
+        bonusParamPerDay.setRemark(msg);
+        return;
+      }
+      BigDecimal bonusMaxLimit = new BigDecimal(mindDivideConfig.getConfigValue());
+      SystemConfig maxBonusPerConfig =
+          systemConfigDao.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
+      if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+        bonusMaxLimit = new BigDecimal(maxBonusPerConfig.getConfigValue());
+      }
+
+
       List<Filter> filters = new ArrayList<Filter>();
       Filter start = new Filter("paymentTime", Operator.ge, startTime);
       Filter end = new Filter("paymentTime", Operator.le, endTime);
@@ -224,25 +244,45 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
 
 
-      List<Filter> mindFilters = new ArrayList<Filter>();
-      Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
-      mindFilters.add(statusFilter);
-      List<LeMindRecord> leMindRecords = leMindRecordDao.findList(null, null, mindFilters, null);
-      if (CollectionUtils.isEmpty(leMindRecords)) {
+      // List<Filter> mindFilters = new ArrayList<Filter>();
+      // Filter statusFilter = new Filter("status", Operator.eq, CommonStatus.ACITVE);
+      // mindFilters.add(statusFilter);
+      // List<LeMindRecord> leMindRecords = leMindRecordDao.findList(null, null, mindFilters, null);
+      // if (CollectionUtils.isEmpty(leMindRecords)) {
+      // if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
+      // LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
+      // "daily Bonus calculate 每日分红运算失败! Timer Period: %s, no active leMind records",
+      // startTime + "-" + endTime);
+      // }
+      // msg = "每日分红运算失败!\n当日平台无可产生用户分红的乐心,无法计算分红";
+      // bonusParamPerDay.setRemark(msg);
+      // bonusParamPerDay.setAvlLeMindCount(0);
+      // return;
+      // }
+      //
+      // BigDecimal leMindSize = new BigDecimal("0");
+      // for (LeMindRecord leMindRecord : leMindRecords) {
+      // leMindSize = leMindSize.add(leMindRecord.getAmount());
+      // }
+
+      List<Filter> userFilters = new ArrayList<Filter>();
+      Filter statusFilter = new Filter("accountStatus", Operator.eq, AccountStatus.ACTIVED);
+      userFilters.add(statusFilter);
+      List<EndUser> userRecords = endUserDao.findList(null, null, userFilters, null);
+      BigDecimal leMindSize = new BigDecimal("0");
+      for (EndUser endUser : userRecords) {
+        leMindSize = leMindSize.add(endUser.getCurLeMind());
+      }
+      if (leMindSize.compareTo(new BigDecimal("0")) <= 0) {
         if (LogUtil.isDebugEnabled(EndUserServiceImpl.class)) {
           LogUtil.debug(EndUserServiceImpl.class, "dailyBonusCalJob",
-              "daily Bonus calculate 每日分红运算失败! Timer Period: %s, no active leMind records",
-              startTime + "-" + endTime);
+              "daily Bonus calculate 每日分红运算失败! Timer Period: %s, no active leMind", startTime + "-"
+                  + endTime);
         }
         msg = "每日分红运算失败!\n当日平台无可产生用户分红的乐心,无法计算分红";
         bonusParamPerDay.setRemark(msg);
         bonusParamPerDay.setAvlLeMindCount(0);
         return;
-      }
-
-      BigDecimal leMindSize = new BigDecimal("0");
-      for (LeMindRecord leMindRecord : leMindRecords) {
-        leMindSize = leMindSize.add(leMindRecord.getAmount());
       }
 
       /**
@@ -260,89 +300,147 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       BigDecimal totalBonusAmountByMind = new BigDecimal("0");
       BigDecimal leScorePer = new BigDecimal(leScorePerConfig.getConfigValue());
       List<EndUser> userList = new ArrayList<EndUser>();
-      List<LeScoreRecord> leScoreList = new ArrayList<LeScoreRecord>();
-      List<LeBeanRecord> leBeanList = new ArrayList<LeBeanRecord>();
-      for (LeMindRecord leMindRecord : leMindRecords) {
-        EndUser endUser = leMindRecord.getEndUser();
-        BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
-        BigDecimal totalLeScoreBonus = leMindRecord.getTotalBonus().add(curBonus);
+      for (EndUser endUser : userRecords) {
+        BigDecimal curBonus = endUser.getCurLeMind().multiply(value);
+        if (curBonus.compareTo(new BigDecimal(0)) <= 0) {
+          continue;
+        }
+        BigDecimal userTmpBonus =
+            endUser.getTmpBonus() != null ? endUser.getTmpBonus() : new BigDecimal(0);
+        BigDecimal totalTmpBonus = userTmpBonus.add(curBonus);
 
+        BonusForUserPerDay bonusForUserPerDay = new BonusForUserPerDay();
+        bonusForUserPerDay.setEndUser(endUser);
+        bonusForUserPerDay.setBonusDate(startTime);
+        bonusForUserPerDay.setBonusAmount(curBonus);
+        bonusForUserPerDay.setBonusMindCount(endUser.getCurLeMind().intValue());
+        endUser.setTmpBonus(totalTmpBonus);
 
-
-        if (totalLeScoreBonus.compareTo(leMindRecord.getMaxBonus()) >= 0) {
-          curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
-          leMindRecord.setTotalBonus(leMindRecord.getMaxBonus());
-          leMindRecord.setStatus(CommonStatus.INACTIVE);
+        if (totalTmpBonus.compareTo(bonusMaxLimit) >= 0) {
+          BigDecimal reduceMind = totalTmpBonus.divide(bonusMaxLimit, 0, BigDecimal.ROUND_DOWN);
+          bonusForUserPerDay.setReduceMindCount(reduceMind.intValue());
+          endUser.setTmpBonus(totalTmpBonus.subtract(reduceMind.multiply(bonusMaxLimit)));
 
           LeMindRecord inactiveRecord = new LeMindRecord();
           inactiveRecord.setEndUser(endUser);
-          inactiveRecord.setAmount(leMindRecord.getAmount().negate());
-          inactiveRecord.setUserCurLeMind(endUser.getCurLeMind().add(leMindRecord.getAmount()));
+          inactiveRecord.setAmount(reduceMind.negate());
+          inactiveRecord.setUserCurLeMind(endUser.getCurLeMind().add(inactiveRecord.getAmount()));
           inactiveRecord.setRemark("分红满限额扣除乐心");
           endUser.getLeMindRecords().add(inactiveRecord);
 
-          endUser.setCurLeMind(endUser.getCurLeMind().subtract(leMindRecord.getAmount()));
-        } else {
-          leMindRecord.setTotalBonus(totalLeScoreBonus);
+          endUser.setCurLeMind(endUser.getCurLeMind().subtract(reduceMind));
         }
-
-        BonusByMindPerDay bonusByMindPerDay = new BonusByMindPerDay();
-        bonusByMindPerDay.setLeMindRecord(leMindRecord);
-        bonusByMindPerDay.setBonusDate(startTime);
-        bonusByMindPerDay.setBonusAmount(curBonus);
-        leMindRecord.getBonusByDays().add(bonusByMindPerDay);
-
+        endUser.getBonusForUserPerDays().add(bonusForUserPerDay);
 
         if (leScorePer.compareTo(new BigDecimal("0")) > 0) {
           BigDecimal leScoreBonus = curBonus.multiply(leScorePer);
-          LeScoreRecord leScoreRecord = compareEndUserLeScore(leScoreList, endUser);
-          if (leScoreRecord != null) {
-            leScoreRecord.setAmount(leScoreRecord.getAmount().add(leScoreBonus));
-            leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreBonus));
-            endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreBonus));
-            endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
-            endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreBonus));
-
-          } else {
-            leScoreRecord = new LeScoreRecord();
-            leScoreRecord.setEndUser(endUser);
-            leScoreRecord.setLeScoreType(LeScoreType.BONUS);
-            leScoreRecord.setAmount(leScoreBonus);
-            leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
-            endUser.getLeScoreRecords().add(leScoreRecord);
-            endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
-            endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
-            endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
-          }
-          leScoreList.add(leScoreRecord);
+          LeScoreRecord leScoreRecord = new LeScoreRecord();
+          leScoreRecord.setEndUser(endUser);
+          leScoreRecord.setLeScoreType(LeScoreType.BONUS);
+          leScoreRecord.setAmount(leScoreBonus);
+          leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+          endUser.getLeScoreRecords().add(leScoreRecord);
+          endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
+          endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+          endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
         }
 
         if (leScorePer.compareTo(new BigDecimal("1")) < 0) {
           BigDecimal leBeanBonus = curBonus.subtract(curBonus.multiply(leScorePer));
-          LeBeanRecord leBeanRecord = compareEndUserLeBean(leBeanList, endUser);
-          if (leBeanRecord != null) {
-            leBeanRecord.setAmount(leBeanRecord.getAmount().add(leBeanBonus));
-            leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanBonus));
-            endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
-            endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanBonus));
-          } else {
-            leBeanRecord = new LeBeanRecord();
-            leBeanRecord.setAmount(leBeanBonus);
-            // leBeanRecord.setAmount(curBonus);
-            leBeanRecord.setEndUser(endUser);
-            leBeanRecord.setType(LeBeanChangeType.BONUS);
-            leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
-            endUser.getLeBeanRecords().add(leBeanRecord);
-            endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
-            endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
-          }
-          leBeanList.add(leBeanRecord);
+          LeBeanRecord leBeanRecord = new LeBeanRecord();
+          leBeanRecord.setAmount(leBeanBonus);
+          leBeanRecord.setEndUser(endUser);
+          leBeanRecord.setType(LeBeanChangeType.BONUS);
+          leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+          endUser.getLeBeanRecords().add(leBeanRecord);
+          endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+          endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
+
         }
-
-
         totalBonusAmountByMind = totalBonusAmountByMind.add(curBonus);
         userList.add(endUser);
       }
+      // for (LeMindRecord leMindRecord : leMindRecords) {
+      // EndUser endUser = leMindRecord.getEndUser();
+      // BigDecimal curBonus = leMindRecord.getAmount().multiply(value);
+      // BigDecimal totalLeScoreBonus = leMindRecord.getTotalBonus().add(curBonus);
+      //
+      //
+      //
+      // if (totalLeScoreBonus.compareTo(leMindRecord.getMaxBonus()) >= 0) {
+      // curBonus = leMindRecord.getMaxBonus().subtract(leMindRecord.getTotalBonus());
+      // leMindRecord.setTotalBonus(leMindRecord.getMaxBonus());
+      // leMindRecord.setStatus(CommonStatus.INACTIVE);
+      //
+      // LeMindRecord inactiveRecord = new LeMindRecord();
+      // inactiveRecord.setEndUser(endUser);
+      // inactiveRecord.setAmount(leMindRecord.getAmount().negate());
+      // inactiveRecord.setUserCurLeMind(endUser.getCurLeMind().add(leMindRecord.getAmount()));
+      // inactiveRecord.setRemark("分红满限额扣除乐心");
+      // endUser.getLeMindRecords().add(inactiveRecord);
+      //
+      // endUser.setCurLeMind(endUser.getCurLeMind().subtract(leMindRecord.getAmount()));
+      // } else {
+      // leMindRecord.setTotalBonus(totalLeScoreBonus);
+      // }
+      //
+      // BonusByMindPerDay bonusByMindPerDay = new BonusByMindPerDay();
+      // bonusByMindPerDay.setLeMindRecord(leMindRecord);
+      // bonusByMindPerDay.setBonusDate(startTime);
+      // bonusByMindPerDay.setBonusAmount(curBonus);
+      // leMindRecord.getBonusByDays().add(bonusByMindPerDay);
+      //
+      //
+      // if (leScorePer.compareTo(new BigDecimal("0")) > 0) {
+      // BigDecimal leScoreBonus = curBonus.multiply(leScorePer);
+      // LeScoreRecord leScoreRecord = compareEndUserLeScore(leScoreList, endUser);
+      // if (leScoreRecord != null) {
+      // leScoreRecord.setAmount(leScoreRecord.getAmount().add(leScoreBonus));
+      // leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreBonus));
+      // endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreBonus));
+      // endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+      // endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreBonus));
+      //
+      // } else {
+      // leScoreRecord = new LeScoreRecord();
+      // leScoreRecord.setEndUser(endUser);
+      // leScoreRecord.setLeScoreType(LeScoreType.BONUS);
+      // leScoreRecord.setAmount(leScoreBonus);
+      // leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+      // endUser.getLeScoreRecords().add(leScoreRecord);
+      // endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(leScoreRecord.getAmount()));
+      // endUser.setCurLeScore(leScoreRecord.getUserCurLeScore());
+      // endUser.setTotalLeScore(endUser.getTotalLeScore().add(leScoreRecord.getAmount()));
+      // }
+      // leScoreList.add(leScoreRecord);
+      // }
+      //
+      // if (leScorePer.compareTo(new BigDecimal("1")) < 0) {
+      // BigDecimal leBeanBonus = curBonus.subtract(curBonus.multiply(leScorePer));
+      // LeBeanRecord leBeanRecord = compareEndUserLeBean(leBeanList, endUser);
+      // if (leBeanRecord != null) {
+      // leBeanRecord.setAmount(leBeanRecord.getAmount().add(leBeanBonus));
+      // leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanBonus));
+      // endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+      // endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanBonus));
+      // } else {
+      // leBeanRecord = new LeBeanRecord();
+      // leBeanRecord.setAmount(leBeanBonus);
+      // // leBeanRecord.setAmount(curBonus);
+      // leBeanRecord.setEndUser(endUser);
+      // leBeanRecord.setType(LeBeanChangeType.BONUS);
+      // leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+      // endUser.getLeBeanRecords().add(leBeanRecord);
+      // endUser.setCurLeBean(leBeanRecord.getUserCurLeBean());
+      // endUser.setTotalLeBean(endUser.getTotalLeBean().add(leBeanRecord.getAmount()));
+      // }
+      // leBeanList.add(leBeanRecord);
+      // }
+      //
+      //
+      // totalBonusAmountByMind = totalBonusAmountByMind.add(curBonus);
+      // userList.add(endUser);
+      // }
 
       bonusParamPerDay.setBonusAmount(totalBonusAmountByMind.toString());
 
