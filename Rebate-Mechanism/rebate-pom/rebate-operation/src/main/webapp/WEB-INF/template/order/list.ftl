@@ -89,6 +89,12 @@
 										<option [#if orderStatus == "FINISHED"] selected="selected" [/#if] value="FINISHED">${message("rebate.orderStatus.FINISHED")}</option>
 									</select>
 								</td>
+								<th>
+									${message("rebate.order.paymentType")}:
+								</th>
+								<td>
+									<input type="text" name="paymentType" class="text" value="${paymentType}"  maxlength="20" />
+								</td>								
 							</tr>
 						</table>
                   </div>

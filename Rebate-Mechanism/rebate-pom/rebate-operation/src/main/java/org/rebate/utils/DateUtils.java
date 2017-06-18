@@ -29,6 +29,7 @@ public final class DateUtils implements ApplicationContextAware, DisposableBean 
       "yyyy-MM-dd HH:mm");
   private static final SimpleDateFormat hourAndMinuteFormat = new SimpleDateFormat("hh:mm");
   private static final SimpleDateFormat dateToNumberFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+  public static final SimpleDateFormat filePostfixFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
   private DateUtils() {}
 
@@ -182,4 +183,30 @@ public final class DateUtils implements ApplicationContextAware, DisposableBean 
     endTime.set(Calendar.MILLISECOND, 999);
     return endTime.getTime();
   }
+  /**
+   * 格式化时间成指定格式字符串
+   * 
+   * @param date
+   * @return format string
+   */
+  public static String getDateFormatString(SimpleDateFormat sf, Date date) {
+    if (date != null) {
+      return sf.format(date);
+    }
+    return null;
+  }
+  /**
+   * 格式化时间成指定格式字符串
+   * 
+   * @param date
+   * @return format string
+   */
+  public static String getDateFormatString(String formatStr, Date date) {
+    if (date != null) {
+      SimpleDateFormat format = new SimpleDateFormat(formatStr);
+      return format.format(date);
+    }
+    return null;
+  }
 }
+
