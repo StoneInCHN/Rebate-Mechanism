@@ -103,10 +103,25 @@ public class SellerClearingRecordController extends BaseController {
 	 if (sellerClearingRecord == null) {
 		 return ERROR_MESSAGE;
 	 }
-	 BankCard bankCard = bankCardService.find(sellerClearingRecord.getBankCardId());
+	 BankCard bankCard = null;
+	 Long bankCardId = sellerClearingRecord.getBankCardId();
+	 if (bankCardId == null) {
+	   if (sellerClearingRecord.getEndUser() != null) {
+	     bankCard = bankCardService.getDefaultCard(sellerClearingRecord.getEndUser());
+       }else if(sellerClearingRecord.getSeller() != null 
+           && sellerClearingRecord.getSeller().getEndUser() != null){
+         bankCard = bankCardService.getDefaultCard(sellerClearingRecord.getSeller().getEndUser());
+         sellerClearingRecord.setEndUser(sellerClearingRecord.getSeller().getEndUser());
+       }
+     }else {
+       bankCard = bankCardService.find(bankCardId);
+     }
 	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
 		 return Message.error("无效的银行卡");
-	 }	 
+	 }else {
+	    sellerClearingRecord.setBankCardId(bankCardId);
+	    sellerClearingRecordService.update(sellerClearingRecord);
+     }	 
      return sellerClearingRecordService.singlePay(sellerClearingRecord, bankCard);
   }
 }
