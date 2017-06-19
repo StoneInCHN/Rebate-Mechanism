@@ -54,7 +54,6 @@
 								</th>
 								<td>
 									<input type="submit" class="btn " value="${message("rebate.common.submit")}" />
-									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
 							<tr>
@@ -81,6 +80,12 @@
 								<td>
 									<input type="text" id="dateTo" name="dateTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'dateFrom\')}'});" readonly [#if dateTo??]value="${dateTo?string("yyyy-MM-dd")}" [/#if]/>
 								</td>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
+								</td>
 							</tr>
 							<tr>
 								<th>
@@ -90,11 +95,21 @@
 									<input type="text" name="sellerName" class="text" value="${sellerName}"  maxlength="100" />
 								</td>
 								<th>
-									${message("rebate.sellerClearingRecord.endUser")}:
+									${message("rebate.sellerClearingRecord.endUser")}手机号:
 								</th>
 								<td>
-									<input type="text" name="endUserNickName" class="text" value="${endUserNickName}"  maxlength="50" />
+									<input type="text" name="endUserCellPhone" class="text" value="${endUserCellPhone}"  maxlength="50" />
 								</td>
+								<th>
+									是否有效:
+								</th>
+								<td>
+									<select  name="valid">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if valid == 'true'] selected="selected" [/#if] value="true">有效</option>
+										<option [#if valid == 'false'] selected="selected" [/#if] value="false">无效</option>
+									</select>
+								</td>								
 							</tr>
 						</table>
                   </div>

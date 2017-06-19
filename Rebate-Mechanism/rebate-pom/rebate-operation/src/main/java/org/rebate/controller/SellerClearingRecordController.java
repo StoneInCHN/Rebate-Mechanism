@@ -51,9 +51,9 @@ public class SellerClearingRecordController extends BaseController {
       filters.add(Filter.like("reqSn", "%" + request.getReqSn() + "%"));
       model.addAttribute("reqSn", request.getReqSn());
     }
-    if (StringUtils.isNotEmpty(request.getEndUserNickName())) {
-      filters.add(Filter.like("endUser&nickName", "%" + request.getEndUserNickName() + "%"));
-      model.addAttribute("endUserNickName", request.getEndUserNickName());
+    if (StringUtils.isNotEmpty(request.getEndUserCellPhone())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getEndUserCellPhone() + "%"));
+      model.addAttribute("endUserCellPhone", request.getEndUserCellPhone());
     }
     if (StringUtils.isNotEmpty(request.getSellerName())) {
       filters.add(Filter.like("seller&name", "%" + request.getSellerName() + "%"));
@@ -63,6 +63,10 @@ public class SellerClearingRecordController extends BaseController {
       filters.add(Filter.eq("clearingStatus", request.getClearingStatus()));
       model.addAttribute("clearingStatus", request.getClearingStatus());
     }
+    if (request.getValid() != null) {
+        filters.add(Filter.eq("valid", request.getValid()));
+        model.addAttribute("valid", request.getValid());
+      }
     if (request.getDateFrom() != null) {
       filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getDateFrom())));
       model.addAttribute("orderDateFrom", request.getDateFrom());
@@ -119,7 +123,7 @@ public class SellerClearingRecordController extends BaseController {
 	 if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
 		 return Message.error("无效的银行卡");
 	 }else {
-	    sellerClearingRecord.setBankCardId(bankCardId);
+	    sellerClearingRecord.setBankCardId(bankCard.getId());
 	    sellerClearingRecordService.update(sellerClearingRecord);
      }	 
      return sellerClearingRecordService.singlePay(sellerClearingRecord, bankCard);

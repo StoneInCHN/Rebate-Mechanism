@@ -178,31 +178,33 @@
 				okValue: '确定',
 				ok: function () {
 					var _that = this;
-					_that.content('提交中,请稍等...');
-					_that.cancelDisplay =false;
-					$.ajax({
-						url: "singlePay.jhtml",
-						type: "POST",
-						data: {
-							id:${sellerClearingRecord.id}
-						},
-						beforeSend:function(){
-							$("#singlePay").attr("disabled","disabled");
-						},
-						dataType: "json",
-						cache: false,
-						success: function(message) {
-							if(message.type == "success"){
+					if(_that.cancelDisplay == true){
+						_that.content('提交中,请稍等...');
+						$.ajax({
+							url: "singlePay.jhtml",
+							type: "POST",
+							data: {
+								id:${sellerClearingRecord.id}
+							},
+							beforeSend:function(){
+								$("#singlePay").attr("disabled","disabled");
+							},
+							dataType: "json",
+							cache: false,
+							success: function(message) {
+								if(message.type == "success"){
 									_that.content(message.content);
 									setTimeout(function() {
 										location.reload();
 									}, 1000);
-							}else{
-								_that.content(message.content);
-								$("#singlePay").attr("disabled",false);
+								}else{
+									_that.content(message.content);
+									$("#singlePay").attr("disabled",false);
+								}
 							}
-						}
-					});
+						});
+				  }
+				  _that.cancelDisplay =false;
 				  return false;
 				},
 				cancelValue: '取消',

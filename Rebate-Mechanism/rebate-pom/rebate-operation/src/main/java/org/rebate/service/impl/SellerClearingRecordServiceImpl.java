@@ -213,7 +213,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				    TranxServiceImpl tranxService = new TranxServiceImpl();
   				    try {
   				    	BigDecimal totalPay = totalClearingAmount.subtract(totalHandlingCharge);//总共代付的金额
-  				    	String totalPayStr = totalPay.multiply(new BigDecimal(100)).setScale(0).toString();//金额单位：分
+  				    	String totalPayStr = totalPay.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP).toString();//金额单位：分
   				    	String totalItem = records.size() + "";//单数量
   				    	tranxService.init();//初始化通联基础数据
   				    	//开始批量代付
@@ -272,8 +272,8 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   			    	LogUtil.debug(this.getClass(), "singlePay", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handlingCharge);
   			    	return Message.success("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge");
   			    }
-    					 
-  			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0).toString());
+    			BigDecimal amountPenny = payAmount.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP);		 
+  			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), amountPenny.toString());
   			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
   			    	String status = resultMap.get("status");
   			    	if ("success".equals(status) || "error".equals(status)){
@@ -312,17 +312,22 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		}else if ("error".equals(status)) {
 	  		newRecord.setClearingStatus(ClearingStatus.FAILED);
 	  		newRecord.setIsClearing(false);
-			update(oldRecord);
+			//update(oldRecord);
 		}
 	    save(newRecord);//保存新的货款记录
   		oldRecord.setValid(false);//标记旧的货款记录无效
-  		oldRecord.setRemark(oldRecord.getRemark() + ",该结算记录已作废,请参考新的货款单号:"+clearingSn);
+  		oldRecord.setRemark(oldRecord.getRemark() + " 该结算记录已作废,请参考新的货款单号:"+clearingSn);
   		update(oldRecord);//更新旧的货款记录
   		//把旧的货款记录和订单关系解除，建立新的货款记录和订单关系
   		List<ClearingOrderRelation> relations = getRelationListByRecordId(oldRecord.getId());
 		for (ClearingOrderRelation relation : relations) {
 			relation.setClearingRecId(newRecord.getId());
 			clearingOrderRelationService.update(relation);//保存商家货款结算记录与订单的关系
+			if ("success".equals(status)) {
+				Order order = relation.getOrder();
+				order.setIsClearing(true);
+				orderService.update(order);
+			}
 		}
 
   	}

@@ -76,6 +76,12 @@
 								<td>
 									<input type="text" id="orderDateTo" name="orderDateTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'orderDateFrom\')}'});" readonly [#if orderDateTo??]value="${orderDateTo?string("yyyy-MM-dd")}" [/#if]/>
 								</td>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<a  id="exportButton" class="btn btn-default"> <i class="fa fa-download"></i> <span>导出</span></a>
+								</td>
 							</tr>
 							<tr>
 								<th>
@@ -94,7 +100,7 @@
 								</th>
 								<td>
 									<input type="text" name="paymentType" class="text" value="${paymentType}"  maxlength="20" />
-								</td>								
+								</td>
 							</tr>
 						</table>
                   </div>
@@ -199,6 +205,7 @@
 		[/@pagination]
 		 
     </form>
+<iframe name="exportData_iframe" style="display:none"></iframe>    
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.lazyload.min.js"></script>
@@ -206,6 +213,50 @@
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
 <script type="text/javascript">
+$(function(){
+	// 导出
+	var $exportButton = $("#exportButton");
+	$exportButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $listForm = $("#listForm");
+		var filterData = $listForm.serialize();
+		var dataList = filterData.split('&');
+		var hasFilter = false;
+		for(var i=0;i<dataList.length;i++){
+			var keyVal=dataList[i].split('=');
+			if(keyVal[0] != 'pageNumber' && keyVal[0] != 'pageSize' && keyVal[1] != ''){
+				hasFilter = true;
+				break;
+			}
+		}
+		console.info(hasFilter);
+		if(!hasFilter){
+			$.dialog({
+				type: "warn",
+				content: '请至少选择一个筛选条件',
+				ok: '确认',
+				cancel: '取消',
+				onOk: function() {
+				}
+			});
+			return false;
+		}
+		$.dialog({
+			type: "warn",
+			content: '确认导出筛选条件后的订单吗？',
+			ok: '确认',
+			cancel: '取消',
+			onOk: function() {
+					$listForm.attr("action", "dataExport.jhtml");
+					$listForm.attr("target", "exportData_iframe");
+					$listForm.submit();
+			}
+		});
+	});
+});
 </script>
 </body>
 </html>

@@ -16,7 +16,7 @@ public class SellerClearingRecordReq {
   
   private String sellerName;
   
-  private String endUserNickName;
+  private String endUserCellPhone;
   
   /**
    * 货款结算状态
@@ -32,6 +32,10 @@ public class SellerClearingRecordReq {
    * 结束时间
    */
   private Date dateTo;
+  /**
+   * 是否有效
+   */
+  private Boolean valid;
 
   public Boolean getIsClearing() {
     return isClearing;
@@ -73,12 +77,12 @@ public class SellerClearingRecordReq {
     this.sellerName = sellerName;
   }
 
-  public String getEndUserNickName() {
-    return endUserNickName;
+  public String getEndUserCellPhone() {
+	return endUserCellPhone;
   }
 
-  public void setEndUserNickName(String endUserNickName) {
-    this.endUserNickName = endUserNickName;
+  public void setEndUserCellPhone(String endUserCellPhone) {
+	this.endUserCellPhone = endUserCellPhone;
   }
 
   public Date getDateFrom() {
@@ -103,6 +107,14 @@ public class SellerClearingRecordReq {
 
   public void setClearingStatus(ClearingStatus clearingStatus) {
     this.clearingStatus = clearingStatus;
+  }
+
+  public Boolean getValid() {
+	return valid;
+  }
+
+  public void setValid(Boolean valid) {
+	this.valid = valid;
   }
   
 }

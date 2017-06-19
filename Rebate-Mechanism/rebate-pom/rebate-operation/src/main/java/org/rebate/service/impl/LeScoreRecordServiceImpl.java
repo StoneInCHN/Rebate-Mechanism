@@ -175,7 +175,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
     tranxService.init();//初始化通联基础数据
     try {
     	BigDecimal totalPay = totalClearingAmount.subtract(totalHandlingCharge);//总共代付的金额
-    	String totalPayStr = totalPay.multiply(new BigDecimal(100)).setScale(0).toString();//金额单位：分
+    	String totalPayStr = totalPay.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP).toString();//金额单位：分
     	String totalItem = records.size() + "";//单数量
     	//开始批量提现（代付）
     	List<LeScoreRecord> recordList = tranxService.batchWithdrawalLeScore(false, totalItem,  totalPayStr, records, bankCardService);
@@ -222,7 +222,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 			    	return Message.success("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge");
 			    }
 					 
-			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0).toString());
+			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
 			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
 			    	String status = resultMap.get("status");
 			    	if ("success".equals(status)) {
