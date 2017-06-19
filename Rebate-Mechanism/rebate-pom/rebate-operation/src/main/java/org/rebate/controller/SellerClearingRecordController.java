@@ -9,11 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.BankCard;
+import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.SellerClearingRecordReq;
+import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.SellerClearingRecordService;
 import org.rebate.service.BankCardService;
 import org.rebate.utils.TimeUtils;
@@ -32,6 +34,7 @@ public class SellerClearingRecordController extends BaseController {
   
   @Resource(name = "bankCardServiceImpl")
   private BankCardService bankCardService;
+  
 
   /**
    * 列表
@@ -91,6 +94,10 @@ public class SellerClearingRecordController extends BaseController {
   public String details(Long id, ModelMap model) {
     SellerClearingRecord sellerClearingRecord = sellerClearingRecordService.find(id);
     model.addAttribute("sellerClearingRecord", sellerClearingRecord);
+    
+    List<ClearingOrderRelation> relations = sellerClearingRecordService.getRelationListByRecordId(id);
+    model.addAttribute("relations", relations);
+    
     return "/sellerClearingRecord/details";
   }
 

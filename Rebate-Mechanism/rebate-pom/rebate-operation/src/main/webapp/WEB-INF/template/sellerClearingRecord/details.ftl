@@ -148,6 +148,101 @@
 									${sellerClearingRecord.remark}
 								</td>
 							</tr>
+							[#if relations != null && relations.size() > 0]
+							<tr>
+								<th>
+									结算订单列表:
+								</th>
+								<td>
+									<table id="listTable" class="table table-striped table-bordered">
+										<thead>
+										<tr>
+															<th>
+																<a href="javascript:;" class="sort">${message("rebate.order.sn")}</a>
+															</th>
+															<th>
+																<a href="javascript:;">${message("rebate.order.endUser.cellPhoneNum")}</a>
+															</th>
+															<th>
+																<a href="javascript:;">${message("rebate.order.endUser.nickName")}</a>
+															</th>
+															<th>
+																<a href="javascript:;">${message("rebate.order.sellerName")}</a>
+															</th>
+															<th>
+																<a href="javascript:;">支付时间</a>
+															</th>
+															<th>
+																<a href="javascript:;">${message("rebate.order.paymentType")}</a>
+															</th>
+															<th>
+																<a href="javascript:;">${message("rebate.order.amount")}</a>
+															</th>	
+															<th>
+																<a href="javascript:;">结算金额</a>
+															</th>		
+															<th>
+																<a href="javascript:;">是否结算</a>
+															</th>																														
+															<th>
+																<a href="javascript:;">${message("rebate.order.status")}</a>
+															</th>					
+										</tr>
+										</thead>
+										<tbody>
+										[#list relations as relation]
+										[#if relation.order != null]
+														<tr>
+															<td>
+																<span title="${relation.order.sn}">${relation.order.sn}</sapn>
+															</td>
+															<td>
+																${relation.order.endUser.cellPhoneNum}
+															</td>
+															<td>
+																${relation.order.endUser.nickName}
+															</td>
+															<td>
+																${relation.order.seller.name}
+															</td>
+															<td>
+																${relation.order.paymentTime?string("yyyy-MM-dd HH:mm:ss")}
+															</td>
+															<td>
+																${relation.order.paymentType}
+															</td>
+															<td>
+																${relation.order.amount}
+															</td>
+															<td>
+																${relation.order.sellerIncome}
+															</td>
+															<td>
+																[#if relation.order.isClearing]
+																是
+																[#else]
+																否
+																[/#if]
+															</td>															
+															<td>
+																[#if  relation.order.status =="UNPAID"]
+																	<span class="label label-danger">${message("rebate.orderStatus.UNPAID")}</span>
+																[#elseif relation.order.status =="PAID"]
+																	<span class="label label-warning">${message("rebate.orderStatus.PAID")}</span>
+																[#elseif relation.order.status =="FINISHED"]
+																	<span class="label label-success">${message("rebate.orderStatus.FINISHED")}</span>
+																[#else]
+																	--
+																[/#if]
+															</td>
+										</tr>
+										[/#if]
+										[/#list]
+										</tbody>
+									</table>
+								</td>
+							</tr>							
+							[/#if]
 							<tr>
 								<th>
 									&nbsp;
