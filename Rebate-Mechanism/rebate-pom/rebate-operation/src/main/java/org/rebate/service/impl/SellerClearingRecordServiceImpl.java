@@ -146,7 +146,13 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				 
   				 record.setTotalOrderAmount(totalOrderAmount); //订单总金额
   				 
-  				 record.setAmount(endUser.getIncomeLeScore());//结算金额
+//  				 record.setAmount(endUser.getIncomeLeScore());//结算金额
+//                 if (totalSellerIncome.compareTo(endUser.getIncomeLeScore()) != 0) {
+//                   LogUtil.debug(this.getClass(), "sellerClearing", "Total seller income is not equals endUser IncomeLeScore !!!");
+//                   record.setAmount(totalSellerIncome);
+//                 }
+                 record.setAmount(totalSellerIncome);//结算金额
+                 
                  BankCard defaultCard = bankCardService.getDefaultCard(endUser);
                  if (defaultCard != null) {
                       record.setBankCardId(defaultCard.getId());
@@ -168,10 +174,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
                      LogUtil.debug(this.getClass(), "sellerClearing", "商家未添加默认银行卡,待添加银行卡后执行单笔货款提现!");
                      continue;//绕开银行卡为空的商家货款结算
                  }
-  				 if (totalSellerIncome.compareTo(endUser.getIncomeLeScore()) != 0) {
-  					 LogUtil.debug(this.getClass(), "sellerClearing", "Total seller income is not equals endUser IncomeLeScore !!!");
-  					 record.setAmount(totalSellerIncome);
-  				 }
+
   				 BigDecimal handingCharge = getAllinpayHandlingCharge(totalOrderAmount);
   				 if (record.getAmount() != null && handingCharge != null) {
   					 //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
