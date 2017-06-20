@@ -81,6 +81,16 @@ $(function() {
 		  <form id="inputForm" action="update.jhtml" method="post">
 						<input type="hidden" name="id" value="${sellerApply.id}" />
 						<table class="input">
+							[#if salesMan??]
+							<tr>
+								<th>
+									业务员手机号:
+								</th>
+								<td>
+										${salesMan.cellPhoneNum}
+								</td>
+							</tr>
+							[/#if]
 							<tr>
 								<th>
 									${message("rebate.sellerApplication.sellerName")}:

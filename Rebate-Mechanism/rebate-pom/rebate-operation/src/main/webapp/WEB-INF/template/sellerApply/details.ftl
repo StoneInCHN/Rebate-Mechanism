@@ -18,6 +18,16 @@
           <li class="active">${message("rebate.sellerApplication.details")}</li>
       </ol>
       <table class="input">
+      						[#if salesMan??]
+							<tr>
+								<th>
+									${message("rebate.sellerApplication.salesMan.cellPhoneNum")}:
+								</th>
+								<td>
+										${salesMan.cellPhoneNum}
+								</td>
+							</tr>
+							[/#if]
 							<tr>
 								<th>
 									${message("rebate.sellerApplication.sellerName")}:

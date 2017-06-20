@@ -8,11 +8,14 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.EndUser;
+import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.SellerApplication;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.SellerApplicationReq;
+import org.rebate.service.SalesmanSellerRelationService;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.utils.TimeUtils;
@@ -32,6 +35,9 @@ public class SellerApplicationController extends BaseController {
 
   @Resource(name = "sellerCategoryServiceImpl")
   private SellerCategoryService sellerCategoryService;
+  
+  @Resource(name="salesmanSellerRelationServiceImpl")
+  private SalesmanSellerRelationService salesmanSellerRelationService;
 
   /**
    * 编辑
@@ -41,6 +47,15 @@ public class SellerApplicationController extends BaseController {
     SellerApplication sellerApplication = sellerApplicationService.find(id);
     model.addAttribute("sellerApply", sellerApplication);
     model.addAttribute("envImages", sellerApplication.getEnvImages());
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("sellerApplication", sellerApplication.getId()));
+    List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationService.findList(null, null, filters, null);
+    if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+      SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
+      EndUser salesMan = salesmanSellerRelation.getEndUser();
+      model.addAttribute("salesMan", salesMan);
+    }
+    
     return "/sellerApply/edit";
   }
 
@@ -116,6 +131,14 @@ public class SellerApplicationController extends BaseController {
     SellerApplication sellerApplication = sellerApplicationService.find(id);
     model.addAttribute("sellerApply", sellerApplication);
     model.addAttribute("envImages", sellerApplication.getEnvImages());
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.eq("sellerApplication", sellerApplication.getId()));
+    List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationService.findList(null, null, filters, null);
+    if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+      SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
+      EndUser salesMan = salesmanSellerRelation.getEndUser();
+      model.addAttribute("salesMan", salesMan);
+    }
     return "/sellerApply/details";
   }
 
