@@ -32,14 +32,13 @@
 
 			<pattern> %d | [%.-1level] | %logger | %X{threadId} |%m%n</pattern>
 		</encoder>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<maxIndex>30</maxIndex>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<maxHistory>30</maxHistory>    
 			<FileNamePattern>${LOG_PATH}/rebate-operation-console-%d{yyyy-MM-dd}.log.%i</FileNamePattern>
+			<TimeBasedFileNamingAndTriggeringPolicy class= "ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<MaxFileSize>10MB</MaxFileSize>
+			</TimeBasedFileNamingAndTriggeringPolicy >
 		</rollingPolicy>
-		<triggeringPolicy
-			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<MaxFileSize>10MB</MaxFileSize>
-		</triggeringPolicy>
 	</appender>
 
 

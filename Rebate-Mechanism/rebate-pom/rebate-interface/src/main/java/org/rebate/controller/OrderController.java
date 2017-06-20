@@ -590,6 +590,8 @@ public class OrderController extends MobileBaseController {
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter sellerFilter = new Filter("seller", Operator.eq, entityId);
+    Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    filters.add(statusFilter);
     filters.add(sellerFilter);
 
     Pageable pageable = new Pageable();

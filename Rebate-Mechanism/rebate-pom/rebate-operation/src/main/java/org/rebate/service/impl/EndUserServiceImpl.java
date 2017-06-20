@@ -214,7 +214,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
           totalBonus.multiply(new BigDecimal(totalBonusPerConfig.getConfigValue())).setScale(4,
               BigDecimal.ROUND_HALF_UP);
 
-      bonusParamPerDay.setBonusCalAmount(totalBonus.toString());
+      bonusParamPerDay.setBonusCalAmount(totalBonusPer.toString());
 
       // /**
       // * 计算每日乐心大于等于1的用户
