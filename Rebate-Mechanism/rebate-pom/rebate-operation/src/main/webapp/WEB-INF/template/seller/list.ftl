@@ -136,6 +136,9 @@
 						<a href="javascript:;" class="sort" name="area">${message("rebate.seller.area")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="licenseNum">${message("rebate.seller.licenseNum")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="storePhoto">${message("rebate.seller.storePhoto")}</a>
 					</th>
 					<th>
@@ -192,6 +195,9 @@
 					</td>
 					<td>
 						${seller.area}
+					</td>
+					<td>
+						${seller.licenseNum}
 					</td>
 					<td>
 						[#if  seller.storePictureUrl ??]
