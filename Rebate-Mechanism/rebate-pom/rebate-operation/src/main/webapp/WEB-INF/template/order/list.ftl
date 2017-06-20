@@ -53,7 +53,7 @@
 									&nbsp;
 								</th>
 								<td>
-									<input type="submit" class="btn " value="${message("rebate.common.submit")}" />
+									<input type="submit" id = "submitBtn" class="btn " value="${message("rebate.common.submit")}" />
 									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
@@ -214,6 +214,13 @@
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
 <script type="text/javascript">
 $(function(){
+	// 提交
+	var $submitBtn = $("#submitBtn");
+	$submitBtn.click( function() {
+			var $listForm = $("#listForm");
+			$listForm.attr("action", "list.jhtml");
+			$listForm.attr("target", "_self");
+	});
 	// 导出
 	var $exportButton = $("#exportButton");
 	$exportButton.click( function() {

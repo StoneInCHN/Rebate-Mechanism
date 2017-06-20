@@ -55,8 +55,7 @@
 									&nbsp;
 								</th>
 								<td>
-									<input type="submit" class="btn " value="${message("rebate.common.submit")}" />
-									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
+									<input type="submit" id = "submitBtn" class="btn " value="${message("rebate.common.submit")}" />
 								</td>
 							</tr>
 							<tr>
@@ -87,6 +86,12 @@
 										[/#list]
 									</select>
 								</td>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<input type="reset" class="btn " value="${message("rebate.common.reset")}" onclick="location.href='list.jhtml'" />
+								</td>
 							</tr>
 							<tr>
 								<th>
@@ -94,6 +99,24 @@
 								</th>
 								<td>
 									<input type="text" name="licenseNum" class="text" value="${licenseNum}" maxlength="200" />
+								</td>
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									&nbsp;
+								</td>		
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									&nbsp;
+								</td>															
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									<a  id="exportButton" class="btn btn-default"> <i class="fa fa-download"></i> <span>导出</span></a>
 								</td>
 							</tr>
 						</table>
@@ -241,6 +264,7 @@
 		[/@pagination]
 		 
     </form>
+<iframe name="exportData_iframe" style="display:none"></iframe>   
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/bootstrap.js"></script>
 <script type="text/javascript" src="${base}/resources/js/viewer.min.js"></script>
@@ -255,7 +279,34 @@ $(function(){
 	//图片懒加载
 	$('.img-lazy').lazyload();
 	
-})
+	// 提交
+	var $submitBtn = $("#submitBtn");
+	$submitBtn.click( function() {
+			var $listForm = $("#listForm");
+			$listForm.attr("action", "list.jhtml");
+			$listForm.attr("target", "_self");
+	});
+	// 导出
+	var $exportButton = $("#exportButton");
+	$exportButton.click( function() {
+		var $this = $(this);
+		if ($this.hasClass("disabled")) {
+			return false;
+		}
+		var $listForm = $("#listForm");
+		$.dialog({
+			type: "warn",
+			content: '确认导出（可以添加筛选条件）的商家吗？',
+			ok: '确认',
+			cancel: '取消',
+			onOk: function() {
+					$listForm.attr("action", "dataExport.jhtml");
+					$listForm.attr("target", "exportData_iframe");
+					$listForm.submit();
+			}
+		});
+	});
+});
 </script>
 </body>
 </html>

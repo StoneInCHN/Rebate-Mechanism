@@ -392,7 +392,7 @@ public class TranxServiceImpl {
       throws UnsupportedEncodingException, Exception {
 	LogUtil.debug(this.getClass(), "sendXml", "xmlRequest after sign: \n======================发送报文======================：\n%s", xml);
 	//System.out.println("======================发送报文======================：\n" + xml);
-    String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
+    String resp = XmlTools.send(url, new String(xml.getBytes(), "UTF-8"));
     //String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
     //System.out.println("======================响应内容======================");
     LogUtil.debug(this.getClass(), "sendXml", "xmlRequest after send, xmlResponse: \n======================响应内容======================：\n%s", resp);

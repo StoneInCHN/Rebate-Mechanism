@@ -2,22 +2,27 @@ package org.rebate.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Area;
+import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.request.OrderReq;
 import org.rebate.request.SellerRequest;
 import org.rebate.service.AreaService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerService;
+import org.rebate.utils.ExportUtils;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -196,5 +201,54 @@ public class SellerController extends BaseController {
     Seller seller = sellerService.find(id);
     model.addAttribute("seller", seller);
     return "/seller/editPosition";
+  }
+  /**
+   * 数据导出
+   */
+  @RequestMapping(value = "/dataExport", method = {RequestMethod.GET,RequestMethod.POST})
+  public void dataExport(SellerRequest request, HttpServletResponse response) {
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.ne("accountStatus", AccountStatus.DELETE));
+    if (StringUtils.isNotEmpty(request.getName())) {
+      filters.add(Filter.like("name", request.getName()));
+    }
+    if (StringUtils.isNotEmpty(request.getLicenseNum())) {
+      filters.add(Filter.like("licenseNum", request.getLicenseNum()));
+    }
+    if (StringUtils.isNotEmpty(request.getContactCellPhone())) {
+      filters.add(Filter.like("contactCellPhone", request.getContactCellPhone()));
+    }
+    if (StringUtils.isNotEmpty(request.getCellPhoneNum())) {
+      filters.add(Filter.like("endUser&cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
+    }
+    if (StringUtils.isNotEmpty(request.getContactPerson())) {
+      filters.add(Filter.like("contactPerson", request.getContactPerson()));
+    }
+    if (request.getAreaId() != null) {
+      filters.add(Filter.eq("area", request.getAreaId()));
+    }
+    if (request.getSellerCategoryId() != null) {
+      filters.add(Filter.eq("sellerCategory", request.getSellerCategoryId()));
+    }
+    if (request.getAccountStatus() != null) {
+      filters.add(Filter.eq("accountStatus", request.getAccountStatus()));
+    }
+    if (request.getApplyFromDate() != null) {
+      filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getApplyFromDate())));
+    }
+    if (request.getApplyToDate() != null) {
+      filters.add(Filter.le("createDate",
+          TimeUtils.addDays(1, TimeUtils.formatDate2Day(request.getApplyToDate()))));
+    }
+    List<Seller> lists = sellerService.findList(null, filters, null);
+    if (lists != null && lists.size() > 0) {
+      String title = "Seller List"; // 工作簿标题，同时也是excel文件名前缀
+      String[] headers = {"sellerId","sellerName","sellerCategory","contactPerson","contactCellPhone","endUserCellPhone","endUserNickName","area","address","licenseNum","rateScore","avgPrice","discount","limitAmountByDay","businessTime","favoriteNum","totalOrderNum","accountStatus","description"}; // 需要导出的字段
+      String[] headersName = {"商家编号","商家名字","商家类别","商家联系人","商家联系人手机","申请人(用户)手机号","用户昵称","地区","商家地址","营业执照号","评分","均价","折扣","每日营业额上限","营业时间","商家被收藏数","总订单数","商家状态","店铺介绍"}; // 字段对应列的列名
+      List<Map<String, String>> mapList = ExportUtils.prepareExportSeller(lists);
+      if (mapList.size() > 0) {
+        exportListToExcel(response, mapList, title, headers, headersName);
+      }
+    }
   }
 }
