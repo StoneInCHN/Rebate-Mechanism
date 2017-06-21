@@ -17,6 +17,7 @@ import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.Order;
 import org.rebate.entity.ParamConfig;
+import org.rebate.entity.Seller;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 import org.rebate.entity.commonenum.CommonEnum.ParamConfigKey;
@@ -26,6 +27,7 @@ import org.rebate.service.EndUserService;
 import org.rebate.service.OrderService;
 import org.rebate.service.ParamConfigService;
 import org.rebate.service.SellerClearingRecordService;
+import org.rebate.service.SellerService;
 import org.rebate.utils.DateUtils;
 import org.rebate.utils.LogUtil;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
@@ -59,6 +61,9 @@ public class SellerClearingRecordJob {
  
   @Resource(name="paramConfigServiceImpl")
   private ParamConfigService paramConfigService;
+  
+  @Resource(name="sellerServiceImpl")
+  private SellerService sellerService; 
 
   // @Scheduled(cron="0 30 21 * * ?")
   @Scheduled(cron = "${job.daily_sellerClearing_cal.cron}")// 每天1点0分0秒执行 0 0 1 * * ?
@@ -141,11 +146,18 @@ public class SellerClearingRecordJob {
   private void updateRecord(SellerClearingRecord record, ClearingStatus status, String errMsg){
 	  LogUtil.debug(this.getClass(), "updateRecord", "Update SellerClearingRecord-->ClearingStatus to be: %s", status.toString());
 	  if (status == ClearingStatus.SUCCESS) {
+		  	//将货款的结算状态改为处理成功即结算成功，是否结算改为true
 	    	record.setClearingStatus(ClearingStatus.SUCCESS);
 	    	record.setIsClearing(true);
 	    	record.setRemark(errMsg);
 	    	sellerClearingRecordService.update(record);
-	    	
+	    	//结算成功后，将商家的未结算货款金额减去本次货款已结算金额
+	    	if (record.getSeller() != null && record.getSeller().getId() != null) {
+	    		Seller seller = sellerService.find(record.getSeller().getId());
+	    		seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(record.getAmount()));
+	    		sellerService.update(seller);
+	    	}
+	    	//将本次货款涉及到的所有订单是否结算状态改为true即已结算
 			List<Filter> filters = new ArrayList<Filter>();
 			filters.add(Filter.eq("clearingRecId", record.getId()));
 			List<ClearingOrderRelation> relations = clearingOrderRelationService.findList(null, filters, null);
@@ -162,6 +174,7 @@ public class SellerClearingRecordJob {
       		orderService.update(orders);
       		
 	  }else if (status == ClearingStatus.FAILED) {
+		  	//将货款的结算状态改为处理失败即结算失败，是否结算改为false
 	    	record.setClearingStatus(ClearingStatus.FAILED);
 	    	record.setIsClearing(false);
 	    	record.setRemark(errMsg);

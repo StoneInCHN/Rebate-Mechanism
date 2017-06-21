@@ -309,6 +309,12 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 	    if ("success".equals(status)) {
 	  		newRecord.setClearingStatus(ClearingStatus.SUCCESS);
 	  		newRecord.setIsClearing(true);
+	        //结算成功后，从商家的未结算货款金额减去本次货款已结算金额
+            if (newRecord.getSeller() != null) {
+                Seller seller = newRecord.getSeller();
+                seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(newRecord.getAmount()));
+                sellerService.update(seller);
+            }
 		}else if ("error".equals(status)) {
 	  		newRecord.setClearingStatus(ClearingStatus.FAILED);
 	  		newRecord.setIsClearing(false);
