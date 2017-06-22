@@ -1250,7 +1250,8 @@ public class EndUserController extends MobileBaseController {
     Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
     String[] propertys =
         {"id", "endUser.userPhoto", "createDate", "endUser.nickName", "amount", "leScoreType",
-            "userCurLeScore", "recommender", "recommenderPhoto", "withdrawStatus", "remark"};
+            "userCurLeScore", "recommender", "recommenderPhoto", "withdrawStatus", "status",
+            "remark"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -1300,8 +1301,12 @@ public class EndUserController extends MobileBaseController {
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
     pageable.setFilters(filters);
-    pageable.setOrderDirection(Direction.desc);
-    pageable.setOrderProperty("createDate");
+    // pageable.setOrderDirection(Direction.desc);
+    // pageable.setOrderProperty("createDate");
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.desc("userCurLeBean"));
+    pageable.setOrders(orderings);
 
     Page<LeBeanRecord> page = leBeanRecordService.findPage(pageable);
     String[] propertys =

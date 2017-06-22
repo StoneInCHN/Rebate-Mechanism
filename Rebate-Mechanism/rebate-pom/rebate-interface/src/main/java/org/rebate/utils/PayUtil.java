@@ -356,6 +356,9 @@ public class PayUtil {
       String userId, String product_id, String total_fee) throws Exception {
 
     ResponseOne<Map<String, Object>> response = new ResponseOne<Map<String, Object>>();
+    if ("5".equals(userId)) {// 特殊处理手机号15339598777 userId=5
+      userId = userId + "xgg";
+    }
     String allinpay_userId =
         SunMd5.allinpayRegister(allinpay_merchantH5Id, userId.toLowerCase(),
             allinpay_merchantH5Key, allinpay_regUser_url);

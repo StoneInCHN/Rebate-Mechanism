@@ -53,6 +53,8 @@
 										<option [#if leScoreType == "CONSUME_SELLER"] selected="selected" [/#if] value="CONSUME_SELLER">${message("rebate.endUser.leScore.type.CONSUME_SELLER")}</option>
 										<option [#if leScoreType == "ENCOURAGE"] selected="selected" [/#if] value="ENCOURAGE">${message("rebate.endUser.leScore.type.ENCOURAGE")}</option>
 										-->
+										<option [#if leScoreType == "CONSUME"] selected="selected" [/#if] value="CONSUME">${message("rebate.endUser.leScore.type.CONSUME")}</option>
+										<option [#if leScoreType == "BONUS"] selected="selected" [/#if] value="BONUS">${message("rebate.endUser.leScore.type.BONUS")}</option>
 										<option [#if leScoreType == "RECOMMEND_USER"] selected="selected" [/#if] value="RECOMMEND_USER">${message("rebate.endUser.leScore.type.RECOMMEND_USER")}</option>
 										<option [#if leScoreType == "RECOMMEND_SELLER"] selected="selected" [/#if] value="RECOMMEND_SELLER">${message("rebate.endUser.leScore.type.RECOMMEND_SELLER")}</option>
 										<option [#if leScoreType == "AGENT"] selected="selected" [/#if] value="AGENT">${message("rebate.endUser.leScore.type.AGENT")}</option>

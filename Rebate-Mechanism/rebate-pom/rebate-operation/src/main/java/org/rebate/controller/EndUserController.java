@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 @Controller("endUserController")
 @RequestMapping("/console/endUser")
@@ -75,7 +77,7 @@ public class EndUserController extends BaseController {
     }
     if (request.getIsSalesman() != null) {
       filters.add(Filter.eq("isSalesman", request.getIsSalesman()));
-      model.addAttribute("isSalesman",  request.getIsSalesman());
+      model.addAttribute("isSalesman", request.getIsSalesman());
     }
     filters.add(Filter.ne("accountStatus", AccountStatus.DELETE));
     pageable.setFilters(filters);
@@ -280,29 +282,44 @@ public class EndUserController extends BaseController {
    * 设置业务员
    */
   @RequestMapping(value = "/updateSalesMan", method = RequestMethod.POST)
-  public @ResponseBody Message updateSalesMan(Long id ,Boolean isSalesman) {
-     if(id==null||isSalesman==null){
-       return ERROR_MESSAGE;
-     }
+  public @ResponseBody Message updateSalesMan(Long id, Boolean isSalesman) {
+    if (id == null || isSalesman == null) {
+      return ERROR_MESSAGE;
+    }
     EndUser endUser = endUserService.find(id);
     endUser.setIsSalesman(isSalesman);
     endUser.setIsSalesmanApply(true);
     endUserService.update(endUser);
     return SUCCESS_MESSAGE;
   }
-  
+
   /**
    * 设置业务员上传商家审核功能
    */
   @RequestMapping(value = "/updateSalesManApply", method = RequestMethod.POST)
-  public @ResponseBody Message updateSalesManApply(Long id ,Boolean isSalesmanApply) {
-     if(id==null||isSalesmanApply==null){
-       return ERROR_MESSAGE;
-     }
+  public @ResponseBody Message updateSalesManApply(Long id, Boolean isSalesmanApply) {
+    if (id == null || isSalesmanApply == null) {
+      return ERROR_MESSAGE;
+    }
     EndUser endUser = endUserService.find(id);
     endUser.setIsSalesmanApply(isSalesmanApply);
     endUserService.update(endUser);
     return SUCCESS_MESSAGE;
   }
-  
+
+
+  /**
+   * 修改用户乐心(用户特殊需求)
+   */
+  @RequestMapping(value = "/updateLeMind", method = RequestMethod.POST)
+  public @ResponseBody Message updateLeMind(Long id, BigDecimal mindAmount) {
+    if (id == null || mindAmount == null) {
+      return ERROR_MESSAGE;
+    }
+    EndUser endUser = endUserService.find(id);
+    endUser.setCurLeMind(mindAmount);
+    endUserService.update(endUser);
+    return SUCCESS_MESSAGE;
+  }
+
 }
