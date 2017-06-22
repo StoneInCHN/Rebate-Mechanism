@@ -263,7 +263,7 @@
 		
 		
 		function updateLeMind(){
-			var content= "<span class='requiredField'>*</span>${message("rebate.endUser.update.cuLeMind")}:<input type='text'  onkeypress='return event.keyCode>=48&&event.keyCode<=57&&event.keyCode=190' ng-pattern='/[^a-zA-Z]/' id='mindAmount' value='${endUser.curLeMind}'/>";
+			var content= "<span class='requiredField'>*</span>${message("rebate.endUser.update.cuLeMind")}:<input type='text'  onkeypress='return event.keyCode>=48&&event.keyCode<=57' ng-pattern='/[^a-zA-Z]/' id='mindAmount' value='${endUser.curLeMind}'/>";
 			var d = dialog({
 				title: '提示',
 				content: content,

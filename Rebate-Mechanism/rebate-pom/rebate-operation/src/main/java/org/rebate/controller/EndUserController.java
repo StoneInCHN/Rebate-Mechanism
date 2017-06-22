@@ -20,6 +20,7 @@ import org.rebate.service.LeBeanRecordService;
 import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.RebateRecordService;
+import org.rebate.utils.LogUtil;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -317,6 +318,9 @@ public class EndUserController extends BaseController {
       return ERROR_MESSAGE;
     }
     EndUser endUser = endUserService.find(id);
+    LogUtil.debug(EndUserController.class, "updateLeMind",
+        "Force update user mind! UserId: %s,CellPhone: %s,originalMinds: %s, updatedMinds: %s", id,
+        endUser.getCellPhoneNum(), endUser.getCurLeMind(), mindAmount);
     endUser.setCurLeMind(mindAmount);
     endUserService.update(endUser);
     return SUCCESS_MESSAGE;
