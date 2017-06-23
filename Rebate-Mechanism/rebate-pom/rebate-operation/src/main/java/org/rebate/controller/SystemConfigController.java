@@ -69,8 +69,8 @@ public class SystemConfigController extends BaseController {
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public @ResponseBody Message update(SystemConfig config) {
-    SystemConfig temp =new SystemConfig();
-    SystemConfig temp1 =  systemConfigService.find(config.getId());
+    SystemConfig temp = new SystemConfig();
+    SystemConfig temp1 = systemConfigService.find(config.getId());
     if (!temp1.getConfigKey().equals(SystemConfigKey.PAYMENTTYPE)) {
       temp.setIsEnabled(config.getIsEnabled());
       temp.setRemark(config.getRemark());
@@ -81,7 +81,7 @@ public class SystemConfigController extends BaseController {
       temp.setId(config.getId());
       temp.setConfigOrder(temp1.getConfigOrder());
       return systemConfigService.updateSystemConfig(temp);
-    }else {
+    } else {
       return ERROR_MESSAGE;
     }
   }
@@ -109,19 +109,19 @@ public class SystemConfigController extends BaseController {
           model.addAttribute("about", settingConfig);
         } else if (SettingConfigKey.LICENSE_AGREEMENT == settingConfig.getConfigKey()) {
           model.addAttribute("license", settingConfig);
-        }else if (SettingConfigKey.SELLER_PAYMENT_DESC == settingConfig.getConfigKey()) {
+        } else if (SettingConfigKey.SELLER_PAYMENT_DESC == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
-        }else if (SettingConfigKey.USER_AUTH_DESC == settingConfig.getConfigKey()) {
+        } else if (SettingConfigKey.USER_AUTH_DESC == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
-        }else if (SettingConfigKey.BANKCARD_MOBILE_DESC == settingConfig.getConfigKey()) {
+        } else if (SettingConfigKey.BANKCARD_MOBILE_DESC == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
-        }else if (SettingConfigKey.BANKCARD_OWNER_DESC == settingConfig.getConfigKey()) {
+        } else if (SettingConfigKey.BANKCARD_OWNER_DESC == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
-        }else if (SettingConfigKey.BANKCARD_SERVICE_AGREEMENT == settingConfig.getConfigKey()) {
+        } else if (SettingConfigKey.BANKCARD_SERVICE_AGREEMENT == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
-        }else if (SettingConfigKey.LEBEAN_PAY_DESC == settingConfig.getConfigKey()) {
+        } else if (SettingConfigKey.LEBEAN_PAY_DESC == settingConfig.getConfigKey()) {
           descInfos.add(settingConfig);
-        }else {
+        } else {
           temps.add(settingConfig);
         }
       }
@@ -173,6 +173,12 @@ public class SystemConfigController extends BaseController {
    */
   @RequestMapping(value = "/updateOther", method = RequestMethod.POST)
   public String updateOther(SettingConfig config) {
+    if ("15".equals(config.getId().toString())) {// 消费人数统计倍数只能输入数字
+      String regex = "^\\d+(\\.\\d+)?$";
+      if (config.getConfigValue().matches(regex) == false) {
+        return ERROR_VIEW;
+      }
+    }
     SettingConfig temp = settingConfigService.find(config.getId());
     if (temp != null) {
       temp.setIsEnabled(config.getIsEnabled());
@@ -182,8 +188,8 @@ public class SystemConfigController extends BaseController {
     }
     return "redirect:list.jhtml";
   }
-  
-  
+
+
   /**
    * 编辑
    */
@@ -192,7 +198,7 @@ public class SystemConfigController extends BaseController {
     model.addAttribute("settingConfig", settingConfigService.find(id));
     return "/systemConfig/editDescInfo";
   }
-  
+
   /**
    * 更新
    */

@@ -209,7 +209,9 @@ public class CommonEnum {
     /** 银行卡服务协议 12 */
     BANKCARD_SERVICE_AGREEMENT,
     /** 乐豆抵扣说明 13 */
-    LEBEAN_PAY_DESC
+    LEBEAN_PAY_DESC,
+    /** 消费人数统计倍数(用于手机端显示) 14 */
+    CONSUME_PEOPLE_MULTIPLE
   }
 
   /**

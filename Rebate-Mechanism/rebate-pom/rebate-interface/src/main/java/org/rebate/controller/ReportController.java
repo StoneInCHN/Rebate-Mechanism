@@ -1,5 +1,6 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,9 @@ import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.NationBonusReport;
+import org.rebate.entity.SettingConfig;
 import org.rebate.entity.UserBonusReport;
+import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
@@ -20,6 +23,7 @@ import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.service.EndUserService;
 import org.rebate.service.NationBonusReportService;
+import org.rebate.service.SettingConfigService;
 import org.rebate.service.UserBonusReportService;
 import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
@@ -37,7 +41,8 @@ public class ReportController extends MobileBaseController {
 
   @Resource(name = "endUserServiceImpl")
   private EndUserService endUserService;
-
+  @Resource(name = "settingConfigServiceImpl")
+  private SettingConfigService settingConfigService;
   @Resource(name = "userBonusReportServiceImpl")
   private UserBonusReportService userBonusReportService;
   @Resource(name = "nationBonusReportServiceImpl")
@@ -119,11 +124,24 @@ public class ReportController extends MobileBaseController {
     orderings.add(ordering);
 
     List<NationBonusReport> list = nationBonusReportService.findList(1, filters, orderings);
+
     String[] propertys =
         {"id", "consumeTotalAmount", "consumePeopleNum", "sellerNum", "calValue", "consumeByDay",
             "totalBonus", "reportDate"};
     if (list != null && list.size() > 0) {
-      Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, list.get(0));
+      NationBonusReport report = list.get(0);
+      Map<String, Object> result = FieldFilterUtils.filterEntityMap(propertys, report);
+      SettingConfig settingConfig =
+          settingConfigService.getConfigsByKey(SettingConfigKey.CONSUME_PEOPLE_MULTIPLE);
+      if (settingConfig != null && settingConfig.getConfigValue() != null
+          && new BigDecimal(settingConfig.getConfigValue()).compareTo(new BigDecimal(0)) > 0) {
+        BigDecimal consumePeopleNum =
+            new BigDecimal(report.getConsumePeopleNum()).multiply(
+                new BigDecimal(settingConfig.getConfigValue())).setScale(0,
+                BigDecimal.ROUND_HALF_UP);
+        result.put("consumePeopleNum", consumePeopleNum);
+      }
+
       response.setMsg(result);
     }
 
