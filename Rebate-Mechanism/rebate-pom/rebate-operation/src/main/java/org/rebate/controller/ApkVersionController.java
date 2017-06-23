@@ -1,12 +1,15 @@
 package org.rebate.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang3.StringUtils;
+import org.rebate.beans.ApkInfo;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.ApkVersion;
@@ -19,11 +22,13 @@ import org.rebate.framework.paging.Pageable;
 import org.rebate.service.ApkVersionService;
 import org.rebate.service.FileService;
 import org.rebate.utils.TimeUtils;
+import org.rebate.utils.apk.ApkUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Controller("apkVersionController")
 @RequestMapping("/console/apkVersion")
@@ -154,7 +159,19 @@ public class ApkVersionController extends BaseController {
     }
     return SUCCESS_MESSAGE;
   }
-
-
+  /**
+   * 获取apk信息
+   */
+  @RequestMapping(value = "/getApkInfo", method = {RequestMethod.GET,RequestMethod.POST})
+  public @ResponseBody ApkInfo getApkInfo(ApkVersion apkVersion) {
+    if (apkVersion.getFile() != null) {
+      CommonsMultipartFile cf = (CommonsMultipartFile) apkVersion.getFile();
+      DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+      File f = fi.getStoreLocation();
+      return ApkUtil.getApkInfo(f);
+    }
+    return null;
+  }
+  
 
 }

@@ -16,7 +16,37 @@
 
 <script type="text/javascript">
 $().ready(function() {
+	var $file = $("#file");
 	var $inputForm = $("#inputForm");
+	var $submitBtn = $("#submitBtn");
+	$("#versionName").focus(function(){
+		$("#versionName").attr("readonly","readonly");
+	});
+	$file.change(function(){
+		if($file.val() != null && $file.val().substr($file.val().length-4,4) == ".apk"){
+			$inputForm.attr("action","getApkInfo.jhtml");
+			$inputForm.attr("target","addApkIfram");
+			$("#versionName").attr("readonly","readonly");
+			$("#updateContent").attr("readonly","readonly");
+			$submitBtn.attr("disabled","disabled");
+			$inputForm.submit();
+			$("#addApkIfram").load(function(){
+				var body = $(window.frames['addApkIfram'].document.body);
+				var data = eval('(' + body[0].textContent + ')');  
+				if(data != null){
+						$("#versionName").val(data.versionName);
+						$("#versionCode").val(data.versionCode);
+						$submitBtn.attr("disabled",false);
+						$("#updateContent").removeAttr("readonly");
+				}
+		     });
+		}     
+	});	
+	$submitBtn.click( function() {
+			$("#versionName").removeAttr("readonly");
+			$inputForm.attr("action", "save.jhtml");
+			$inputForm.attr("target", "_self");
+	});
 	var $loadingBar = $(".loadingBar");
 	// 表单验证
 	$inputForm.validate({
@@ -69,7 +99,7 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.apkVersion.name")}:
 								</th>
 								<td>
-									<input type="text" name="versionName" class="text" maxlength="20" />
+									<input type="text" id = "versionName" name="versionName" class="text" maxlength="20" readonly = readonly/>
 								</td>
 							</tr>
 							<tr>
@@ -77,7 +107,7 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.apkVersion.apkPath")}:
 								</th>
 								<td>
-									<input type="file" name="file"/>
+									<input type="file" id = "file" name="file"/>
 								</td>
 							</tr>
 							<tr>
@@ -85,7 +115,7 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.apkVersion.code")}:
 								</th>
 								<td>
-									<input type="text" name="versionCode" class="text" maxlength="20" />
+									<input type="text" id = "versionCode" name="versionCode" class="text" maxlength="20"  readonly = readonly/>
 								</td>
 							</tr>
 							<tr>
@@ -102,7 +132,7 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.apkVersion.updateContent")}:
 								</th>
 								<td>
-									<textarea  name="updateContent" rows="6" cols="60"></textarea>
+									<textarea  id = "updateContent" name="updateContent" rows="6" cols="60" readonly = readonly></textarea>
 								</td>
 							</tr>
 							<tr>
@@ -117,7 +147,7 @@ $().ready(function() {
 									&nbsp;
 								</th>
 								<td>
-									<input type="submit" class="button" value="${message("rebate.common.submit")}" />
+									<input type="submit" id="submitBtn" class="button" value="${message("rebate.common.submit")}" />
 									<input type="button" class="button" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 								</td>
 							</tr>
@@ -126,3 +156,4 @@ $().ready(function() {
      </div>
 </body>
 </html>
+<iframe id='addApkIfram' name='addApkIfram' style="display:none"/>

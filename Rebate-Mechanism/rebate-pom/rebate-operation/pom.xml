@@ -398,6 +398,18 @@
 			<artifactId>xstream</artifactId>
 			<version>1.4.1</version>
 		</dependency>
+		
+		<!-- APK信息读取 -->
+		<dependency>
+			<groupId>apk</groupId>
+			<artifactId>AXMLPrinter2</artifactId>
+			<version>1.0.0-release</version>
+		</dependency>
+		<dependency>
+			<groupId>apk</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.0.0-release</version>
+		</dependency>
 	</dependencies>
 
 	<build>
