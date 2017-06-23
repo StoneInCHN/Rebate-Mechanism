@@ -94,20 +94,28 @@ $().ready(function() {
           </ol>
 		 <form id="inputForm" action="save.jhtml" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
                      	<table class="input tabContent">
-							<tr>
-								<th>
-									<span class="requiredField">*</span>${message("rebate.apkVersion.name")}:
+ 							<tr>
+ 								<th>
+									<span class="requiredField">提示:</span>
 								</th>
 								<td>
-									<input type="text" id = "versionName" name="versionName" class="text" maxlength="20" readonly = readonly/>
+									<span class="requiredField">请先选择APK文件</span>
 								</td>
-							</tr>
+							</tr>                        	
 							<tr>
 								<th>
 									<span class="requiredField">*</span>${message("rebate.apkVersion.apkPath")}:
 								</th>
 								<td>
 									<input type="file" id = "file" name="file"/>
+								</td>
+							</tr>                     	
+							<tr>
+								<th>
+									<span class="requiredField">*</span>${message("rebate.apkVersion.name")}:
+								</th>
+								<td>
+									<input type="text" id = "versionName" name="versionName" class="text" maxlength="20" readonly = readonly/>
 								</td>
 							</tr>
 							<tr>
