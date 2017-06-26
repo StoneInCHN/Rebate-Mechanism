@@ -117,6 +117,7 @@ public class SellerController extends BaseController {
         temp.setArea(area);
       }
     }
+    temp.setContactCellPhone(seller.getContactCellPhone());
     temp.setIsBeanPay(seller.getIsBeanPay());
     temp.setAvgPrice(seller.getAvgPrice());
     temp.setDescription(seller.getDescription());

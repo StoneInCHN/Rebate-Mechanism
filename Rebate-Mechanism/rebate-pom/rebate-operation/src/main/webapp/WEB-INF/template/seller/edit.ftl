@@ -61,7 +61,7 @@
 									${message("rebate.seller.contactCellPhone")}:
 								</th>
 								<td>
-									${seller.contactCellPhone}
+									<input type="text" name="contactCellPhone" class="text" maxlength="50" value="${seller.contactCellPhone}"/>
 								</td>
 							</tr>
 							<tr>
