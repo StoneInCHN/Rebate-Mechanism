@@ -7,12 +7,21 @@
 <link href="${base}/resources/style/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/font-awesome.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
+
+<link href="${base}/resources/style/bootstrap-theme.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
+
 <script type="text/javascript" src="${base}/resources/js/jquery.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.validate.js"></script>
 <script type="text/javascript" src="${base}/resources/js/jquery.placeholder.js"></script>
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
-<script type="text/javascript" src="${base}/resources/js/input.js">
-</script><script type="text/javascript" src="${base}/resources/js/jquery.form.js"></script>
+<script type="text/javascript" src="${base}/resources/js/input.js"></script>
+<script type="text/javascript" src="${base}/resources/js/jquery.form.js"></script>
+<script type="text/javascript" src="${base}/resources/js/dialog-plus.js"></script>
 
 <script type="text/javascript">
 $().ready(function() {
@@ -29,6 +38,10 @@ $().ready(function() {
 			$("#versionName").attr("readonly","readonly");
 			$("#updateContent").attr("readonly","readonly");
 			$submitBtn.attr("disabled","disabled");
+			$("#confirmVersionName").hide();
+			$("#confirmVersionCode").hide();
+			$("#readVersionName").show();
+			$("#readVersionCode").show();
 			$inputForm.submit();
 			$("#addApkIfram").load(function(){
 				var body = $(window.frames['addApkIfram'].document.body);
@@ -36,20 +49,19 @@ $().ready(function() {
 				if(data != null){
 						$("#versionName").val(data.versionName);
 						$("#versionCode").val(data.versionCode);
+						$("#readVersionName").hide();
+						$("#readVersionCode").hide();
+						$("#confirmVersionName").show();
+						$("#confirmVersionCode").show();
 						$submitBtn.attr("disabled",false);
 						$("#updateContent").removeAttr("readonly");
 				}
 		     });
 		}     
 	});	
-	$submitBtn.click( function() {
-			$("#versionName").removeAttr("readonly");
-			$inputForm.attr("action", "save.jhtml");
-			$inputForm.attr("target", "_self");
-	});
-	var $loadingBar = $(".loadingBar");
+
 	// 表单验证
-	$inputForm.validate({
+	var flag = $inputForm.validate({
 		rules: {
 			versionName: {
 				required: true,
@@ -82,11 +94,20 @@ $().ready(function() {
 		}
 			
 	});
+	
+	$submitBtn.click( function() {
+			$("#versionName").removeAttr("readonly");
+			$inputForm.attr("action", "save.jhtml");
+			$inputForm.attr("target", "_self");
+			$("#confirmVersionName").hide();
+			$("#confirmVersionCode").hide();
+	});	
+
 });
 </script>
 </head>
 <body>
- <div class="content">
+ <div>
           <ol class="breadcrumb">
                 <li><a ><i class="fa fa-user"></i> ${message("rebate.main.Version")}</a> </li>
                 <li><a href="#">${message("rebate.apkVersion.list")}</a></li>
@@ -116,6 +137,8 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="text" id = "versionName" name="versionName" class="text" maxlength="20" readonly = readonly/>
+									<span  id="readVersionName"  style="display:none"><img src="${base}/resources/images/loading.gif" alt="正在解析版本..."/>获取版本名称中...</span>
+									<span  id="confirmVersionName"  style="display:none"><img src="${base}/resources/images/ok.png"  height="16px" width="16px" alt="版本获取成功！"/></span>
 								</td>
 							</tr>
 							<tr>
@@ -124,6 +147,8 @@ $().ready(function() {
 								</th>
 								<td>
 									<input type="text" id = "versionCode" name="versionCode" class="text" maxlength="20"  readonly = readonly/>
+									<span  id="readVersionCode"  style="display:none"><img src="${base}/resources/images/loading.gif" alt="正在解析版本号..."/>正在解析版本号...</span>
+									<span  id="confirmVersionCode"  style="display:none"><img src="${base}/resources/images/ok.png" height="16px" width="16px" alt="版本号获取成功！"/></span>
 								</td>
 							</tr>
 							<tr>
@@ -145,7 +170,7 @@ $().ready(function() {
 							</tr>
 							<tr>
 								<td  colspan="2">
-									<span class="loadingBar" style="margin-left:120px;display:none"></span>
+									
 								</td>
 							</tr>
 						</table>

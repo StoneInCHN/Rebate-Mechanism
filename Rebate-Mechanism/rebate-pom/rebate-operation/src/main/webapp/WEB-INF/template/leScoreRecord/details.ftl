@@ -9,6 +9,7 @@
 <link href="${base}/resources/style/main.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/common.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/style/viewer.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/style/dialog-plus.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	  <ol class="breadcrumb">
@@ -17,6 +18,30 @@
           <li class="active">${message("rebate.leScoreRecord.withdraw.details")}</li>
       </ol>
       <table class="input">
+      						<tr>
+								<th>
+									${message("rebate.sellerClearingRecord.sn")}:
+								</th>
+								<td width=500>
+									${leScoreRecord.sn}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									提现流水号:
+								</th>
+								<td>
+									${leScoreRecord.withDrawSn}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									${message("rebate.sellerClearingRecord.reqSn")}:
+								</th>
+								<td>
+									${leScoreRecord.reqSn}
+								</td>
+							</tr>
 							<tr>
 								<th>
 									${message("rebate.leScoreRecord.endUser.userName")}:
