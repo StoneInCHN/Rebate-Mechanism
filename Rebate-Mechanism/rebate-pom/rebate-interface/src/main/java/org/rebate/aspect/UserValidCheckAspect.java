@@ -74,11 +74,13 @@ public class UserValidCheckAspect {
           }
           if (seller == null) {
             validFlag = "sellerNoexist";
+          } else {
+            if (AccountStatus.DELETE.equals(seller.getAccountStatus())
+                || AccountStatus.LOCKED.equals(seller.getAccountStatus())) {
+              validFlag = "sellerInvalid";
+            }
           }
-          if (AccountStatus.DELETE.equals(seller.getAccountStatus())
-              || AccountStatus.LOCKED.equals(seller.getAccountStatus())) {
-            validFlag = "sellerInvalid";
-          }
+
         }
       }
 
