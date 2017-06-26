@@ -50,7 +50,12 @@ $(function() {
 									${message("rebate.settingConfig.configValue")}:
 								</th>
 								<td>
-									<textarea name="configValue" cols="50" rows="3" maxlength="200">${settingConfig.configValue}</textarea>
+									[#if settingConfig.configKey=="BEAN_INCOME_SWITCH"]
+									 <input type="radio" name="configValue" value="1" [#if settingConfig.configValue=="1"]checked[/#if]/>${message("rebate.common.true")}
+									 <input type="radio" name="configValue" value="0" [#if settingConfig.configValue=="0"]checked[/#if]/>${message("rebate.common.false")}
+									[#else]
+										<textarea name="configValue" cols="50" rows="3" maxlength="200">${settingConfig.configValue}</textarea>
+									[/#if]
 								</td>
 							</tr>
 							<tr>
@@ -60,10 +65,15 @@ $(function() {
 								<td>
 									<select name="isEnabled">
 										<option [#if settingConfig.isEnabled] selected="selected" [/#if] value="true">${message("rebate.settingConfig.isEnabled.true")}</option>
+										[#if settingConfig.configKey=="BEAN_INCOME_SWITCH"]
+										[#else]
 										<option [#if !settingConfig.isEnabled] selected="selected" [/#if] value="false">${message("rebate.settingConfig.isEnabled.false")}</option>
+										[/#if]
 									</select>
 								</td>
 							</tr>
+							
+							
 							<tr>
 								<th>
 									${message("rebate.settingConfig.remark")}:

@@ -239,7 +239,19 @@
 									<span data-toggle="tooltip" data-placement="top" title="${settingConfig.remark}">${message("rebate.settingConfig.configKey."+settingConfig.configKey)}</span>
 								</td>
 								<td>
-									${settingConfig.configValue}
+								[#if  settingConfig.configValue??]
+									[#if settingConfig.configKey=="BEAN_INCOME_SWITCH"]
+										[#if settingConfig.configValue=="1"]
+										${message("rebate.common.true")}
+										[#else]
+										${message("rebate.common.false")}
+										[/#if]
+									[#else]
+										${settingConfig.configValue}
+									[/#if]
+								[#else]
+										--
+								[/#if]
 								</td>
 								<td>
 									[#if  settingConfig.isEnabled]

@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
@@ -90,6 +91,7 @@ public class OrderController extends MobileBaseController {
 
     Long userId = request.getUserId();
     SystemConfigKey configKey = request.getConfigKey();
+    Long sellerId = request.getSellerId();
 
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("isBeanPay", false);
@@ -97,7 +99,10 @@ public class OrderController extends MobileBaseController {
     List<SystemConfig> payTypes = new ArrayList<SystemConfig>();
     for (SystemConfig systemConfig : configList) {
       if (systemConfig.getId().intValue() == 4) {// 乐豆支付id固定为4
-        map.put("isBeanPay", true);
+        Seller seller = sellerService.find(sellerId);
+        if (BooleanUtils.isTrue(seller.getIsBeanPay())) {
+          map.put("isBeanPay", true);
+        }
       } else {
         payTypes.add(systemConfig);
       }
@@ -181,17 +186,16 @@ public class OrderController extends MobileBaseController {
     // String password = req.getPayPwd();
     BigDecimal deductLeBean = req.getDeductLeBean();
 
-    if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
-      return response;
-    }
-
     BigDecimal payAmount = req.getAmount();
     if (isBeanPay) {// 支付中使用了乐豆抵扣
       if (deductLeBean.compareTo(new BigDecimal(0)) <= 0) {
         response.setCode(CommonAttributes.FAIL_COMMON);
         response.setDesc(Message.error("rebate.payOrder.deductLeBean.error").getContent());
+        return response;
+      }
+      if (deductLeBean.compareTo(amount) > 0) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.payOrder.deductLeBean.excess").getContent());
         return response;
       }
       payAmount = amount.subtract(deductLeBean);
@@ -201,7 +205,9 @@ public class OrderController extends MobileBaseController {
         response.setDesc(Message.error("rebate.payOrder.curLeBean.insufficient").getContent());
         return response;
       }
-
+      if (payAmount.compareTo(new BigDecimal(0)) <= 0) {
+        payTypeId = "4"; // 乐豆完全抵扣
+      }
     }
     if ("5".equals(payTypeId)) {// 乐分支付
       EndUser endUser = endUserService.find(userId);
@@ -211,6 +217,12 @@ public class OrderController extends MobileBaseController {
             endUser.getCurLeScore()).getContent());
         return response;
       }
+    }
+
+    if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
+      return response;
     }
 
     Order order =
@@ -225,6 +237,7 @@ public class OrderController extends MobileBaseController {
               "pay order. userId: %s,payType: %s,payTypeId: %s,amount: %s,sellerId: %s,remark: %s,isBeanPay: %s,deductLeBean: %s",
               userId, payType, payTypeId, amount, sellerId, remark, isBeanPay, deductLeBean);
     }
+
 
     try {
       if ("1".equals(payTypeId)) {// 微信支付
@@ -268,7 +281,7 @@ public class OrderController extends MobileBaseController {
       e.printStackTrace();
     }
 
-    if ("5".equals(payTypeId)) {// 乐分支付
+    if ("5".equals(payTypeId) || "4".equals(payTypeId)) {// 乐分支付或乐豆完全抵扣支付
       taskExecutor.execute(new Runnable() {
         public void run() {
           orderService.callbackAfterPay(order.getSn());
@@ -702,11 +715,10 @@ public class OrderController extends MobileBaseController {
     if (request.getOrderStatus() != null) {
       Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
       filters.add(statusFilter);
+    } else {
+      Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+      filters.add(statusFilter);
     }
-    // else {
-    // Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
-    // filters.add(statusFilter);
-    // }
 
     Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.eq, isSallerOrder);
     filters.add(sellerOrderFilter);
