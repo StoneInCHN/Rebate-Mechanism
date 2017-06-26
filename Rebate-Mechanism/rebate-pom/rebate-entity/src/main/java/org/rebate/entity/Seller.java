@@ -37,6 +37,7 @@ import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
     @Index(name = "licenseNumIndex", columnList = "licenseNum"),
     @Index(name = "contactPersonIndex", columnList = "contactPerson"),
     @Index(name = "contactCellPhoneIndex", columnList = "contactCellPhone"),
+    @Index(name = "isBeanPayIndex", columnList = "isBeanPay"),
     @Index(name = "accountStatusIndex", columnList = "accountStatus")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_seller_sequence")
 public class Seller extends BaseEntity {
@@ -214,6 +215,19 @@ public class Seller extends BaseEntity {
    * 备注
    */
   private String remark;
+
+  /**
+   * 商家是否支持乐豆抵扣
+   */
+  private Boolean isBeanPay;
+
+  public Boolean getIsBeanPay() {
+    return isBeanPay;
+  }
+
+  public void setIsBeanPay(Boolean isBeanPay) {
+    this.isBeanPay = isBeanPay;
+  }
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getLimitAmountByDay() {

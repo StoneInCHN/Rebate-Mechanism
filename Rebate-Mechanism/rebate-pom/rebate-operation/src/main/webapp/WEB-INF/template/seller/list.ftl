@@ -101,10 +101,14 @@
 									<input type="text" name="licenseNum" class="text" value="${licenseNum}" maxlength="200" />
 								</td>
 								<th>
-									&nbsp;
+									${message("rebate.seller.isBeanPay")}:
 								</th>
 								<td>
-									&nbsp;
+									<select  name="isBeanPay">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if isBeanPay?? && isBeanPay] selected="selected" [/#if] value="true">${message("rebate.common.true")}</option>
+										<option [#if isBeanPay?? && !isBeanPay] selected="selected" [/#if] value="false">${message("rebate.common.false")}</option>
+									</select>
 								</td>		
 								<th>
 									&nbsp;
@@ -147,7 +151,7 @@
 						<a href="javascript:;" class="sort" name="address">${message("rebate.seller.address")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" class="sort" name="contactPerson">${message("rebate.seller.contactPerson")}</a>
+						<a href="javascript:;" class="sort" name="isBeanPay">${message("rebate.seller.isBeanPay")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="contactCellPhone">${message("rebate.seller.contactCellPhone")}</a>
@@ -204,7 +208,11 @@
 						<span title="${seller.address}">${seller.address}</sapn>
 					</td>
 					<td>
-						${seller.contactPerson}
+						[#if seller.isBeanPay==true]
+							${message("rebate.common.true")}
+						[#else]
+							${message("rebate.common.false")}
+						[/#if]
 					</td>
 					<td>
 						${seller.contactCellPhone}

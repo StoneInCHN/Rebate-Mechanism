@@ -216,6 +216,15 @@
 							</tr>
 							<tr>
 								<th>
+									<span class="requiredField">*</span>${message("rebate.seller.isBeanPay")}:
+								</th>
+								<td>
+									 <input type="radio" name="isBeanPay" value="true" [#if seller.isBeanPay==true]checked[/#if]/>${message("rebate.common.true")}
+									 <input type="radio" name="isBeanPay" value="false" [#if seller.isBeanPay==false]checked[/#if]/>${message("rebate.common.false")}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									<span class="requiredField">*</span>${message("rebate.seller.description")}:
 								</th>
 								<td>

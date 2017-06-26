@@ -681,6 +681,7 @@ public class OrderController extends MobileBaseController {
     String token = request.getToken();
     Integer pageNumber = request.getPageNumber();
     Integer pageSize = request.getPageSize();
+    Boolean isSallerOrder = request.getIsSallerOrder();
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
@@ -701,13 +702,14 @@ public class OrderController extends MobileBaseController {
     if (request.getOrderStatus() != null) {
       Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
       filters.add(statusFilter);
-    } else {
-      Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
-      filters.add(statusFilter);
     }
+    // else {
+    // Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    // filters.add(statusFilter);
+    // }
 
-    // Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.ne, true);
-    // filters.add(sellerOrderFilter);
+    Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.eq, isSallerOrder);
+    filters.add(sellerOrderFilter);
 
     pageable.setFilters(filters);
 

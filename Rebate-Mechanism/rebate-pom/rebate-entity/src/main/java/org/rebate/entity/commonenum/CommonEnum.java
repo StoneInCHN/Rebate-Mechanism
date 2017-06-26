@@ -211,7 +211,9 @@ public class CommonEnum {
     /** 乐豆抵扣说明 13 */
     LEBEAN_PAY_DESC,
     /** 消费人数统计倍数(用于手机端显示) 14 */
-    CONSUME_PEOPLE_MULTIPLE
+    CONSUME_PEOPLE_MULTIPLE,
+    /** 乐豆支付是否产生收益 15 */
+    BEAN_INCOME_SWITCH
   }
 
   /**

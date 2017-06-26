@@ -209,6 +209,18 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.seller.isBeanPay")}:
+								</th>
+								<td>
+									[#if seller.isBeanPay==true]
+									${message("rebate.common.true")}
+									[#else]
+									${message("rebate.common.false")}
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.seller.description")}:
 								</th>
 								<td>

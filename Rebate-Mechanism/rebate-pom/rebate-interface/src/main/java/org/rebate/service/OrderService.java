@@ -96,5 +96,13 @@ public interface OrderService extends BaseService<Order, Long> {
 
   List<Order> createSellerOrder(List<SellerOrderCart> sellerOrderCarts);
 
+  /**
+   * 获取商家当日订单消费当前额度
+   * 
+   * @param sellerId
+   * @return
+   */
+  BigDecimal getPayOrderAmountForSeller(Long sellerId);
+
 
 }

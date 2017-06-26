@@ -44,6 +44,7 @@ import org.rebate.json.request.SellerRequest;
 import org.rebate.service.BankCardService;
 import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.EndUserService;
+import org.rebate.service.OrderService;
 import org.rebate.service.SellerApplicationService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerClearingRecordService;
@@ -100,6 +101,9 @@ public class SellerController extends MobileBaseController {
 
   @Resource(name = "userAuthServiceImpl")
   private UserAuthService userAuthService;
+
+  @Resource(name = "orderServiceImpl")
+  private OrderService orderService;
 
 
 
@@ -440,6 +444,7 @@ public class SellerController extends MobileBaseController {
     map.put("envImgs", envImgs);
     map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
     map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
+    map.put("curLimitAmountByDay", orderService.getPayOrderAmountForSeller(seller.getId()));
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(token);
@@ -448,7 +453,6 @@ public class SellerController extends MobileBaseController {
     response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
-
 
   /**
    * 修改完善店铺信息

@@ -26,6 +26,7 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 @Entity
 @Table(name = "rm_order", indexes = {@Index(name = "createDateIndex", columnList = "createDate"),
     @Index(name = "snIndex", columnList = "sn"),
+    @Index(name = "paymentTimeIndex", columnList = "paymentTime"),
     @Index(name = "batchSnIndex", columnList = "batchSn")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_order_sequence")
 public class Order extends BaseEntity {
@@ -190,7 +191,9 @@ public class Order extends BaseEntity {
 
   @Transient
   public BigDecimal getSellerDiscount() {
-    sellerDiscount = sellerIncome.divide(amount, 1, BigDecimal.ROUND_HALF_UP);
+    sellerDiscount =
+        sellerIncome.divide(amount).multiply(new BigDecimal(10))
+            .setScale(1, BigDecimal.ROUND_HALF_UP);
     return sellerDiscount;
   }
 

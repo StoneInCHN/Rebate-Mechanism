@@ -53,6 +53,19 @@ public class SellerRequest {
    */
   private String licenseNum;
 
+  /**
+   * 商家是否支持乐豆抵扣
+   */
+  private Boolean isBeanPay;
+
+
+  public Boolean getIsBeanPay() {
+    return isBeanPay;
+  }
+
+  public void setIsBeanPay(Boolean isBeanPay) {
+    this.isBeanPay = isBeanPay;
+  }
 
   public String getLicenseNum() {
     return licenseNum;

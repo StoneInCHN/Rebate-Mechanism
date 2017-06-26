@@ -391,33 +391,36 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
         BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
-        BigDecimal mind = endUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
-        if (mind.compareTo(new BigDecimal(1)) >= 0) {
-          LeMindRecord leMindRecord = new LeMindRecord();
-          leMindRecord.setEndUser(endUser);
-          leMindRecord.setAmount(mind);
-          leMindRecord.setScore(mind.multiply(divideMind));
-          leMindRecord.setStatus(CommonStatus.ACITVE);
-          leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
+        if (divideMind.compareTo(new BigDecimal(0)) > 0) {
+          BigDecimal mind = endUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+          if (mind.compareTo(new BigDecimal(1)) >= 0) {
+            LeMindRecord leMindRecord = new LeMindRecord();
+            leMindRecord.setEndUser(endUser);
+            leMindRecord.setAmount(mind);
+            leMindRecord.setScore(mind.multiply(divideMind));
+            leMindRecord.setStatus(CommonStatus.ACITVE);
+            leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
 
-          leMindRecord.setMaxBonus(mind.multiply(divideMind));
-          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
-            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
-                .getConfigValue())));
+            leMindRecord.setMaxBonus(mind.multiply(divideMind));
+            if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+              leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+                  .getConfigValue())));
+            }
+
+            endUser.getLeMindRecords().add(leMindRecord);
+            endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
+            endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
+
+            RebateRecord deductScore = new RebateRecord();
+            deductScore.setRemark(Message.success("rebate.endUser.score.mind",
+                divideMind.toString()).getContent());
+            deductScore.setEndUser(endUser);
+            deductScore.setRebateScore(mind.multiply(divideMind).negate());
+            deductScore.setUserCurScore(endUser.getCurScore().add(deductScore.getRebateScore()));
+            endUser.getRebateRecords().add(deductScore);
+            endUser.setCurScore(deductScore.getUserCurScore());
           }
 
-          endUser.getLeMindRecords().add(leMindRecord);
-          endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
-          endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
-
-          RebateRecord deductScore = new RebateRecord();
-          deductScore.setRemark(Message.success("rebate.endUser.score.mind", divideMind.toString())
-              .getContent());
-          deductScore.setEndUser(endUser);
-          deductScore.setRebateScore(mind.multiply(divideMind).negate());
-          deductScore.setUserCurScore(endUser.getCurScore().add(deductScore.getRebateScore()));
-          endUser.getRebateRecords().add(deductScore);
-          endUser.setCurScore(deductScore.getUserCurScore());
         }
       }
       endUserDao.merge(endUser);
@@ -441,34 +444,36 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
       if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
         BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
-        BigDecimal mind = sellerEndUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
-        if (mind.compareTo(new BigDecimal(1)) >= 0) {
-          LeMindRecord leMindRecord = new LeMindRecord();
-          leMindRecord.setEndUser(sellerEndUser);
-          leMindRecord.setAmount(mind);
-          leMindRecord.setScore(mind.multiply(divideMind));
-          leMindRecord.setStatus(CommonStatus.ACITVE);
-          leMindRecord.setUserCurLeMind(sellerEndUser.getCurLeMind().add(mind));
+        if (divideMind.compareTo(new BigDecimal(0)) > 0) {
+          BigDecimal mind =
+              sellerEndUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+          if (mind.compareTo(new BigDecimal(1)) >= 0) {
+            LeMindRecord leMindRecord = new LeMindRecord();
+            leMindRecord.setEndUser(sellerEndUser);
+            leMindRecord.setAmount(mind);
+            leMindRecord.setScore(mind.multiply(divideMind));
+            leMindRecord.setStatus(CommonStatus.ACITVE);
+            leMindRecord.setUserCurLeMind(sellerEndUser.getCurLeMind().add(mind));
 
-          leMindRecord.setMaxBonus(mind.multiply(divideMind));
-          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
-            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
-                .getConfigValue())));
+            leMindRecord.setMaxBonus(mind.multiply(divideMind));
+            if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+              leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+                  .getConfigValue())));
+            }
+            sellerEndUser.getLeMindRecords().add(leMindRecord);
+            sellerEndUser.setCurLeMind(leMindRecord.getUserCurLeMind());
+            sellerEndUser.setTotalLeMind(sellerEndUser.getTotalLeMind().add(mind));
+
+            RebateRecord deductScore = new RebateRecord();
+            deductScore.setRemark(Message.success("rebate.endUser.score.mind",
+                divideMind.toString()).getContent());
+            deductScore.setEndUser(sellerEndUser);
+            deductScore.setRebateScore(mind.multiply(divideMind).negate());
+            deductScore.setUserCurScore(sellerEndUser.getCurScore().add(
+                deductScore.getRebateScore()));
+            sellerEndUser.getRebateRecords().add(deductScore);
+            sellerEndUser.setCurScore(deductScore.getUserCurScore());
           }
-          sellerEndUser.getLeMindRecords().add(leMindRecord);
-          sellerEndUser.setCurLeMind(leMindRecord.getUserCurLeMind());
-          sellerEndUser.setTotalLeMind(sellerEndUser.getTotalLeMind().add(mind));
-
-          RebateRecord deductScore = new RebateRecord();
-          deductScore.setRemark(Message.success("rebate.endUser.score.mind", divideMind.toString())
-              .getContent());
-          deductScore.setEndUser(sellerEndUser);
-          deductScore.setRebateScore(mind.multiply(divideMind).negate());
-          deductScore
-              .setUserCurScore(sellerEndUser.getCurScore().add(deductScore.getRebateScore()));
-          sellerEndUser.getRebateRecords().add(deductScore);
-          sellerEndUser.setCurScore(deductScore.getUserCurScore());
-
         }
       }
     }
@@ -510,6 +515,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     SystemConfig recommendSellerConfig =
         systemConfigDao.getConfigByKey(SystemConfigKey.RECOMMEND_SELLER);
     if (recommendSellerConfig != null && recommendSellerConfig.getConfigValue() != null
+        && new BigDecimal(recommendSellerConfig.getConfigValue()).compareTo(new BigDecimal(0)) > 0
         && salesmanSellerRelation != null) {
       LeScoreRecord leScoreRecord = new LeScoreRecord();
       leScoreRecord.setOrderId(orderId);
@@ -559,6 +565,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     }
 
     orderDao.merge(order);
+    LogUtil.debug(OrderServiceImpl.class, "updateOrderInfo",
+        "update order info finished. orderId: %s,sn: %s,orderStatus: %s,payTime: %s",
+        order.getId(), order.getSn(), order.getStatus().toString(), order.getPaymentTime());
     return order;
   }
 
@@ -566,11 +575,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     List<EndUser> records = new ArrayList<EndUser>();
     if (area != null) {
       EndUser agent = endUserDao.getAgentByArea(area);
-
       if (agent != null) {
         AgentCommissionConfig agentCommissionConfig =
             agentCommissionConfigDao.getConfigByArea(area);
-        if (agentCommissionConfig != null && agentCommissionConfig.getCommissionRate() != null) {
+        if (agentCommissionConfig != null && agentCommissionConfig.getCommissionRate() != null
+            && agentCommissionConfig.getCommissionRate().compareTo(new BigDecimal(0)) > 0) {
           LeScoreRecord leScoreRecord = new LeScoreRecord();
           leScoreRecord.setEndUser(agent);
           leScoreRecord.setLeScoreType(LeScoreType.AGENT);
@@ -584,9 +593,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           agent.getLeScoreRecords().add(leScoreRecord);
           records.add(agent);
         }
-
       }
-
       records.addAll(agentCommissionIncome(rebateAmount, area.getParent()));
     }
     return records;
@@ -631,18 +638,20 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       // userRecommend.setCurLeBean(userRecommend.getCurLeBean().add(leBeanRecord.getAmount()));
       // userRecommend.setTotalLeBean(userRecommend.getTotalLeBean().add(leBeanRecord.getAmount()));
       // userRecommend.getLeBeanRecords().add(leBeanRecord);
+      if (income.compareTo(new BigDecimal(0)) > 0) {
+        userRecommend.setCurLeScore(userRecommend.getCurLeScore().add(leScoreRecord.getAmount()));
+        userRecommend.setTotalLeScore(userRecommend.getTotalLeScore()
+            .add(leScoreRecord.getAmount()));
+        userRecommend.getLeScoreRecords().add(leScoreRecord);
+        userRecommend.setMotivateLeScore(userRecommend.getMotivateLeScore().add(
+            leScoreRecord.getAmount()));
 
-      userRecommend.setCurLeScore(userRecommend.getCurLeScore().add(leScoreRecord.getAmount()));
-      userRecommend.setTotalLeScore(userRecommend.getTotalLeScore().add(leScoreRecord.getAmount()));
-      userRecommend.getLeScoreRecords().add(leScoreRecord);
-      userRecommend.setMotivateLeScore(userRecommend.getMotivateLeScore().add(
-          leScoreRecord.getAmount()));
+        userRecommendRelation.setTotalRecommendLeScore(userRecommendRelation
+            .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
+        userRecommendRelationDao.merge(userRecommendRelation);
+        records.add(userRecommend);
+      }
 
-      userRecommendRelation.setTotalRecommendLeScore(userRecommendRelation
-          .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
-      userRecommendRelationDao.merge(userRecommendRelation);
-
-      records.add(userRecommend);
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
           indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId, consumeUser));
     }
@@ -694,17 +703,23 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     return order;
   }
 
-  @Override
-  public Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount) {
-    Seller seller = sellerDao.find(sellerId);
-    BigDecimal limitAmount = seller.getLimitAmountByDay();
-    if (limitAmount == null) {
-      return false;
-    }
-
+  public BigDecimal getPayOrderAmountForSeller(Long sellerId) {
     Date curDate = new Date();
     Date startTime = TimeUtils.formatDate2Day0(curDate);
     Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
+    BigDecimal amount = new BigDecimal(0);
+    if (CollectionUtils.isEmpty(orders)) {
+      return amount;
+    }
+    for (Order order : orders) {
+      amount = amount.add(order.getAmount());
+    }
+    return amount;
+  }
+
+  public List<Order> getPayOrderForSerllerByDay(Date startTime, Date endTime, Long sellerId) {
+
     List<Filter> filters = new ArrayList<Filter>();
     Filter startFilter = new Filter("paymentTime", Operator.ge, startTime);
     Filter endFilter = new Filter("paymentTime", Operator.le, endTime);
@@ -715,6 +730,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     filters.add(endFilter);
     filters.add(sellerFilter);
     List<Order> orders = orderDao.findList(null, null, filters, null);
+    return orders;
+
+  }
+
+  @Override
+  public Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount) {
+    Seller seller = sellerDao.find(sellerId);
+    BigDecimal limitAmount = seller.getLimitAmountByDay();
+    if (limitAmount == null) {
+      return false;
+    }
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
     BigDecimal curTotalOrderAmount = new BigDecimal("0");
     try {
       if (CollectionUtils.isEmpty(orders)) {
