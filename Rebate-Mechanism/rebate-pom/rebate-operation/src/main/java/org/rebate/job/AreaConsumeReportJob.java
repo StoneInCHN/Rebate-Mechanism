@@ -45,8 +45,7 @@ public class AreaConsumeReportJob {
 	  private AreaService areaService;	  
 	  
 	  
-	  //@Scheduled(cron="0 30 21 * * ?")
-	  @Scheduled(cron = "${job.daily_areaConsume_statistics.cron}")// 每天1点0分0秒执行 0 0 3 * * ?
+	  //@Scheduled(cron = "${job.daily_areaConsume_statistics.cron}")// 每天1点0分0秒执行 0 0 3 * * ?
 	  public void areaConsumeReport() {
 		if (date == null) {
 		    date = new Date();
