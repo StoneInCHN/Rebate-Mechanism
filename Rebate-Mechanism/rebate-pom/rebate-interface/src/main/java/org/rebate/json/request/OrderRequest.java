@@ -68,7 +68,19 @@ public class OrderRequest extends BaseRequest {
    */
   private BigDecimal deductLeBean;
 
+  /**
+   * 是否结算
+   */
+  private Boolean isClearing;
 
+
+  public Boolean getIsClearing() {
+    return isClearing;
+  }
+
+  public void setIsClearing(Boolean isClearing) {
+    this.isClearing = isClearing;
+  }
 
   public BigDecimal getDeductLeBean() {
     return deductLeBean;

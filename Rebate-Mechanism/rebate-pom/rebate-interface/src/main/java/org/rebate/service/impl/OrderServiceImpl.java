@@ -284,11 +284,18 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Seller seller = order.getSeller();
     EndUser sellerEndUser = seller.getEndUser();
 
-    if (BooleanUtils.isNotTrue(order.getIsSallerOrder())) {
+    if (BooleanUtils.isFalse(order.getIsSallerOrder())) {
       seller
           .setTotalOrderNum((seller.getTotalOrderNum() != null ? seller.getTotalOrderNum() : 0) + 1);
-      seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getSellerIncome()));
+      seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getAmount()));
       seller.setUnClearingAmount(seller.getUnClearingAmount().add(order.getSellerIncome()));
+      sellerDao.merge(seller);
+    }
+    if (BooleanUtils.isTrue(order.getIsSallerOrder())) {
+      seller.setTotalSellerOrderNum((seller.getTotalSellerOrderNum() != null ? seller
+          .getTotalSellerOrderNum() : 0) + 1);
+      seller.setTotalSellerOrderAmount((seller.getTotalSellerOrderAmount() != null ? seller
+          .getTotalSellerOrderAmount() : new BigDecimal(0)).add(order.getRebateAmount()));
       sellerDao.merge(seller);
     }
 
@@ -584,9 +591,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       }
     }
     orderDao.merge(order);
-    LogUtil.debug(OrderServiceImpl.class, "updateOrderInfo",
-        "update order info finished. orderId: %s,sn: %s,orderStatus: %s,payTime: %s",
-        order.getId(), order.getSn(), order.getStatus().toString(), order.getPaymentTime());
+    LogUtil
+        .debug(
+            OrderServiceImpl.class,
+            "updateOrderInfo",
+            "update order info finished for pay callback. orderId: %s,sn: %s,orderStatus: %s,payTime: %s",
+            order.getId(), order.getSn(), order.getStatus().toString(), order.getPaymentTime());
     return order;
   }
 

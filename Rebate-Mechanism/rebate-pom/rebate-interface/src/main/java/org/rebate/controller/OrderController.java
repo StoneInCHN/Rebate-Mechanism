@@ -583,7 +583,7 @@ public class OrderController extends MobileBaseController {
   @RequestMapping(value = "/getOrderUnderSeller", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.SELLER)
   public @ResponseBody ResponseMultiple<Map<String, Object>> getOrderUnderSeller(
-      @RequestBody BaseRequest request) {
+      @RequestBody OrderRequest request) {
 
     ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
@@ -592,6 +592,10 @@ public class OrderController extends MobileBaseController {
     Long entityId = request.getEntityId();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
+
+    Boolean isSallerOrder = request.getIsSallerOrder();
+    OrderStatus status = request.getOrderStatus();
+    Boolean isClearing = request.getIsClearing();
 
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
@@ -603,9 +607,21 @@ public class OrderController extends MobileBaseController {
 
     List<Filter> filters = new ArrayList<Filter>();
     Filter sellerFilter = new Filter("seller", Operator.eq, entityId);
-    Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
-    filters.add(statusFilter);
     filters.add(sellerFilter);
+
+    if (status != null && isClearing == null) {
+      Filter statusFilter = new Filter("status", Operator.eq, status);
+      filters.add(statusFilter);
+    }
+    if (status == null && isClearing != null) {
+      Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+      filters.add(statusFilter);
+      Filter clearingFilter = new Filter("isClearing", Operator.eq, isClearing);
+      filters.add(clearingFilter);
+    }
+
+    Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.eq, isSallerOrder);
+    filters.add(sellerOrderFilter);
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
@@ -618,7 +634,7 @@ public class OrderController extends MobileBaseController {
     String[] propertys =
         {"id", "seller.name", "createDate", "endUser.nickName", "sellerScore", "amount",
             "endUser.cellPhoneNum", "endUser.userPhoto", "sn", "rebateAmount", "isSallerOrder",
-            "remark", "userScore", "status", "evaluate.sellerReply"};
+            "remark", "userScore", "status", "isClearing", "evaluate.sellerReply"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -837,11 +853,18 @@ public class OrderController extends MobileBaseController {
     // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
     // return response;
     // }
-
-    if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
-      return response;
+    Seller seller = sellerService.find(sellerId);
+    if (seller.getLimitAmountByDay() != null) {
+      BigDecimal curLimitAmount = orderService.getPayOrderAmountForSeller(sellerId);
+      if (curLimitAmount.add(amount).compareTo(seller.getLimitAmountByDay()) > 0) {
+        BigDecimal remainLimitAmount = seller.getLimitAmountByDay().subtract(curLimitAmount);
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error(
+            "rebate.payOrder.seller.curLimitAmount.insufficient",
+            remainLimitAmount.compareTo(new BigDecimal(0)) < 0 ? new BigDecimal(0)
+                : remainLimitAmount).getContent());
+        return response;
+      }
     }
 
     Order order = orderService.createSellerOrder(entityId, amount, sellerId);
@@ -867,6 +890,37 @@ public class OrderController extends MobileBaseController {
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
+    return response;
+  }
+
+
+  /**
+   * 商家删除未支付的录单订单(物理删)
+   * 
+   * @return
+   */
+  @RequestMapping(value = "/delSellerUnpaidOrder", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.SELLER)
+  public @ResponseBody BaseResponse delSellerUnpaidOrder(@RequestBody OrderRequest request) {
+
+    BaseResponse response = new BaseResponse();
+    Long userId = request.getUserId();
+    Long orderId = request.getEntityId();
+
+    Order order = orderService.find(orderId);
+    if (BooleanUtils.isTrue(order.getIsSallerOrder())
+        && OrderStatus.UNPAID.equals(order.getStatus())) {
+      orderService.delete(order);
+    } else {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.seller.order.delete.error").getContent());
+      return response;
+    }
+
+    String newtoken = TokenGenerator.generateToken(request.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
     return response;
   }
 }

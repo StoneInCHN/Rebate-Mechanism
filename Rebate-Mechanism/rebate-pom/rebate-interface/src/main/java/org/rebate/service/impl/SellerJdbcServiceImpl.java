@@ -49,7 +49,7 @@ public class SellerJdbcServiceImpl extends BaseServiceImpl<EndUser, Long> implem
       double[] aroundGps =
           LatLonUtil.getAround(Double.valueOf(latitude), Double.valueOf(longitude), radius);
       seller_sql
-          .append("SELECT distinct(rs.id),rs.create_date,rs.name,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name,");
+          .append("SELECT distinct(rs.id),rs.create_date,rs.name,rs.is_bean_pay,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name,");
       seller_sql.append("round(6378.138*2*asin(sqrt(pow(sin((" + latitude);
       seller_sql.append("*pi()/180-latitude*pi()/180)/2),2)+cos(" + latitude);
       seller_sql.append("*pi()/180)*cos(latitude*pi()/180)*pow(sin((" + longitude);
@@ -150,7 +150,7 @@ public class SellerJdbcServiceImpl extends BaseServiceImpl<EndUser, Long> implem
     } else if (latitude == null && longitude == null && areaIds != null) {// 手机未开启定位，经纬度丢失
 
       seller_sql
-          .append("SELECT distinct(rs.id),rs.create_date,rs.name,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name");
+          .append("SELECT distinct(rs.id),rs.create_date,rs.name,rs.is_bean_pay,rs.latitude,rs.longitude,rs.address,rs.description,rs.discount,rs.avg_price,rs.business_time,rs.favorite_num,rs.featured_service,rs.rate_score,rs.store_picture_url,rs.store_phone,rsc.category_name");
       seller_sql.append(" FROM rm_seller rs");
       seller_sql.append(" LEFT JOIN rm_seller_category rsc ON rsc.id = rs.seller_category");
       seller_sql.append(" WHERE rs.account_status = 0");

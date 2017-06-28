@@ -48,7 +48,7 @@ public class SellerRowMapper implements RowMapper<Map<String, Object>> {
     sellerInfo.put("storePictureUrl", rs.getString("store_picture_url"));
     sellerInfo.put("favorite_num", rs.getInt("favorite_num"));
     sellerInfo.put("featured_service", rs.getString("featured_service"));
-
+    sellerInfo.put("isBeanPay", rs.getBoolean("is_bean_pay"));
     if (!StringUtils.isEmpty(unitConsume) && !StringUtils.isEmpty(rebateScoreUser)) {
       BigDecimal unit = new BigDecimal(unitConsume);
       sellerInfo.put("unitConsume", unit);

@@ -186,11 +186,21 @@ public class SellerOrderCartController extends MobileBaseController {
       totalAmount = totalAmount.add(sellerOrderCart.getAmount());
     }
 
-    if (orderService.isOverSellerLimitAmount(sellerId, totalAmount)) {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
-      return response;
+
+    Seller seller = sellerService.find(sellerId);
+    if (seller.getLimitAmountByDay() != null) {
+      BigDecimal curLimitAmount = orderService.getPayOrderAmountForSeller(sellerId);
+      if (curLimitAmount.add(totalAmount).compareTo(seller.getLimitAmountByDay()) > 0) {
+        BigDecimal remainLimitAmount = seller.getLimitAmountByDay().subtract(curLimitAmount);
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error(
+            "rebate.payOrder.seller.curLimitAmount.insufficient",
+            remainLimitAmount.compareTo(new BigDecimal(0)) < 0 ? new BigDecimal(0)
+                : remainLimitAmount).getContent());
+        return response;
+      }
     }
+
     List<Order> orders = orderService.createSellerOrder(sellerOrderCarts);
 
     // taskExecutor.execute(new Runnable() {

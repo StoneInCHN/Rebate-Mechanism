@@ -217,6 +217,9 @@ public class SellerController extends BaseController {
     if (StringUtils.isNotEmpty(request.getName())) {
       filters.add(Filter.like("name", request.getName()));
     }
+    if (request.getIsBeanPay() != null) {
+      filters.add(Filter.eq("isBeanPay", request.getIsBeanPay()));
+    }
     if (StringUtils.isNotEmpty(request.getLicenseNum())) {
       filters.add(Filter.like("licenseNum", request.getLicenseNum()));
     }
@@ -252,10 +255,10 @@ public class SellerController extends BaseController {
           {"sellerId", "sellerName", "sellerCategory", "contactPerson", "contactCellPhone",
               "endUserCellPhone", "endUserNickName", "area", "address", "licenseNum", "rateScore",
               "avgPrice", "discount", "limitAmountByDay", "businessTime", "favoriteNum",
-              "totalOrderNum", "accountStatus", "description"}; // 需要导出的字段
+              "totalOrderNum", "accountStatus", "isBeanPay", "description"}; // 需要导出的字段
       String[] headersName =
           {"商家编号", "商家名字", "商家类别", "商家联系人", "商家联系人手机", "申请人(用户)手机号", "用户昵称", "地区", "商家地址", "营业执照号",
-              "评分", "均价", "折扣", "每日营业额上限", "营业时间", "商家被收藏数", "总订单数", "商家状态", "店铺介绍"}; // 字段对应列的列名
+              "评分", "均价", "折扣", "每日营业额上限", "营业时间", "商家被收藏数", "总订单数", "商家状态", "支持乐豆抵扣", "店铺介绍"}; // 字段对应列的列名
       List<Map<String, String>> mapList = ExportUtils.prepareExportSeller(lists);
       if (mapList.size() > 0) {
         exportListToExcel(response, mapList, title, headers, headersName);

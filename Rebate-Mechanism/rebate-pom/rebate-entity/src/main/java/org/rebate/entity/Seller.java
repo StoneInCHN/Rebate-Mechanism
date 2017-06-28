@@ -192,12 +192,12 @@ public class Seller extends BaseEntity {
   // private Long recommenderId;
 
   /**
-   * 商家累计订单数
+   * 商家累计普通订单数
    */
   private Integer totalOrderNum = 0;
 
   /**
-   * 累计订单金额
+   * 累计普通订单金额
    */
   private BigDecimal totalOrderAmount = new BigDecimal("0");
 
@@ -205,6 +205,17 @@ public class Seller extends BaseEntity {
    * 所有订单未结算(提取)的金额
    */
   private BigDecimal unClearingAmount = new BigDecimal("0");
+
+  /**
+   * 商家累计录单订单数
+   */
+  private Integer totalSellerOrderNum = 0;
+
+  /**
+   * 累计录单订单金额
+   */
+  private BigDecimal totalSellerOrderAmount = new BigDecimal("0");
+
 
   /**
    * 每日营业额上限
@@ -220,6 +231,23 @@ public class Seller extends BaseEntity {
    * 商家是否支持乐豆抵扣
    */
   private Boolean isBeanPay;
+
+
+  public Integer getTotalSellerOrderNum() {
+    return totalSellerOrderNum;
+  }
+
+  public void setTotalSellerOrderNum(Integer totalSellerOrderNum) {
+    this.totalSellerOrderNum = totalSellerOrderNum;
+  }
+
+  public BigDecimal getTotalSellerOrderAmount() {
+    return totalSellerOrderAmount;
+  }
+
+  public void setTotalSellerOrderAmount(BigDecimal totalSellerOrderAmount) {
+    this.totalSellerOrderAmount = totalSellerOrderAmount;
+  }
 
   public Boolean getIsBeanPay() {
     return isBeanPay;
