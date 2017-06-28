@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.quartz.Job;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.job.AreaConsumeReportJob;
 import org.rebate.job.SellerClearingRecordJob;
 import org.rebate.service.QuartzManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class JobManagerController extends BaseController {
   @Resource(name = "sellerClearingRecordJob")
   private SellerClearingRecordJob sellerClearingRecordJob;
 
+  @Resource(name = "areaConsumeReportJob")
+  private AreaConsumeReportJob areaConsumeReportJob;
+  
   /**
    * 列表
    */
@@ -58,7 +62,22 @@ public class JobManagerController extends BaseController {
           sellerClearingRecordJob.sellerClearingCalculate();
           return SUCCESS_MESSAGE;
       } catch (Exception e) {
-          return ERROR_MESSAGE;
+          return Message.error(e.getMessage());
+      }
+  }
+  /**
+   * 手动统计地区交易额数据
+   * @param manualDate
+   * @return
+   */
+  @RequestMapping(value = "/manualAreaConsumeJob", method = RequestMethod.POST)
+  public @ResponseBody Message manualAreaConsumeJob(Date manualDate) {
+      try {
+    	  AreaConsumeReportJob.date = manualDate;
+          areaConsumeReportJob.areaConsumeReport();
+          return SUCCESS_MESSAGE;
+      } catch (Exception e) {
+          return Message.error(e.getMessage());
       }
   }
 }

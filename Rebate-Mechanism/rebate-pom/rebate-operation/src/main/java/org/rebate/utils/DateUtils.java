@@ -157,7 +157,9 @@ public final class DateUtils implements ApplicationContextAware, DisposableBean 
     }
     Calendar startTime = Calendar.getInstance();
     startTime.setTime(date);
-    startTime.add(Calendar.DATE, day);
+    if (day != 0) {
+        startTime.add(Calendar.DATE, day);
+	}
     startTime.set(Calendar.HOUR_OF_DAY, 0);
     startTime.set(Calendar.MINUTE, 0);
     startTime.set(Calendar.SECOND, 0);
@@ -176,7 +178,9 @@ public final class DateUtils implements ApplicationContextAware, DisposableBean 
     }
     Calendar endTime = Calendar.getInstance();
     endTime.setTime(date);
-    endTime.add(Calendar.DATE, day);
+    if (day != 0) {
+        endTime.add(Calendar.DATE, day);
+	}
     endTime.set(Calendar.HOUR_OF_DAY, 23);
     endTime.set(Calendar.MINUTE, 59);
     endTime.set(Calendar.SECOND, 59);

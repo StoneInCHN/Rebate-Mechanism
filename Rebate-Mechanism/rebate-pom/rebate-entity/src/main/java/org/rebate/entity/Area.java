@@ -31,7 +31,7 @@ public class Area extends OrderEntity {
   private static final long serialVersionUID = -2158109459123036967L;
 
   /** 树路径分隔符 */
-  private static final String TREE_PATH_SEPARATOR = ",";
+  public static final String TREE_PATH_SEPARATOR = ",";
 
   /** 名称 */
   private String name;
