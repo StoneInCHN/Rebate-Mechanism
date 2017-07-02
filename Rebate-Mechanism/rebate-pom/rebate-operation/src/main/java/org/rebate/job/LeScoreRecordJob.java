@@ -16,6 +16,7 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.ParamConfig;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
+import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.ParamConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.service.BankCardService;
@@ -24,9 +25,12 @@ import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.ParamConfigService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.utils.LogUtil;
+import org.rebate.utils.SpringUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 乐分提现 交易结果更新
@@ -98,25 +102,8 @@ public class LeScoreRecordJob {
 			  					    			endUser = endUserService.find(record.getEndUser().getId());
 											}
 			  					    		if (endUser != null) {
-  			  					    		// 当前乐分
-  			  					    		BigDecimal curLeScore = record.getAmount();
-  			  					    		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
-  			  					    		BigDecimal motivateLeScore = record.getMotivateLeScore();
-  			  					    		// 商家直接收益乐分
-  			  					    		// BigDecimal incomeLeScore = record.getIncomeLeScore();
-  			  					    		// 代理商提成乐分
-  			  					    		BigDecimal agentLeScore = record.getAgentLeScore();
-  			  					    		if (endUser.getCurLeScore() != null) {
-  			  					    			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
-												}
-  			  					    		if (endUser.getMotivateLeScore() != null) {
-  			  					    			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
-												}
-  			  					    		if (endUser.getAgentLeScore() != null) {
-  			  					    			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
-												}
-  			  					    		// endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
-  			  					    		endUserService.update(endUser);
+			  					    			refundLeScore(endUser, record);
+  			  				
 											}
 			  					    	}
 					        		}
@@ -186,5 +173,45 @@ public class LeScoreRecordJob {
 		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
 	  }
       return period;
+  }
+  /**
+   * 退回乐分给用户
+   * @param endUser
+   * @param record
+   */
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
+  private void refundLeScore(EndUser endUser, LeScoreRecord record){
+  		// 当前乐分
+  		BigDecimal curLeScore = record.getAmount();
+  		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
+  		BigDecimal motivateLeScore = record.getMotivateLeScore();
+  		// 商家直接收益乐分
+  		// BigDecimal incomeLeScore = record.getIncomeLeScore();
+  		// 代理商提成乐分
+  		BigDecimal agentLeScore = record.getAgentLeScore();
+  		if (endUser.getCurLeScore() != null) {
+  			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
+			}
+  		if (endUser.getMotivateLeScore() != null) {
+  			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
+			}
+  		if (endUser.getAgentLeScore() != null) {
+  			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
+			}
+  		// endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
+  		endUserService.update(endUser);
+    	LeScoreRecord refundRecord = new LeScoreRecord();//乐分退回记录
+    	refundRecord.setLeScoreType(LeScoreType.REFUND);
+    	refundRecord.setEndUser(endUser);
+    	refundRecord.setAmount(record.getAmount().abs());
+    	refundRecord.setMotivateLeScore(record.getMotivateLeScore().abs());
+    	refundRecord.setAgentLeScore(record.getAgentLeScore().abs());
+    	refundRecord.setIncomeLeScore(record.getIncomeLeScore());
+    	refundRecord.setSeller(record.getSeller());
+    	refundRecord.setUserCurLeScore(endUser.getCurLeScore());
+    	refundRecord.setWithdrawMsg(SpringUtils.getMessage("rebate.endUser.leScore.REFUND.msg", record.getReqSn()));
+    	refundRecord.setRemark(SpringUtils.getMessage("rebate.endUser.leScore.type.WITHDRAW") + record.getWithdrawMsg()
+    	    		+SpringUtils.getMessage("rebate.endUser.leScore.type.REFUND"));
+    	leScoreRecordService.save(refundRecord);
   }
 }

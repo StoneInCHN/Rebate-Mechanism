@@ -84,7 +84,7 @@ public class AreaConsumeReportJob {
   					exist = areaConsumeReportService.exists(Filter.eq("city", area), 
   	  						Filter.eq("reportDate", startDate));
 				}  				
-  				if (level == 1) {//省
+  				if (level == 0) {//省
   					exist = areaConsumeReportService.exists(Filter.eq("province", area), 
   	  						Filter.eq("reportDate", startDate));
 				}
@@ -107,7 +107,7 @@ public class AreaConsumeReportJob {
   						report.setProvince(area.getParent());
   					}
 				}  				
-  				if (level == 1) {//省
+  				if (level == 0) {//省
   					report.setProvince(area);
 				}   				
   				report.setSellerDiscount(new BigDecimal(keyArray[1]));

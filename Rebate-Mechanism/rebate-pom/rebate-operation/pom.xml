@@ -410,6 +410,12 @@
 			<artifactId>jdom</artifactId>
 			<version>1.0.0-release</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

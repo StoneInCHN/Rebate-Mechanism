@@ -270,6 +270,11 @@ public class Setting implements Serializable {
    */
   private String juheKey;
   
+  /**
+   * 推广(分享)注册 Url
+   */
+  private String recommendUrl;
+  
   
   public String getServerIp() {
     return serverIp;
@@ -711,6 +716,14 @@ public class Setting implements Serializable {
 
   public void setJuheKey(String juheKey) {
     this.juheKey = juheKey;
+  }
+
+  public String getRecommendUrl() {
+	return recommendUrl;
+  }
+
+  public void setRecommendUrl(String recommendUrl) {
+	this.recommendUrl = recommendUrl;
   }
     
 	

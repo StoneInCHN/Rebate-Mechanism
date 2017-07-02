@@ -252,8 +252,8 @@
           	   quickClose: true
        		 }).show(this);
 			return false;
-		})
-	})
+		});
+	});
 </script>	
 </body>
 </html>
