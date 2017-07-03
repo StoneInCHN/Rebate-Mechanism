@@ -1,5 +1,7 @@
 package org.rebate.json.request;
 
+import java.math.BigDecimal;
+
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
@@ -8,6 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UserRequest extends BaseRequest {
 
+  /**
+   * 提现金额
+   */
+  private BigDecimal withdrawAmount;
   /**
    * 密码
    */
@@ -79,6 +85,14 @@ public class UserRequest extends BaseRequest {
    */
   private LeScoreType leScoreType;
 
+
+  public BigDecimal getWithdrawAmount() {
+    return withdrawAmount;
+  }
+
+  public void setWithdrawAmount(BigDecimal withdrawAmount) {
+    this.withdrawAmount = withdrawAmount;
+  }
 
   public LeScoreType getLeScoreType() {
     return leScoreType;

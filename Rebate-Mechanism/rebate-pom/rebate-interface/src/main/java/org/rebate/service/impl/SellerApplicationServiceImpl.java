@@ -15,6 +15,7 @@ import org.rebate.entity.EndUser;
 import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SellerCategory;
+import org.rebate.entity.SellerCommitmentImage;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
@@ -102,6 +103,16 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
         envImages.add(envImg);
       }
       application.setEnvImages(envImages);
+    }
+
+    if (!CollectionUtils.isEmpty(req.getCommitmentImgs())) {
+      List<SellerCommitmentImage> commitmentImages = new ArrayList<SellerCommitmentImage>();
+      for (MultipartFile file : req.getCommitmentImgs()) {
+        SellerCommitmentImage commitmentImg = new SellerCommitmentImage();
+        commitmentImg.setSource(fileService.saveImage(file, ImageType.STORE_COMMITMENT));
+        commitmentImages.add(commitmentImg);
+      }
+      application.setCommitmentImages(commitmentImages);
     }
 
     sellerApplicationDao.persist(application);

@@ -32,7 +32,7 @@ public class test {
     // String pwd1 = KeyGenerator.encrypt("111111", RSAHelper.getPublicKey(serverPublicKey));
     // System.out.println(pwd1);
     System.out.println(DigestUtils.md5Hex("luyBL3"));
-    System.out.println(KeyGenerator.encrypt("luyBL3", RSAHelper.getPublicKey(serverPublicKey)));
+    System.out.println(KeyGenerator.encrypt("123456", RSAHelper.getPublicKey(serverPublicKey)));
     String password =
         "Od3XgLxsVHCeIPzx4oikeT3HH02iOzAHimS8xQTDr8Veq66O2u8ZCskmq5ewXQD3PD7xHwCTOLJfPpIMKXJMhUrogJLVXvDMqUOm7u5L2TF7fIGAYjzS6RRIgzSUtZE+3o+sejo5PvDoRqLPDy1s9svUznLYZkyPIIhv8VhGguU=";
     System.out.println(KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey)));
@@ -117,6 +117,8 @@ public class test {
     params.put("signMsg", "292915306352B007DCD043DFBF3FBB9A");
     System.out.println(params);
     System.out.println(PayNotify.verifySignH5(params));
+
+    System.out.println(new Date().getTime());
 
   }
 

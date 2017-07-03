@@ -273,6 +273,8 @@ public class CommonEnum {
     STORE_LICENSE,
     /** 店铺列表展示图片 */
     STORE_SIGN,
+    /** 商户承诺书图片 */
+    STORE_COMMITMENT,
     /** 订单评论图片 */
     ORDER_EVALUATE,
     /** 身份证照片 */

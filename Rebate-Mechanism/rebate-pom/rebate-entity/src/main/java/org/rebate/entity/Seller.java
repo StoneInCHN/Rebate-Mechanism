@@ -181,6 +181,11 @@ public class Seller extends BaseEntity {
    */
   private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
 
+  /**
+   * 商家承诺书图片
+   */
+  private List<SellerCommitmentImage> commitmentImages = new ArrayList<SellerCommitmentImage>();
+
   // /**
   // * 推荐人
   // */
@@ -327,6 +332,17 @@ public class Seller extends BaseEntity {
     this.licenseImgUrl = licenseImgUrl;
   }
 
+  @Valid
+  @ElementCollection
+  @LazyCollection(LazyCollectionOption.FALSE)
+  @CollectionTable(name = "rm_seller_commitment_image")
+  public List<SellerCommitmentImage> getCommitmentImages() {
+    return commitmentImages;
+  }
+
+  public void setCommitmentImages(List<SellerCommitmentImage> commitmentImages) {
+    this.commitmentImages = commitmentImages;
+  }
 
   @Valid
   @ElementCollection

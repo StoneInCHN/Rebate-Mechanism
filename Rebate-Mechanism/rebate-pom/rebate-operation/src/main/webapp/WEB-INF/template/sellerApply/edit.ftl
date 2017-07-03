@@ -186,6 +186,19 @@ $(function() {
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.seller.commitmentImages")}:
+								</th>
+								<td>
+									<!-- a block container is required -->
+									  <ul  class="viewer-images clearfix">
+									  	[#list commitmentImages as images]	
+											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
+										[/#list]
+									  </ul>
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.sellerApplication.discount")}:
 								</th>
 								<td>

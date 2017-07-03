@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface OrderService extends BaseService<Order, Long> {
 
   /**
-   * 支付订单
+   * 创建普通支付订单
    * 
    * @param userId
    * @param payType
@@ -90,8 +90,16 @@ public interface OrderService extends BaseService<Order, Long> {
   // Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
   // Boolean isBeanPay, Boolean isSallerOrder);
 
-
-  Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId);
+  /**
+   * 立即录单
+   * 
+   * @param userId
+   * @param amount
+   * @param sellerId
+   * @param sellerDiscount
+   * @return
+   */
+  Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId, BigDecimal sellerDiscount);
 
 
   List<Order> createSellerOrder(List<SellerOrderCart> sellerOrderCarts);

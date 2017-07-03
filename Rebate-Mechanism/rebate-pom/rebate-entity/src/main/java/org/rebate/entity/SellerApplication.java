@@ -138,6 +138,11 @@ public class SellerApplication extends BaseEntity {
    */
   private List<SellerEnvImage> envImages = new ArrayList<SellerEnvImage>();
 
+  /**
+   * 商家承诺书图片
+   */
+  private List<SellerCommitmentImage> commitmentImages = new ArrayList<SellerCommitmentImage>();
+
 
   @Column(length = 1000)
   public String getDescription() {
@@ -148,6 +153,18 @@ public class SellerApplication extends BaseEntity {
     this.description = description;
   }
 
+
+  @Valid
+  @ElementCollection
+  @LazyCollection(LazyCollectionOption.FALSE)
+  @CollectionTable(name = "rm_seller_apply_commitment_image")
+  public List<SellerCommitmentImage> getCommitmentImages() {
+    return commitmentImages;
+  }
+
+  public void setCommitmentImages(List<SellerCommitmentImage> commitmentImages) {
+    this.commitmentImages = commitmentImages;
+  }
 
   @Valid
   @ElementCollection

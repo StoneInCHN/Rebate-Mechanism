@@ -133,10 +133,12 @@ public class SellerJdbcServiceImpl extends BaseServiceImpl<EndUser, Long> implem
 
       SystemConfig rebateScore = systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER);
       SystemConfig unitConsume = systemConfigDao.getConfigByKey(SystemConfigKey.UNIT_CONSUME);
+      SystemConfig leBeanPayConfig = systemConfigDao.find(Long.valueOf(4));// 乐豆抵扣是否开启
       List<Map<String, Object>> sellerList =
           jdbcTemplate.query(seller_sql.toString(), new SellerRowMapper(
               rebateScore != null ? rebateScore.getConfigValue() : null,
-              unitConsume != null ? unitConsume.getConfigValue() : null));
+              unitConsume != null ? unitConsume.getConfigValue() : null,
+              leBeanPayConfig != null ? leBeanPayConfig.getIsEnabled() : null));
       Map<String, Object> totalMap = jdbcTemplate.queryForMap(total_count_sql.toString());
       Long total = (Long) totalMap.get("total");
 
@@ -217,10 +219,12 @@ public class SellerJdbcServiceImpl extends BaseServiceImpl<EndUser, Long> implem
 
       SystemConfig rebateScore = systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER);
       SystemConfig unitConsume = systemConfigDao.getConfigByKey(SystemConfigKey.UNIT_CONSUME);
+      SystemConfig leBeanPayConfig = systemConfigDao.find(Long.valueOf(4));// 乐豆抵扣是否开启
       List<Map<String, Object>> sellerList =
           jdbcTemplate.query(seller_sql.toString(), new SellerRowMapper(
               rebateScore != null ? rebateScore.getConfigValue() : null,
-              unitConsume != null ? unitConsume.getConfigValue() : null));
+              unitConsume != null ? unitConsume.getConfigValue() : null,
+              leBeanPayConfig != null ? leBeanPayConfig.getIsEnabled() : null));
       Map<String, Object> totalMap = jdbcTemplate.queryForMap(total_count_sql.toString());
       Long total = (Long) totalMap.get("total");
 

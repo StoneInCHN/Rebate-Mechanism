@@ -846,6 +846,7 @@ public class OrderController extends MobileBaseController {
     String token = req.getToken();
     BigDecimal amount = req.getAmount();
     Long sellerId = req.getSellerId();
+    BigDecimal sellerDiscount = req.getSellerDiscount();
     // // 验证登录token
     // String userToken = endUserService.getEndUserToken(userId);
     // if (!TokenGenerator.isValiableToken(token, userToken)) {
@@ -867,12 +868,12 @@ public class OrderController extends MobileBaseController {
       }
     }
 
-    Order order = orderService.createSellerOrder(entityId, amount, sellerId);
+    Order order = orderService.createSellerOrder(entityId, amount, sellerId, sellerDiscount);
 
     if (LogUtil.isDebugEnabled(OrderController.class)) {
       LogUtil.debug(OrderController.class, "generateSellerOrder",
-          "generate Seller Order. consumerId: %s,amount: %s,sellerId: %s", entityId, amount,
-          sellerId);
+          "generate Seller Order. consumerId: %s,amount: %s,sellerId: %s,sellerDiscount: %s",
+          entityId, amount, sellerId, sellerDiscount);
     }
 
     // taskExecutor.execute(new Runnable() {

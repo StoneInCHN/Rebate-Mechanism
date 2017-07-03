@@ -2,6 +2,7 @@ package org.rebate.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
@@ -58,6 +60,7 @@ import org.rebate.utils.LatLonUtil;
 import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -264,6 +267,10 @@ public class SellerController extends MobileBaseController {
       map.put("distance", null);
     }
 
+    SystemConfig leBeanPayConfig = systemConfigService.find(Long.valueOf(4));
+    if (BooleanUtils.isFalse(leBeanPayConfig.getIsEnabled())) {// 乐豆抵扣支付开关关闭,所有商家都不显示乐豆抵扣标识
+      map.put("isBeanPay", false);
+    }
     response.setMsg(map);
 
     response.setCode(CommonAttributes.SUCCESS);
@@ -350,6 +357,13 @@ public class SellerController extends MobileBaseController {
     String token = req.getToken();
 
 
+    // 手机号码格式验证
+    if (StringUtils.isEmpty(req.getContactCellPhone())
+        || !isMobileNumber(req.getContactCellPhone())) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
+      return response;
+    }
     // // 验证店铺折扣,不得低于设定的最小值
     // if (new BigDecimal(req.getDiscount()).compareTo(new
     // BigDecimal(setting.getSellerDiscountMin())) < 0) {
@@ -555,30 +569,50 @@ public class SellerController extends MobileBaseController {
     String token = request.getToken();
     Integer pageSize = request.getPageSize();
     Integer pageNumber = request.getPageNumber();
+    Date startTime = request.getStartTime();
+    Date endTime = request.getEndTime();
 
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);
     pageable.setPageSize(pageSize);
 
+    LogUtil.debug(SellerController.class, "paymentList",
+        "seller payment list. userId: %s,startTime: %s,endTime: %s", userId, startTime, endTime);
+
     List<Filter> filters = new ArrayList<Filter>();
     Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(endUserFilter);
+    if (startTime != null) {
+      Filter startTimeFilter = new Filter("createDate", Operator.ge, startTime);
+      filters.add(startTimeFilter);
+    }
+    if (endTime != null) {
+      Filter endTimeFilter = new Filter("createDate", Operator.le, endTime);
+      filters.add(endTimeFilter);
+    }
     pageable.setFilters(filters);
     pageable.setOrderDirection(Direction.desc);
     pageable.setOrderProperty("createDate");
 
     Page<SellerClearingRecord> page = sellerClearingRecordService.findPage(pageable);
     String[] propertys = {"id", "clearingSn", "isClearing", "createDate", "amount"};
-    List<Map<String, Object>> result =
-        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
-
+    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    BigDecimal totaOrderlAmount = new BigDecimal(0);// 消费总额
+    BigDecimal totalClearAmount = new BigDecimal(0);// 结算总额
+    for (SellerClearingRecord record : page.getContent()) {
+      totaOrderlAmount = totaOrderlAmount.add(record.getTotalOrderAmount());
+      totalClearAmount = totalClearAmount.add(record.getAmount());
+      Map<String, Object> map = FieldFilterUtils.filterEntityMap(propertys, record);
+      result.add(map);
+    }
     PageResponse pageInfo = new PageResponse();
     pageInfo.setPageNumber(pageNumber);
     pageInfo.setPageSize(pageSize);
     pageInfo.setTotal((int) page.getTotal());
     response.setPage(pageInfo);
     response.setMsg(result);
+    response.setDesc(totaOrderlAmount + "," + totalClearAmount);
 
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);

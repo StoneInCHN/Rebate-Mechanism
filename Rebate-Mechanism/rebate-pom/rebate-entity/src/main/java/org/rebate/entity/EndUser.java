@@ -180,7 +180,7 @@ public class EndUser extends BaseEntity {
   private BigDecimal motivateLeScore = new BigDecimal("0");
 
   /**
-   * 商家直接收入乐分
+   * 业务员收入乐分
    */
   private BigDecimal incomeLeScore = new BigDecimal("0");
 

@@ -121,14 +121,27 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    */
   Map<String, String> getAvlRule(EndUser endUser);
 
+
   /**
    * 用户提现
    * 
    * @param userId
+   * @param bankCardId
    * @param remark
    * @return
    */
   EndUser userWithdraw(Long userId, Long bankCardId, String remark);
+
+  /**
+   * 用户提现
+   * 
+   * @param endUser
+   * @param withdrawAmount
+   * @param bankCardId
+   * @param remark
+   * @return
+   */
+  EndUser userWithdraw(EndUser endUser, BigDecimal withdrawAmount, Long bankCardId, String remark);
 
   /**
    * 推荐是否被限制
@@ -146,4 +159,12 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   EndUser editInfo(Long userId, Long areaId, String nickName);
+
+  /**
+   * 变更用户手机号
+   * 
+   * @param endUser
+   * @return
+   */
+  EndUser changeUserMobile(EndUser endUser);
 }

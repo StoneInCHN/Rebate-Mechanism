@@ -14,6 +14,7 @@ import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SellerCategory;
+import org.rebate.entity.SellerCommitmentImage;
 import org.rebate.entity.SellerEnvImage;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
@@ -35,7 +36,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
 
   @Resource(name = "sellerDaoImpl")
   private SellerDao sellerDao;
-  
+
   @Resource(name = "salesmanSellerRelationDaoImpl")
   private SalesmanSellerRelationDao salesmanSellerRelationDao;
 
@@ -47,17 +48,17 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public synchronized Message applyUpdate(SellerApplication sellerApply) {
-    String message= "";
-    //业务员
+    String message = "";
+    // 业务员
     EndUser salesMan = new EndUser();
     SellerApplication apply = this.find(sellerApply.getId());
-    //商家所属用户
+    // 商家所属用户
     EndUser endUser = apply.getEndUser();
-    
-    if (endUser!=null&&endUser.getSeller()!=null) {
+
+    if (endUser != null && endUser.getSeller() != null) {
       return Message.error("rebate.message.error");
     }
-    
+
     try {
       apply.setApplyStatus(sellerApply.getApplyStatus());
       apply.setNotes(sellerApply.getNotes());
@@ -78,6 +79,19 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
           }
         }
         seller.setEnvImages(sellerEnvImages);
+
+        List<SellerCommitmentImage> commintmentImages = apply.getCommitmentImages();
+        List<SellerCommitmentImage> sellerCommintmentImages =
+            new ArrayList<SellerCommitmentImage>();
+
+        if (commintmentImages != null && commintmentImages.size() > 0) {
+          for (SellerCommitmentImage image : commintmentImages) {
+            SellerCommitmentImage sellerCommintmentImage = image;
+            sellerCommintmentImages.add(sellerCommintmentImage);
+          }
+        }
+        seller.setCommitmentImages(sellerCommintmentImages);
+
         if (sellerCategory != null) {
           seller.setSellerCategory(sellerCategory);
         }
@@ -97,11 +111,12 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
         seller.setDescription(apply.getDescription());
         seller.setAccountStatus(AccountStatus.ACTIVED);
         sellerDao.persist(seller);
-        
+
         List<Filter> filters = new ArrayList<Filter>();
         filters.add(Filter.eq("sellerApplication", sellerApply.getId()));
-        List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationDao.findList(null, null, filters, null);
-        if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+        List<SalesmanSellerRelation> salesmanSellerRelations =
+            salesmanSellerRelationDao.findList(null, null, filters, null);
+        if (salesmanSellerRelations != null && salesmanSellerRelations.size() == 1) {
           SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
           salesmanSellerRelation.setSeller(seller);
           salesmanSellerRelation.setApplyStatus(true);
@@ -109,25 +124,27 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
           salesMan = salesmanSellerRelation.getEndUser();
         }
         message = SpringUtils.getMessage("rebate.sellerApplication.audit.passed", seller.getName());
-      }else{
+      } else {
         List<Filter> filters = new ArrayList<Filter>();
         filters.add(Filter.eq("sellerApplication", sellerApply.getId()));
-        List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationDao.findList(null, null, filters, null);
-        if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+        List<SalesmanSellerRelation> salesmanSellerRelations =
+            salesmanSellerRelationDao.findList(null, null, filters, null);
+        if (salesmanSellerRelations != null && salesmanSellerRelations.size() == 1) {
           SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
           salesMan = salesmanSellerRelation.getEndUser();
         }
-        message = SpringUtils.getMessage("rebate.sellerApplication.audit.failed", apply.getSellerName());
+        message =
+            SpringUtils.getMessage("rebate.sellerApplication.audit.failed", apply.getSellerName());
       }
-   
+
       this.update(apply);
-      //给业务员发消息
-      if(salesMan.getCellPhoneNum()!=null){
-        ToolsUtils.sendSmsMsg(salesMan.getCellPhoneNum(),message);
+      // 给业务员发消息
+      if (salesMan.getCellPhoneNum() != null) {
+        ToolsUtils.sendSmsMsg(salesMan.getCellPhoneNum(), message);
       }
-      //给商家发消息
-      if(apply.getContactCellPhone()!=null){
-        ToolsUtils.sendSmsMsg(apply.getContactCellPhone(),message);
+      // 给商家发消息
+      if (apply.getContactCellPhone() != null) {
+        ToolsUtils.sendSmsMsg(apply.getContactCellPhone(), message);
       }
       return Message.success("rebate.message.success");
     } catch (Exception e) {

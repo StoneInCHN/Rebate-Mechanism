@@ -26,6 +26,7 @@ import org.rebate.dao.UserRegReportDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
+import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
 import org.rebate.entity.SettingConfig;
 import org.rebate.entity.Sn.Type;
@@ -255,21 +256,21 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
   public Map<String, String> getAvlRule(EndUser endUser) {
     Map<String, String> map = new HashMap<String, String>();
-    map.put("agentRule", null);
-    map.put("incomeRule", null);
+    // map.put("agentRule", null);
+    // map.put("incomeRule", null);
     SettingConfig endUserRule =
         settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_ENDUSER);
     map.put("motivateRule", endUserRule != null ? endUserRule.getConfigValue() : null);
-    if (!CollectionUtils.isEmpty(endUser.getSellers())) {
-      SettingConfig sellerRule =
-          settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_SELLER);
-      map.put("incomeRule", sellerRule != null ? sellerRule.getConfigValue() : null);
-    }
-    if (endUser.getAgent() != null) {
-      SettingConfig agentRule =
-          settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_AGENT);
-      map.put("agentRule", agentRule != null ? agentRule.getConfigValue() : null);
-    }
+    // if (!CollectionUtils.isEmpty(endUser.getSellers())) {
+    // SettingConfig sellerRule =
+    // settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_SELLER);
+    // map.put("incomeRule", sellerRule != null ? sellerRule.getConfigValue() : null);
+    // }
+    // if (endUser.getAgent() != null) {
+    // SettingConfig agentRule =
+    // settingConfigDao.getConfigsByKey(SettingConfigKey.WITHDRAW_RULE_AGENT);
+    // map.put("agentRule", agentRule != null ? agentRule.getConfigValue() : null);
+    // }
     return map;
   }
 
@@ -303,6 +304,80 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     // map.put("incomeLeScore", incomeScore);
     map.put("motivateLeScore", motivateScore);
     return map;
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public EndUser userWithdraw(EndUser endUser, BigDecimal withdrawAmount, Long bankCardId,
+      String remark) {
+    BigDecimal agentAmount = endUser.getAgentLeScore();
+    BigDecimal salesmanAmount = endUser.getIncomeLeScore();
+    // BigDecimal userAmount = endUser.getMotivateLeScore();
+
+    LeScoreRecord leScoreRecord = new LeScoreRecord();
+    leScoreRecord.setRemark(remark);
+    leScoreRecord.setEndUser(endUser);
+    leScoreRecord.setLeScoreType(LeScoreType.WITHDRAW);
+    leScoreRecord.setWithdrawStatus(ApplyStatus.AUDIT_WAITING);
+    leScoreRecord.setAmount(withdrawAmount.negate());
+    // 乐分提现顺序：代理商提成>业务员推荐商家>会员分红或推荐好友
+    if (withdrawAmount.compareTo(agentAmount) > 0) {
+      BigDecimal remainAmount = withdrawAmount.subtract(agentAmount);
+      leScoreRecord.setAgentLeScore(agentAmount);
+      if (remainAmount.compareTo(salesmanAmount) > 0) {
+        leScoreRecord.setIncomeLeScore(salesmanAmount);
+        leScoreRecord.setMotivateLeScore(remainAmount.subtract(salesmanAmount));
+      } else {
+        leScoreRecord.setIncomeLeScore(remainAmount);
+      }
+    } else {
+      leScoreRecord.setAgentLeScore(withdrawAmount);
+    }
+
+    leScoreRecord.setWithDrawSn(snDao.generate(Type.WITHDRAW));
+    leScoreRecord.setWithDrawType(bankCardId);
+    leScoreRecord.setUserCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+    // leScoreRecordDao.persist(leScoreRecord);
+
+    endUser.getLeScoreRecords().add(leScoreRecord);
+    endUser.setAgentLeScore(endUser.getAgentLeScore().subtract(leScoreRecord.getAgentLeScore()));
+    if (leScoreRecord.getIncomeLeScore() != null) {
+      endUser.setIncomeLeScore(endUser.getIncomeLeScore()
+          .subtract(leScoreRecord.getIncomeLeScore()));
+    }
+    if (leScoreRecord.getMotivateLeScore() != null) {
+      endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(
+          leScoreRecord.getMotivateLeScore()));
+    }
+
+    endUser.setCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
+    endUserDao.merge(endUser);
+
+    // Seller seller = endUser.getSeller();
+    // List<Filter> filters = new ArrayList<Filter>();
+    // filters.add(Filter.eq("seller", seller));
+    // filters.add(Filter.eq("isClearing", false));
+    // List<Order> orders = orderDao.findList(null, null, filters, null);
+    //
+    // List<ClearingOrderRelation> clearingOrderRelations = new ArrayList<ClearingOrderRelation>();
+    // for (Order order : orders) {
+    // ClearingOrderRelation clearingOrderRelation = new ClearingOrderRelation();
+    // clearingOrderRelation.setClearingRecId(leScoreRecord.getId());
+    // clearingOrderRelation.setOrder(order);
+    // clearingOrderRelations.add(clearingOrderRelation);
+    // }
+    //
+    // if (!CollectionUtils.isEmpty(clearingOrderRelations)) {
+    // clearingOrderRelationDao.persist(clearingOrderRelations);
+    // }
+    // if (!CollectionUtils.isEmpty(endUser.getSellers())) {
+    // for (Seller seller : endUser.getSellers()) {
+    // seller.setUnClearingAmount(seller.getUnClearingAmount().subtract(map.get("incomeLeScore")));
+    // sellerDao.merge(seller);
+    // break;
+    // }
+    // }
+    return endUser;
   }
 
   @Override
@@ -383,6 +458,18 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     }
     endUsers.add(endUser);
     endUserDao.merge(endUsers);
+    return endUser;
+  }
+
+
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  public EndUser changeUserMobile(EndUser endUser) {
+    Seller seller = endUser.getSeller();
+    if (seller != null) {
+      seller.setContactCellPhone(endUser.getCellPhoneNum());
+      sellerDao.merge(seller);
+    }
+    endUserDao.merge(endUser);
     return endUser;
   }
 

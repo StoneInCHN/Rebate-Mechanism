@@ -78,14 +78,21 @@ public class SellerOrderCartController extends MobileBaseController {
     Long userId = request.getUserId();
     Long entityId = request.getEntityId();
     String token = request.getToken();
+    BigDecimal sellerDiscount = request.getSellerDiscount();
 
     if (entityId != null) {
       Seller seller = sellerService.find(request.getSellerId());
       BigDecimal tenBigDecimal = new BigDecimal(10);
       SellerOrderCart sellerOrderCart = new SellerOrderCart();
       sellerOrderCart.setAmount(request.getAmount());
-      sellerOrderCart.setRebateAmount(request.getAmount().multiply(
-          (tenBigDecimal.subtract(seller.getDiscount())).divide(new BigDecimal("10"))));
+      if (sellerDiscount != null) {
+        sellerOrderCart.setRebateAmount(request.getAmount().multiply(
+            (tenBigDecimal.subtract(sellerDiscount)).divide(new BigDecimal("10"))));
+      } else {
+        sellerOrderCart.setRebateAmount(request.getAmount().multiply(
+            (tenBigDecimal.subtract(seller.getDiscount())).divide(new BigDecimal("10"))));
+      }
+
       sellerOrderCart.setSeller(seller);
       sellerOrderCart.setEndUser(endUserService.find(entityId));
       sellerOrderCartService.save(sellerOrderCart);

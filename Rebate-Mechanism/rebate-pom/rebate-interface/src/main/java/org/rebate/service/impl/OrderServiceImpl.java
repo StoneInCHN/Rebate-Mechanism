@@ -104,7 +104,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Order create(Long userId, String payTypeId, String payType, BigDecimal amount,
       Long sellerId, String remark, Boolean isBeanPay, Boolean isSallerOrder,
-      BigDecimal deductAmount) {
+      BigDecimal deductAmount, BigDecimal sellerDiscount) {
 
     Order order = new Order();
     EndUser endUser = endUserDao.find(userId);
@@ -113,7 +113,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     order.setEndUser(endUser);
     order.setSeller(seller);
     order.setAmount(amount);
-    order.setSellerIncome(amount.multiply(seller.getDiscount().divide(new BigDecimal("10"))));
+    if (sellerDiscount != null) {
+      order.setSellerIncome(amount.multiply(sellerDiscount.divide(new BigDecimal("10"))));
+    } else {
+      order.setSellerIncome(amount.multiply(seller.getDiscount().divide(new BigDecimal("10"))));
+    }
     order.setPaymentType(payType);
     order.setPaymentTypeId(payTypeId);
     order.setRemark(remark);
@@ -137,38 +141,49 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       order.setIsSallerOrder(true);
     }
     // if (!isBeanPay) {
-    BigDecimal rebateUserScoreConfig =
-        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER)
-            .getConfigValue());
-    BigDecimal rebateSellerScoreConfig =
-        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
-            .getConfigValue());
+    Boolean flag = true;
+    if (BooleanUtils.isTrue(order.getIsBeanPay())) {
+      SettingConfig beanIncomeSwitchConfig =
+          settingConfigDao.getConfigsByKey(SettingConfigKey.BEAN_INCOME_SWITCH);
+      if ("0".equals(beanIncomeSwitchConfig.getConfigValue())) {
+        flag = false; // 乐豆支付不产生相关收益
+      }
+    }
+
     // BigDecimal rebateSellerOrderPercentageConfig =
     // new BigDecimal(systemConfigDao.getConfigByKey(
     // SystemConfigKey.REBATESCORE_SELLER_ORDER_PERCENTAGE).getConfigValue());
-    BigDecimal encourageAmountConfig =
-        new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
-            .getConfigValue());
 
-    BigDecimal encourageAmount =
-        (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
-            .setScale(4, BigDecimal.ROUND_HALF_UP);
-    order.setEncourageAmount(encourageAmount);
+    if (flag) {
+      BigDecimal rebateUserScoreConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_USER)
+              .getConfigValue());
+      BigDecimal rebateSellerScoreConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.REBATESCORE_SELLER)
+              .getConfigValue());
+      BigDecimal rebateUserScore =
+          amount.subtract(order.getSellerIncome()).multiply(rebateUserScoreConfig);
+      if (rebateUserScore.compareTo(order.getAmount()) > 0) {
+        rebateUserScore = order.getAmount();
+      }
 
-    BigDecimal rebateUserScore =
-        amount.subtract(order.getSellerIncome()).multiply(rebateUserScoreConfig);
-    if (rebateUserScore.compareTo(order.getAmount()) > 0) {
-      rebateUserScore = order.getAmount();
+      BigDecimal rebateSellerScore =
+          amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
+      // rebateSellerScore =
+      // rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
+
+      order.setUserScore(rebateUserScore);
+      order.setSellerScore(rebateSellerScore);
+      // }
+      BigDecimal encourageAmountConfig =
+          new BigDecimal(systemConfigDao.getConfigByKey(SystemConfigKey.ENCOURAGE_CONSUME)
+              .getConfigValue());
+
+      BigDecimal encourageAmount =
+          (order.getAmount().subtract(order.getSellerIncome())).multiply(encourageAmountConfig)
+              .setScale(4, BigDecimal.ROUND_HALF_UP);
+      order.setEncourageAmount(encourageAmount);
     }
-
-    BigDecimal rebateSellerScore =
-        amount.subtract(order.getSellerIncome()).multiply(rebateSellerScoreConfig);
-    // rebateSellerScore =
-    // rebateSellerScore.add(order.getAmount().multiply(rebateSellerOrderPercentageConfig));
-
-    order.setUserScore(rebateUserScore);
-    order.setSellerScore(rebateSellerScore);
-    // }
 
     orderDao.persist(order);
     return order;
@@ -180,7 +195,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   public Order create(Long userId, String payTypeId, String payType, BigDecimal amount,
       Long sellerId, String remark, Boolean isBeanPay, BigDecimal deductAmount) {
     return create(userId, payTypeId, payType, amount, sellerId, remark, isBeanPay, false,
-        deductAmount);
+        deductAmount, null);
   }
 
   /**
@@ -572,7 +587,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         // sellerRecommender.getLeBeanRecords().add(leBeanRecord);
         salesman.setCurLeScore(salesman.getCurLeScore().add(leScoreRecord.getAmount()));
         salesman.setTotalLeScore(salesman.getTotalLeScore().add(leScoreRecord.getAmount()));
-        salesman.setMotivateLeScore(salesman.getMotivateLeScore().add(leScoreRecord.getAmount()));
+        salesman.setIncomeLeScore(salesman.getIncomeLeScore().add(leScoreRecord.getAmount()));
         salesman.getLeScoreRecords().add(leScoreRecord);
         endUserDao.merge(salesman);
 
@@ -803,9 +818,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   }
 
   @Override
-  public Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId) {
+  public Order createSellerOrder(Long userId, BigDecimal amount, Long sellerId,
+      BigDecimal sellerDiscount) {
 
-    return create(userId, null, null, amount, sellerId, null, false, true, null);
+    return create(userId, null, null, amount, sellerId, null, false, true, null, sellerDiscount);
   }
 
   @Override
@@ -820,7 +836,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       order.setEndUser(sellerOrderCart.getEndUser());
       order.setSeller(seller);
       order.setAmount(amount);
-      order.setSellerIncome(amount.multiply(seller.getDiscount().divide(new BigDecimal("10"))));
+      order.setSellerIncome(amount.subtract(sellerOrderCart.getRebateAmount()));
+      // order.setSellerIncome(amount.multiply(seller.getDiscount().divide(new BigDecimal("10"))));
       order.setPaymentType(null);
       order.setStatus(OrderStatus.UNPAID);
       order.setSn(snDao.generate(Type.ORDER));

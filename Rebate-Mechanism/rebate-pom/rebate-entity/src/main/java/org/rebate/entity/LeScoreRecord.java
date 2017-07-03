@@ -75,12 +75,12 @@ public class LeScoreRecord extends BaseEntity {
   private ApplyStatus withdrawStatus;
 
   /**
-   * 提现的激励乐分(包括鼓励金乐分，推荐获得乐分)
+   * 提现的激励乐分(包括分红乐分，推荐获得乐分)
    */
   private BigDecimal motivateLeScore;
 
   /**
-   * 商家直接收益乐分
+   * 业务员收益乐分
    */
   private BigDecimal incomeLeScore;
 
@@ -102,7 +102,7 @@ public class LeScoreRecord extends BaseEntity {
    * 是否已提现
    */
   private Boolean isWithdraw;
-  
+
   /**
    * 提现手续费
    */
@@ -122,7 +122,7 @@ public class LeScoreRecord extends BaseEntity {
    * 提现流水号
    */
   private String withDrawSn;
-  
+
   /**
    * 交易批次号（批量代付号）
    */
@@ -131,7 +131,7 @@ public class LeScoreRecord extends BaseEntity {
    * 记录序号，例如：0001
    */
   private String sn;
-  
+
 
   @Column(length = 30)
   public String getWithDrawSn() {
@@ -286,36 +286,38 @@ public class LeScoreRecord extends BaseEntity {
   public void setIsWithdraw(Boolean isWithdraw) {
     this.isWithdraw = isWithdraw;
   }
+
   @Column(scale = 4, precision = 12)
   public BigDecimal getHandlingCharge() {
-	return handlingCharge;
+    return handlingCharge;
   }
-	
+
   public void setHandlingCharge(BigDecimal handlingCharge) {
-	this.handlingCharge = handlingCharge;
+    this.handlingCharge = handlingCharge;
   }
-	public String getReqSn() {
-		return reqSn;
-	}
-	
-	public void setReqSn(String reqSn) {
-		this.reqSn = reqSn;
-	}
 
-	public String getSn() {
-		return sn;
-	}
+  public String getReqSn() {
+    return reqSn;
+  }
 
-	public void setSn(String sn) {
-		this.sn = sn;
-	}
+  public void setReqSn(String reqSn) {
+    this.reqSn = reqSn;
+  }
 
-	public ClearingStatus getStatus() {
-		return status;
-	}
+  public String getSn() {
+    return sn;
+  }
 
-	public void setStatus(ClearingStatus status) {
-		this.status = status;
-	}
-	
+  public void setSn(String sn) {
+    this.sn = sn;
+  }
+
+  public ClearingStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(ClearingStatus status) {
+    this.status = status;
+  }
+
 }

@@ -22,6 +22,7 @@ import org.rebate.beans.Message;
 import org.rebate.beans.SMSVerificationCode;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
+import org.rebate.entity.Agent;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
@@ -731,6 +732,76 @@ public class EndUserController extends MobileBaseController {
     return response;
   }
 
+
+  /**
+   * 变更用户注册手机号
+   *
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/changeRegMobile", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse changeRegMobile(@RequestBody UserRequest req) {
+    BaseResponse response = new BaseResponse();
+    String smsCode = req.getSmsCode();
+    String cellPhoneNum = req.getCellPhoneNum();
+    Long userId = req.getUserId();
+
+    if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
+      return response;
+    }
+
+    EndUser user = endUserService.findByUserMobile(cellPhoneNum);
+    if (user != null) {// 变更后的手机号已经存在
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.mobile.used").getContent());
+      return response;
+    }
+
+    SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(cellPhoneNum);
+    if (smsVerficationCode == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.sms.invaliable").getContent());
+      return response;
+    } else {
+      String code = smsVerficationCode.getSmsCode();
+      String timeoutToken = smsVerficationCode.getTimeoutToken();
+      if (timeoutToken != null
+          && !TokenGenerator.smsCodeTokenTimeOut(timeoutToken, setting.getSmsCodeTimeOut())) {
+        if (!smsCode.equals(code)) {
+          response.setCode(CommonAttributes.FAIL_COMMON);
+          response.setDesc(Message.error("rebate.sms.token.error").getContent());
+          return response;
+        } else {
+          endUserService.deleteSmsCode(cellPhoneNum);
+        }
+      } else {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.sms.token.timeout").getContent());
+        return response;
+      }
+    }
+
+    EndUser endUser = endUserService.find(userId);
+    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+      LogUtil.debug(EndUserController.class, "change user mobile",
+          "change user mobile. UserId: %s, OldCellPhone: %s, NewCellPhone: %s", userId,
+          endUser.getCellPhoneNum(), cellPhoneNum);
+    }
+    endUser.setCellPhoneNum(cellPhoneNum);
+    endUserService.changeUserMobile(endUser);
+
+    String newtoken = TokenGenerator.generateToken(req.getToken());
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+
+  }
+
+
   /**
    * 修改密码（支付密码和登录密码）
    *
@@ -920,6 +991,12 @@ public class EndUserController extends MobileBaseController {
             "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
             "wechatNickName", "isSalesman", "isSalesmanApply"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
+    Agent agent = endUser.getAgent();
+    if (agent != null) {
+      Map<String, Object> agentMap = (Map<String, Object>) map.get("agent");
+      agentMap.put("areaId", agent.getArea().getId());
+      agentMap.put("areaName", agent.getArea().getName());
+    }
     map.put("isAuth", userAuthService.getUserAuth(userId, true) != null ? true : false);
     map.put("isOwnBankCard", bankCardService.userHasBankCard(userId));
     map.putAll(endUserService.isUserHasSeller(endUser));
@@ -1480,21 +1557,31 @@ public class EndUserController extends MobileBaseController {
     Long userId = request.getUserId();
     String token = request.getToken();
 
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
-
     EndUser endUser = endUserService.find(userId);
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put("wxNickName", endUser.getWechatNickName());
-    map.put("userPhoto", endUser.getUserPhoto());
-    map.put("curLeScore", endUser.getCurLeScore());
-    map.putAll(endUserService.getAvlLeScore(endUser));
+    // map.put("wxNickName", endUser.getWechatNickName());
+    // map.put("userPhoto", endUser.getUserPhoto());
+    // map.put("curLeScore", endUser.getCurLeScore());
+    map.put("agentLeScore", endUser.getAgentLeScore());// 代理商乐分
+    map.put("incomeLeScore", endUser.getIncomeLeScore());// 业务员乐分
+    map.put("motivateLeScore", endUser.getMotivateLeScore());// 会员乐分
+    // map.putAll(endUserService.getAvlLeScore(endUser));
     map.putAll(endUserService.getAvlRule(endUser));
+
+    // 满配置金额才可提现
+    SystemConfig minlimitConfig =
+        systemConfigService.getConfigByKey(SystemConfigKey.WITHDRAW_MINIMUM_LIMIT);
+    if (minlimitConfig != null && minlimitConfig.getConfigValue() != null) {
+      map.put("minLimitAmount", minlimitConfig.getConfigValue());
+    } else {
+      map.put("minLimitAmount", "0");
+    }
+
+    SystemConfig handChargeConfig =
+        systemConfigService.getConfigByKey(SystemConfigKey.TRANSACTION_FEE_PERTIME);
+    if (handChargeConfig != null && handChargeConfig.getConfigValue() != null) {
+      map.put("transactionFee", handChargeConfig.getConfigValue());
+    }
     response.setMsg(map);
 
     String newtoken = TokenGenerator.generateToken(token);
@@ -1512,21 +1599,14 @@ public class EndUserController extends MobileBaseController {
   @RequestMapping(value = "/withdrawConfirm", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
   public @ResponseBody BaseResponse withdrawConfirm(@RequestBody UserRequest request) {
-    String serverPrivateKey = setting.getServerPrivateKey();
+    // String serverPrivateKey = setting.getServerPrivateKey();
     BaseResponse response = new BaseResponse();
     Long userId = request.getUserId();
     String token = request.getToken();
-    String password = request.getPassword();
+    // String password = request.getPassword();
     String remark = request.getRemark();
     Long entityId = request.getEntityId();
-
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
+    BigDecimal withdrawAmount = request.getWithdrawAmount();// 提现金额
 
     // 银行卡非空验证
     if (entityId == null) {
@@ -1534,44 +1614,83 @@ public class EndUserController extends MobileBaseController {
       response.setDesc(Message.error("rebate.request.param.missing").getContent());
       return response;
     }
-    EndUser endUser = endUserService.find(userId);
-    // 密码非空验证
-    if (StringUtils.isEmpty(password)) {
-      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
-      response.setDesc(Message.error("rebate.pwd.null.error").getContent());
-      return response;
-    }
-    // 支付密码未设置
-    if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
-      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
-      response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
-      return response;
-    }
-    try {
-      password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
-    } catch (Exception e) {
-      e.printStackTrace();
+
+    EndUser endUser = null;
+    if (withdrawAmount != null) {
+      if (withdrawAmount.compareTo(new BigDecimal(0)) <= 0) {
+        response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+        response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
+        return response;
+      }
+
+      endUser = endUserService.find(userId);
+      if (endUser.getCurLeScore().compareTo(withdrawAmount) < 0) {
+        response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+        response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
+        return response;
+      }
+
+      SystemConfig handChargeConfig =
+          systemConfigService.getConfigByKey(SystemConfigKey.TRANSACTION_FEE_PERTIME);
+      if (handChargeConfig != null && handChargeConfig.getConfigValue() != null) {
+        BigDecimal handCharge = new BigDecimal(handChargeConfig.getConfigValue());
+        if (withdrawAmount.compareTo(handCharge) <= 0) {
+          response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+          response.setDesc(Message.error("rebate.withdraw.amount.handcharge", handCharge)
+              .getContent());
+          return response;
+        }
+      }
     }
 
-    // 密码长度验证
-    if (password.length() < setting.getPasswordMinlength()) {
-      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
-      response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
-          .getContent());
-      return response;
-    }
 
-    if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
-      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
-      response.setDesc(Message.error("rebate.payPwd.error").getContent());
-      return response;
-    }
-
-    EndUser user = endUserService.userWithdraw(userId, entityId, remark);
-    if (user == null) {
-      response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
-      response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
-      return response;
+    // // 密码非空验证
+    // if (StringUtils.isEmpty(password)) {
+    // response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+    // response.setDesc(Message.error("rebate.pwd.null.error").getContent());
+    // return response;
+    // }
+    // // 支付密码未设置
+    // if (StringUtils.isEmpty(endUser.getPaymentPwd())) {
+    // response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+    // response.setDesc(Message.error("rebate.payPwd.not.set").getContent());
+    // return response;
+    // }
+    // try {
+    // password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    //
+    // // 密码rsa解密后非空验证
+    // if (password == null) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
+    // return response;
+    // }
+    //
+    // // 密码长度验证
+    // if (password.length() < setting.getPasswordMinlength()) {
+    // response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+    // response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
+    // .getContent());
+    // return response;
+    // }
+    //
+    // if (!DigestUtils.md5Hex(password).equals(endUser.getPaymentPwd())) {
+    // response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+    // response.setDesc(Message.error("rebate.payPwd.error").getContent());
+    // return response;
+    // }
+    if (withdrawAmount != null) {
+      endUserService.userWithdraw(endUser, withdrawAmount, entityId, remark);
+    } else {// 兼容旧版本app
+      EndUser user = endUserService.userWithdraw(userId, entityId, remark);
+      if (user == null) {
+        response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+        response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
+        return response;
+      }
     }
 
     String newtoken = TokenGenerator.generateToken(token);
@@ -1580,7 +1699,6 @@ public class EndUserController extends MobileBaseController {
     response.setToken(newtoken);
     return response;
   }
-
 
 
   /**

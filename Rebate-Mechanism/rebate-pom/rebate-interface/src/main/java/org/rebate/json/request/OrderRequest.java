@@ -73,6 +73,20 @@ public class OrderRequest extends BaseRequest {
    */
   private Boolean isClearing;
 
+  /**
+   * 录单时商家折扣
+   */
+  private BigDecimal sellerDiscount;
+
+
+
+  public BigDecimal getSellerDiscount() {
+    return sellerDiscount;
+  }
+
+  public void setSellerDiscount(BigDecimal sellerDiscount) {
+    this.sellerDiscount = sellerDiscount;
+  }
 
   public Boolean getIsClearing() {
     return isClearing;

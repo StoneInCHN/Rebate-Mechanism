@@ -1,5 +1,6 @@
 package org.rebate.json.request;
 
+import java.util.Date;
 import java.util.List;
 
 import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
@@ -68,6 +69,11 @@ public class SellerRequest extends BaseRequest {
    * 环境图片
    */
   private List<MultipartFile> envImgs;
+
+  /**
+   * 承诺书图片
+   */
+  private List<MultipartFile> commitmentImgs;
   /**
    * 店铺简介
    */
@@ -128,6 +134,40 @@ public class SellerRequest extends BaseRequest {
    */
   private Boolean isConfirmOpr;
 
+  /**
+   * 开始时间
+   */
+  private Date startTime;
+
+  /**
+   * 结束时间
+   */
+  private Date endTime;
+
+
+  public Date getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
+
+  public Date getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(Date endTime) {
+    this.endTime = endTime;
+  }
+
+  public List<MultipartFile> getCommitmentImgs() {
+    return commitmentImgs;
+  }
+
+  public void setCommitmentImgs(List<MultipartFile> commitmentImgs) {
+    this.commitmentImgs = commitmentImgs;
+  }
 
   public Boolean getIsConfirmOpr() {
     return isConfirmOpr;

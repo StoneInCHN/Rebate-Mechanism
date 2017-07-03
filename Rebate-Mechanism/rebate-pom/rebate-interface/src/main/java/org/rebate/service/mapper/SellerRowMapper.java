@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;
 
@@ -17,10 +18,13 @@ public class SellerRowMapper implements RowMapper<Map<String, Object>> {
 
   private String rebateScoreUser;
 
-  public SellerRowMapper(String rebateScore, String unitConsume) {
+  private Boolean isBeanPay;
+
+  public SellerRowMapper(String rebateScore, String unitConsume, Boolean isBeanPay) {
     super();
     this.unitConsume = unitConsume;
     this.rebateScoreUser = rebateScore;
+    this.isBeanPay = isBeanPay;
   }
 
   public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -49,6 +53,9 @@ public class SellerRowMapper implements RowMapper<Map<String, Object>> {
     sellerInfo.put("favorite_num", rs.getInt("favorite_num"));
     sellerInfo.put("featured_service", rs.getString("featured_service"));
     sellerInfo.put("isBeanPay", rs.getBoolean("is_bean_pay"));
+    if (BooleanUtils.isFalse(isBeanPay)) {
+      sellerInfo.put("isBeanPay", false);
+    }
     if (!StringUtils.isEmpty(unitConsume) && !StringUtils.isEmpty(rebateScoreUser)) {
       BigDecimal unit = new BigDecimal(unitConsume);
       sellerInfo.put("unitConsume", unit);

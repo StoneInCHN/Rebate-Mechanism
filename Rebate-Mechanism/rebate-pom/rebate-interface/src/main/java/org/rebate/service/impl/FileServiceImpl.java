@@ -135,6 +135,9 @@ public class FileServiceImpl extends BaseServiceImpl<EndUser, Long> implements F
       } else if (imageType == ImageType.STORE_SIGN) {
         imgUploadPath = uploadPath + File.separator + "store" + File.separator + "sign";
         projectPath = projectUploadPath + File.separator + "store" + File.separator + "sign";
+      } else if (imageType == ImageType.STORE_COMMITMENT) {
+        imgUploadPath = uploadPath + File.separator + "store" + File.separator + "commitment";
+        projectPath = projectUploadPath + File.separator + "store" + File.separator + "commitment";
       } else if (imageType == ImageType.PHOTO) {
         imgUploadPath = uploadPath + File.separator + "profile";
         projectPath = projectUploadPath + File.separator + "profile";
