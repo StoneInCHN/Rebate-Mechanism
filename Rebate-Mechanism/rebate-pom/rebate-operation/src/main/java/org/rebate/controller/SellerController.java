@@ -297,15 +297,15 @@ public class SellerController extends BaseController {
 	  String logoImageURL = null;
 	  String content = null;
 	  if (qrCodeType == QrCodeType.SHARE) {
-		  logoImageURL = session.getServletContext().getRealPath("/") + 
-		  			"resources" + File.separator + "images" + File.separator + "system_logo.png"; 
+		  if (seller.getStorePictureUrl() != null) {
+			  logoImageURL = sellerService.getDiskPath(seller.getStorePictureUrl());
+		  }
 		  if (setting.getRecommendUrl() != null && seller.getEndUser() != null) {
 			  content = setting.getRecommendUrl() + "?cellPhoneNum=" + seller.getEndUser().getCellPhoneNum();
 		  }
 	  }else if (qrCodeType == QrCodeType.PAID) {
-		  if (seller.getStorePictureUrl() != null) {
-			  logoImageURL = sellerService.getDiskPath(seller.getStorePictureUrl());
-		  }
+		  logoImageURL = session.getServletContext().getRealPath("/") + 
+		  			"resources" + File.separator + "images" + File.separator + "system_logo.png"; 
 		  content = "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"sellerId\":\"" 
 				  + seller.getId() + "\"}";
 	  }
