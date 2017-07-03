@@ -59,6 +59,7 @@
 										<option [#if leScoreType == "RECOMMEND_SELLER"] selected="selected" [/#if] value="RECOMMEND_SELLER">${message("rebate.endUser.leScore.type.RECOMMEND_SELLER")}</option>
 										<option [#if leScoreType == "AGENT"] selected="selected" [/#if] value="AGENT">${message("rebate.endUser.leScore.type.AGENT")}</option>
 										<option [#if leScoreType == "WITHDRAW"] selected="selected" [/#if] value="WITHDRAW">${message("rebate.endUser.leScore.type.WITHDRAW")}</option>
+										<option [#if leScoreType == "REFUND"] selected="selected" [/#if] value="REFUND">${message("rebate.endUser.leScore.type.REFUND")}</option>
 									</select>
 								</td>
 								<th>

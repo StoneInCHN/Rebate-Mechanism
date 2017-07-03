@@ -1,18 +1,26 @@
 package org.rebate.controller;
 
+import java.io.File;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Area;
 import org.rebate.entity.Seller;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
+import org.rebate.entity.commonenum.CommonEnum.ImageSize;
+import org.rebate.entity.commonenum.CommonEnum.QrCodeType;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
@@ -20,7 +28,10 @@ import org.rebate.request.SellerRequest;
 import org.rebate.service.AreaService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerService;
+import org.rebate.utils.DateUtils;
 import org.rebate.utils.ExportUtils;
+import org.rebate.utils.LogUtil;
+import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,7 +51,11 @@ public class SellerController extends BaseController {
 
   @Resource(name = "areaServiceImpl")
   private AreaService areaService;
-
+  
+  @Resource(name = "taskExecutor")
+  private Executor threadPoolExecutor;
+  
+  
   /**
    * 列表
    */
@@ -264,5 +279,74 @@ public class SellerController extends BaseController {
         exportListToExcel(response, mapList, title, headers, headersName);
       }
     }
+  }
+  /**
+   * 下载商家二维码图片
+   * 
+   */
+  @RequestMapping(value = "/downloadQRCoder", method = {RequestMethod.GET, RequestMethod.POST})
+  protected void downloadQRCoder(Long sellerID, ImageSize imageSize, QrCodeType qrCodeType, 
+		  HttpServletResponse response, HttpSession session) {
+	  
+	  Seller seller = sellerService.find(sellerID);
+	  if (seller == null){
+		  LogUtil.debug(this.getClass(), "downloadQRCoder", "seller is null");
+		  return;
+	  }
+	  
+	  String logoImageURL = null;
+	  String content = null;
+	  if (qrCodeType == QrCodeType.SHARE) {
+		  logoImageURL = session.getServletContext().getRealPath("/") + 
+		  			"resources" + File.separator + "images" + File.separator + "system_logo.png"; 
+		  if (setting.getRecommendUrl() != null && seller.getEndUser() != null) {
+			  content = setting.getRecommendUrl() + "?cellPhoneNum=" + seller.getEndUser().getCellPhoneNum();
+		  }
+	  }else if (qrCodeType == QrCodeType.PAID) {
+		  if (seller.getStorePictureUrl() != null) {
+			  logoImageURL = sellerService.getDiskPath(seller.getStorePictureUrl());
+		  }
+		  content = "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"sellerId\":\"" 
+				  + seller.getId() + "\"}";
+	  }
+	  if (logoImageURL == null || content == null){
+		  LogUtil.debug(this.getClass(), "downloadQRCoder", "logoImageURL or content is null");
+		  return;
+	  }
+	  
+	  Integer size = 1;
+	  if (imageSize == ImageSize.MIDDLE)  size = 2;
+	  if (imageSize == ImageSize.BIG) size = 4;
+	  
+      try {
+        response.setContentType("octets/stream");
+        String filename = seller.getContactCellPhone() 
+        		+ "_" + qrCodeType.toString() + "_" + imageSize.toString() + "_" 
+        		+ DateUtils.getDateFormatString(DateUtils.filePostfixFormat, new Date());
+        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ".jpg");
+        
+        OutputStream out = response.getOutputStream();// 获得输出流
+        QRCodeGenerator generator = new QRCodeGenerator(content, logoImageURL, size, out);
+        Object locker = new Object();//当前主线程的一把锁
+        synchronized (locker) {
+          threadPoolExecutor.execute(//加入到线程池中执行
+        	new Runnable() {
+              public void run() {
+            	  generator.generateQrImage();
+            	  synchronized (locker) {
+            	      locker.notify();
+            	  }
+              }
+            });
+          locker.wait();//主线程等待
+        }
+
+        out.flush();
+        out.close();
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
   }
 }

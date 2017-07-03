@@ -103,10 +103,10 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
    //     BigDecimal incomeLeScore = temp.getIncomeLeScore();
         // 代理商提成乐分
         BigDecimal agentLeScore = temp.getAgentLeScore();
-        endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore));
-        endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore));
+        endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
+        endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
     //    endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
-        endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore));
+        endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
         endUserService.update(endUser);
       }
       temp.setWithdrawStatus(leScoreRecord.getWithdrawStatus());
