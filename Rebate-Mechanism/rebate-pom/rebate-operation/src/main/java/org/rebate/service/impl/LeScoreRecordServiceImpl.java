@@ -95,18 +95,26 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 //        }
       } else if (ApplyStatus.AUDIT_FAILED.equals(leScoreRecord.getWithdrawStatus())) {
         // 审核失败 把 乐分还回到用户手中
-        // 当前乐分
-        BigDecimal curLeScore = temp.getAmount();
-        // 激励乐分(包括乐心分红乐分，推荐获得乐分)
-        BigDecimal motivateLeScore = temp.getMotivateLeScore();
-        // 商家直接收益乐分
-   //     BigDecimal incomeLeScore = temp.getIncomeLeScore();
-        // 代理商提成乐分
-        BigDecimal agentLeScore = temp.getAgentLeScore();
-        endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
-        endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
-    //    endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
-        endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
+  		// 当前乐分
+  		BigDecimal curLeScore = temp.getAmount();
+  		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
+  		BigDecimal motivateLeScore = temp.getMotivateLeScore();
+  		// 业务员收益乐分
+  		BigDecimal incomeLeScore = temp.getIncomeLeScore();
+  		// 代理商提成乐分
+  		BigDecimal agentLeScore = temp.getAgentLeScore();
+  		if (endUser.getCurLeScore() != null && curLeScore != null) {
+  			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
+			}
+  		if (endUser.getMotivateLeScore() != null && motivateLeScore != null) {
+  			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
+			}
+  		if (endUser.getAgentLeScore() != null && agentLeScore != null) {
+  			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
+			}
+  		if (endUser.getIncomeLeScore() != null && incomeLeScore != null) {
+  			endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore.abs()));
+		}
         endUserService.update(endUser);
       }
       temp.setWithdrawStatus(leScoreRecord.getWithdrawStatus());

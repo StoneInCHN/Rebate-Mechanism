@@ -185,20 +185,22 @@ public class LeScoreRecordJob {
   		BigDecimal curLeScore = record.getAmount();
   		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
   		BigDecimal motivateLeScore = record.getMotivateLeScore();
-  		// 商家直接收益乐分
-  		// BigDecimal incomeLeScore = record.getIncomeLeScore();
+  		// 业务员收益乐分
+  		BigDecimal incomeLeScore = record.getIncomeLeScore();
   		// 代理商提成乐分
   		BigDecimal agentLeScore = record.getAgentLeScore();
-  		if (endUser.getCurLeScore() != null) {
+  		if (endUser.getCurLeScore() != null && curLeScore != null) {
   			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
 			}
-  		if (endUser.getMotivateLeScore() != null) {
+  		if (endUser.getMotivateLeScore() != null && motivateLeScore != null) {
   			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
 			}
-  		if (endUser.getAgentLeScore() != null) {
+  		if (endUser.getAgentLeScore() != null && agentLeScore != null) {
   			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
 			}
-  		// endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore));
+  		if (endUser.getIncomeLeScore() != null && incomeLeScore != null) {
+  			endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore.abs()));
+		}
   		endUserService.update(endUser);
     	LeScoreRecord refundRecord = new LeScoreRecord();//乐分退回记录
     	refundRecord.setLeScoreType(LeScoreType.REFUND);
