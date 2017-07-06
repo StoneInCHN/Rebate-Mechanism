@@ -38,7 +38,9 @@ import org.rebate.entity.commonenum.CommonEnum.FeaturedService;
     @Index(name = "contactPersonIndex", columnList = "contactPerson"),
     @Index(name = "contactCellPhoneIndex", columnList = "contactCellPhone"),
     @Index(name = "isBeanPayIndex", columnList = "isBeanPay"),
-    @Index(name = "accountStatusIndex", columnList = "accountStatus")})
+    @Index(name = "accountStatusIndex", columnList = "accountStatus"),
+    @Index(name = "cityIndex", columnList = "city"),
+    @Index(name = "provinceIndex", columnList = "province")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_seller_sequence")
 public class Seller extends BaseEntity {
 
@@ -96,6 +98,16 @@ public class Seller extends BaseEntity {
 
   /** 地区 */
   private Area area;
+  
+  /**
+   * 市级代理 地区ID
+   */
+  private Long city;
+  
+  /**
+   * 省级代理 地区ID
+   */
+  private Long province;
 
   /**
    * 评分
@@ -561,6 +573,22 @@ public class Seller extends BaseEntity {
 
   public void setSellerCategory(SellerCategory sellerCategory) {
     this.sellerCategory = sellerCategory;
+  }
+
+  public Long getCity() {
+	return city;
+  }
+
+  public void setCity(Long city) {
+	this.city = city;
+  }
+
+  public Long getProvince() {
+	return province;
+  }
+
+  public void setProvince(Long province) {
+	this.province = province;
   }
 
 

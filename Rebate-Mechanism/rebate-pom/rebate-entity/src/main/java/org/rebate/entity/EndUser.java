@@ -38,7 +38,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     @Index(name = "cellPhoneNumIndex", columnList = "cellPhoneNum"),
     @Index(name = "accountStatusIndex", columnList = "accountStatus"),
     @Index(name = "recommenderIdIndex", columnList = "recommenderId"),
-    @Index(name = "nickNameIndex", columnList = "nickName")})
+    @Index(name = "nickNameIndex", columnList = "nickName"),
+    @Index(name = "cityIndex", columnList = "city"),
+    @Index(name = "provinceIndex", columnList = "province")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_end_user_sequence")
 public class EndUser extends BaseEntity {
 
@@ -105,6 +107,16 @@ public class EndUser extends BaseEntity {
    * 用户所在地区
    */
   private Area area;
+  
+  /**
+   * 市级代理 地区ID
+   */
+  private Long city;
+  
+  /**
+   * 省级代理 地区ID
+   */
+  private Long province;
 
   /**
    * 极光push注册ID
@@ -718,5 +730,21 @@ public class EndUser extends BaseEntity {
 
   public void setMsgEndUsers(Set<MsgEndUser> msgEndUsers) {
     this.msgEndUsers = msgEndUsers;
+  }
+  
+  public Long getCity() {
+	return city;
+  }
+
+  public void setCity(Long city) {
+	this.city = city;
+  }
+
+  public Long getProvince() {
+	return province;
+  }
+
+  public void setProvince(Long province) {
+	this.province = province;
   }
 }
