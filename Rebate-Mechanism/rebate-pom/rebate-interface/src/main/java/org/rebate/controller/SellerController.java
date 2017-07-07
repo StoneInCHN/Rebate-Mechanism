@@ -491,7 +491,12 @@ public class SellerController extends MobileBaseController {
     // return response;
     // }
 
-    sellerService.editInfo(req);
+    Seller seller = sellerService.editInfo(req);
+    if (seller == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.userEdit.areaCounty").getContent());
+      return response;
+    }
     if (LogUtil.isDebugEnabled(SellerController.class)) {
       LogUtil
           .debug(

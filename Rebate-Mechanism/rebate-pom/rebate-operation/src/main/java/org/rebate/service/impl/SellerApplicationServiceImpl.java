@@ -9,6 +9,7 @@ import org.rebate.beans.Message;
 import org.rebate.dao.SalesmanSellerRelationDao;
 import org.rebate.dao.SellerApplicationDao;
 import org.rebate.dao.SellerDao;
+import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.SalesmanSellerRelation;
 import org.rebate.entity.Seller;
@@ -96,7 +97,26 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
           seller.setSellerCategory(sellerCategory);
         }
         seller.setAddress(apply.getAddress());
-        seller.setArea(apply.getArea());
+
+        if (apply.getArea() != null) {
+          Area area = apply.getArea();
+          // if (!CollectionUtils.isEmpty(area.getChildren())) {
+          // return null;
+          // }
+          seller.setArea(area);
+          Area cityArea = area.getParent();
+          if (cityArea != null) {
+            Area provinceArea = cityArea.getParent();
+            if (provinceArea != null) {// 三级行政单位 省市区
+              seller.setCity(cityArea.getId());
+              seller.setProvince(provinceArea.getId());
+            } else {// 二级行政单位 省市
+              seller.setCity(area.getId());
+              seller.setProvince(cityArea.getId());
+            }
+          }
+        }
+
         seller.setContactCellPhone(apply.getContactCellPhone());
         seller.setContactPerson(apply.getContactPerson());
         seller.setLatitude(apply.getLatitude());

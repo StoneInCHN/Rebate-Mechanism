@@ -711,6 +711,12 @@ public class EndUserController extends MobileBaseController {
     // }
 
     EndUser endUser = endUserService.editInfo(userId, areaId, nickName);
+    if (endUser == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.userEdit.areaCounty").getContent());
+      return response;
+    }
+
     if (LogUtil.isDebugEnabled(EndUserController.class)) {
       LogUtil.debug(EndUserController.class, "edit user info",
           "Edit EndUser Info. NickName: %s, area: %s", endUser.getNickName(),
@@ -1310,8 +1316,17 @@ public class EndUserController extends MobileBaseController {
     List<Filter> filters = new ArrayList<Filter>();
     Filter userFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(userFilter);
-    Filter typeFilter = new Filter("leScoreType", Operator.eq, leScoreType);
-    filters.add(typeFilter);
+    if (leScoreType != null && LeScoreType.WITHDRAW.equals(leScoreType)) {
+      List<LeScoreType> types = new ArrayList<LeScoreType>();
+      types.add(LeScoreType.WITHDRAW);
+      types.add(LeScoreType.REFUND);
+      Filter typeFilter = new Filter("leScoreType", Operator.in, types);
+      filters.add(typeFilter);
+    } else {
+      Filter typeFilter = new Filter("leScoreType", Operator.eq, leScoreType);
+      filters.add(typeFilter);
+    }
+
 
     Pageable pageable = new Pageable();
     pageable.setPageNumber(pageNumber);

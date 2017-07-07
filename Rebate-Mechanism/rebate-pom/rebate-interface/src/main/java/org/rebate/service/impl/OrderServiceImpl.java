@@ -362,9 +362,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       if (endUser.getMotivateLeScore().compareTo(payAmount) >= 0) {// 乐分支付优先消耗激励乐分
         endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(payAmount));
       } else {
-        BigDecimal diff = endUser.getMotivateLeScore().subtract(payAmount);
+        BigDecimal diff = payAmount.subtract(endUser.getMotivateLeScore());
         endUser.setMotivateLeScore(new BigDecimal(0));
-        endUser.setAgentLeScore(endUser.getAgentLeScore().add(diff));
+        if (endUser.getIncomeLeScore().compareTo(diff) >= 0) {// 然后消耗业务员乐分
+          endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(diff));
+        } else {// 最后消耗代理商乐分
+          BigDecimal remain = diff.subtract(endUser.getIncomeLeScore());
+          endUser.setIncomeLeScore(new BigDecimal(0));
+          endUser.setAgentLeScore(endUser.getAgentLeScore().subtract(remain));
+        }
       }
       endUser.setCurLeScore(endUser.getCurLeScore().add(leScoreRecord.getAmount()));
       endUser.getLeScoreRecords().add(leScoreRecord);
@@ -810,8 +816,49 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
               OrderServiceImpl.class,
               "isOverSellerLimitAmount",
               "check seller total order amount over limit amount by day. sellerId: %s,sellerName: %s,curTotalOrderAmount: %s,curOrderAmount: %s,limitAmount: %s,period:%s",
-              seller.getId(), seller.getName(), curTotalOrderAmount.toString(), amount,
-              limitAmount.toString(), startTime + "-" + endTime);
+              seller.getId(), seller.getName(), curTotalOrderAmount, amount, limitAmount, startTime
+                  + "-" + endTime);
+    }
+    return null;
+
+  }
+
+  @Override
+  public Boolean isOverSellerLimitBeanDeduct(Long sellerId, BigDecimal deductAmount) {
+    Seller seller = sellerDao.find(sellerId);
+    BigDecimal limitAmount = seller.getLimitBeanByDay();
+    if (limitAmount == null) {
+      return false;
+    }
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
+    BigDecimal curBeanDeductAmount = new BigDecimal(0);
+    try {
+      if (CollectionUtils.isEmpty(orders)) {
+        return false;
+      }
+      for (Order order : orders) {
+        if (BooleanUtils.isTrue(order.getIsBeanPay()) && order.getDeductAmount() != null) {
+          curBeanDeductAmount = curBeanDeductAmount.add(order.getDeductAmount());
+        }
+      }
+      BigDecimal totalBeanDeductAmount = curBeanDeductAmount.add(deductAmount);
+      if (totalBeanDeductAmount.compareTo(limitAmount) > 0) {
+        return true;
+      }
+      return false;
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      LogUtil
+          .debug(
+              OrderServiceImpl.class,
+              "isOverSellerLimitBeanDeduct",
+              "check seller total leBean deduct amount over limit deduct amount by day. sellerId: %s,sellerName: %s,curBeanDeductAmount: %s,curDeductAmount: %s,limitBeanDeduct: %s,period:%s",
+              seller.getId(), seller.getName(), curBeanDeductAmount, deductAmount, limitAmount,
+              startTime + "-" + endTime);
     }
     return null;
 
@@ -889,6 +936,25 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Override
   public List<Order> getOrderByBatchSn(String batchSn) {
     return orderDao.getOrderByBatchSn(batchSn);
+  }
+
+  @Override
+  public BigDecimal getPayOrderBeanDeductForSeller(Long sellerId) {
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
+    BigDecimal beanDeductAmount = new BigDecimal(0);
+    if (CollectionUtils.isEmpty(orders)) {
+      return beanDeductAmount;
+    }
+    for (Order order : orders) {
+      if (BooleanUtils.isTrue(order.getIsBeanPay()) && order.getDeductAmount() != null) {
+        beanDeductAmount = beanDeductAmount.add(order.getDeductAmount());
+      }
+
+    }
+    return beanDeductAmount;
   }
 
 

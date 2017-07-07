@@ -205,6 +205,14 @@ public class OrderController extends MobileBaseController {
         response.setDesc(Message.error("rebate.payOrder.curLeBean.insufficient").getContent());
         return response;
       }
+
+      // 商家乐豆抵扣支付已达每日上限
+      if (orderService.isOverSellerLimitBeanDeduct(sellerId, deductLeBean)) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.payOrder.seller.limitBeanDeduct").getContent());
+        return response;
+      }
+
       if (payAmount.compareTo(new BigDecimal(0)) <= 0) {
         payTypeId = "4"; // 乐豆完全抵扣
       }
@@ -219,6 +227,7 @@ public class OrderController extends MobileBaseController {
       }
     }
 
+    // 商家营业额已达每日上限
     if (orderService.isOverSellerLimitAmount(sellerId, amount)) {
       response.setCode(CommonAttributes.FAIL_COMMON);
       response.setDesc(Message.error("rebate.payOrder.seller.limitAmount").getContent());
@@ -632,9 +641,9 @@ public class OrderController extends MobileBaseController {
 
     Page<Order> page = orderService.findPage(pageable);
     String[] propertys =
-        {"id", "seller.name", "createDate", "endUser.nickName", "sellerScore", "amount",
-            "endUser.cellPhoneNum", "endUser.userPhoto", "sn", "rebateAmount", "isSallerOrder",
-            "remark", "userScore", "status", "isClearing", "evaluate.sellerReply"};
+        {"id", "seller.name", "seller.id", "createDate", "endUser.nickName", "sellerScore",
+            "amount", "endUser.cellPhoneNum", "endUser.userPhoto", "sn", "rebateAmount",
+            "isSallerOrder", "remark", "userScore", "status", "isClearing", "evaluate.sellerReply"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -728,13 +737,15 @@ public class OrderController extends MobileBaseController {
     Filter endUserFilter = new Filter("endUser", Operator.eq, userId);
     filters.add(endUserFilter);
 
-    if (request.getOrderStatus() != null) {
-      Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
-      filters.add(statusFilter);
-    } else {
-      Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
-      filters.add(statusFilter);
-    }
+    Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
+    filters.add(statusFilter);
+    // if (request.getOrderStatus() != null) {
+    // Filter statusFilter = new Filter("status", Operator.eq, request.getOrderStatus());
+    // filters.add(statusFilter);
+    // } else {
+    // Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    // filters.add(statusFilter);
+    // }
 
     Filter sellerOrderFilter = new Filter("isSallerOrder", Operator.eq, isSallerOrder);
     filters.add(sellerOrderFilter);

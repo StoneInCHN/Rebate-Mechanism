@@ -31,6 +31,7 @@ import org.rebate.json.beans.VerifyBankcardResult;
 import org.rebate.json.request.BankCardRequest;
 import org.rebate.service.BankCardService;
 import org.rebate.service.EndUserService;
+import org.rebate.service.ThirdApiReportService;
 import org.rebate.service.UserAuthService;
 import org.rebate.utils.ApiUtils;
 import org.rebate.utils.FieldFilterUtils;
@@ -61,6 +62,9 @@ public class BankCardController extends MobileBaseController {
 
   @Resource(name = "endUserServiceImpl")
   private EndUserService endUserService;
+
+  @Resource(name = "thirdApiReportServiceImpl")
+  private ThirdApiReportService thirdApiReportService;
 
 
 
@@ -234,6 +238,8 @@ public class BankCardController extends MobileBaseController {
 
       LogUtil.debug(this.getClass(), "verifyCard", "request params: %s, result: %s",
           params.toString(), result);
+
+      thirdApiReportService.verifyBankCardReport();
 
       ObjectMapper objectMapper = new ObjectMapper();
       VerifyBankcardBean verifyBankcardBean =

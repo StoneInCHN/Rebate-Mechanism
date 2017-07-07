@@ -454,7 +454,21 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     }
     if (areaId != null) {// 修改所在地区
       Area area = areaDao.find(areaId);
+      if (!CollectionUtils.isEmpty(area.getChildren())) {
+        return null;
+      }
       endUser.setArea(area);
+      Area cityArea = area.getParent();
+      if (cityArea != null) {
+        Area provinceArea = cityArea.getParent();
+        if (provinceArea != null) {// 三级行政单位 省市区
+          endUser.setCity(cityArea.getId());
+          endUser.setProvince(provinceArea.getId());
+        } else {// 二级行政单位 省市
+          endUser.setCity(areaId);
+          endUser.setProvince(cityArea.getId());
+        }
+      }
     }
     endUsers.add(endUser);
     endUserDao.merge(endUsers);

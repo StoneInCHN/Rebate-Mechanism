@@ -38,6 +38,7 @@ import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -135,6 +136,25 @@ public class SellerController extends BaseController {
       return ERROR_VIEW;
     }
     Seller temp = sellerService.find(seller.getId());
+    if (areaId != null) {// 修改商家所在地区
+      Area area = areaService.find(areaId);
+      if (!CollectionUtils.isEmpty(area.getChildren())) {
+        model.addAttribute("content", Message.error("rebate.seller.areaCounty").getContent());
+        return ERROR_VIEW;
+      }
+      temp.setArea(area);
+      Area cityArea = area.getParent();
+      if (cityArea != null) {
+        Area provinceArea = cityArea.getParent();
+        if (provinceArea != null) {// 三级行政单位 省市区
+          temp.setCity(cityArea.getId());
+          temp.setProvince(provinceArea.getId());
+        } else {// 二级行政单位 省市
+          temp.setCity(areaId);
+          temp.setProvince(cityArea.getId());
+        }
+      }
+    }
 
     // 修改每日营业额上限小于该商家当日当前营业额,则不允许修改
     if (seller.getLimitAmountByDay().compareTo(temp.getLimitAmountByDay()) != 0) {
@@ -163,12 +183,7 @@ public class SellerController extends BaseController {
 
     temp.setAccountStatus(seller.getAccountStatus());
     temp.setAddress(seller.getAddress());
-    if (areaId != null) {
-      Area area = areaService.find(areaId);
-      if (area != null) {
-        temp.setArea(area);
-      }
-    }
+
     temp.setContactCellPhone(seller.getContactCellPhone());
     temp.setIsBeanPay(seller.getIsBeanPay());
     temp.setAvgPrice(seller.getAvgPrice());

@@ -77,15 +77,6 @@ public interface OrderService extends BaseService<Order, Long> {
   Order evaluateOrder(Long orderId, Long userId, Integer score, String content,
       List<MultipartFile> evaluateImages);
 
-  /**
-   * 验证商家当天营业额是否超过规定的营业额度
-   * 
-   * @param seller
-   * @param amount
-   * @return
-   */
-  Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount);
-
 
   // Order create(Long userId, String payType, BigDecimal amount, Long sellerId, String remark,
   // Boolean isBeanPay, Boolean isSallerOrder);
@@ -105,12 +96,38 @@ public interface OrderService extends BaseService<Order, Long> {
   List<Order> createSellerOrder(List<SellerOrderCart> sellerOrderCarts);
 
   /**
+   * 验证商家当天营业额是否超过规定的营业额度
+   * 
+   * @param seller
+   * @param amount
+   * @return
+   */
+  Boolean isOverSellerLimitAmount(Long sellerId, BigDecimal amount);
+
+  /**
+   * 验证商家当天乐豆抵扣总额是否超过规定的每日抵扣额度
+   * 
+   * @param seller
+   * @param amount
+   * @return
+   */
+  Boolean isOverSellerLimitBeanDeduct(Long sellerId, BigDecimal deductAmount);
+
+  /**
    * 获取商家当日订单消费当前额度
    * 
    * @param sellerId
    * @return
    */
   BigDecimal getPayOrderAmountForSeller(Long sellerId);
+
+  /**
+   * 获取商家当日乐豆抵扣当前额度
+   * 
+   * @param sellerId
+   * @return
+   */
+  BigDecimal getPayOrderBeanDeductForSeller(Long sellerId);
 
 
 }

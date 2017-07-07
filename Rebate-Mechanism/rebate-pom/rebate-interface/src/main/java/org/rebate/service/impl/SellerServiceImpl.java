@@ -56,6 +56,24 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
   @Override
   public Seller editInfo(SellerRequest req) {
     Seller seller = sellerDao.find(req.getSellerId());
+    if (req.getAreaId() != null) {// 修改商家所在地区
+      Area area = areaDao.find(req.getAreaId());
+      if (!CollectionUtils.isEmpty(area.getChildren())) {
+        return null;
+      }
+      seller.setArea(area);
+      Area cityArea = area.getParent();
+      if (cityArea != null) {
+        Area provinceArea = cityArea.getParent();
+        if (provinceArea != null) {// 三级行政单位 省市区
+          seller.setCity(cityArea.getId());
+          seller.setProvince(provinceArea.getId());
+        } else {// 二级行政单位 省市
+          seller.setCity(req.getAreaId());
+          seller.setProvince(cityArea.getId());
+        }
+      }
+    }
     if (req.getStorePicture() != null) {
       seller.setStorePictureUrl(fileService.saveImage(req.getStorePicture(), ImageType.STORE_SIGN));
     }
@@ -63,8 +81,6 @@ public class SellerServiceImpl extends BaseServiceImpl<Seller, Long> implements 
     seller.setBusinessTime(req.getBusinessTime());
     seller.setName(req.getSellerName());
     seller.setAddress(req.getAddress());
-    Area area = areaDao.find(req.getAreaId());
-    seller.setArea(area);
     seller.setLatitude(new BigDecimal(req.getLatitude()));
     seller.setLongitude(new BigDecimal(req.getLongitude()));
     seller.setFeaturedService(req.getFeaturedService());
