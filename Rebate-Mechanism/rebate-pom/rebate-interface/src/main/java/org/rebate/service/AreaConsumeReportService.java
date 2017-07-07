@@ -3,11 +3,9 @@ package org.rebate.service;
 import org.rebate.entity.AreaConsumeReport;
 import org.rebate.framework.service.BaseService;
 import org.rebate.json.base.ResponseMultiple;
-import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.AgentAreaRequest;
 import org.rebate.json.response.AreaAmountResponse;
 import org.rebate.json.response.AreaCountResponse;
-import org.rebate.json.response.ProvinceCount;
 import org.rebate.json.response.SalesManReport;
 
 public interface AreaConsumeReportService extends BaseService<AreaConsumeReport,Long>{
