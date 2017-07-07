@@ -17,6 +17,7 @@ import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.service.EndUserService;
 import org.rebate.service.NationBonusReportService;
+import org.rebate.service.ThirdApiReportService;
 import org.rebate.service.UserBonusReportService;
 import org.rebate.service.UserRegReportService;
 import org.rebate.utils.TimeUtils;
@@ -40,7 +41,10 @@ public class ReportController extends BaseController {
   private UserRegReportService userRegReportService;
 
   @Resource(name = "endUserServiceImpl")
-  EndUserService endUserService;
+  private EndUserService endUserService;
+
+  @Resource(name = "thirdApiReportServiceImpl")
+  private ThirdApiReportService thirdApiReportService;
 
   /**
    * 列表
@@ -200,5 +204,28 @@ public class ReportController extends BaseController {
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.asc("createDate"));
     return userRegReportService.findList(null, filters, orderings);
+  }
+
+  /**
+   * 第三方api调用统计
+   */
+  @RequestMapping(value = "/thirdApiReport", method = RequestMethod.GET)
+  public String thirdApiReport(Pageable pageable, Date reportDateFrom, Date reportDateTo,
+      ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    if (reportDateFrom != null) {
+      filters.add(Filter.ge("statisticsDate", TimeUtils.formatDate2Day(reportDateFrom)));
+      model.addAttribute("reportDateFrom", reportDateFrom);
+    }
+    if (reportDateTo != null) {
+      filters.add(Filter.le("statisticsDate", TimeUtils.formatDate2Day(reportDateTo)));
+      model.addAttribute("reportDateTo", reportDateTo);
+    }
+    pageable.setFilters(filters);
+    List<Ordering> orderings = new ArrayList<Ordering>();
+    orderings.add(Ordering.desc("statisticsDate"));
+    pageable.setOrders(orderings);
+    model.addAttribute("page", thirdApiReportService.findPage(pageable));
+    return "/report/thirdApiReport";
   }
 }

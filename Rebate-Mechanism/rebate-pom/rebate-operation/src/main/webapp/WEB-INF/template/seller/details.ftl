@@ -232,6 +232,16 @@
 									[/#if]
 								</td>
 							</tr>
+							[#if seller.isBeanPay==true]
+							<tr>
+								<th>
+									${message("rebate.seller.limitBeanByDay")}:
+								</th>
+								<td>
+									${seller.limitBeanByDay}
+								</td>
+							</tr>
+							[/#if]
 							<tr>
 								<th>
 									${message("rebate.seller.description")}:

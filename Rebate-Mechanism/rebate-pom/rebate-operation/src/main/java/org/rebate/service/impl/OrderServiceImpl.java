@@ -33,8 +33,11 @@ import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
+import org.rebate.framework.filter.Filter;
+import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
 import org.rebate.service.OrderService;
+import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +71,58 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   public void setBaseDao(OrderDao orderDao) {
     super.setBaseDao(orderDao);
   }
+
+  @Override
+  public BigDecimal getPayOrderBeanDeductForSeller(Long sellerId) {
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
+    BigDecimal beanDeductAmount = new BigDecimal(0);
+    if (CollectionUtils.isEmpty(orders)) {
+      return beanDeductAmount;
+    }
+    for (Order order : orders) {
+      if (BooleanUtils.isTrue(order.getIsBeanPay()) && order.getDeductAmount() != null) {
+        beanDeductAmount = beanDeductAmount.add(order.getDeductAmount());
+      }
+
+    }
+    return beanDeductAmount;
+  }
+
+  @Override
+  public BigDecimal getPayOrderAmountForSeller(Long sellerId) {
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
+    BigDecimal amount = new BigDecimal(0);
+    if (CollectionUtils.isEmpty(orders)) {
+      return amount;
+    }
+    for (Order order : orders) {
+      amount = amount.add(order.getAmount());
+    }
+    return amount;
+  }
+
+  public List<Order> getPayOrderForSerllerByDay(Date startTime, Date endTime, Long sellerId) {
+
+    List<Filter> filters = new ArrayList<Filter>();
+    Filter startFilter = new Filter("paymentTime", Operator.ge, startTime);
+    Filter endFilter = new Filter("paymentTime", Operator.le, endTime);
+    Filter statusFilter = new Filter("status", Operator.ne, OrderStatus.UNPAID);
+    Filter sellerFilter = new Filter("seller", Operator.eq, sellerId);
+    filters.add(statusFilter);
+    filters.add(startFilter);
+    filters.add(endFilter);
+    filters.add(sellerFilter);
+    List<Order> orders = orderDao.findList(null, null, filters, null);
+    return orders;
+
+  }
+
 
   @Override
   public Order updateSallerOrderStatus(Long orderId, OrderStatus status) {

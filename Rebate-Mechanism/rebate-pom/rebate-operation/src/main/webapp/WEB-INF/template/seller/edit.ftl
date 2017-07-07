@@ -237,6 +237,14 @@
 									 <input type="radio" name="isBeanPay" value="false" [#if seller.isBeanPay==false]checked[/#if]/>${message("rebate.common.false")}
 								</td>
 							</tr>
+							<tr id="leBeanLimitTr">
+								<th>
+									<span class="requiredField">*</span>${message("rebate.seller.limitBeanByDay")}:
+								</th>
+								<td>
+									<input type="text" name="limitBeanByDay" class="text" maxlength="50" value="${seller.limitBeanByDay}"/>
+								</td>
+							</tr>
 							<tr>
 								<th>
 									<span class="requiredField">*</span>${message("rebate.seller.description")}:
@@ -278,6 +286,13 @@
 	$(function(){
 		$('.viewer-images').viewer();
 		$('.img-lazy').lazyload();
+		
+		var leBeanDisplay = $("input[name='isBeanPay']:checked").val();
+		if(leBeanDisplay=='true'){
+			 $("#leBeanLimitTr").show();  
+		}else{
+			$("#leBeanLimitTr").hide();  
+		}
 
 		var $inputForm = $("#inputForm");
 		// 表单验证
@@ -292,7 +307,12 @@
 				},
 				limitAmountByDay:{
 					required: true,
-					number:true
+					number:true,
+					min:0.01
+				},
+				limitBeanByDay:{
+				    number:true,
+				    min:0.01
 				},
 				avgPrice:{
 					number:true
@@ -309,6 +329,16 @@
 				url: "${base}/console/common/area.jhtml"
 		});
 
+		$("input[name='isBeanPay']").change(function(){
+			var flag = $("input[name='isBeanPay']:checked").val();
+			if(flag=='true'){
+				 $("#leBeanLimitTr").show();  
+			}else{
+				 $("#leBeanLimitTr").hide();  
+			}
+		});
+		
+		
 		$("#editPosition").click(function(){
 			window.dialog({
 	           id: 'editPosition-dialog',

@@ -98,12 +98,12 @@ public class Seller extends BaseEntity {
 
   /** 地区 */
   private Area area;
-  
+
   /**
    * 市级代理 地区ID
    */
   private Long city;
-  
+
   /**
    * 省级代理 地区ID
    */
@@ -240,6 +240,11 @@ public class Seller extends BaseEntity {
   private BigDecimal limitAmountByDay;
 
   /**
+   * 每日乐豆抵扣上限(只开启乐豆抵扣的商家有效)
+   */
+  private BigDecimal limitBeanByDay;
+
+  /**
    * 备注
    */
   private String remark;
@@ -249,6 +254,14 @@ public class Seller extends BaseEntity {
    */
   private Boolean isBeanPay;
 
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getLimitBeanByDay() {
+    return limitBeanByDay;
+  }
+
+  public void setLimitBeanByDay(BigDecimal limitBeanByDay) {
+    this.limitBeanByDay = limitBeanByDay;
+  }
 
   public Integer getTotalSellerOrderNum() {
     return totalSellerOrderNum;
@@ -576,19 +589,19 @@ public class Seller extends BaseEntity {
   }
 
   public Long getCity() {
-	return city;
+    return city;
   }
 
   public void setCity(Long city) {
-	this.city = city;
+    this.city = city;
   }
 
   public Long getProvince() {
-	return province;
+    return province;
   }
 
   public void setProvince(Long province) {
-	this.province = province;
+    this.province = province;
   }
 
 

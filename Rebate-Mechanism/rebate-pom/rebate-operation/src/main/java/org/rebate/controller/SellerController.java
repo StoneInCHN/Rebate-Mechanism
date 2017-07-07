@@ -2,6 +2,7 @@ package org.rebate.controller;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
@@ -26,6 +28,7 @@ import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.request.SellerRequest;
 import org.rebate.service.AreaService;
+import org.rebate.service.OrderService;
 import org.rebate.service.SellerCategoryService;
 import org.rebate.service.SellerService;
 import org.rebate.utils.DateUtils;
@@ -51,11 +54,14 @@ public class SellerController extends BaseController {
 
   @Resource(name = "areaServiceImpl")
   private AreaService areaService;
-  
+
+  @Resource(name = "orderServiceImpl")
+  private OrderService orderService;
+
   @Resource(name = "taskExecutor")
   private Executor threadPoolExecutor;
-  
-  
+
+
   /**
    * 列表
    */
@@ -122,8 +128,39 @@ public class SellerController extends BaseController {
    * 更新
    */
   @RequestMapping(value = "/update", method = RequestMethod.POST)
-  public String update(Seller seller, Long areaId) {
+  public String update(Seller seller, Long areaId, ModelMap model) {
+    if (BooleanUtils.isTrue(seller.getIsBeanPay()) && seller.getLimitBeanByDay() == null) {
+      model.addAttribute("content", Message.error("rebate.seller.limitBeanByDay.notnull")
+          .getContent());
+      return ERROR_VIEW;
+    }
     Seller temp = sellerService.find(seller.getId());
+
+    // 修改每日营业额上限小于该商家当日当前营业额,则不允许修改
+    if (seller.getLimitAmountByDay().compareTo(temp.getLimitAmountByDay()) != 0) {
+      BigDecimal curLimitAmountByDay = orderService.getPayOrderAmountForSeller(seller.getId());
+      if (seller.getLimitAmountByDay().compareTo(curLimitAmountByDay) < 0) {
+        model.addAttribute("content",
+            Message.error("rebate.seller.curLimitAmountByDay.invalid", curLimitAmountByDay)
+                .getContent());
+        return ERROR_VIEW;
+      }
+    }
+
+    // 修改每日乐豆抵扣上限小于该商家当日当前乐豆抵扣额,则不允许修改
+    if (BooleanUtils.isTrue(seller.getIsBeanPay()) && temp.getLimitBeanByDay() != null
+        && seller.getLimitBeanByDay().compareTo(temp.getLimitBeanByDay()) != 0) {
+      BigDecimal curLimitBeanDeductByDay =
+          orderService.getPayOrderBeanDeductForSeller(seller.getId());
+      if (seller.getLimitBeanByDay().compareTo(curLimitBeanDeductByDay) < 0) {
+        model.addAttribute("content",
+            Message.error("rebate.seller.curLimitBeanDeductByDay.invalid", curLimitBeanDeductByDay)
+                .getContent());
+        return ERROR_VIEW;
+      }
+    }
+
+
     temp.setAccountStatus(seller.getAccountStatus());
     temp.setAddress(seller.getAddress());
     if (areaId != null) {
@@ -142,10 +179,10 @@ public class SellerController extends BaseController {
     temp.setBusinessTime(seller.getBusinessTime());
     temp.setRemark(seller.getRemark());
     temp.setLimitAmountByDay(seller.getLimitAmountByDay());
+    temp.setLimitBeanByDay(seller.getLimitBeanByDay());
     sellerService.update(temp);
     return "redirect:list.jhtml";
   }
-
 
   /**
    * 查看
@@ -280,73 +317,79 @@ public class SellerController extends BaseController {
       }
     }
   }
+
   /**
    * 下载商家二维码图片
    * 
    */
   @RequestMapping(value = "/downloadQRCoder", method = {RequestMethod.GET, RequestMethod.POST})
-  protected void downloadQRCoder(Long sellerID, ImageSize imageSize, QrCodeType qrCodeType, 
-		  HttpServletResponse response, HttpSession session) {
-	  
-	  Seller seller = sellerService.find(sellerID);
-	  if (seller == null){
-		  LogUtil.debug(this.getClass(), "downloadQRCoder", "seller is null");
-		  return;
-	  }
-	  
-	  String logoImageURL = null;
-	  String content = null;
-	  if (qrCodeType == QrCodeType.SHARE) {
-		  if (seller.getStorePictureUrl() != null) {
-			  logoImageURL = sellerService.getDiskPath(seller.getStorePictureUrl());
-		  }
-		  if (setting.getRecommendUrl() != null && seller.getEndUser() != null) {
-			  content = setting.getRecommendUrl() + "?cellPhoneNum=" + seller.getEndUser().getCellPhoneNum();
-		  }
-	  }else if (qrCodeType == QrCodeType.PAID) {
-		  logoImageURL = session.getServletContext().getRealPath("/") + 
-		  			"resources" + File.separator + "images" + File.separator + "system_logo.png"; 
-		  content = "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"sellerId\":\"" 
-				  + seller.getId() + "\"}";
-	  }
-	  if (logoImageURL == null || content == null){
-		  LogUtil.debug(this.getClass(), "downloadQRCoder", "logoImageURL or content is null");
-		  return;
-	  }
-	  
-	  Integer size = 1;
-	  if (imageSize == ImageSize.MIDDLE)  size = 2;
-	  if (imageSize == ImageSize.BIG) size = 4;
-	  
-      try {
-        response.setContentType("octets/stream");
-        String filename = seller.getContactCellPhone() 
-        		+ "_" + qrCodeType.toString() + "_" + imageSize.toString() + "_" 
-        		+ DateUtils.getDateFormatString(DateUtils.filePostfixFormat, new Date());
-        response.addHeader("Content-Disposition", "attachment;filename=" + filename + ".jpg");
-        
-        OutputStream out = response.getOutputStream();// 获得输出流
-        QRCodeGenerator generator = new QRCodeGenerator(content, logoImageURL, size, out);
-        Object locker = new Object();//当前主线程的一把锁
-        synchronized (locker) {
-          threadPoolExecutor.execute(//加入到线程池中执行
-        	new Runnable() {
+  protected void downloadQRCoder(Long sellerID, ImageSize imageSize, QrCodeType qrCodeType,
+      HttpServletResponse response, HttpSession session) {
+
+    Seller seller = sellerService.find(sellerID);
+    if (seller == null) {
+      LogUtil.debug(this.getClass(), "downloadQRCoder", "seller is null");
+      return;
+    }
+
+    String logoImageURL = null;
+    String content = null;
+    if (qrCodeType == QrCodeType.SHARE) {
+      if (seller.getStorePictureUrl() != null) {
+        logoImageURL = sellerService.getDiskPath(seller.getStorePictureUrl());
+      }
+      if (setting.getRecommendUrl() != null && seller.getEndUser() != null) {
+        content =
+            setting.getRecommendUrl() + "?cellPhoneNum=" + seller.getEndUser().getCellPhoneNum();
+      }
+    } else if (qrCodeType == QrCodeType.PAID) {
+      logoImageURL =
+          session.getServletContext().getRealPath("/") + "resources" + File.separator + "images"
+              + File.separator + "system_logo.png";
+      content =
+          "{\"flag\":\"" + DigestUtils.md5Hex("翼享生活") + "\",\"sellerId\":\"" + seller.getId()
+              + "\"}";
+    }
+    if (logoImageURL == null || content == null) {
+      LogUtil.debug(this.getClass(), "downloadQRCoder", "logoImageURL or content is null");
+      return;
+    }
+
+    Integer size = 1;
+    if (imageSize == ImageSize.MIDDLE)
+      size = 2;
+    if (imageSize == ImageSize.BIG)
+      size = 4;
+
+    try {
+      response.setContentType("octets/stream");
+      String filename =
+          seller.getContactCellPhone() + "_" + qrCodeType.toString() + "_" + imageSize.toString()
+              + "_" + DateUtils.getDateFormatString(DateUtils.filePostfixFormat, new Date());
+      response.addHeader("Content-Disposition", "attachment;filename=" + filename + ".jpg");
+
+      OutputStream out = response.getOutputStream();// 获得输出流
+      QRCodeGenerator generator = new QRCodeGenerator(content, logoImageURL, size, out);
+      Object locker = new Object();// 当前主线程的一把锁
+      synchronized (locker) {
+        threadPoolExecutor.execute(// 加入到线程池中执行
+            new Runnable() {
               public void run() {
-            	  generator.generateQrImage();
-            	  synchronized (locker) {
-            	      locker.notify();
-            	  }
+                generator.generateQrImage();
+                synchronized (locker) {
+                  locker.notify();
+                }
               }
             });
-          locker.wait();//主线程等待
-        }
-
-        out.flush();
-        out.close();
-
-      } catch (Exception e) {
-        e.printStackTrace();
+        locker.wait();// 主线程等待
       }
+
+      out.flush();
+      out.close();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
   }
 }
