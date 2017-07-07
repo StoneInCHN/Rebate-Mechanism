@@ -94,6 +94,7 @@ public final class CommonAttributes {
 
   public static final String USER_INVALID = "3000";// 用户非法（禁用）
 
+  public static final int PAGE_SIZE = 10;//默认每页10条数据
   /**
    * 不可实例化
    */

@@ -2,6 +2,7 @@ package org.rebate.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource; 
 
@@ -27,5 +28,13 @@ public class AreaConsumeReportServiceImpl extends BaseServiceImpl<AreaConsumeRep
 	public List<AreaConsumeResult> getAreaConsumeResult(Date startDate,
 			Date endDate) {
 		return areaConsumeReportDao.getAreaConsumeResult(startDate, endDate);
+	}
+	/**
+	 * dateStr: yyyy-MM-dd
+	 */
+	@Override
+	public List<AreaConsumeReport> getCityProvinceReport(Set<Long> citeIds,
+			Set<Long> provinceIds, Date reportDate) {
+		return areaConsumeReportDao.getCityProvinceReport(citeIds, provinceIds, reportDate);
 	}
 }

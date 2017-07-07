@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.rebate.entity.base.BaseEntity;
+import org.rebate.entity.commonenum.CommonEnum.AgencyLevel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -47,8 +48,8 @@ public class AreaConsumeReport extends BaseEntity {
   	private BigDecimal sellerDiscount;
   	/** 统计日期 */
   	private Date reportDate;
-//    /** 代理级别 */
-//    private AgencyLevel agencyLevel;
+    /** 统计批次 */
+    private AgencyLevel agencyLevel;
   	
   	@ManyToOne(fetch = FetchType.LAZY)
 	public Area getArea() {
@@ -93,6 +94,12 @@ public class AreaConsumeReport extends BaseEntity {
 	}
 	public void setProvince(Area province) {
 		this.province = province;
+	}
+	public AgencyLevel getAgencyLevel() {
+		return agencyLevel;
+	}
+	public void setAgencyLevel(AgencyLevel agencyLevel) {
+		this.agencyLevel = agencyLevel;
 	}
 
   

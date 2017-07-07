@@ -4,27 +4,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.rebate.entity.Agent;
 import org.rebate.entity.Area;
 import org.rebate.entity.AreaConsumeReport;
-import org.rebate.entity.Seller;
 import org.rebate.entity.commonenum.CommonEnum.AgencyLevel;
 import org.rebate.framework.filter.Filter;
 import org.rebate.json.beans.AreaConsumeResult;
-import org.rebate.service.AgentService;
 import org.rebate.service.AreaConsumeReportService;
 import org.rebate.service.AreaService;
-import org.rebate.service.SellerClearingRecordService;
 import org.rebate.utils.DateUtils;
 import org.rebate.utils.LogUtil;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
@@ -68,7 +64,7 @@ public class AreaConsumeReportJob {
 				mapAmount.put(key, existAmount.add(result.getAmount()));
 			}
 		}
-	    List<AreaConsumeReport> reports = new ArrayList<AreaConsumeReport>();
+	    List<AreaConsumeReport> countryReports = new ArrayList<AreaConsumeReport>();
 	    if (!mapAmount.isEmpty()) {
 	    	for (Map.Entry<String, BigDecimal> entry : mapAmount.entrySet()) {
   				String key = entry.getKey();
@@ -113,13 +109,30 @@ public class AreaConsumeReportJob {
   				report.setSellerDiscount(new BigDecimal(keyArray[1]));
   				report.setReportDate(startDate);
   				report.setTotalAmount(entry.getValue());
-  				reports.add(report);
+  				report.setAgencyLevel(AgencyLevel.COUNTY);
+  				countryReports.add(report);
 	    	}
 		}
-	    if (reports.size() > 0) {
-	    	areaConsumeReportService.save(reports);
+	    if (countryReports.size() > 0) {
+	    	areaConsumeReportService.save(countryReports);
+	    	Set<Long> citeIds = new HashSet<Long>();
+	    	Set<Long> provinceIds = new HashSet<Long>();
+	    	for (AreaConsumeReport areaConsumeReport : countryReports) {
+	    		Area city = areaConsumeReport.getCity();
+	    		Area province = areaConsumeReport.getProvince();
+				if (city != null) {
+					citeIds.add(city.getId());
+				}
+				if (province != null) {
+					provinceIds.add(province.getId());
+				}
+			}
+	    	List<AreaConsumeReport> cityProvinceReports = areaConsumeReportService.getCityProvinceReport
+	    			(citeIds, provinceIds, startDate);
+	    	areaConsumeReportService.save(cityProvinceReports);
 		}
 	    LogUtil.debug(this.getClass(), "areaConsumeReport", "AreaConsumeReport Job End! Time Period:"
 		        + startDate + " - " + endDate);
 	  }
+	  
 }
