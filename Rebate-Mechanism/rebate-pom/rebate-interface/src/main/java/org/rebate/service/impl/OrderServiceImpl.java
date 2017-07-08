@@ -352,6 +352,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       LeScoreRecord leScoreRecord = new LeScoreRecord();
       leScoreRecord.setOrderId(orderId);
       leScoreRecord.setEndUser(endUser);
+      leScoreRecord.setSeller(seller);
       leScoreRecord.setLeScoreType(LeScoreType.CONSUME);
       BigDecimal payAmount = order.getAmount();
       if (order.getIsBeanPay() && order.getDeductAmount().compareTo(new BigDecimal(0)) > 0) {
