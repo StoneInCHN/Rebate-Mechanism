@@ -173,7 +173,9 @@ public class CommonEnum {
     /** 每笔提现固定手续费 19 */
     TRANSACTION_FEE_PERTIME,
     /** 乐心分红value值 20 */
-    MIND_VALUE
+    MIND_VALUE,
+    /** 商家货款结算最低金额限制 21 */
+    CLEARING_MINIMUM_LIMIT
   }
 
   /**

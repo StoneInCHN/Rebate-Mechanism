@@ -88,8 +88,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   		filters.add(Filter.ne("status", OrderStatus.UNPAID));//订单不等于未支付，即已支付 或者 评价后
   		filters.add(Filter.eq("isClearing", false));//订单未结算
   		filters.add(Filter.eq("isSallerOrder", false));//不是录单订单
-        Date[] queryDates = {startDate, endDate};
-        filters.add(Filter.between("paymentTime", queryDates));//订单支付时间在开始查询和结束查询之间
+//        Date[] queryDates = {startDate, endDate};
+//        filters.add(Filter.between("paymentTime", queryDates));//订单支付时间在开始查询和结束查询之间
+  		filters.add(Filter.le("paymentTime", endDate));
   		List<Order> orderList = orderService.findList(null, filters, null);
   		List<Order> orders = new ArrayList<Order>();
   		for (int i = 0; i < orderList.size(); i++) {
@@ -137,6 +138,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				 Seller seller = sellerService.find(entry.getKey());//根据sellerId获取Seller
   				 BigDecimal totalOrderAmount = entry.getValue(); //当天商家订单总金额
   				 BigDecimal totalSellerIncome = sellerIncomeMap.get(seller.getId()); //当天商家收入金额（折扣后的结算金额）
+  				 totalSellerIncome = totalSellerIncome.setScale(2,BigDecimal.ROUND_HALF_UP);
   				 
   				 EndUser endUser = seller.getEndUser();
   				 
@@ -152,12 +154,22 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 //                   record.setAmount(totalSellerIncome);
 //                 }
                  record.setAmount(totalSellerIncome);//结算金额
+                 //货款金额不足 结算最低金额限制的，留给下次凑够了金额再结算
+                 SystemConfig clearingMinLimit = systemConfigService.getConfigByKey(SystemConfigKey.CLEARING_MINIMUM_LIMIT);
+     			 if (clearingMinLimit != null && clearingMinLimit.getConfigValue() != null) {
+     				BigDecimal minLimit = new BigDecimal(clearingMinLimit.getConfigValue());
+     				if (record.getAmount().compareTo(minLimit) == -1) {
+                        LogUtil.debug(this.getClass(), "sellerClearing", "商家ID：%s 货款金额 %s 不足 结算最低金额 %s 的商家货款结算,留给下次凑够了金额再结算", 
+                        		seller.getId(), record.getAmount().toString(), clearingMinLimit.getConfigValue());
+                        continue;//绕开货款金额不足 结算最低金额的商家货款结算
+     				}
+     			 }
                  
                  BankCard defaultCard = bankCardService.getDefaultCard(endUser);
                  if (defaultCard != null) {
                       record.setBankCardId(defaultCard.getId());
                  }else {
-                     LogUtil.debug(this.getClass(), "sellerClearing", "Cannot find default card for endUserId:", endUser != null? endUser.getId() : "");
+                     LogUtil.debug(this.getClass(), "sellerClearing", "Cannot find default card for endUserId: %s", endUser != null? endUser.getId() : "");
                      //是否需要短信或邮件通知商家用户去配置默认银行卡？？
                      record.setClearingStatus(ClearingStatus.FAILED);
                      record.setIsClearing(false);
@@ -171,34 +183,37 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
                        relation.setOrder(order);
                        clearingOrderRelationService.save(relation);//保存商家货款结算记录与订单的关系
                      }
-                     LogUtil.debug(this.getClass(), "sellerClearing", "商家未添加默认银行卡,待添加银行卡后执行单笔货款提现!");
+                     LogUtil.debug(this.getClass(), "sellerClearing", "商家店主 %s 未添加默认银行卡,待添加银行卡后执行单笔货款提现!", endUser != null? endUser.getCellPhoneNum() : "");
                      continue;//绕开银行卡为空的商家货款结算
                  }
+                 //XGG需求：商家货款代付不扣手续费了
+  				 //BigDecimal handingCharge = getAllinpayHandlingCharge(totalOrderAmount);
+//  				 if (record.getAmount() != null && handingCharge != null) {
+//  					 //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
+//  					 //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理
+//  					 BigDecimal payAmount = record.getAmount().subtract(handingCharge);
+//  					 if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
+//  						 record.setClearingStatus(ClearingStatus.FAILED);
+//  						 record.setIsClearing(false);
+//  						 record.setRemark(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
+//  						 save(record);
+//  						 Set<Order> orderSet = sellerOrdersMap.get(record.getSeller().getId());
+//						 for (Order order : orderSet) {
+//							ClearingOrderRelation relation = new ClearingOrderRelation();
+//							relation.setClearingRecId(record.getId());
+//							relation.setOrder(order);
+//							clearingOrderRelationService.save(relation);//保存商家货款结算记录与订单的关系
+//						 }
+//						 LogUtil.debug(this.getClass(), "sellerClearing", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handingCharge);
+//  						 continue;
+//  					 }
+//  					 
+//  				 }
 
-  				 BigDecimal handingCharge = getAllinpayHandlingCharge(totalOrderAmount);
-  				 if (record.getAmount() != null && handingCharge != null) {
-  					 //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
-  					 //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理
-  					 BigDecimal payAmount = record.getAmount().subtract(handingCharge);
-  					 if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
-  						 record.setClearingStatus(ClearingStatus.FAILED);
-  						 record.setIsClearing(false);
-  						 record.setRemark(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
-  						 save(record);
-  						 Set<Order> orderSet = sellerOrdersMap.get(record.getSeller().getId());
-						 for (Order order : orderSet) {
-							ClearingOrderRelation relation = new ClearingOrderRelation();
-							relation.setClearingRecId(record.getId());
-							relation.setOrder(order);
-							clearingOrderRelationService.save(relation);//保存商家货款结算记录与订单的关系
-						 }
-						 LogUtil.debug(this.getClass(), "sellerClearing", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handingCharge);
-  						 continue;
-  					 }
-  					 
-  				 }
   				 totalClearingAmount = totalClearingAmount.add(record.getAmount());//累加结算金额
-  				 record.setHandlingCharge(handingCharge);//手续费
+  				 //XGG需求：商家货款代付不扣手续费了
+  				 //record.setHandlingCharge(handingCharge);//手续费
+  				 record.setHandlingCharge(new BigDecimal(0));
   				 totalHandlingCharge = totalHandlingCharge.add(record.getHandlingCharge()); //累加手续费
   				 
   				 record.setClearingSn(snService.generate(Type.SELLER_CLEARING_RECORD));//结算货款单编号（用于显示）
@@ -259,19 +274,23 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   	      try {
   			    TranxServiceImpl tranxService = new TranxServiceImpl();
   			    tranxService.init();//初始化通联基础数据
-  			    BigDecimal handlingCharge = getAllinpayHandlingCharge(record.getAmount());//手续费
+  			    //XGG需求：商家货款代付不扣手续费了
+  			    //BigDecimal handlingCharge = getAllinpayHandlingCharge(record.getAmount());//手续费
+  			    BigDecimal handlingCharge = new BigDecimal(0);
+  			    //record.setHandlingCharge(handlingCharge);
   			    record.setHandlingCharge(handlingCharge);
-  			    BigDecimal payAmount = record.getAmount().abs().subtract(handlingCharge);
+  			    //BigDecimal payAmount = record.getAmount().abs().subtract(handlingCharge);
+  			    BigDecimal payAmount = record.getAmount().abs();
   			    //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
   			    //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理
-  			    if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
-//  			    	record.setClearingStatus(ClearingStatus.FAILED);
-//  			    	record.setIsClearing(false);
-  			    	record.setRemark(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
-  			    	update(record);
-  			    	LogUtil.debug(this.getClass(), "singlePay", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handlingCharge);
-  			    	return Message.success("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge");
-  			    }
+//  			    if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
+////  			    	record.setClearingStatus(ClearingStatus.FAILED);
+////  			    	record.setIsClearing(false);
+//  			    	record.setRemark(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
+//  			    	update(record);
+//  			    	LogUtil.debug(this.getClass(), "singlePay", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handlingCharge);
+//  			    	return Message.success("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge");
+//  			    }
     			BigDecimal amountPenny = payAmount.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP);		 
   			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), amountPenny.toString());
   			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
