@@ -754,9 +754,9 @@ public class OrderController extends MobileBaseController {
 
     Page<Order> orderPage = orderService.findPage(pageable);
     String[] propertys =
-        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "createDate", "remark",
-            "evaluate.content", "evaluate.sellerReply", "status", "isSallerOrder",
-            "seller.storePictureUrl", "seller.address"};
+        {"id", "sn", "seller.name", "seller.id", "userScore", "amount", "rebateAmount",
+            "createDate", "remark", "evaluate.content", "evaluate.sellerReply", "status",
+            "isSallerOrder", "seller.storePictureUrl", "seller.address"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, orderPage.getContent());
 
