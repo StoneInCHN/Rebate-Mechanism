@@ -123,7 +123,7 @@ public class AgentController extends BaseController {
     return SUCCESS_MESSAGE;
   }
   /**
-   * 删除
+   * 根据地区判断代理级别
    */
   @RequestMapping(value = "/getAgencyLevelByArea", method = RequestMethod.POST)
   public @ResponseBody AgencyLevel getAgencyLevelByArea(Long areaId) {
