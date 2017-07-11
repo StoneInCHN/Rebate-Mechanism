@@ -78,6 +78,7 @@
 						} else {
 							$input.val($this.val());
 						}
+						$input.change();
 						addSelect($this, $this.val(), null);
 					});
 				}

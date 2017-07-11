@@ -122,5 +122,27 @@ public class AgentController extends BaseController {
     agentService.delete(ids);
     return SUCCESS_MESSAGE;
   }
+  /**
+   * 删除
+   */
+  @RequestMapping(value = "/getAgencyLevelByArea", method = RequestMethod.POST)
+  public @ResponseBody AgencyLevel getAgencyLevelByArea(Long areaId) {
+	  Area area = areaService.find(areaId);
+	  AgencyLevel agencyLevel = AgencyLevel.PROVINCE;
+	  if (area != null) {
+			int level = area.getTreePath().split(Area.TREE_PATH_SEPARATOR).length;
+			if (level == 3) {//县区
+				agencyLevel = AgencyLevel.COUNTY;
+			}
+			if (level == 2) {//市
+				agencyLevel = AgencyLevel.CITY;
+			}  				
+			if (level == 0) {//省
+				agencyLevel = AgencyLevel.PROVINCE;
+			}
+	  }
+    return agencyLevel;
+  } 
+  
  
 }

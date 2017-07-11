@@ -25,6 +25,21 @@ $().ready(function() {
 	$areaId.lSelect({
 		url: "${base}/console/common/area.jhtml"
 	});
+	$areaId.change(function(){
+				$.ajax({
+		  				url: "getAgencyLevelByArea.jhtml",
+		  				type: "POST",
+		  				dataType: "json",
+		  				cache: false,
+		  				data: {"areaId":$areaId.val()},
+		  				success:function(result){
+		  					$("#agencyLevel option[value='"+ result +"']").attr('selected',true);
+		  					$("#agencyLevelVal").val(result);
+		  				}
+		  		});
+				
+	});
+
 	var $inputForm = $("#inputForm");
 	// 表单验证
 	$inputForm.validate({
@@ -113,7 +128,7 @@ $().ready(function() {
 								<td>
 									<input type="hidden" id="endUserId"  class="text" name="endUserId"/>
 									<input type="text" id="endUserName" readonly class="text" maxlength="20" />
-									<a type="btn btn-default" id="selectEndUser">选择用户</a>
+									<input type="button" class="button" id="selectEndUser" value="选择用户"/>
 								</td>
 							</tr>
 							<tr>
@@ -121,11 +136,12 @@ $().ready(function() {
 									<span class="requiredField">*</span>${message("rebate.agent.agencyLevel")}:
 								</th>
 								<td>
-									<select name="agencyLevel">
+									<select id="agencyLevel" disabled="disabled">
 										<option value="PROVINCE">${message("rebate.agent.agencyLevel.PROVINCE")}</option>
 										<option value="CITY">${message("rebate.agent.agencyLevel.CITY")}</option>
 										<option value="COUNTY">${message("rebate.agent.agencyLevel.COUNTY")}</option>
 									</select>
+									<input type="hidden" id="agencyLevelVal" name="agencyLevel"/>
 								</td>
 							</tr>
 						</table>

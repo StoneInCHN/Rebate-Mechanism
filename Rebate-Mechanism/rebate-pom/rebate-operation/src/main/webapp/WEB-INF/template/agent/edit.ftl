@@ -88,7 +88,7 @@ $().ready(function() {
 								<td>
 									<input type="hidden" id="endUserId"  class="text" name="endUserId"/>
 									<input type="text" id="endUserName"   readonly value="${agent.endUser.userName}" class="text" maxlength="20" />
-									<a type="btn btn-default" id="selectEndUser">选择用户</a>
+									<input type="button" class="button" id="selectEndUser" value="选择用户"/>
 								</td>
 							</tr>
 							<tr>

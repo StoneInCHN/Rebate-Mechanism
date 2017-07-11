@@ -38,16 +38,17 @@ public class AgentServiceImpl extends BaseServiceImpl<Agent, Long> implements Ag
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public void updateAgent(Long areaId, Long endUserId, Agent agent) {
-    Area area = areaService.find(areaId);
+    //Area area = areaService.find(areaId);
     EndUser endUser = endUserService.find(endUserId);
-    if (area != null && endUser != null && agent != null && agent.getId() != null) {
+    if (endUser != null && agent != null && agent.getId() != null) {
       Agent tempAgent = this.find(agent.getId());
       EndUser endUserTemp = tempAgent.getEndUser();
       endUserTemp.setAgent(null);
       endUserService.update(endUserTemp);
       endUser.setAgent(agent);
       endUserService.update(endUser);
-      agent.setArea(area);
+      agent.setArea(tempAgent.getArea());
+      agent.setAgencyLevel(tempAgent.getAgencyLevel());
       agent.setEndUser(endUser);
       this.update(agent);
     }
