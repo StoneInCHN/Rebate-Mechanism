@@ -798,9 +798,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
     BigDecimal curTotalOrderAmount = new BigDecimal("0");
     try {
-      if (CollectionUtils.isEmpty(orders)) {
-        return false;
-      }
+      // if (CollectionUtils.isEmpty(orders)) {
+      // return false;
+      // }
       for (Order order : orders) {
         curTotalOrderAmount = curTotalOrderAmount.add(order.getAmount());
       }
@@ -837,9 +837,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     List<Order> orders = getPayOrderForSerllerByDay(startTime, endTime, sellerId);
     BigDecimal curBeanDeductAmount = new BigDecimal(0);
     try {
-      if (CollectionUtils.isEmpty(orders)) {
-        return false;
-      }
+      // if (CollectionUtils.isEmpty(orders)) {
+      // return false;
+      // }
       for (Order order : orders) {
         if (BooleanUtils.isTrue(order.getIsBeanPay()) && order.getDeductAmount() != null) {
           curBeanDeductAmount = curBeanDeductAmount.add(order.getDeductAmount());
@@ -857,7 +857,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           .debug(
               OrderServiceImpl.class,
               "isOverSellerLimitBeanDeduct",
-              "check seller total leBean deduct amount over limit deduct amount by day. sellerId: %s,sellerName: %s,curBeanDeductAmount: %s,curDeductAmount: %s,limitBeanDeduct: %s,period:%s",
+              "check seller total leBean deduct amount over limit deduct amount by day. sellerId: %s,sellerName: %s,curTotalDeductAmount: %s,curDeductAmount: %s,limitBeanDeduct: %s,period:%s",
               seller.getId(), seller.getName(), curBeanDeductAmount, deductAmount, limitAmount,
               startTime + "-" + endTime);
     }
