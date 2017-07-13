@@ -178,7 +178,7 @@ $(function() {
 								<td>
 									<!-- a block container is required -->
 									  <ul  class="viewer-images clearfix">
-									  	[#list envImages as images]	
+									  	[#list sellerApply.envImages as images]	
 											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
 										[/#list]
 									  </ul>
@@ -191,7 +191,7 @@ $(function() {
 								<td>
 									<!-- a block container is required -->
 									  <ul  class="viewer-images clearfix">
-									  	[#list commitmentImages as images]	
+									  	[#list sellerApply.commitmentImages as images]	
 											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
 										[/#list]
 									  </ul>

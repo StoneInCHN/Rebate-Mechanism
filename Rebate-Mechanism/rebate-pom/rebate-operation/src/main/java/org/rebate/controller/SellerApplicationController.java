@@ -35,8 +35,8 @@ public class SellerApplicationController extends BaseController {
 
   @Resource(name = "sellerCategoryServiceImpl")
   private SellerCategoryService sellerCategoryService;
-  
-  @Resource(name="salesmanSellerRelationServiceImpl")
+
+  @Resource(name = "salesmanSellerRelationServiceImpl")
   private SalesmanSellerRelationService salesmanSellerRelationService;
 
   /**
@@ -46,16 +46,17 @@ public class SellerApplicationController extends BaseController {
   public String edit(Long id, ModelMap model) {
     SellerApplication sellerApplication = sellerApplicationService.find(id);
     model.addAttribute("sellerApply", sellerApplication);
-    model.addAttribute("envImages", sellerApplication.getEnvImages());
+    // model.addAttribute("envImages", sellerApplication.getEnvImages());
     List<Filter> filters = new ArrayList<Filter>();
     filters.add(Filter.eq("sellerApplication", sellerApplication.getId()));
-    List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationService.findList(null, null, filters, null);
-    if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+    List<SalesmanSellerRelation> salesmanSellerRelations =
+        salesmanSellerRelationService.findList(null, null, filters, null);
+    if (salesmanSellerRelations != null && salesmanSellerRelations.size() == 1) {
       SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
       EndUser salesMan = salesmanSellerRelation.getEndUser();
       model.addAttribute("salesMan", salesMan);
     }
-    
+
     return "/sellerApply/edit";
   }
 
@@ -130,11 +131,12 @@ public class SellerApplicationController extends BaseController {
   public String details(Long id, ModelMap model) {
     SellerApplication sellerApplication = sellerApplicationService.find(id);
     model.addAttribute("sellerApply", sellerApplication);
-    model.addAttribute("envImages", sellerApplication.getEnvImages());
+    // model.addAttribute("envImages", sellerApplication.getEnvImages());
     List<Filter> filters = new ArrayList<Filter>();
     filters.add(Filter.eq("sellerApplication", sellerApplication.getId()));
-    List<SalesmanSellerRelation> salesmanSellerRelations = salesmanSellerRelationService.findList(null, null, filters, null);
-    if(salesmanSellerRelations!=null && salesmanSellerRelations.size() == 1){
+    List<SalesmanSellerRelation> salesmanSellerRelations =
+        salesmanSellerRelationService.findList(null, null, filters, null);
+    if (salesmanSellerRelations != null && salesmanSellerRelations.size() == 1) {
       SalesmanSellerRelation salesmanSellerRelation = salesmanSellerRelations.get(0);
       EndUser salesMan = salesmanSellerRelation.getEndUser();
       model.addAttribute("salesMan", salesMan);

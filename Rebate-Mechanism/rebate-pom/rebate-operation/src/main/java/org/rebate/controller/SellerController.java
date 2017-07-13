@@ -206,7 +206,8 @@ public class SellerController extends BaseController {
   public String details(Long id, ModelMap model) {
     Seller seller = sellerService.find(id);
     model.addAttribute("seller", seller);
-    model.addAttribute("envImages", seller.getEnvImages());
+    // model.addAttribute("envImages", seller.getEnvImages());
+    // model.addAttribute("commitmentImages", seller.getCommitmentImages());
     return "/seller/details";
   }
 

@@ -137,7 +137,7 @@
 								<td>
 									<!-- a block container is required -->
 									  <ul  class="viewer-images clearfix">
-									  	[#list envImages as images]	
+									  	[#list seller.envImages as images]	
 											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
 										[/#list]
 									  </ul>
@@ -150,7 +150,7 @@
 								<td>
 									<!-- a block container is required -->
 									  <ul  class="viewer-images clearfix">
-									  	[#list commitmentImages as images]	
+									  	[#list seller.commitmentImages as images]	
 											 <li><img class="img-lazy img-rounded" data-original="${images.source}" alt="${images.title}"></li>
 										[/#list]
 									  </ul>

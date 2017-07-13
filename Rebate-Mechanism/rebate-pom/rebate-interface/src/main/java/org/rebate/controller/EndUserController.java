@@ -1581,6 +1581,7 @@ public class EndUserController extends MobileBaseController {
     map.put("agentLeScore", endUser.getAgentLeScore());// 代理商乐分
     map.put("incomeLeScore", endUser.getIncomeLeScore());// 业务员乐分
     map.put("motivateLeScore", endUser.getMotivateLeScore());// 会员乐分
+    map.put("avlLeScore", endUserService.getAvlLeScore(endUser).get("avlLeScore"));// 为兼容旧版本返回的值可提现金额
     // map.putAll(endUserService.getAvlLeScore(endUser));
     map.putAll(endUserService.getAvlRule(endUser));
 

@@ -278,13 +278,13 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
   public Map<String, BigDecimal> getAvlLeScore(EndUser endUser) {
     SystemConfig minLimit = systemConfigDao.getConfigByKey(SystemConfigKey.WITHDRAW_MINIMUM_LIMIT);
 
-    // BigDecimal incomeScore = endUser.getIncomeLeScore();
+    BigDecimal incomeScore = endUser.getIncomeLeScore();
     BigDecimal motivateScore = endUser.getMotivateLeScore();
     BigDecimal agentScore = endUser.getAgentLeScore();
-    // /**
-    // * 商家直接收益乐分不足1乐分无法提取
-    // */
-    // incomeScore = incomeScore.setScale(0, BigDecimal.ROUND_DOWN);
+    /**
+     * 业务员直接收益乐分不足1乐分无法提取
+     */
+    incomeScore = incomeScore.setScale(0, BigDecimal.ROUND_DOWN);
     /**
      * 代理商提成乐分不足1乐分无法提取
      */
@@ -296,12 +296,12 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
         ((motivateScore.divide(new BigDecimal(minLimit.getConfigValue()))).setScale(0,
             BigDecimal.ROUND_DOWN)).multiply(new BigDecimal(minLimit.getConfigValue()));
 
-    // BigDecimal avlLeScore = incomeScore.add(motivateScore).add(agentScore);
-    BigDecimal avlLeScore = motivateScore.add(agentScore);
+    BigDecimal avlLeScore = incomeScore.add(motivateScore).add(agentScore);
+    // BigDecimal avlLeScore = motivateScore.add(agentScore);
     Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
     map.put("avlLeScore", avlLeScore);
     map.put("agentLeScore", agentScore);
-    // map.put("incomeLeScore", incomeScore);
+    map.put("incomeLeScore", incomeScore);
     map.put("motivateLeScore", motivateScore);
     return map;
   }
