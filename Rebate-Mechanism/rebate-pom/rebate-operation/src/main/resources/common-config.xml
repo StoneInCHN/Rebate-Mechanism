@@ -50,9 +50,9 @@
 	<!-- 通联支付URL -->
 	<setting name="allinpayUrl" value="https://113.108.182.3/aipg/ProcessServlet" />
 	<!-- 公钥证书 -->
-	<setting name="tltcerPath" value="allinpayConfig\\test\\allinpay-pds.cer" /> 
+	<setting name="tltcerPath" value="allinpayConfig/test/allinpay-pds.cer" /> 
 	<!-- 私钥证书 -->
-	<setting name="pfxPath" value="allinpayConfig\\test\\20060400000044502.p12" /> 
+	<setting name="pfxPath" value="allinpayConfig/test/20060400000044502.p12" /> 
 	<!-- 私钥密码 -->
 	<setting name="pfxPassword" value="111111" /> 
 	<!-- 商户号-->

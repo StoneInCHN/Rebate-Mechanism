@@ -21,6 +21,7 @@ import org.rebate.service.AreaService;
 import org.rebate.utils.DateUtils;
 import org.rebate.utils.LogUtil;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
@@ -41,7 +42,7 @@ public class AreaConsumeReportJob {
 	  private AreaService areaService;	  
 	  
 	  
-	  //@Scheduled(cron = "${job.daily_areaConsume_statistics.cron}")// 每天1点0分0秒执行 0 0 3 * * ?
+	  @Scheduled(cron = "${job.daily_areaConsume_statistics.cron}")// 每天1点0分0秒执行 0 0 1 * * ?
 	  public void areaConsumeReport() {
 		if (date == null) {
 		    date = new Date();
