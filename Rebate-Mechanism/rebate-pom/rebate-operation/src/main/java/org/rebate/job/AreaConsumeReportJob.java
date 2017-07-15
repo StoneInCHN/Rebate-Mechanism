@@ -52,88 +52,97 @@ public class AreaConsumeReportJob {
 
 	    LogUtil.debug(this.getClass(), "areaConsumeReport", "AreaConsumeReport Job Start! Time Period:"
 	        + startDate + " - " + endDate);
+	    try {
+	    	Map<String, BigDecimal> mapAmount = new HashMap<String, BigDecimal>();
+		    List<AreaConsumeResult> results = areaConsumeReportService.getAreaConsumeResult(startDate, endDate);
+		    LogUtil.debug(this.getClass(), "areaConsumeReport", "results size:"+ (results != null? results.size():null));
+		    
+		    for (int i = 0; i < results.size(); i++) {
+		    	AreaConsumeResult result = results.get(i);
+		    	String key = result.getAreaID() + "_" + result.getSellerDiscount();
+		    	if (!mapAmount.containsKey(key)) {
+		    		mapAmount.put(key, result.getAmount());
+				}else {
+					BigDecimal existAmount = mapAmount.get(key);
+					mapAmount.put(key, existAmount.add(result.getAmount()));
+				}
+			}
+		    List<AreaConsumeReport> countryReports = new ArrayList<AreaConsumeReport>();
+		    if (!mapAmount.isEmpty()) {
+		    	for (Map.Entry<String, BigDecimal> entry : mapAmount.entrySet()) {
+	  				String key = entry.getKey();
+	  				String[] keyArray = key.split("_");
+	  				Area area = areaService.find(new Long(keyArray[0]));
+	  				int level = area.getTreePath().split(Area.TREE_PATH_SEPARATOR).length;
+	  				boolean exist = false;
+	  				if (level == 3) {//县区
+	  					exist = areaConsumeReportService.exists(Filter.eq("area", area), 
+	  	  						Filter.eq("reportDate", startDate));
+	  				}
+	  				if (level == 2) {//市
+	  					exist = areaConsumeReportService.exists(Filter.eq("city", area), 
+	  	  						Filter.eq("reportDate", startDate));
+					}  				
+	  				if (level == 0) {//省
+	  					exist = areaConsumeReportService.exists(Filter.eq("province", area), 
+	  	  						Filter.eq("reportDate", startDate));
+					}
+	  				if (exist) {
+						continue;
+					}
+	  				AreaConsumeReport report = new AreaConsumeReport();
+	  				if (level == 3) {//县区
+	  					report.setArea(area);
+	  	  				if (area.getParent() != null) {
+	  						report.setCity(area.getParent());
+	  						if (area.getParent().getParent() != null) {
+	  							report.setProvince(area.getParent().getParent());
+	  						}
+	  					}
+					}
+	  				if (level == 2) {//市
+	  					report.setCity(area);
+	  					if (area.getParent() != null) {
+	  						report.setProvince(area.getParent());
+	  					}
+					}  				
+	  				if (level == 0) {//省
+	  					report.setProvince(area);
+					}   				
+	  				report.setSellerDiscount(new BigDecimal(keyArray[1]));
+	  				report.setReportDate(startDate);
+	  				report.setTotalAmount(entry.getValue());
+	  				report.setAgencyLevel(AgencyLevel.COUNTY);
+	  				countryReports.add(report);
+		    	}
+			}
+		    if (countryReports.size() > 0) {
+		    	areaConsumeReportService.save(countryReports);
+		    	Set<Long> citeIds = new HashSet<Long>();
+		    	Set<Long> provinceIds = new HashSet<Long>();
+		    	for (AreaConsumeReport areaConsumeReport : countryReports) {
+		    		Area city = areaConsumeReport.getCity();
+		    		Area province = areaConsumeReport.getProvince();
+					if (city != null) {
+						citeIds.add(city.getId());
+					}
+					if (province != null) {
+						provinceIds.add(province.getId());
+					}
+				}
+		    	List<AreaConsumeReport> cityProvinceReports = areaConsumeReportService.getCityProvinceReport
+		    			(citeIds, provinceIds, startDate);
+		    	areaConsumeReportService.save(cityProvinceReports);
+			}
+		} catch (Exception e) {
+		      date = null;
+		      LogUtil.debug(this.getClass(), "areaConsumeReport", "Catch Exception: %s", e.getMessage());
+		}
 	    
-	    Map<String, BigDecimal> mapAmount = new HashMap<String, BigDecimal>();
-	    List<AreaConsumeResult> results = areaConsumeReportService.getAreaConsumeResult(startDate, endDate);
-	    for (int i = 0; i < results.size(); i++) {
-	    	AreaConsumeResult result = results.get(i);
-	    	String key = result.getAreaID() + "_" + result.getSellerDiscount();
-	    	if (!mapAmount.containsKey(key)) {
-	    		mapAmount.put(key, result.getAmount());
-			}else {
-				BigDecimal existAmount = mapAmount.get(key);
-				mapAmount.put(key, existAmount.add(result.getAmount()));
-			}
-		}
-	    List<AreaConsumeReport> countryReports = new ArrayList<AreaConsumeReport>();
-	    if (!mapAmount.isEmpty()) {
-	    	for (Map.Entry<String, BigDecimal> entry : mapAmount.entrySet()) {
-  				String key = entry.getKey();
-  				String[] keyArray = key.split("_");
-  				Area area = areaService.find(new Long(keyArray[0]));
-  				int level = area.getTreePath().split(Area.TREE_PATH_SEPARATOR).length;
-  				boolean exist = false;
-  				if (level == 3) {//县区
-  					exist = areaConsumeReportService.exists(Filter.eq("area", area), 
-  	  						Filter.eq("reportDate", startDate));
-  				}
-  				if (level == 2) {//市
-  					exist = areaConsumeReportService.exists(Filter.eq("city", area), 
-  	  						Filter.eq("reportDate", startDate));
-				}  				
-  				if (level == 0) {//省
-  					exist = areaConsumeReportService.exists(Filter.eq("province", area), 
-  	  						Filter.eq("reportDate", startDate));
-				}
-  				if (exist) {
-					continue;
-				}
-  				AreaConsumeReport report = new AreaConsumeReport();
-  				if (level == 3) {//县区
-  					report.setArea(area);
-  	  				if (area.getParent() != null) {
-  						report.setCity(area.getParent());
-  						if (area.getParent().getParent() != null) {
-  							report.setProvince(area.getParent().getParent());
-  						}
-  					}
-				}
-  				if (level == 2) {//市
-  					report.setCity(area);
-  					if (area.getParent() != null) {
-  						report.setProvince(area.getParent());
-  					}
-				}  				
-  				if (level == 0) {//省
-  					report.setProvince(area);
-				}   				
-  				report.setSellerDiscount(new BigDecimal(keyArray[1]));
-  				report.setReportDate(startDate);
-  				report.setTotalAmount(entry.getValue());
-  				report.setAgencyLevel(AgencyLevel.COUNTY);
-  				countryReports.add(report);
-	    	}
-		}
-	    if (countryReports.size() > 0) {
-	    	areaConsumeReportService.save(countryReports);
-	    	Set<Long> citeIds = new HashSet<Long>();
-	    	Set<Long> provinceIds = new HashSet<Long>();
-	    	for (AreaConsumeReport areaConsumeReport : countryReports) {
-	    		Area city = areaConsumeReport.getCity();
-	    		Area province = areaConsumeReport.getProvince();
-				if (city != null) {
-					citeIds.add(city.getId());
-				}
-				if (province != null) {
-					provinceIds.add(province.getId());
-				}
-			}
-	    	List<AreaConsumeReport> cityProvinceReports = areaConsumeReportService.getCityProvinceReport
-	    			(citeIds, provinceIds, startDate);
-	    	areaConsumeReportService.save(cityProvinceReports);
-		}
 	    LogUtil.debug(this.getClass(), "areaConsumeReport", "AreaConsumeReport Job End! Time Period:"
 		        + startDate + " - " + endDate);
+	    
+	    date = null;
 	  }
 	  
 }
