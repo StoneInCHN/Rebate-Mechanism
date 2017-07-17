@@ -41,7 +41,6 @@ public class AreaConsumeReportJob {
 	  @Resource(name = "areaServiceImpl")
 	  private AreaService areaService;	  
 	  
-	  
 	  @Scheduled(cron = "${job.daily_areaConsume_statistics.cron}")// 每天1点0分0秒执行 0 0 1 * * ?
 	  public void areaConsumeReport() {
 		if (date == null) {
@@ -95,9 +94,14 @@ public class AreaConsumeReportJob {
 	  					report.setArea(area);
 	  	  				if (area.getParent() != null) {
 	  						report.setCity(area.getParent());
-	  						if (area.getParent().getParent() != null) {
-	  							report.setProvince(area.getParent().getParent());
-	  						}
+	  						Area parentArea = areaService.find(area.getParent().getId());
+	  						if (parentArea.getParent() != null) {
+	  							report.setProvince(parentArea.getParent());
+							}
+	  						//手动跑job不报错，自动跑job就要报Catch Exception: could not initialize proxy - no Session()
+//	  						if (area.getParent().getParent() != null) {
+//	  							report.setProvince(area.getParent().getParent());
+//	  						}
 	  					}
 					}
 	  				if (level == 2) {//市
