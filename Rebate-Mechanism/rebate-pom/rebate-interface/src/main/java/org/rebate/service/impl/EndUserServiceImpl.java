@@ -182,6 +182,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
       if (recommend != null) {// 存在该推荐人
         regUser.setRecommender(recommend.getNickName());
         regUser.setRecommenderId(recommend.getId());
+        regUser.setRecommenderMobile(recommend.getCellPhoneNum());
 
         UserRecommendRelation parent = userRecommendRelationDao.findByUser(recommend);
         relation.setParent(parent);

@@ -76,13 +76,13 @@
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.endUser.isBindWeChat")}:
+									${message("rebate.endUser.recommenderMobile")}:
 								</th>
 								<td>
-									[#if endUser.isBindWeChat == true]
-										${message("rebate.common.true")}
+									[#if endUser.recommenderMobile??]
+										${endUser.recommenderMobile}
 									[#else]
-										${message("rebate.common.false")}
+										--
 									[/#if]
 								</td>
 							</tr>

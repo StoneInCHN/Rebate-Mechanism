@@ -36,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "rm_end_user", indexes = {
     @Index(name = "cellPhoneNumIndex", columnList = "cellPhoneNum"),
+    @Index(name = "recommenderMobileIndex", columnList = "recommenderMobile"),
     @Index(name = "accountStatusIndex", columnList = "accountStatus"),
     @Index(name = "recommenderIdIndex", columnList = "recommenderId"),
     @Index(name = "nickNameIndex", columnList = "nickName"),
@@ -77,6 +78,11 @@ public class EndUser extends BaseEntity {
   private String recommender;
 
   /**
+   * 推荐人手机号
+   */
+  private String recommenderMobile;
+
+  /**
    * 推荐人ID
    */
   private Long recommenderId;
@@ -107,12 +113,12 @@ public class EndUser extends BaseEntity {
    * 用户所在地区
    */
   private Area area;
-  
+
   /**
    * 市级代理 地区ID
    */
   private Long city;
-  
+
   /**
    * 省级代理 地区ID
    */
@@ -661,6 +667,15 @@ public class EndUser extends BaseEntity {
     this.recommender = recommender;
   }
 
+  @Column(length = 20)
+  public String getRecommenderMobile() {
+    return recommenderMobile;
+  }
+
+  public void setRecommenderMobile(String recommenderMobile) {
+    this.recommenderMobile = recommenderMobile;
+  }
+
   public Long getRecommenderId() {
     return recommenderId;
   }
@@ -731,20 +746,20 @@ public class EndUser extends BaseEntity {
   public void setMsgEndUsers(Set<MsgEndUser> msgEndUsers) {
     this.msgEndUsers = msgEndUsers;
   }
-  
+
   public Long getCity() {
-	return city;
+    return city;
   }
 
   public void setCity(Long city) {
-	this.city = city;
+    this.city = city;
   }
 
   public Long getProvince() {
-	return province;
+    return province;
   }
 
   public void setProvince(Long province) {
-	this.province = province;
+    this.province = province;
   }
 }

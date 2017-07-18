@@ -66,7 +66,21 @@ public class EndUserReq {
   /**
    * 是否为业务员
    */
-  private Boolean isSalesman ;
+  private Boolean isSalesman;
+
+  /**
+   * 推荐人手机号
+   */
+  private String recommenderMobile;
+
+
+  public String getRecommenderMobile() {
+    return recommenderMobile;
+  }
+
+  public void setRecommenderMobile(String recommenderMobile) {
+    this.recommenderMobile = recommenderMobile;
+  }
 
   public LeBeanChangeType getType() {
     return type;
@@ -164,5 +178,5 @@ public class EndUserReq {
     this.isSalesman = isSalesman;
   }
 
-  
+
 }

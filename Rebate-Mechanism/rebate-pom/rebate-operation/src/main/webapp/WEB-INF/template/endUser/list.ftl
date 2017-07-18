@@ -76,6 +76,14 @@
 									<input type="text" id="regDateTo" name="regDateTo" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'regDateFrom\')}'});" readonly [#if regDateTo??]value="${regDateTo?string("yyyy-MM-dd")}" [/#if]/>
 								</td>
 								<th>
+									${message("rebate.endUser.recommenderMobile")}:
+								</th>
+								<td>
+									<input type="text" name="recommenderMobile" class="text" value="${recommenderMobile}"  maxlength="50" />
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.endUser.isSalesman")}:
 								</th>
 								<td>
@@ -117,7 +125,7 @@
 						<a href="javascript:;" name="agent">${message("rebate.endUser.agent")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" name="isBindWeChat">${message("rebate.endUser.isBindWeChat")}</a>
+						<a href="javascript:;" name="recommenderMobile">${message("rebate.endUser.recommenderMobile")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" name="isSalesman">${message("rebate.endUser.isSalesman")}</a>
@@ -168,10 +176,10 @@
 						[/#if]
 					</td>
 					<td>
-						[#if endUser.isBindWeChat == true]
-							${message("rebate.common.true")}
+						[#if endUser.recommenderMobile??]
+							${endUser.recommenderMobile}
 						[#else]
-							${message("rebate.common.false")}
+							--
 						[/#if]
 					</td>
 					<td>

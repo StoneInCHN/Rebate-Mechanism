@@ -59,6 +59,10 @@ public class EndUserController extends BaseController {
       filters.add(Filter.like("cellPhoneNum", "%" + request.getCellPhoneNum() + "%"));
       model.addAttribute("cellPhoneNum", request.getCellPhoneNum());
     }
+    if (StringUtils.isNotEmpty(request.getRecommenderMobile())) {
+      filters.add(Filter.like("recommenderMobile", "%" + request.getRecommenderMobile() + "%"));
+      model.addAttribute("recommenderMobile", request.getRecommenderMobile());
+    }
     if (StringUtils.isNotEmpty(request.getNickName())) {
       filters.add(Filter.like("nickName", "%" + request.getNickName() + "%"));
       model.addAttribute("nickName", request.getNickName());

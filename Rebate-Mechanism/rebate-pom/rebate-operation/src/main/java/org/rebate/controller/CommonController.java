@@ -26,10 +26,13 @@ import org.rebate.beans.Setting.ImageType;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Admin;
 import org.rebate.entity.Area;
+import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.framework.filter.Filter;
+import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.json.base.BaseResponse;
 import org.rebate.request.EndUserReq;
 import org.rebate.service.AdminService;
 import org.rebate.service.AreaService;
@@ -40,6 +43,7 @@ import org.rebate.service.RSAService;
 import org.rebate.utils.JsonUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -67,6 +71,29 @@ public class CommonController extends BaseController {
   private FileService fileService;
   @Resource(name = "endUserServiceImpl")
   private EndUserService endUserService;
+
+
+  /**
+   * 补全推荐人手机号
+   *
+   * @return
+   */
+  @RequestMapping(value = "/test", method = RequestMethod.GET)
+  public @ResponseBody BaseResponse test() {
+    BaseResponse response = new BaseResponse();
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(new Filter("recommenderId", Operator.isNotNull, null));
+    List<EndUser> endUsers = endUserService.findList(null, filters, null);
+    if (!CollectionUtils.isEmpty(endUsers)) {
+      for (EndUser endUser : endUsers) {
+        EndUser recommender = endUserService.find(endUser.getRecommenderId());
+        endUser.setRecommenderMobile(recommender.getCellPhoneNum());
+      }
+      endUserService.update(endUsers);
+    }
+    response.setCode("0000");
+    return response;
+  }
 
   /**
    * 验证码
