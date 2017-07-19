@@ -31,7 +31,8 @@ public class AreaConsumeReportDaoImpl extends  BaseDaoImpl<AreaConsumeReport,Lon
 			Date endDate) {
 		StringBuffer sqlBuffer = new StringBuffer();
 		sqlBuffer.append("select o.amount, (o.seller_income/o.amount)*10, seller.area from rm_order o,rm_seller seller");
-		sqlBuffer.append(" where o.seller = seller.id and o.status <> 0 and o.is_saller_order = 0");
+		//sqlBuffer.append(" where o.seller = seller.id and o.status <> 0 and o.is_saller_order = 0");
+		sqlBuffer.append(" where o.seller = seller.id and o.status <> 0");//包含普通订单和录单
 		sqlBuffer.append(" and o.create_date > '");
 		sqlBuffer.append(DateUtils.getDateFormatString("yyyy-MM-dd HH:mm:ss", startDate));
 		sqlBuffer.append("'");
