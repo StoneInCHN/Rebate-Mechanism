@@ -205,9 +205,9 @@ public class LeScoreRecordJob {
     	LeScoreRecord refundRecord = new LeScoreRecord();//乐分退回记录
     	refundRecord.setLeScoreType(LeScoreType.REFUND);
     	refundRecord.setEndUser(endUser);
-    	refundRecord.setAmount(record.getAmount().abs());
-    	refundRecord.setMotivateLeScore(record.getMotivateLeScore().abs());
-    	refundRecord.setAgentLeScore(record.getAgentLeScore().abs());
+    	refundRecord.setAmount(record.getAmount() !=null? record.getAmount().abs():null);
+    	refundRecord.setMotivateLeScore(record.getMotivateLeScore());
+    	refundRecord.setAgentLeScore(record.getAgentLeScore());
     	refundRecord.setIncomeLeScore(record.getIncomeLeScore());
     	refundRecord.setSeller(record.getSeller());
     	refundRecord.setUserCurLeScore(endUser.getCurLeScore());

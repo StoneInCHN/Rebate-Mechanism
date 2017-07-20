@@ -8,7 +8,9 @@ import org.quartz.Job;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.job.AreaConsumeReportJob;
+import org.rebate.job.LeScoreRecordJob;
 import org.rebate.job.SellerClearingRecordJob;
+import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.QuartzManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,9 +27,15 @@ public class JobManagerController extends BaseController {
   
   @Resource(name = "sellerClearingRecordJob")
   private SellerClearingRecordJob sellerClearingRecordJob;
-
+  
   @Resource(name = "areaConsumeReportJob")
   private AreaConsumeReportJob areaConsumeReportJob;
+  
+  @Resource(name = "leScoreRecordServiceImpl")
+  private LeScoreRecordService leScoreRecordService;
+  
+  @Resource(name = "leScoreRecordJob")
+  private LeScoreRecordJob leScoreRecordJob;
   
   /**
    * 列表
@@ -76,6 +84,24 @@ public class JobManagerController extends BaseController {
     	  AreaConsumeReportJob.date = manualDate;
           areaConsumeReportJob.areaConsumeReport();
           return SUCCESS_MESSAGE;
+      } catch (Exception e) {
+          return Message.error(e.getMessage());
+      }
+  }
+  /**
+   * 手动查询代付交易结果并更新乐分记录
+   * @param manualDate
+   * @return
+   */
+  @RequestMapping(value = "/manualQueryLeScoreJob", method = RequestMethod.POST)
+  public @ResponseBody Message manualAreaConsumeJob(String reqSn) {
+      try {
+    	  if (reqSn != null) {
+    	      leScoreRecordJob.updateRecordStatus(reqSn);
+    	      return Message.success("手动查询代付交易结果并更新乐分记录!");
+    	    } else {
+    	      return Message.success("reqSn参数为空!");
+    	    }
       } catch (Exception e) {
           return Message.error(e.getMessage());
       }
