@@ -152,12 +152,14 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 				record.setWithdrawMsg("未找到提现银行卡！");
 				update(record);
 			}else if(record.getAmount() != null) {
-				totalClearingAmount = totalClearingAmount.add(record.getAmount().abs());
-				BigDecimal handingCharge = getAllinpayHandlingCharge(record.getAmount().abs());
+				BigDecimal leAmount = record.getAmount().abs();
+				leAmount = leAmount.setScale(2,BigDecimal.ROUND_HALF_UP);
+				totalClearingAmount = totalClearingAmount.add(leAmount);
+				BigDecimal handingCharge = getAllinpayHandlingCharge(leAmount);
  				if (handingCharge != null) {
   					 //因为手续费要在提现金额里面扣除，所以提现金额应该至少多余手续费一分钱
   					 //否者放弃提现此单，标明备注：提现金额不够支付手续费！
-  					 BigDecimal payAmount = record.getAmount().abs().subtract(handingCharge);
+  					 BigDecimal payAmount = leAmount.subtract(handingCharge);
   					 if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
   						 LogUtil.debug(this.getClass(), "batchWithdrawal", "Withdrawal Amount: %s is less than Handling Charge: %s !!!", record.getAmount().abs(), handingCharge);
   						 record.setWithdrawMsg("提现金额不够支付手续费！");
@@ -166,8 +168,8 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
   					 }
   				}
  				record.setHandlingCharge(handingCharge);//手续费
- 				record.setIsWithdraw(false);//暂时先标记为已提现
- 				record.setStatus(ClearingStatus.PROCESSING);
+ 				record.setIsWithdraw(false);//暂时先标记为未提现
+ 				record.setStatus(ClearingStatus.PROCESSING);//处理中...
  				record.setWithdrawMsg("处理中...");//处理中...
  				totalHandlingCharge = totalHandlingCharge.add(record.getHandlingCharge()); //累加手续费
 				records.add(record);
@@ -198,13 +200,13 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 	        }
     	}else {
     		LogUtil.debug(this.getClass(), "batchWithdrawal", "Batch Withdrawal failed, recordList is null or size=0");
-    		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚当前的事物
+    		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚当前的事务
     		return null;
 		}
 	} catch (Exception e) {
 		e.printStackTrace();
 		LogUtil.debug(this.getClass(), "batchWithdrawal", "Batch Withdrawal failed, Catch exception: %s", e.getMessage());
-		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚当前的事物
+		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚当前的事务
 	}
     
     return null;
