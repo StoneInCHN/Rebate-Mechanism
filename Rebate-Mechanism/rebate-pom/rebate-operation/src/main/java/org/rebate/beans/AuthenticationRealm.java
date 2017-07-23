@@ -30,67 +30,69 @@ import org.rebate.service.CaptchaService;
  */
 public class AuthenticationRealm extends AuthorizingRealm {
 
-	@Resource(name = "captchaServiceImpl")
-	private CaptchaService captchaService;
-	@Resource(name = "adminServiceImpl")
-	private AdminService adminService;
+  @Resource(name = "captchaServiceImpl")
+  private CaptchaService captchaService;
+  @Resource(name = "adminServiceImpl")
+  private AdminService adminService;
 
-	/**
-	 * 获取认证信息
-	 * 
-	 * @param token
-	 *            令牌
-	 * @return 认证信息
-	 */
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken token) {
-		AuthenticationToken authenticationToken = (AuthenticationToken) token;
-		String username = authenticationToken.getUsername();
-		String password = new String(authenticationToken.getPassword());
-		String captchaId = authenticationToken.getCaptchaId();
-		String captcha = authenticationToken.getCaptcha();
-		String ip = authenticationToken.getHost();
-		if (!captchaService.isValid(CaptchaType.adminLogin, captchaId, captcha)) {
-			throw new UnsupportedTokenException();
-		}
-		if (username != null && password != null) {
-			Admin admin = adminService.findByUsername(username);
-			if (admin == null) {
-				throw new UnknownAccountException();
-			}
-			if (admin.getAdminStatus().equals(AdminStatus.locked)) {
-				throw new DisabledAccountException();
-			}
-			if (!DigestUtils.md5Hex(password).equals(admin.getPassword())) {
-				throw new IncorrectCredentialsException();
-			}
-			admin.setLoginIp(ip);
-			admin.setLoginDate(new Date());
-			adminService.update(admin);
-			return new SimpleAuthenticationInfo(new Principal(admin.getId(), username), password, getName());
-		}
-		throw new UnknownAccountException();
-	}
+  /**
+   * 获取认证信息
+   * 
+   * @param token 令牌
+   * @return 认证信息
+   */
+  @Override
+  protected AuthenticationInfo doGetAuthenticationInfo(
+      org.apache.shiro.authc.AuthenticationToken token) {
+    AuthenticationToken authenticationToken = (AuthenticationToken) token;
+    String username = authenticationToken.getUsername();
+    String password = new String(authenticationToken.getPassword());
+    String captchaId = authenticationToken.getCaptchaId();
+    String captcha = authenticationToken.getCaptcha();
+    String ip = authenticationToken.getHost();
+    if (!captchaService.isValid(CaptchaType.adminLogin, captchaId, captcha)) {
+      throw new UnsupportedTokenException();
+    }
+    if (username != null && password != null) {
+      Admin admin = adminService.findByUsername(username);
+      if (admin == null) {
+        throw new UnknownAccountException();
+      }
+      if (admin.getAdminStatus().equals(AdminStatus.locked)) {
+        throw new DisabledAccountException();
+      }
+      if (!DigestUtils.md5Hex(password).equals(admin.getPassword())) {
+        throw new IncorrectCredentialsException();
+      }
+      if (!admin.getIsSystem() || admin.getLoginIp() != null) {
+        admin.setLoginIp(ip);
+        admin.setLoginDate(new Date());
+      }
+      adminService.update(admin);
+      return new SimpleAuthenticationInfo(new Principal(admin.getId(), username), password,
+          getName());
+    }
+    throw new UnknownAccountException();
+  }
 
-	/**
-	 * 获取授权信息
-	 * 
-	 * @param principals
-	 *            principals
-	 * @return 授权信息
-	 */
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		Principal principal = (Principal) principals.fromRealm(getName()).iterator().next();
-		if (principal != null) {
-			List<String> authorities = adminService.findAuthorities(principal.getId());
-			if (authorities != null) {
-				SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-				authorizationInfo.addStringPermissions(authorities);
-				return authorizationInfo;
-			}
-		}
-		return null;
-	}
+  /**
+   * 获取授权信息
+   * 
+   * @param principals principals
+   * @return 授权信息
+   */
+  @Override
+  protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+    Principal principal = (Principal) principals.fromRealm(getName()).iterator().next();
+    if (principal != null) {
+      List<String> authorities = adminService.findAuthorities(principal.getId());
+      if (authorities != null) {
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        authorizationInfo.addStringPermissions(authorities);
+        return authorizationInfo;
+      }
+    }
+    return null;
+  }
 
 }

@@ -397,7 +397,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     leScoreRecord.setWithdrawStatus(ApplyStatus.AUDIT_WAITING);
     leScoreRecord.setAmount(map.get("avlLeScore").negate());
     leScoreRecord.setMotivateLeScore(map.get("motivateLeScore"));
-    // leScoreRecord.setIncomeLeScore(map.get("incomeLeScore"));
+    leScoreRecord.setIncomeLeScore(map.get("incomeLeScore"));
     leScoreRecord.setAgentLeScore(map.get("agentLeScore"));
     leScoreRecord.setWithDrawSn(snDao.generate(Type.WITHDRAW));
     leScoreRecord.setWithDrawType(bankCardId);
@@ -406,7 +406,7 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
 
     endUser.getLeScoreRecords().add(leScoreRecord);
     endUser.setAgentLeScore(endUser.getAgentLeScore().subtract(map.get("agentLeScore")));
-    // endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(map.get("incomeLeScore")));
+    endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(map.get("incomeLeScore")));
     endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(map.get("motivateLeScore")));
     endUser.setCurLeScore(endUser.getCurLeScore().subtract(map.get("avlLeScore")));
     endUserDao.merge(endUser);

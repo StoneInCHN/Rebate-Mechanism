@@ -459,6 +459,12 @@ public class OrderController extends MobileBaseController {
     // response.getMsg().put("orderId", order.getId());
 
     orderService.update(orders);
+    if (LogUtil.isDebugEnabled(OrderController.class)) {
+      LogUtil.debug(OrderController.class, "paySellerOrder",
+          "pay Seller Order. orderSn: %s,sellerId: %s,payType: %s,payTypeId: %s", orderSn,
+          sellerId, payType, payTypeId);
+    }
+
 
     response.setCode(CommonAttributes.SUCCESS);
     String newtoken = TokenGenerator.generateToken(token);

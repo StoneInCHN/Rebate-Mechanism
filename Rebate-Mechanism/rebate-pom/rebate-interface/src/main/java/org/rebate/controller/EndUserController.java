@@ -194,7 +194,7 @@ public class EndUserController extends MobileBaseController {
        * 鼓励金收益,直接转化为乐豆
        */
       if (order.getEncourageAmount() != null) {
-        endUser.setCurLeBean(order.getEncourageAmount());
+        endUser.setCurLeBean(endUser.getCurLeBean().add(order.getEncourageAmount()));
         endUser.setTotalLeBean(endUser.getTotalLeBean().add(order.getEncourageAmount()));
       }
 
@@ -1710,6 +1710,11 @@ public class EndUserController extends MobileBaseController {
       }
     }
 
+    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+      LogUtil.debug(EndUserController.class, "withdrawConfirm",
+          "withdraw confirm. userId: %s, bankCardId: %s,withdrawAmount: %s", userId, entityId,
+          withdrawAmount);
+    }
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setCode(CommonAttributes.SUCCESS);
