@@ -79,11 +79,13 @@ public class LeScoreRecordJob {
 							Iterator<Element> qtdetails = root.element("QTRANSRSP").elementIterator("QTDETAIL");
 					        	try {
 					        		handleQueryTradeNew(qtdetails, reqSn);
-					        		cancel();//结束
+					        		//cancel();//结束
 								} catch (Exception e) {
-									cancel();//结束
+									//cancel();//结束
 									LogUtil.debug(this.getClass(), "batchWithdrawal(handleQueryTradeNew)", "Catch Exception: %s", e.getMessage());
 									e.printStackTrace();
+								} finally{
+									cancel();//结束
 								}
 							}
 						}

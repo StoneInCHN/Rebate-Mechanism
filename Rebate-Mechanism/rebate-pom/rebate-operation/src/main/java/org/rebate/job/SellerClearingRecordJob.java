@@ -102,22 +102,30 @@ public class SellerClearingRecordJob {
   					        if ("0000".equals(ret_code)) {//处理完毕
   					        	@SuppressWarnings("unchecked")
 								Iterator<Element> qtdetails = root.element("QTRANSRSP").elementIterator("QTDETAIL");
-  					        	while (qtdetails.hasNext()) {
-  					        		Element qtdetail = (Element) qtdetails.next();
-  					        		String sn = qtdetail.elementText("SN");
-  					        		String qtdetail_ret_code = qtdetail.elementText("RET_CODE");
-  					        		String qtdetail_err_msg = qtdetail.elementText("ERR_MSG");
-  					        		SellerClearingRecord record = findNeedClearingRecord(reqSn, sn);
-  					        		if (record != null) {
-  			  					    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
-  			  					    		updateRecord(record, ClearingStatus.SUCCESS, qtdetail_err_msg);
-										}else {//处理失败
-											updateRecord(record, ClearingStatus.FAILED, qtdetail_err_msg);
-										}
-									}
-  					        		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "req_sn: %s, sn: %s", req_sn, sn);
-  					            }
-  					        	cancel();//结束
+//  					        	while (qtdetails.hasNext()) {
+//  					        		Element qtdetail = (Element) qtdetails.next();
+//  					        		String sn = qtdetail.elementText("SN");
+//  					        		String qtdetail_ret_code = qtdetail.elementText("RET_CODE");
+//  					        		String qtdetail_err_msg = qtdetail.elementText("ERR_MSG");
+//  					        		SellerClearingRecord record = findNeedClearingRecord(reqSn, sn);
+//  					        		if (record != null) {
+//  			  					    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
+//  			  					    		updateRecord(record, ClearingStatus.SUCCESS, qtdetail_err_msg);
+//										}else {//处理失败
+//											updateRecord(record, ClearingStatus.FAILED, qtdetail_err_msg);
+//										}
+//									}
+//  					        		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "req_sn: %s, sn: %s", req_sn, sn);
+//  					            }
+//  					        	cancel();//结束
+  					        	try {
+  					        		handleQueryTradeNew(qtdetails, reqSn);
+								} catch (Exception e) {
+									LogUtil.debug(this.getClass(), "handleQueryTradeNew", "Catch Exception: %s", e.getMessage());
+									e.printStackTrace();
+								} finally{
+									cancel();//结束
+								}
   							}
   						}
   				} catch (Exception e) {
@@ -137,12 +145,30 @@ public class SellerClearingRecordJob {
         + startDate + " - " + endDate);
     date = null;
   }
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
+  private void handleQueryTradeNew(Iterator<Element> qtdetails, String reqSn) throws Exception{
+	while (qtdetails.hasNext()) {
+		Element qtdetail = (Element) qtdetails.next();
+		String sn = qtdetail.elementText("SN");
+		String qtdetail_ret_code = qtdetail.elementText("RET_CODE");
+		String qtdetail_err_msg = qtdetail.elementText("ERR_MSG");
+		SellerClearingRecord record = findNeedClearingRecord(reqSn, sn);
+		if (record != null) {
+		    if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
+		    	updateRecord(record, ClearingStatus.SUCCESS, qtdetail_err_msg);
+			}else {//处理失败
+				updateRecord(record, ClearingStatus.FAILED, qtdetail_err_msg);
+			}
+		}
+		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "req_sn: %s, sn: %s", reqSn, sn);
+	}
+  }
   /**
    * 更新商家货款记录等信息
    * @param record
    * @param status
    */
-  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
+//  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
   private void updateRecord(SellerClearingRecord record, ClearingStatus status, String errMsg){
 	  LogUtil.debug(this.getClass(), "updateRecord", "Update SellerClearingRecord-->ClearingStatus to be: %s", status.toString());
 	  if (status == ClearingStatus.SUCCESS) {
@@ -180,12 +206,12 @@ public class SellerClearingRecordJob {
 	    	record.setRemark(errMsg);
 	    	sellerClearingRecordService.update(record);
 	  }
-  	  EndUser endUser = record.getEndUser();
-  	  if (endUser != null && endUser.getId() != null) {
-  		  EndUser sellerEndUser = endUserService.find(endUser.getId());//不明白为啥直接用record.getEndUser()要报错-->could not initialize proxy - no Session,不应该是懒加载的原因啊。。。。。
-  		  sellerEndUser.setIncomeLeScore(new BigDecimal(0));
-      	  endUserService.update(sellerEndUser);
-  	  }
+//  	  EndUser endUser = record.getEndUser();
+//  	  if (endUser != null && endUser.getId() != null) {
+//  		  EndUser sellerEndUser = endUserService.find(endUser.getId());//不明白为啥直接用record.getEndUser()要报错-->could not initialize proxy - no Session,不应该是懒加载的原因啊。。。。。
+//  		  sellerEndUser.setIncomeLeScore(new BigDecimal(0));
+//      	  endUserService.update(sellerEndUser);
+//  	  }
   }
   /**
    * 根据reqSn和sn，获取需要更新结算状态的商家货款记录
