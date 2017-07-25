@@ -241,9 +241,9 @@
 					</td>
 					<td>
 						[#if  sellerApplication.applyStatus =="AUDIT_WAITING"]
-								<a href="edit.jhtml?id=${sellerApplication.id}" title="${message("csh.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
+								<a href="edit.jhtml?id=${sellerApplication.id}" title="${message("rebate.common.edit")}"><i class="fa fa-pencil-square-o"></i></a>
 						[#else]
-								<a href="details.jhtml?id=${sellerApplication.id}" title="${message("csh.common.details")}"><i class="fa fa-eye"></i></a>
+								<a href="details.jhtml?id=${sellerApplication.id}" title="${message("rebate.common.details")}"><i class="fa fa-eye"></i></a>
 						[/#if]
 					</td>
 				</tr>

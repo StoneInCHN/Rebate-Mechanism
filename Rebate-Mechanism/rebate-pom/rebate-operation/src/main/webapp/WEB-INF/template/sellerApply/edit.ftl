@@ -84,10 +84,10 @@ $(function() {
 							[#if salesMan??]
 							<tr>
 								<th>
-									业务员手机号:
+									${message("rebate.sellerApplication.salesMan")}:
 								</th>
 								<td>
-										${salesMan.cellPhoneNum}
+									${message("rebate.sellerApplication.salesMan.cellPhoneNum")}:${salesMan.cellPhoneNum}&nbsp;&nbsp;&nbsp;&nbsp;${message("rebate.sellerApplication.salesMan.nickName")}:${salesMan.nickName}&nbsp;&nbsp;&nbsp;&nbsp;${message("rebate.sellerApplication.salesMan.role")}:${message("rebate.sellerApplication.salesMan.role.sale")}[#if salesMan.agent??],${message("rebate.sellerApplication.salesMan.role.agent")}[/#if]
 								</td>
 							</tr>
 							[/#if]

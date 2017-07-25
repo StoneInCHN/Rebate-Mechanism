@@ -38,6 +38,7 @@ import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
+import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
@@ -80,6 +81,7 @@ import org.rebate.utils.KeyGenerator;
 import org.rebate.utils.LatLonUtil;
 import org.rebate.utils.QRCodeGenerator;
 import org.rebate.utils.RSAHelper;
+import org.rebate.utils.TimeUtils;
 import org.rebate.utils.TokenGenerator;
 import org.rebate.utils.ToolsUtils;
 import org.springframework.stereotype.Controller;
@@ -180,20 +182,43 @@ public class EndUserController extends MobileBaseController {
     // }
     // }
     // agentCommissionConfigService.save(configs);
+    String token = req.getToken();
+    if (!"ulsOtfMZcNc4D6aQnBwwnOTt6ZKohflO".equals(token)) {
+      response.setDesc("token invalid");
+      return response;
+    }
     String mobile = req.getCellPhoneNum();
     EndUser endUser = endUserService.findByUserMobile(mobile);
     List<Filter> filters = new ArrayList<Filter>();
     Filter endUserFilter = new Filter("endUser", Operator.eq, endUser);
     Filter statusFilter = new Filter("status", Operator.eq, OrderStatus.UNPAID);
+    Date curDate = new Date();
+    Date startTime = TimeUtils.formatDate2Day0(curDate);
+    Date endTime = TimeUtils.formatDate2Day59(curDate);
+    Filter startFilter = new Filter("createDate", Operator.ge, startTime);
+    Filter endFilter = new Filter("createDate", Operator.le, endTime);
+    filters.add(startFilter);
+    filters.add(endFilter);
     filters.add(endUserFilter);
     filters.add(statusFilter);
     List<Order> orders = orderService.findList(null, filters, null);
+    SystemConfig mindDivideConfig = systemConfigService.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
+    SystemConfig maxBonusPerConfig =
+        systemConfigService.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
     for (Order order : orders) {
 
       /**
        * 鼓励金收益,直接转化为乐豆
        */
       if (order.getEncourageAmount() != null) {
+        LeBeanRecord leBeanRecord = new LeBeanRecord();
+        leBeanRecord.setOrderId(order.getId());
+        leBeanRecord.setEndUser(endUser);
+        leBeanRecord.setType(LeBeanChangeType.ENCOURAGE);
+        leBeanRecord.setAmount(order.getEncourageAmount());
+        leBeanRecord.setSeller(order.getSeller());
+        leBeanRecord.setUserCurLeBean(endUser.getCurLeBean().add(leBeanRecord.getAmount()));
+        endUser.getLeBeanRecords().add(leBeanRecord);
         endUser.setCurLeBean(endUser.getCurLeBean().add(order.getEncourageAmount()));
         endUser.setTotalLeBean(endUser.getTotalLeBean().add(order.getEncourageAmount()));
       }
@@ -201,38 +226,51 @@ public class EndUserController extends MobileBaseController {
       if (order.getUserScore() != null) {
         endUser.setCurScore(endUser.getCurScore().add(order.getUserScore()));
         endUser.setTotalScore(endUser.getTotalScore().add(order.getUserScore()));
-      }
+        RebateRecord rebateRecord = new RebateRecord();
+        rebateRecord.setEndUser(endUser);
+        rebateRecord.setSeller(order.getSeller());
+        rebateRecord.setAmount(order.getAmount());
+        rebateRecord.setOrderId(order.getId());
+        rebateRecord.setRebateScore(order.getUserScore());
+        rebateRecord.setPaymentType(order.getPaymentType());
+        rebateRecord.setUserCurScore(endUser.getCurScore());
+        endUser.getRebateRecords().add(rebateRecord);
 
 
-      SystemConfig mindDivideConfig =
-          systemConfigService.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
-      SystemConfig maxBonusPerConfig =
-          systemConfigService.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
-      if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
-        BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
-        BigDecimal mind = endUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
-        if (mind.compareTo(new BigDecimal(1)) >= 0) {
-          LeMindRecord leMindRecord = new LeMindRecord();
-          leMindRecord.setEndUser(endUser);
-          leMindRecord.setAmount(mind);
-          leMindRecord.setScore(mind.multiply(divideMind));
-          leMindRecord.setStatus(CommonStatus.ACITVE);
-          leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
+        if (mindDivideConfig != null && mindDivideConfig.getConfigValue() != null) {
+          BigDecimal divideMind = new BigDecimal(mindDivideConfig.getConfigValue());
+          BigDecimal mind = endUser.getCurScore().divide(divideMind, 0, BigDecimal.ROUND_DOWN);
+          if (mind.compareTo(new BigDecimal(1)) >= 0) {
+            LeMindRecord leMindRecord = new LeMindRecord();
+            leMindRecord.setEndUser(endUser);
+            leMindRecord.setAmount(mind);
+            leMindRecord.setScore(mind.multiply(divideMind));
+            leMindRecord.setStatus(CommonStatus.ACITVE);
+            leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
 
-          leMindRecord.setMaxBonus(mind.multiply(divideMind));
-          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
-            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
-                .getConfigValue())));
+            leMindRecord.setMaxBonus(mind.multiply(divideMind));
+            if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+              leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+                  .getConfigValue())));
+            }
+
+            endUser.getLeMindRecords().add(leMindRecord);
+            endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
+            endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
+            RebateRecord deductScore = new RebateRecord();
+            deductScore.setRemark(Message.success("rebate.endUser.score.mind",
+                divideMind.toString()).getContent());
+            deductScore.setEndUser(endUser);
+            deductScore.setRebateScore(mind.multiply(divideMind).negate());
+            deductScore.setUserCurScore(endUser.getCurScore().add(deductScore.getRebateScore()));
+            endUser.getRebateRecords().add(deductScore);
+            endUser.setCurScore(deductScore.getUserCurScore());
           }
-
-          endUser.getLeMindRecords().add(leMindRecord);
-          endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
-          endUser.setTotalLeMind(endUser.getTotalLeMind().add(mind));
         }
       }
       endUserService.update(endUser);
-
     }
+    response.setDesc("success");
     return response;
   }
 

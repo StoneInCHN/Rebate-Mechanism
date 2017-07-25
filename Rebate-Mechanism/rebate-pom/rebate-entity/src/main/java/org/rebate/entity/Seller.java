@@ -252,7 +252,7 @@ public class Seller extends BaseEntity {
   /**
    * 商家是否支持乐豆抵扣
    */
-  private Boolean isBeanPay;
+  private Boolean isBeanPay = false;
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getLimitBeanByDay() {

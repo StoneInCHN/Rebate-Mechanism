@@ -148,7 +148,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     Seller seller = order.getSeller();
     EndUser sellerEndUser = seller.getEndUser();
 
-    if (BooleanUtils.isNotTrue(order.getIsSallerOrder())) {
+    if (BooleanUtils.isFalse(order.getIsSallerOrder())) {
       seller
           .setTotalOrderNum((seller.getTotalOrderNum() != null ? seller.getTotalOrderNum() : 0) + 1);
       seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getSellerIncome()));

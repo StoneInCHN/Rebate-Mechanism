@@ -306,6 +306,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       seller.setUnClearingAmount(seller.getUnClearingAmount().add(order.getSellerIncome()));
       sellerDao.merge(seller);
     }
+
     if (BooleanUtils.isTrue(order.getIsSallerOrder())) {
       seller.setTotalSellerOrderNum((seller.getTotalSellerOrderNum() != null ? seller
           .getTotalSellerOrderNum() : 0) + 1);
