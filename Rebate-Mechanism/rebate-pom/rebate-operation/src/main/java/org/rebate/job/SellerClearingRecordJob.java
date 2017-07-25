@@ -129,7 +129,9 @@ public class SellerClearingRecordJob {
   							}
   						}
   				} catch (Exception e) {
+  					cancel();//结束
   					LogUtil.debug(this.getClass(), "sellerClearingCalculate", "Catch Exception: %s", e.getMessage());
+  					e.printStackTrace();
   				}
   			}
   		};
