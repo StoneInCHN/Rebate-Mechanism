@@ -97,7 +97,7 @@ public class SellerClearingRecord extends BaseEntity {
     this.amount = amount;
   }
 
-  @Column(length = 100)
+  @Column(length = 1000)
   public String getRemark() {
     return remark;
   }
