@@ -10,6 +10,7 @@ import org.rebate.entity.Order;
 import org.rebate.entity.Seller;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
+import org.rebate.json.beans.SellerClearingResult;
 
 public class ExportUtils {
 
@@ -64,14 +65,6 @@ public class ExportUtils {
   }
 
   public static List<Map<String, String>> prepareExportSeller(List<Seller> lists) {
-    String[] headers =
-        {"sellerId", "sellerName", "sellerCategory", "contactPerson", "contactCellPhone",
-            "endUserCellPhone", "endUserNickName", "area", "address", "licenseNum", "rateScore",
-            "avgPrice", "discount", "limitAmountByDay", "businessTime", "favoriteNum",
-            "totalOrderNum", "accountStatus", "isBeanPay", "description"}; // 需要导出的字段
-    String[] headersName =
-        {"商家编号", "商家名字", "商家类别", "商家联系人", "商家联系人手机", "申请人(用户)手机号", "用户昵称", "地区", "商家地址", "营业执照号",
-            "评分", "均价", "折扣", "每日营业额上限", "营业时间", "商家被收藏数", "总订单数", "商家状态", "支持乐豆抵扣", "店铺介绍"}; // 字段对应列的列名
     List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
     for (Seller seller : lists) {
       Map<String, String> map = new HashMap<String, String>();
@@ -122,4 +115,19 @@ public class ExportUtils {
     return mapList;
   }
 
+  public static List<Map<String, String>> prepareExportSellerClearing(
+		List<SellerClearingResult> lists) {
+    List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
+    for (SellerClearingResult result : lists) {
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("paymentDate", result.getPaymentDate());
+      map.put("sellerName", result.getSellerName());
+      map.put("amount", result.getAmount() != null ? result.getAmount().toString() : "");
+      map.put("sellerIncome", result.getSellerIncome() != null ? result.getSellerIncome().toString() : "");
+      map.put("profit", result.getProfit() != null ? result.getProfit().toString() : "");
+      map.put("count", result.getCount() + "");
+      mapList.add(map);
+    }
+    return mapList;
+  }
 }

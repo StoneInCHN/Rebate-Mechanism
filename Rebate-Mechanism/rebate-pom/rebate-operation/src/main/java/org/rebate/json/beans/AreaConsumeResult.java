@@ -3,8 +3,6 @@ package org.rebate.json.beans;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import org.rebate.entity.Area;
-
 
 /**
  *  每日地区消费/交易额结果

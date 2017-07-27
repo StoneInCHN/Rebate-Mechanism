@@ -2,8 +2,10 @@ package org.rebate.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
@@ -14,10 +16,11 @@ import org.rebate.entity.SellerClearingRecord;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
+import org.rebate.json.beans.SellerClearingResult;
 import org.rebate.request.SellerClearingRecordReq;
-import org.rebate.service.ClearingOrderRelationService;
-import org.rebate.service.SellerClearingRecordService;
 import org.rebate.service.BankCardService;
+import org.rebate.service.SellerClearingRecordService;
+import org.rebate.utils.ExportUtils;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -134,5 +137,21 @@ public class SellerClearingRecordController extends BaseController {
 	    sellerClearingRecordService.update(sellerClearingRecord);
      }	 
      return sellerClearingRecordService.singlePay(sellerClearingRecord, bankCard);
+  }
+  /**
+   * 数据导出
+   */
+  @RequestMapping(value = "/dataExport", method = {RequestMethod.GET,RequestMethod.POST})
+  public void dataExport(HttpServletResponse response) {   
+    List<SellerClearingResult> lists = sellerClearingRecordService.findClearingResult();
+    if (lists != null && lists.size() > 0) {
+      String title = "Seller Clearing Record List"; // 工作簿标题，同时也是excel文件名前缀
+      String[] headers = {"paymentDate", "sellerName","amount","sellerIncome", "profit", "count"}; // 需要导出的字段
+      String[] headersName = {"交易日期", "商户名称","交易额","商家结算金额", "毛利润", "交易笔数"}; // 字段对应列的列名
+      List<Map<String, String>> mapList = ExportUtils.prepareExportSellerClearing(lists);
+      if (mapList.size() > 0) {
+        exportListToExcel(response, mapList, title, headers, headersName);
+      }
+    }
   }
 }

@@ -6,9 +6,9 @@ import java.util.List;
 import org.rebate.beans.Message;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.ClearingOrderRelation;
-import org.rebate.entity.Order;
 import org.rebate.entity.SellerClearingRecord;
 import org.rebate.framework.service.BaseService;
+import org.rebate.json.beans.SellerClearingResult;
 
 public interface SellerClearingRecordService extends BaseService<SellerClearingRecord,Long>{
     /**
@@ -24,4 +24,6 @@ public interface SellerClearingRecordService extends BaseService<SellerClearingR
 			BankCard bankCard);
 	
 	List<ClearingOrderRelation> getRelationListByRecordId(Long recordId);
+
+	List<SellerClearingResult> findClearingResult();
 }

@@ -1,8 +1,8 @@
 package org.rebate.service.impl; 
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.rebate.beans.Message;
-import org.rebate.beans.Setting;
 import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.ClearingOrderRelation;
@@ -27,6 +26,7 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.json.beans.SellerClearingResult;
 import org.rebate.service.BankCardService;
 import org.rebate.service.ClearingOrderRelationService;
 import org.rebate.service.OrderService;
@@ -35,14 +35,11 @@ import org.rebate.service.SellerService;
 import org.rebate.service.SnService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.utils.LogUtil;
-import org.rebate.utils.SettingUtils;
-import org.rebate.utils.SpringUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Service("sellerClearingRecordServiceImpl")
 public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClearingRecord,Long> implements SellerClearingRecordService {
@@ -386,5 +383,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		filters.add(Filter.eq("clearingRecId", recordId));
 		List<ClearingOrderRelation> relations = clearingOrderRelationService.findList(null, filters, null);
 		return relations;
+	}
+	@Override
+	public List<SellerClearingResult> findClearingResult() {
+		return sellerClearingRecordDao.findClearingResult();
 	}
 }
