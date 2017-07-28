@@ -23,6 +23,7 @@ import org.rebate.beans.SMSVerificationCode;
 import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
 import org.rebate.entity.Agent;
+import org.rebate.entity.BankCard;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeBeanRecord;
 import org.rebate.entity.LeMindRecord;
@@ -55,6 +56,7 @@ import org.rebate.json.base.PageResponse;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.json.base.ResponseOne;
 import org.rebate.json.request.AuthRequest;
+import org.rebate.json.request.BankCardRequest;
 import org.rebate.json.request.SellerRequest;
 import org.rebate.json.request.SmsCodeRequest;
 import org.rebate.json.request.UserRequest;
@@ -270,6 +272,86 @@ public class EndUserController extends MobileBaseController {
       }
       endUserService.update(endUser);
     }
+    response.setDesc("success");
+    return response;
+  }
+
+
+  /**
+   * 黑盒测试
+   *
+   * @return
+   */
+  @RequestMapping(value = "/blackTest", method = RequestMethod.POST)
+  public @ResponseBody BaseResponse blackTest(@RequestBody BankCardRequest req) {
+    BaseResponse response = new BaseResponse();
+    String cellPhoneNum = req.getCellPhoneNum();
+    String cellPhoneNumOld = req.getUserName();
+
+    String ownerName = req.getOwnerName();
+    String cardNum = req.getCardNum();
+    String idcard = req.getIdCard();
+    String reservedMobile = req.getReservedMobile();
+    String bankName = req.getBankName();
+
+    if (ownerName != null && cardNum != null && idcard != null && reservedMobile != null) {
+      String pic = "/upload/idcard/src_e8602933-45a0-494f-852f-0d210adb2b85.png";
+      EndUser endUser = endUserService.findByUserMobile(reservedMobile);
+      if (endUser == null) {
+        response.setDesc("mobileNum not exist");
+        return response;
+      }
+
+      UserAuth userAuth = userAuthService.getUserAuth(endUser.getId(), true);
+      if (userAuth == null) {
+        userAuth = new UserAuth();
+      }
+      userAuth.setUserId(endUser.getId());
+      userAuth.setIsAuth(true);
+      userAuth.setIdCardNo(idcard);
+      userAuth.setRealName(ownerName);
+      userAuth.setIdCardFrontPic(pic);
+      userAuth.setIdCardBackPic(pic);
+      userAuthService.save(userAuth);
+
+      BankCard bankCard = new BankCard();
+      bankCard.setEndUser(endUser);
+      bankCard.setOwnerName(ownerName);
+      bankCard.setBankName(bankName);
+      bankCard.setCardNum(cardNum);
+      bankCard.setIdCard(idcard);
+      bankCard.setCardType("借记卡");
+      bankCard.setIsDefault(true);
+      bankCard.setReservedMobile(reservedMobile);
+      bankCard.setBankLogo("http://apiserver.qiniudn.com/zhongguo.png");
+      bankCard.setDelStatus(false);
+      bankCardService.save(bankCard);
+    }
+
+    if (cellPhoneNum != null && cellPhoneNumOld != null) {
+      if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
+        return response;
+      }
+
+      EndUser user = endUserService.findByUserMobile(cellPhoneNum);
+      if (user != null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.mobile.used").getContent());
+        return response;
+      }
+      EndUser endUser = endUserService.findByUserMobile(cellPhoneNumOld);
+      if (endUser == null) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.user.noexist").getContent());
+        return response;
+      }
+      endUser.setCellPhoneNum(cellPhoneNum);
+      endUserService.changeUserMobile(endUser);
+    }
+
+
     response.setDesc("success");
     return response;
   }

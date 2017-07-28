@@ -169,6 +169,7 @@ public class EndUserController extends BaseController {
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.asc("orderId"));
     pageable.setOrders(orderings);
     model.addAttribute("page", rebateRecordService.findPage(pageable));
     return "/endUser/scoreRecord";

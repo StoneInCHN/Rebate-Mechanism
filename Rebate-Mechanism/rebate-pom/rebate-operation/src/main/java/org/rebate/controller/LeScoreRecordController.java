@@ -46,30 +46,31 @@ public class LeScoreRecordController extends BaseController {
     filters.add(Filter.eq("leScoreType", LeScoreType.WITHDRAW));
     if (req.getUserName() != null) {
       filters.add(Filter.like("endUser&nickName", "%" + req.getUserName() + "%"));
+      model.addAttribute("userName", req.getUserName());
     }
     if (req.getCellPhoneNum() != null) {
       filters.add(Filter.like("endUser&cellPhoneNum", "%" + req.getCellPhoneNum() + "%"));
+      model.addAttribute("cellPhoneNum", req.getCellPhoneNum());
     }
     if (req.getWithdrawStatus() != null) {
       filters.add(Filter.eq("withdrawStatus", req.getWithdrawStatus()));
+      model.addAttribute("withdrawStatus", req.getWithdrawStatus());
     }
     if (req.getBeginDate() != null) {
       Filter dateGeFilter = new Filter("createDate", Operator.ge, req.getBeginDate());
       filters.add(dateGeFilter);
+      model.addAttribute("beginDate", req.getBeginDate());
     }
     if (req.getEndDate() != null) {
       Filter dateLeFilter = new Filter("createDate", Operator.le, req.getEndDate());
       filters.add(dateLeFilter);
+      model.addAttribute("endDate", req.getEndDate());
     }
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
     pageable.setOrders(orderings);
     model.addAttribute("page", leScoreRecordService.findPage(pageable));
-    model.addAttribute("withdrawStatus", req.getWithdrawStatus());
-    model.addAttribute("userName", req.getUserName());
-    model.addAttribute("beginDate", req.getBeginDate());
-    model.addAttribute("endDate", req.getEndDate());
     return "/leScoreRecord/list";
   }
 
