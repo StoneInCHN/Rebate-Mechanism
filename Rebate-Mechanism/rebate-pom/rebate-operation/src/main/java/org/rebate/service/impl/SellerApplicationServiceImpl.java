@@ -57,7 +57,7 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     EndUser endUser = apply.getEndUser();
 
     if (endUser != null && endUser.getSeller() != null) {
-      return Message.error("rebate.message.error");
+      return Message.error("rebate.sellerApplication.user.hasSeller");
     }
 
     try {

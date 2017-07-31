@@ -2178,6 +2178,11 @@ public class EndUserController extends MobileBaseController {
     String token = req.getToken();
     String cellPhoneNum = req.getCellPhoneNum();
 
+    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+      LogUtil.debug(EndUserController.class, "verifyMobile",
+          "verify User Mobile for apply seller. userId: %s,cellPhoneNum: %s", userId, cellPhoneNum);
+    }
+
     // 手机号码格式验证
     if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
       response.setCode(CommonAttributes.FAIL_COMMON);

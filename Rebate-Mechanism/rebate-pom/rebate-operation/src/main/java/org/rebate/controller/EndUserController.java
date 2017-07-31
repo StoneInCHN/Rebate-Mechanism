@@ -169,7 +169,8 @@ public class EndUserController extends BaseController {
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
-    orderings.add(Ordering.asc("orderId"));
+    // orderings.add(Ordering.asc("orderId"));
+    orderings.add(Ordering.desc("id"));
     pageable.setOrders(orderings);
     model.addAttribute("page", rebateRecordService.findPage(pageable));
     return "/endUser/scoreRecord";
@@ -244,6 +245,7 @@ public class EndUserController extends BaseController {
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.desc("userCurLeScore"));
     pageable.setOrders(orderings);
     model.addAttribute("page", leScoreRecordService.findPage(pageable));
     return "/endUser/leScoreRecord";
@@ -279,6 +281,7 @@ public class EndUserController extends BaseController {
     pageable.setFilters(filters);
     List<Ordering> orderings = new ArrayList<Ordering>();
     orderings.add(Ordering.desc("createDate"));
+    orderings.add(Ordering.desc("userCurLeBean"));
     pageable.setOrders(orderings);
     model.addAttribute("page", leBeanRecordService.findPage(pageable));
     return "/endUser/leBeanRecord";
