@@ -56,15 +56,15 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
     // 商家所属用户
     EndUser endUser = apply.getEndUser();
 
-    if (endUser != null && endUser.getSeller() != null) {
-      return Message.error("rebate.sellerApplication.user.hasSeller");
-    }
 
     try {
-      apply.setApplyStatus(sellerApply.getApplyStatus());
-      apply.setNotes(sellerApply.getNotes());
-      apply.setLimitAmountByDay(sellerApply.getLimitAmountByDay());
       if (ApplyStatus.AUDIT_PASSED == sellerApply.getApplyStatus()) {
+        if (endUser != null && endUser.getSeller() != null) {
+          return Message.error("rebate.sellerApplication.user.hasSeller");
+        }
+        apply.setApplyStatus(sellerApply.getApplyStatus());
+        apply.setNotes(sellerApply.getNotes());
+        apply.setLimitAmountByDay(sellerApply.getLimitAmountByDay());
         Seller seller = new Seller();
         SellerCategory sellerCategory = apply.getSellerCategory();
         if (endUser != null) {
@@ -145,6 +145,8 @@ public class SellerApplicationServiceImpl extends BaseServiceImpl<SellerApplicat
         }
         message = SpringUtils.getMessage("rebate.sellerApplication.audit.passed", seller.getName());
       } else {
+        apply.setApplyStatus(sellerApply.getApplyStatus());
+        apply.setNotes(sellerApply.getNotes());
         List<Filter> filters = new ArrayList<Filter>();
         filters.add(Filter.eq("sellerApplication", sellerApply.getId()));
         List<SalesmanSellerRelation> salesmanSellerRelations =
