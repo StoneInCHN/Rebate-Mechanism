@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -21,7 +22,8 @@ import org.rebate.entity.base.BaseEntity;
  *
  */
 @Entity
-@Table(name = "rm_bonus_for_user_per_day")
+@Table(name = "rm_bonus_for_user_per_day", indexes = {@Index(name = "bonusDateIndex",
+    columnList = "bonusDate")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_bonus_for_user_per_day_sequence")
 public class BonusForUserPerDay extends BaseEntity {
 

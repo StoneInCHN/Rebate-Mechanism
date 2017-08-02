@@ -24,8 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@Table(name = "rm_user_bonus_report", indexes = {@Index(name = "createDateIndex",
-    columnList = "createDate")})
+@Table(name = "rm_user_bonus_report", indexes = {@Index(name = "reportDateIndex",
+    columnList = "reportDate")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_user_bonus_report_sequence")
 public class UserBonusReport extends BaseEntity {
 

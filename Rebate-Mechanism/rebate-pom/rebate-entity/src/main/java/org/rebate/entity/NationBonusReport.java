@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,7 +22,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@Table(name = "rm_nation_bonus_report")
+@Table(name = "rm_nation_bonus_report", indexes = {@Index(name = "reportDateIndex",
+    columnList = "reportDate")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_nation_bonus_report_sequence")
 public class NationBonusReport extends BaseEntity {
 
