@@ -47,7 +47,7 @@
 									${message("rebate.sellerEvaluate.score")}:
 								</th>
 								<td>
-									<input type="text" name="score" class="text" value="${score}"maxlength="20" />
+									<input type="number" name="score" class="text" value="${score}" min="1" max="5" />
 								</td>
 								<th>
 									&nbsp;

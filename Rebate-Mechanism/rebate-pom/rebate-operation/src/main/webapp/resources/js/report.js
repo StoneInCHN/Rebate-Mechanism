@@ -53,7 +53,7 @@ function() {
 							},
 							series : [
 									{
-										name : '乐豆',
+										name : '分红金额',
 										data : bonusLeScoreData
 									},
 									{
@@ -61,7 +61,7 @@ function() {
 										data : consumeTotalAmountData
 									},
 									{
-										name : '最高分红乐豆',
+										name : '最高分红',
 										data : highBonusLeScoreData
 									} ]
 						});

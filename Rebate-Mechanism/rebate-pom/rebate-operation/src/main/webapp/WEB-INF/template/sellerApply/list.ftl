@@ -39,10 +39,15 @@
 									<input type="text" name="sellerName" class="text" value="${sellerName}"maxlength="20" />
 								</td>
 								<th>
-									${message("rebate.sellerApplication.contactPerson")}:
+									${message("rebate.sellerApplication.sellerCategory")}:
 								</th>
 								<td>
-									<input type="text" name="contactPerson" class="text" value="${contactPerson}" maxlength="200" />
+									<select  name="sellerCategoryId">
+										<option value="">${message("rebate.common.All")}</option>
+										[#list sellerCategorys as sellerCategory]	
+											<option [#if sellerCategory.id == sellerCategoryId] selected="selected" [/#if] value="${sellerCategory.id}">${sellerCategory.categoryName}</option>
+										[/#list]
+									</select>
 								</td>
 								<th>
 									${message("rebate.sellerApplication.contactCellPhone")}:
@@ -85,17 +90,6 @@
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.sellerApplication.sellerCategory")}:
-								</th>
-								<td>
-									<select  name="sellerCategoryId">
-										<option value="">${message("rebate.common.All")}</option>
-										[#list sellerCategorys as sellerCategory]	
-											<option [#if sellerCategory.id == sellerCategoryId] selected="selected" [/#if] value="${sellerCategory.id}">${sellerCategory.categoryName}</option>
-										[/#list]
-									</select>
-								</td>
-								<th>
 									${message("rebate.seller.licenseNum")}:
 								</th>
 								<td>
@@ -127,9 +121,6 @@
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="address">${message("rebate.sellerApplication.address")}</a>
-					</th>
-					<th>
-						<a href="javascript:;" class="sort" name="contactPerson">${message("rebate.sellerApplication.contactPerson")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="contactCellPhone">${message("rebate.sellerApplication.contactCellPhone")}</a>
@@ -184,9 +175,6 @@
 					</td>
 					<td>
 						<span title="${sellerApplication.address}">${sellerApplication.address}</sapn>
-					</td>
-					<td>
-						${sellerApplication.contactPerson}
 					</td>
 					<td>
 						${sellerApplication.contactCellPhone}

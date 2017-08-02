@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -23,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@Table(name = "rm_user_bonus_report")
+@Table(name = "rm_user_bonus_report", indexes = {@Index(name = "createDateIndex",
+    columnList = "createDate")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_user_bonus_report_sequence")
 public class UserBonusReport extends BaseEntity {
 

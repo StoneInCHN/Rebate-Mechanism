@@ -39,10 +39,15 @@
 									<input type="text" name="name" class="text" value="${name}"maxlength="20" />
 								</td>
 								<th>
-									${message("rebate.seller.contactPerson")}:
+									${message("rebate.seller.sellerCategory")}:
 								</th>
 								<td>
-									<input type="text" name="contactPerson" class="text" value="${contactPerson}" maxlength="200" />
+									<select  name="sellerCategoryId">
+										<option value="">${message("rebate.common.All")}</option>
+										[#list sellerCategorys as sellerCategory]	
+											<option [#if sellerCategory.id == sellerCategoryId] selected="selected" [/#if] value="${sellerCategory.id}">${sellerCategory.categoryName}</option>
+										[/#list]
+									</select>
 								</td>
 								<th>
 									${message("rebate.seller.contactCellPhone")}:
@@ -50,7 +55,6 @@
 								<td>
 									<input type="text" name="contactCellPhone" class="text" value="${contactCellPhone}" maxlength="200" />
 								</td>
-							
 								<th>
 									&nbsp;
 								</th>
@@ -76,15 +80,10 @@
 									</select>
 								</td>
 								<th>
-									${message("rebate.seller.sellerCategory")}:
+									${message("rebate.seller.licenseNum")}:
 								</th>
 								<td>
-									<select  name="sellerCategoryId">
-										<option value="">${message("rebate.common.All")}</option>
-										[#list sellerCategorys as sellerCategory]	
-											<option [#if sellerCategory.id == sellerCategoryId] selected="selected" [/#if] value="${sellerCategory.id}">${sellerCategory.categoryName}</option>
-										[/#list]
-									</select>
+									<input type="text" name="licenseNum" class="text" value="${licenseNum}" maxlength="200" />
 								</td>
 								<th>
 									&nbsp;
@@ -95,12 +94,6 @@
 							</tr>
 							<tr>
 								<th>
-									${message("rebate.seller.licenseNum")}:
-								</th>
-								<td>
-									<input type="text" name="licenseNum" class="text" value="${licenseNum}" maxlength="200" />
-								</td>
-								<th>
 									${message("rebate.seller.isBeanPay")}:
 								</th>
 								<td>
@@ -109,7 +102,13 @@
 										<option [#if isBeanPay?? && isBeanPay] selected="selected" [/#if] value="true">${message("rebate.common.true")}</option>
 										<option [#if isBeanPay?? && !isBeanPay] selected="selected" [/#if] value="false">${message("rebate.common.false")}</option>
 									</select>
-								</td>		
+								</td>	
+								<th>
+									&nbsp;
+								</th>
+								<td>
+									&nbsp;
+								</td>	
 								<th>
 									&nbsp;
 								</th>

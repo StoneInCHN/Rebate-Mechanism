@@ -26,6 +26,7 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 @Entity
 @Table(name = "rm_order", indexes = {@Index(name = "createDateIndex", columnList = "createDate"),
     @Index(name = "snIndex", columnList = "sn"),
+    @Index(name = "statusIndex", columnList = "status"),
     @Index(name = "paymentTimeIndex", columnList = "paymentTime"),
     @Index(name = "batchSnIndex", columnList = "batchSn")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_order_sequence")

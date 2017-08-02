@@ -17,7 +17,11 @@ import org.rebate.entity.base.BaseEntity;
  *
  */
 @Entity
-@Table(name = "rm_bank_card", indexes = {@Index(name = "isDefault", columnList = "isDefault")})
+@Table(name = "rm_bank_card", indexes = {@Index(name = "cardNumIndex", columnList = "cardNum"),
+    @Index(name = "createDateIndex", columnList = "createDate"),
+    @Index(name = "idCardIndex", columnList = "idCard"),
+    @Index(name = "reservedMobileIndex", columnList = "reservedMobile"),
+    @Index(name = "ownerNameIndex", columnList = "ownerName")})
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "rm_bank_card_sequence")
 public class BankCard extends BaseEntity {
 
@@ -50,11 +54,11 @@ public class BankCard extends BaseEntity {
    * 用户
    */
   private EndUser endUser;
-  
+
   /**
    * Admin用户
    */
-  private Admin admin; 
+  private Admin admin;
 
   /**
    * 身份证号
@@ -171,7 +175,7 @@ public class BankCard extends BaseEntity {
   public void setIdCard(String idCard) {
     this.idCard = idCard;
   }
-  
+
   @ManyToOne(fetch = FetchType.LAZY)
   public Admin getAdmin() {
     return admin;
