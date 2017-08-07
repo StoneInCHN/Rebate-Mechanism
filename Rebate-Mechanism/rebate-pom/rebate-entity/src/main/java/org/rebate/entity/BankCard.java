@@ -121,7 +121,7 @@ public class BankCard extends BaseEntity {
     this.reservedMobile = reservedMobile;
   }
 
-  @Column(length = 50, nullable = false, unique = true)
+  @Column(length = 50, nullable = false)
   public String getCardNum() {
     return cardNum;
   }
