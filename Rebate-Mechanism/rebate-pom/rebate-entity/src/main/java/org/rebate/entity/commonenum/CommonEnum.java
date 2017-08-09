@@ -238,7 +238,7 @@ public class CommonEnum {
     WITHDRAW,
     /** 乐分退回 */
     REFUND
-    
+
   }
 
   /**
@@ -371,21 +371,36 @@ public class CommonEnum {
    *
    */
   public enum ImageSize {
-	  /** 小图*/
-	  SMALL,
-	  /** 中图*/
-	  MIDDLE,
-	  /** 大图*/
-	  BIG
+    /** 小图 */
+    SMALL,
+    /** 中图 */
+    MIDDLE,
+    /** 大图 */
+    BIG
   }
   /**
    * 二维码类型
    *
    */
   public enum QrCodeType {
-	  /** 推广二维码*/
-	  SHARE,
-	  /** 支付二维码*/
-	  PAID
+    /** 推广二维码 */
+    SHARE,
+    /** 支付二维码 */
+    PAID
+  }
+
+  /**
+   * 收益类型
+   *
+   */
+  public enum RebateType {
+    /** 积分 */
+    SCORE,
+    /** 乐心 */
+    LE_MIND,
+    /** 乐豆 */
+    LE_BEAN,
+    /** 乐分 */
+    LE_SCORE
   }
 }
