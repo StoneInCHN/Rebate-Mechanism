@@ -1,41 +1,28 @@
 package org.rebate.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
 import org.rebate.aspect.UserParam.CheckUserType;
 import org.rebate.aspect.UserValidCheck;
 import org.rebate.beans.CommonAttributes;
+import org.rebate.beans.Message;
+import org.rebate.beans.SMSVerificationCode;
+import org.rebate.common.log.LogUtil;
 import org.rebate.controller.base.MobileBaseController;
-import org.rebate.entity.LeBeanRecord;
-import org.rebate.entity.LeMindRecord;
-import org.rebate.entity.LeScoreRecord;
-import org.rebate.entity.RebateRecord;
-import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
-import org.rebate.framework.filter.Filter;
-import org.rebate.framework.filter.Filter.Operator;
-import org.rebate.framework.ordering.Ordering;
-import org.rebate.framework.ordering.Ordering.Direction;
-import org.rebate.framework.paging.Page;
-import org.rebate.framework.paging.Pageable;
-import org.rebate.json.base.BaseRequest;
-import org.rebate.json.base.PageResponse;
-import org.rebate.json.base.ResponseMultiple;
+import org.rebate.entity.EndUser;
+import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
+import org.rebate.entity.commonenum.CommonEnum.RebateType;
+import org.rebate.json.base.BaseResponse;
 import org.rebate.json.request.UserRequest;
-import org.rebate.service.AreaService;
 import org.rebate.service.EndUserService;
-import org.rebate.service.FileService;
 import org.rebate.service.LeBeanRecordService;
 import org.rebate.service.LeMindRecordService;
 import org.rebate.service.LeScoreRecordService;
-import org.rebate.service.RebateRecordService;
-import org.rebate.service.UserRecommendRelationService;
-import org.rebate.utils.FieldFilterUtils;
 import org.rebate.utils.TokenGenerator;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,18 +35,6 @@ public class TransferRebateController extends MobileBaseController {
   @Resource(name = "endUserServiceImpl")
   private EndUserService endUserService;
 
-  @Resource(name = "areaServiceImpl")
-  private AreaService areaService;
-
-  @Resource(name = "fileServiceImpl")
-  private FileService fileService;
-
-  @Resource(name = "userRecommendRelationServiceImpl")
-  private UserRecommendRelationService userRecommendRelationService;
-
-  @Resource(name = "rebateRecordServiceImpl")
-  private RebateRecordService rebateRecordService;
-
   @Resource(name = "leMindRecordServiceImpl")
   private LeMindRecordService leMindRecordService;
 
@@ -69,253 +44,132 @@ public class TransferRebateController extends MobileBaseController {
   @Resource(name = "leBeanRecordServiceImpl")
   private LeBeanRecordService leBeanRecordService;
 
-  /**
-   * 用户积分记录列表
-   * 
-   * @return
-   */
-  @RequestMapping(value = "/scoreRec", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> scoreRec(
-      @RequestBody BaseRequest request) {
 
-    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
-
-    Long userId = request.getUserId();
-    String token = request.getToken();
-    Integer pageSize = request.getPageSize();
-    Integer pageNumber = request.getPageNumber();
-
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
-
-    List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, userId);
-    filters.add(userFilter);
-
-    Pageable pageable = new Pageable();
-    pageable.setPageNumber(pageNumber);
-    pageable.setPageSize(pageSize);
-    pageable.setFilters(filters);
-    List<Ordering> orderings = new ArrayList<Ordering>();
-    orderings.add(Ordering.desc("createDate"));
-    orderings.add(Ordering.asc("orderId"));
-    pageable.setOrders(orderings);
-    // pageable.setOrderDirection(Direction.desc);
-    // pageable.setOrderProperty("createDate");
-
-    Page<RebateRecord> page = rebateRecordService.findPage(pageable);
-    String[] propertys =
-        {"id", "seller.name", "createDate", "seller.storePictureUrl", "rebateScore", "paymentType",
-            "userCurScore"};
-    List<Map<String, Object>> result =
-        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
-
-    PageResponse pageInfo = new PageResponse();
-    pageInfo.setPageNumber(pageNumber);
-    pageInfo.setPageSize(pageSize);
-    pageInfo.setTotal((int) page.getTotal());
-    response.setPage(pageInfo);
-    response.setMsg(result);
-
-    String newtoken = TokenGenerator.generateToken(token);
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
-    response.setCode(CommonAttributes.SUCCESS);
-    return response;
-  }
 
   /**
-   * 用户乐心记录列表
-   * 
+   * 用户转账(乐心,乐豆,乐分)
+   *
+   * @param request
+   * @param resetPwdReq
    * @return
    */
-  @RequestMapping(value = "/leMindRec", method = RequestMethod.POST)
+  @RequestMapping(value = "/doTransfer", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> leMindRec(
-      @RequestBody BaseRequest request) {
+  public @ResponseBody BaseResponse updatePwd(@RequestBody UserRequest req) {
+    BaseResponse response = new BaseResponse();
+    String smsCode = req.getSmsCode();
+    String cellPhoneNum = req.getCellPhoneNum();
+    RebateType transType = req.getTransType();
+    BigDecimal amount = req.getAmount();
+    String token = req.getToken();
+    Long userId = req.getUserId();
 
-    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
-    Long userId = request.getUserId();
-    String token = request.getToken();
-    Integer pageSize = request.getPageSize();
-    Integer pageNumber = request.getPageNumber();
-
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
-
-    List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, userId);
-    filters.add(userFilter);
-
-    Pageable pageable = new Pageable();
-    pageable.setPageNumber(pageNumber);
-    pageable.setPageSize(pageSize);
-    pageable.setFilters(filters);
-    pageable.setOrderDirection(Direction.desc);
-    pageable.setOrderProperty("createDate");
-
-    Page<LeMindRecord> page = leMindRecordService.findPage(pageable);
-    String[] propertys = {"id", "amount", "createDate", "score", "userCurLeMind"};
-    List<Map<String, Object>> result =
-        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
-
-    PageResponse pageInfo = new PageResponse();
-    pageInfo.setPageNumber(pageNumber);
-    pageInfo.setPageSize(pageSize);
-    pageInfo.setTotal((int) page.getTotal());
-    response.setPage(pageInfo);
-    response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(token);
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
-    response.setCode(CommonAttributes.SUCCESS);
-    return response;
-  }
-
-  /**
-   * 用户乐分记录列表
-   * 
-   * @return
-   */
-  @RequestMapping(value = "/leScoreRec", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> leScoreRec(
-      @RequestBody UserRequest request) {
-
-    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
-
-    Long userId = request.getUserId();
-    String token = request.getToken();
-    Integer pageSize = request.getPageSize();
-    Integer pageNumber = request.getPageNumber();
-    LeScoreType leScoreType = request.getLeScoreType();
-
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
-
-    List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, userId);
-    filters.add(userFilter);
-    if (leScoreType != null && LeScoreType.WITHDRAW.equals(leScoreType)) {
-      List<LeScoreType> types = new ArrayList<LeScoreType>();
-      types.add(LeScoreType.WITHDRAW);
-      types.add(LeScoreType.REFUND);
-      Filter typeFilter = new Filter("leScoreType", Operator.in, types);
-      filters.add(typeFilter);
-    } else {
-      Filter typeFilter = new Filter("leScoreType", Operator.eq, leScoreType);
-      filters.add(typeFilter);
+    if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
+      return response;
     }
 
+    if (amount == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.transfer.amount.null").getContent());
+      return response;
+    }
 
-    Pageable pageable = new Pageable();
-    pageable.setPageNumber(pageNumber);
-    pageable.setPageSize(pageSize);
-    pageable.setFilters(filters);
-    List<Ordering> orderings = new ArrayList<Ordering>();
-    orderings.add(Ordering.desc("createDate"));
-    orderings.add(Ordering.desc("userCurLeScore"));
-    pageable.setOrders(orderings);
-    // pageable.setOrderDirection(Direction.desc);
-    // pageable.setOrderProperty("createDate");
+    EndUser transferUser = endUserService.find(userId);
+    if (RebateType.LE_MIND.equals(transType)) {
+      if (!isInteger(amount.toString())) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.transfer.leMind.invalid").getContent());
+        return response;
+      }
+      if (amount.compareTo(transferUser.getCurLeMind()) > 0) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.transfer.leMind.insufficient").getContent());
+        return response;
+      }
+    }
 
-    Page<LeScoreRecord> page = leScoreRecordService.findPage(pageable);
-    String[] propertys =
-        {"id", "endUser.userPhoto", "seller.storePictureUrl", "seller.name", "createDate",
-            "endUser.nickName", "amount", "leScoreType", "userCurLeScore", "recommender",
-            "recommenderPhoto", "withdrawStatus", "status", "remark"};
-    List<Map<String, Object>> result =
-        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
+    if (RebateType.LE_BEAN.equals(transType)) {
+      if (!isNumber(amount.toString())) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.transfer.leBean.invalid").getContent());
+        return response;
+      }
+      if (amount.compareTo(transferUser.getCurLeBean()) > 0) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.transfer.leBean.insufficient").getContent());
+        return response;
+      }
+    }
 
-    PageResponse pageInfo = new PageResponse();
-    pageInfo.setPageNumber(pageNumber);
-    pageInfo.setPageSize(pageSize);
-    pageInfo.setTotal((int) page.getTotal());
-    response.setPage(pageInfo);
-    response.setMsg(result);
+    if (RebateType.LE_SCORE.equals(transType)) {
+      if (!isNumber(amount.toString())) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.transfer.leScore.invalid").getContent());
+        return response;
+      }
+      if (amount.compareTo(transferUser.getCurLeScore()) > 0) {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.transfer.leScore.insufficient").getContent());
+        return response;
+      }
+    }
+
+    EndUser user = endUserService.findByUserMobile(cellPhoneNum);
+    if (user == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.transfer.receiver.noexist").getContent());
+      return response;
+    }
+    if (user != null && !AccountStatus.ACTIVED.equals(user.getAccountStatus())) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.transfer.receiver.invalid").getContent());
+      return response;
+    }
+    if (user != null && user.getCellPhoneNum().equals(transferUser.getCellPhoneNum())) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.transfer.mobile.self").getContent());
+      return response;
+    }
+
+    SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(cellPhoneNum);
+    if (smsVerficationCode == null) {
+      response.setCode(CommonAttributes.FAIL_COMMON);
+      response.setDesc(Message.error("rebate.sms.invaliable").getContent());
+      return response;
+    } else {
+      String code = smsVerficationCode.getSmsCode();
+      String timeoutToken = smsVerficationCode.getTimeoutToken();
+      if (timeoutToken != null
+          && !TokenGenerator.smsCodeTokenTimeOut(timeoutToken, setting.getSmsCodeTimeOut())) {
+        if (!smsCode.equals(code)) {
+          response.setCode(CommonAttributes.FAIL_COMMON);
+          response.setDesc(Message.error("rebate.sms.token.error").getContent());
+          return response;
+        } else {
+          endUserService.deleteSmsCode(cellPhoneNum);
+        }
+      } else {
+        response.setCode(CommonAttributes.FAIL_COMMON);
+        response.setDesc(Message.error("rebate.sms.token.timeout").getContent());
+        return response;
+      }
+    }
+
+    endUserService.transferRebate(transferUser, user, transType, amount);
+    if (LogUtil.isDebugEnabled(TransferRebateController.class)) {
+      LogUtil.debug(TransferRebateController.class, "doTransfer",
+          "User Transfer. TransferId: %s,ReceiverCellPhone: %s,TransferType: %s,transAmount: %s",
+          userId, cellPhoneNum, transType.toString(), amount);
+    }
+
     String newtoken = TokenGenerator.generateToken(token);
     endUserService.createEndUserToken(newtoken, userId);
     response.setToken(newtoken);
     response.setCode(CommonAttributes.SUCCESS);
     return response;
+
   }
-
-  /**
-   * 用户乐豆记录列表
-   * 
-   * @return
-   */
-  @RequestMapping(value = "/leBeanRec", method = RequestMethod.POST)
-  @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody ResponseMultiple<Map<String, Object>> leBeanRec(
-      @RequestBody BaseRequest request) {
-
-    ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
-
-    Long userId = request.getUserId();
-    String token = request.getToken();
-    Integer pageSize = request.getPageSize();
-    Integer pageNumber = request.getPageNumber();
-
-    // // 验证登录token
-    // String userToken = endUserService.getEndUserToken(userId);
-    // if (!TokenGenerator.isValiableToken(token, userToken)) {
-    // response.setCode(CommonAttributes.FAIL_TOKEN_TIMEOUT);
-    // response.setDesc(Message.error("rebate.user.token.timeout").getContent());
-    // return response;
-    // }
-
-    List<Filter> filters = new ArrayList<Filter>();
-    Filter userFilter = new Filter("endUser", Operator.eq, userId);
-    filters.add(userFilter);
-
-    Pageable pageable = new Pageable();
-    pageable.setPageNumber(pageNumber);
-    pageable.setPageSize(pageSize);
-    pageable.setFilters(filters);
-    // pageable.setOrderDirection(Direction.desc);
-    // pageable.setOrderProperty("createDate");
-    List<Ordering> orderings = new ArrayList<Ordering>();
-    orderings.add(Ordering.desc("createDate"));
-    orderings.add(Ordering.desc("userCurLeBean"));
-    pageable.setOrders(orderings);
-
-    Page<LeBeanRecord> page = leBeanRecordService.findPage(pageable);
-    String[] propertys =
-        {"id", "amount", "seller.storePictureUrl", "seller.name", "createDate", "userCurLeBean",
-            "type", "recommender", "recommenderPhoto"};
-    List<Map<String, Object>> result =
-        FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
-
-    PageResponse pageInfo = new PageResponse();
-    pageInfo.setPageNumber(pageNumber);
-    pageInfo.setPageSize(pageSize);
-    pageInfo.setTotal((int) page.getTotal());
-    response.setPage(pageInfo);
-    response.setMsg(result);
-    String newtoken = TokenGenerator.generateToken(token);
-    endUserService.createEndUserToken(newtoken, userId);
-    response.setToken(newtoken);
-    response.setCode(CommonAttributes.SUCCESS);
-    return response;
-  }
-
-
 }

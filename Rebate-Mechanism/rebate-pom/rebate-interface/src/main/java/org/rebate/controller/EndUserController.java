@@ -645,7 +645,8 @@ public class EndUserController extends MobileBaseController {
           }
         } else if (smsCodeType.equals(SmsCodeType.UPDATELOGINPWD)
             || smsCodeType.equals(SmsCodeType.RESETPWD)
-            || smsCodeType.equals(SmsCodeType.UPDATEPAYPWD)) {// 找回登录密码，修改登录密码，修改支付密码（user应存在）
+            || smsCodeType.equals(SmsCodeType.UPDATEPAYPWD)
+            || smsCodeType.equals(SmsCodeType.TRANSFER)) {// 找回登录密码，修改登录密码，修改支付密码,转账（user应存在）
           if (endUser == null) {
             response.setCode(CommonAttributes.FAIL_SMSTOKEN);
             response.setDesc(Message.error("rebate.user.noexist").getContent());

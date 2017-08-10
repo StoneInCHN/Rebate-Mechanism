@@ -197,7 +197,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     }
 
     SystemConfig mindDivideConfig = systemConfigDao.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
-    SystemConfig maxBonusPerConfig = systemConfigDao.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
+    // SystemConfig maxBonusPerConfig =
+    // systemConfigDao.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
 
 
 
@@ -255,11 +256,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           leMindRecord.setStatus(CommonStatus.ACITVE);
           leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
 
-          leMindRecord.setMaxBonus(mind.multiply(divideMind));
-          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
-            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
-                .getConfigValue())));
-          }
+          // leMindRecord.setMaxBonus(mind.multiply(divideMind));
+          // if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+          // leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+          // .getConfigValue())));
+          // }
 
           endUser.getLeMindRecords().add(leMindRecord);
           endUser.setCurLeMind(leMindRecord.getUserCurLeMind());
@@ -278,7 +279,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       endUserDao.merge(endUser);
     }
     /**
-     * 消费后商家积分返利(乐豆消费无积分返利)
+     * 消费后商家积分返利
      */
     if (order.getSellerScore() != null) {
       sellerEndUser.setCurScore(sellerEndUser.getCurScore().add(order.getSellerScore()));
@@ -305,11 +306,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           leMindRecord.setStatus(CommonStatus.ACITVE);
           leMindRecord.setUserCurLeMind(sellerEndUser.getCurLeMind().add(mind));
 
-          leMindRecord.setMaxBonus(mind.multiply(divideMind));
-          if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
-            leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
-                .getConfigValue())));
-          }
+          // leMindRecord.setMaxBonus(mind.multiply(divideMind));
+          // if (maxBonusPerConfig != null && maxBonusPerConfig.getConfigValue() != null) {
+          // leMindRecord.setMaxBonus(mind.multiply(new BigDecimal(maxBonusPerConfig
+          // .getConfigValue())));
+          // }
           sellerEndUser.getLeMindRecords().add(leMindRecord);
           sellerEndUser.setCurLeMind(leMindRecord.getUserCurLeMind());
           sellerEndUser.setTotalLeMind(sellerEndUser.getTotalLeMind().add(mind));

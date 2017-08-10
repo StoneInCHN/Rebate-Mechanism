@@ -89,7 +89,9 @@ public class CommonEnum {
     /** 修改支付密码 */
     UPDATEPAYPWD,
     /** 银行预留手机号验证 */
-    RESERVEDMOBILE
+    RESERVEDMOBILE,
+    /** 转账 */
+    TRANSFER
   }
 
   /**
@@ -237,8 +239,9 @@ public class CommonEnum {
     /** 提现 */
     WITHDRAW,
     /** 乐分退回 */
-    REFUND
-
+    REFUND,
+    /** 乐分转账 */
+    TRANSFER
   }
 
   /**
@@ -267,6 +270,8 @@ public class CommonEnum {
     CONSUME,
     /** 用户消费鼓励金收益 */
     ENCOURAGE,
+    /** 转账 */
+    TRANSFER
   }
 
   public enum ImageType {

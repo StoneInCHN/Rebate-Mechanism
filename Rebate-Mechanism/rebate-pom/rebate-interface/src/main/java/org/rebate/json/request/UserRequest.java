@@ -3,6 +3,7 @@ package org.rebate.json.request;
 import java.math.BigDecimal;
 
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.RebateType;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SmsCodeType;
 import org.rebate.json.base.BaseRequest;
@@ -85,6 +86,32 @@ public class UserRequest extends BaseRequest {
    */
   private LeScoreType leScoreType;
 
+  /**
+   * 转账类型
+   */
+  private RebateType transType;
+
+  /**
+   * 额度
+   */
+  private BigDecimal amount;
+
+
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
+
+  public RebateType getTransType() {
+    return transType;
+  }
+
+  public void setTransType(RebateType transType) {
+    this.transType = transType;
+  }
 
   public BigDecimal getWithdrawAmount() {
     return withdrawAmount;

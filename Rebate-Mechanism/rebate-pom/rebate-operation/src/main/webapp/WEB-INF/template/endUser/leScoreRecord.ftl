@@ -60,6 +60,7 @@
 										<option [#if leScoreType == "AGENT"] selected="selected" [/#if] value="AGENT">${message("rebate.endUser.leScore.type.AGENT")}</option>
 										<option [#if leScoreType == "WITHDRAW"] selected="selected" [/#if] value="WITHDRAW">${message("rebate.endUser.leScore.type.WITHDRAW")}</option>
 										<option [#if leScoreType == "REFUND"] selected="selected" [/#if] value="REFUND">${message("rebate.endUser.leScore.type.REFUND")}</option>
+										<option [#if leScoreType == "TRANSFER"] selected="selected" [/#if] value="TRANSFER">${message("rebate.endUser.leScore.type.TRANSFER")}</option>
 									</select>
 								</td>
 								<th>

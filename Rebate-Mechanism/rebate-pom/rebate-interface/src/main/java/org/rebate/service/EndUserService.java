@@ -7,6 +7,7 @@ import org.rebate.beans.SMSVerificationCode;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
+import org.rebate.entity.commonenum.CommonEnum.RebateType;
 import org.rebate.framework.service.BaseService;
 
 public interface EndUserService extends BaseService<EndUser, Long> {
@@ -167,4 +168,15 @@ public interface EndUserService extends BaseService<EndUser, Long> {
    * @return
    */
   EndUser changeUserMobile(EndUser endUser);
+
+
+  /**
+   * 用户转账
+   * 
+   * @param transUser
+   * @param receiver
+   * @param transType
+   * @param amount
+   */
+  void transferRebate(EndUser transUser, EndUser receiver, RebateType transType, BigDecimal amount);
 }

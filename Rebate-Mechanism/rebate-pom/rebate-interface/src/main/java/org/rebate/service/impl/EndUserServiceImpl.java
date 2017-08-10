@@ -25,6 +25,8 @@ import org.rebate.dao.UserRecommendRelationDao;
 import org.rebate.dao.UserRegReportDao;
 import org.rebate.entity.Area;
 import org.rebate.entity.EndUser;
+import org.rebate.entity.LeBeanRecord;
+import org.rebate.entity.LeMindRecord;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.Seller;
 import org.rebate.entity.SellerApplication;
@@ -36,7 +38,9 @@ import org.rebate.entity.UserRegReport;
 import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
+import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.RebateType;
 import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
@@ -486,6 +490,120 @@ public class EndUserServiceImpl extends BaseServiceImpl<EndUser, Long> implement
     }
     endUserDao.merge(endUser);
     return endUser;
+  }
+
+  @Override
+  public void transferRebate(EndUser transUser, EndUser receiver, RebateType transType,
+      BigDecimal amount) {
+    if (RebateType.LE_MIND.equals(transType)) {
+      LeMindRecord transRecord = new LeMindRecord();
+      transRecord.setEndUser(transUser);
+      transRecord.setAmount(amount.negate());
+      transRecord.setUserCurLeMind(transUser.getCurLeMind().add(transRecord.getAmount()));
+      transRecord.setRemark("您向好友转账:" + receiver.getCellPhoneNum());
+      transUser.getLeMindRecords().add(transRecord);
+      transUser.setCurLeMind(transUser.getCurLeMind().subtract(amount));
+
+      LeMindRecord receiverRecord = new LeMindRecord();
+      receiverRecord.setEndUser(receiver);
+      receiverRecord.setAmount(amount);
+      receiverRecord.setUserCurLeMind(receiver.getCurLeMind().add(receiverRecord.getAmount()));
+      receiverRecord.setRemark("好友向您转账:" + transUser.getCellPhoneNum());
+      receiver.getLeMindRecords().add(receiverRecord);
+      receiver.setCurLeMind(receiver.getCurLeMind().add(amount));
+    }
+    if (RebateType.LE_BEAN.equals(transType)) {
+      LeBeanRecord transLeBeanRecord = new LeBeanRecord();
+      transLeBeanRecord.setAmount(amount.negate());
+      transLeBeanRecord.setEndUser(transUser);
+      transLeBeanRecord.setRemark("您向好友转账");
+      transLeBeanRecord.setType(LeBeanChangeType.TRANSFER);
+      transLeBeanRecord.setRecommender(receiver.getNickName());
+      transLeBeanRecord.setRecommenderPhoto(receiver.getUserPhoto());
+      transLeBeanRecord.setUserCurLeBean(transUser.getCurLeBean()
+          .add(transLeBeanRecord.getAmount()));
+      transUser.getLeBeanRecords().add(transLeBeanRecord);
+      transUser.setCurLeBean(transLeBeanRecord.getUserCurLeBean());
+
+
+      LeBeanRecord receiverLeBeanRecord = new LeBeanRecord();
+      receiverLeBeanRecord.setAmount(amount);
+      receiverLeBeanRecord.setEndUser(receiver);
+      receiverLeBeanRecord.setRemark("好友向您转账");
+      receiverLeBeanRecord.setType(LeBeanChangeType.TRANSFER);
+      receiverLeBeanRecord.setRecommender(transUser.getNickName());
+      receiverLeBeanRecord.setRecommenderPhoto(transUser.getUserPhoto());
+      receiverLeBeanRecord.setUserCurLeBean(receiver.getCurLeBean().add(
+          receiverLeBeanRecord.getAmount()));
+      receiver.getLeBeanRecords().add(receiverLeBeanRecord);
+      receiver.setCurLeBean(receiverLeBeanRecord.getUserCurLeBean());
+
+    }
+    if (RebateType.LE_SCORE.equals(transType)) {
+      LeScoreRecord transLeScoreRecord = new LeScoreRecord();
+      transLeScoreRecord.setEndUser(transUser);
+      transLeScoreRecord.setRemark("您向好友转账");
+      transLeScoreRecord.setLeScoreType(LeScoreType.TRANSFER);
+      transLeScoreRecord.setAmount(amount.negate());
+      transLeScoreRecord.setRecommender(receiver.getNickName());
+      transLeScoreRecord.setRecommenderPhoto(receiver.getUserPhoto());
+      transLeScoreRecord.setUserCurLeScore(transUser.getCurLeScore().add(
+          transLeScoreRecord.getAmount()));
+
+      if (transUser.getMotivateLeScore().compareTo(amount) >= 0) {// 乐分支付优先消耗激励乐分
+        transUser.setMotivateLeScore(transUser.getMotivateLeScore().subtract(amount));
+        transLeScoreRecord.setMotivateLeScore(amount);
+      } else {
+        BigDecimal diff = amount.subtract(transUser.getMotivateLeScore());
+        transLeScoreRecord.setMotivateLeScore(transUser.getMotivateLeScore());
+        transUser.setMotivateLeScore(new BigDecimal(0));
+        if (transUser.getIncomeLeScore().compareTo(diff) >= 0) {// 然后消耗业务员乐分
+          transLeScoreRecord.setIncomeLeScore(diff);
+          transUser.setIncomeLeScore(transUser.getIncomeLeScore().subtract(diff));
+        } else {// 最后消耗代理商乐分
+          BigDecimal remain = diff.subtract(transUser.getIncomeLeScore());
+          transLeScoreRecord.setIncomeLeScore(transUser.getIncomeLeScore());
+          transLeScoreRecord.setAgentLeScore(remain);
+          transUser.setIncomeLeScore(new BigDecimal(0));
+          transUser.setAgentLeScore(transUser.getAgentLeScore().subtract(remain));
+        }
+      }
+      transUser.getLeScoreRecords().add(transLeScoreRecord);
+      transUser.setCurLeScore(transUser.getCurLeScore().add(transLeScoreRecord.getAmount()));
+
+
+      LeScoreRecord receiverLeScoreRecord = new LeScoreRecord();
+      receiverLeScoreRecord.setEndUser(receiver);
+      receiverLeScoreRecord.setRemark("好友向您转账");
+      receiverLeScoreRecord.setLeScoreType(LeScoreType.TRANSFER);
+      receiverLeScoreRecord.setAmount(amount);
+      receiverLeScoreRecord.setRecommender(transUser.getNickName());
+      receiverLeScoreRecord.setRecommenderPhoto(transUser.getUserPhoto());
+      receiverLeScoreRecord.setUserCurLeScore(receiver.getCurLeScore().add(
+          receiverLeScoreRecord.getAmount()));
+
+
+      if (transLeScoreRecord.getMotivateLeScore() != null) {
+        receiverLeScoreRecord.setMotivateLeScore(transLeScoreRecord.getMotivateLeScore());
+        receiver.setMotivateLeScore(receiver.getMotivateLeScore().add(
+            transLeScoreRecord.getMotivateLeScore()));
+      }
+      if (transLeScoreRecord.getIncomeLeScore() != null) {
+        receiverLeScoreRecord.setIncomeLeScore(transLeScoreRecord.getIncomeLeScore());
+        receiver.setIncomeLeScore(receiver.getIncomeLeScore().add(
+            transLeScoreRecord.getIncomeLeScore()));
+      }
+      if (transLeScoreRecord.getAgentLeScore() != null) {
+        receiverLeScoreRecord.setAgentLeScore(transLeScoreRecord.getAgentLeScore());
+        receiver.setAgentLeScore(receiver.getAgentLeScore().add(
+            transLeScoreRecord.getAgentLeScore()));
+      }
+      receiver.getLeScoreRecords().add(receiverLeScoreRecord);
+      receiver.setCurLeScore(receiver.getCurLeScore().add(receiverLeScoreRecord.getAmount()));
+    }
+
+    endUserDao.merge(transUser);
+    endUserDao.merge(receiver);
   }
 
 }
