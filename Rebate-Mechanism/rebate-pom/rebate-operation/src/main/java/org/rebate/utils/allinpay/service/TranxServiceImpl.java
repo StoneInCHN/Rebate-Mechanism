@@ -262,10 +262,15 @@ public class TranxServiceImpl {
         		LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款成功！TRANSRET RET_CODE= " + tran_ret_code + ", ERR_MSG=" + tran_err_msg);
             	resultMap.put("status", "success");
 			}else {
-				LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款失败！TRANSRET RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
+				LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款失败,无TRANSRET结点！TRANSRET RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
 				resultMap.put("status", "error");
 			}
         	resultMap.put("err_msg", tran_err_msg);
+		}else if ("2008".equals(ret_code) || "2007".equals(ret_code) || "2005".equals(ret_code) 
+				|| "2003".equals(ret_code) || "2001".equals(ret_code) || "2000".equals(ret_code)) {//中间状态
+			LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款中间状态！INFO RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
+			resultMap.put("status", "wait");
+			resultMap.put("err_msg", err_msg);
 		}else {
 			LogUtil.debug(this.getClass(), "singleDaiFushi", "单笔实时付款失败！INFO RET_CODE= " + ret_code + ", ERR_MSG=" + err_msg);
 			resultMap.put("status", "error");

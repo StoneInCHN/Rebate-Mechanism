@@ -26,6 +26,7 @@ import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.job.SellerClearingShiJob;
 import org.rebate.json.beans.SellerClearingResult;
 import org.rebate.service.BankCardService;
 import org.rebate.service.ClearingOrderRelationService;
@@ -69,6 +70,10 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
       
       @Autowired
       private SellerClearingRecordDao sellerClearingRecordDao;
+      
+      @Resource(name = "sellerClearingShiJob")
+      private SellerClearingShiJob sellerClearingShiJob;
+      
       /**
        * 商家货款结算
        * return req_sn
@@ -145,11 +150,6 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				 
   				 record.setTotalOrderAmount(totalOrderAmount); //订单总金额
   				 
-//  				 record.setAmount(endUser.getIncomeLeScore());//结算金额
-//                 if (totalSellerIncome.compareTo(endUser.getIncomeLeScore()) != 0) {
-//                   LogUtil.debug(this.getClass(), "sellerClearing", "Total seller income is not equals endUser IncomeLeScore !!!");
-//                   record.setAmount(totalSellerIncome);
-//                 }
                  record.setAmount(totalSellerIncome);//结算金额
                  //货款金额不足 结算最低金额限制的，留给下次凑够了金额再结算
                  SystemConfig clearingMinLimit = systemConfigService.getConfigByKey(SystemConfigKey.CLEARING_MINIMUM_LIMIT);
@@ -230,16 +230,6 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   				    	tranxService.init();//初始化通联基础数据
   				    	//开始批量代付
   				    	List<SellerClearingRecord> recordList = tranxService.batchDaiFu(false, totalItem,  totalPayStr, records, bankCardService);
-//  						if (recordList == null) {
-//  							/**
-//  							 * 代付失败,回滚当前的事物
-//  							 * 避免生成无用的货款结算记录（防止手动补跑job生成重复的结算记录）
-//  							 * 手动补跑job调用 此货款结算（/console/job/manualClearingRecordJob.jhtml）
-//  							 */
-//  							TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//  						}else {
-//  							update(recordList);//更新商家货款结算记录（已赋值了req_sn和sn）
-//  						}
   				    	if (recordList != null && recordList.size() > 0) {
   					    	save(recordList);//保存已经受理的货款结算记录（已赋值了req_sn和sn）
   					    	for (int i = 0; i < recordList.size(); i++) {
@@ -292,23 +282,76 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   			    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), amountPenny.toString());
   			    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
   			    	String status = resultMap.get("status");
-  			    	if ("success".equals(status) || "error".equals(status)){
+  			    	if ("success".equals(status) || "error".equals(status)){//最终结果
   	  			    	String req_sn = resultMap.get("req_sn");
   	  			    	String err_msg = resultMap.get("err_msg");
   	  			    	singlePayHandle(record, status, req_sn, err_msg, handlingCharge);
+  	  			    	return Message.success("rebate.message.success");
+  			    	}
+  			    	if ("wait".equals(status)){//中间状态，还需要等待查询
+  	  			    	String req_sn = resultMap.get("req_sn");
+  	  			    	String err_msg = resultMap.get("err_msg");
+  	  			    	singlePayWait(record, status, req_sn, err_msg, handlingCharge);
+  	  			    	return Message.success(err_msg);
   			    	}
   				}
+  				return Message.error("rebate.common.system.error");				
   	        } catch (Exception e) {
   	          e.printStackTrace();
   	          return Message.error("rebate.common.system.error");
   	        }
-  	        return Message.success("rebate.message.success");
   	}
   	/**
-  	 * 单笔结算成功，将以前的记录作废，新建一个新的记录
+  	 * 单笔结算等待查询，将以前的记录作废，新建一个新的记录(处理中...)
+  	 */
+  	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+  	private void singlePayWait(SellerClearingRecord oldRecord, String status, String reqSn, String errMsg, BigDecimal handlingCharge){
+  		oldRecord.setValid(false);//标记旧的货款记录无效
+  		update(oldRecord);//更新旧的货款记录
+  		LogUtil.debug(this.getClass(), "singlePayWait", "旧的货款单%s已作废", oldRecord.getClearingSn());
+  		
+  		SellerClearingRecord newRecord = new SellerClearingRecord();
+  		newRecord.setAmount(oldRecord.getAmount());
+  		newRecord.setBankCardId(oldRecord.getBankCardId());
+  		String clearingSn = snService.generate(Type.SELLER_CLEARING_RECORD);
+  		newRecord.setClearingSn(clearingSn);//结算货款单编号（用于显示）
+  		newRecord.setEndUser(oldRecord.getEndUser());
+  		newRecord.setSeller(oldRecord.getSeller());
+  		newRecord.setTotalOrderAmount(oldRecord.getTotalOrderAmount());
+  		newRecord.setHandlingCharge(handlingCharge);
+  		newRecord.setValid(true);//标记新的货款记录有效
+  		newRecord.setReqSn(reqSn);
+  		newRecord.setSn(null);//单笔结算不像批量结算，没有sn号
+  		newRecord.setRemark(errMsg);
+	    if ("wait".equals(status)) {
+	  		newRecord.setClearingStatus(ClearingStatus.PROCESSING);//处理中...
+	  		newRecord.setIsClearing(false);//暂时未结算
+		    save(newRecord);//保存新的货款记录
+		    LogUtil.debug(this.getClass(), "singlePayWait", "新的货款单%s已生成", oldRecord.getClearingSn());
+		    
+	  		oldRecord.setRemark(oldRecord.getRemark() + ";已作废请参考:"+clearingSn);
+	  		update(oldRecord);//更新旧的货款记录
+	  		//把旧的货款记录和订单关系解除，建立新的货款记录和订单关系
+	  		List<ClearingOrderRelation> relations = getRelationListByRecordId(oldRecord.getId());
+			for (ClearingOrderRelation relation : relations) {
+				relation.setClearingRecId(newRecord.getId());
+				clearingOrderRelationService.update(relation);//保存商家货款结算记录与订单的关系
+			}
+			//过十分钟后发起异步单笔查询请求
+		    if (reqSn != null) {
+		        sellerClearingShiJob.updateRecordShi(reqSn);
+		    }
+		}
+  	}  	
+  	/**
+  	 * 单笔结算完成，将以前的记录作废，新建一个新的记录(处理成功 或者 处理失败)
   	 */
   	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   	private void singlePayHandle(SellerClearingRecord oldRecord, String status, String req_sn, String err_msg, BigDecimal handlingCharge){
+  		oldRecord.setValid(false);//标记旧的货款记录无效
+  		update(oldRecord);//更新旧的货款记录
+  		LogUtil.debug(this.getClass(), "singlePayHandle", "旧的货款单%s已作废", oldRecord.getClearingSn());
+  		
   		SellerClearingRecord newRecord = new SellerClearingRecord();
   		newRecord.setAmount(oldRecord.getAmount());
   		newRecord.setBankCardId(oldRecord.getBankCardId());
@@ -334,11 +377,11 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 		}else if ("error".equals(status)) {
 	  		newRecord.setClearingStatus(ClearingStatus.FAILED);
 	  		newRecord.setIsClearing(false);
-			//update(oldRecord);
 		}
 	    save(newRecord);//保存新的货款记录
-  		oldRecord.setValid(false);//标记旧的货款记录无效
-  		oldRecord.setRemark(oldRecord.getRemark() + " 该结算记录已作废,请参考新的货款单号:"+clearingSn);
+	    LogUtil.debug(this.getClass(), "singlePayHandle", "新的货款单%s已生成", oldRecord.getClearingSn());
+	    
+  		oldRecord.setRemark(oldRecord.getRemark() + ";已作废请参考:"+clearingSn);
   		update(oldRecord);//更新旧的货款记录
   		//把旧的货款记录和订单关系解除，建立新的货款记录和订单关系
   		List<ClearingOrderRelation> relations = getRelationListByRecordId(oldRecord.getId());

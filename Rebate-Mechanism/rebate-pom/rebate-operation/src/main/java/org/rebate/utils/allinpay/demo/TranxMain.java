@@ -31,7 +31,7 @@ public class TranxMain {
     
     
     // 单笔实时代付
-    tranxService.singleDaiFushi(tranxContants.getUrl(), isfront);
+    //tranxService.singleDaiFushi(tranxContants.getUrl(), isfront);
     // tranxService.batchDaiShou(URL11https, isfront);
     
     // tranxService.downBills(URL11, isfront);
@@ -40,7 +40,7 @@ public class TranxMain {
     // 简单对账文件下载
     // tranxService.downSimpleBills(URLbill, true);
     // 交易查询
-    // tranxService.queryTradeNew(tranxContants.getUrl(), "2007010000044091496379790353", isfront);
+     tranxService.queryTradeNew(tranxContants.getUrl(), "2007010000044091501227303196", isfront);
 
   }
 }
