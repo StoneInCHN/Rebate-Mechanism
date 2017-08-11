@@ -214,7 +214,7 @@
 									${message("rebate.seller.totalOrderNum")}:
 								</th>
 								<td>
-									${seller.totalOrderNum}
+									${seller.totalOrderNum+seller.totalSellerOrderNum}
 								</td>
 							</tr>
 							<tr>
