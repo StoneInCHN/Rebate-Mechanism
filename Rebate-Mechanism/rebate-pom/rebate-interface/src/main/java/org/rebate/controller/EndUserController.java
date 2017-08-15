@@ -1755,6 +1755,18 @@ public class EndUserController extends MobileBaseController {
 
     EndUser endUser = null;
     if (withdrawAmount != null) {
+      // 满配置金额整数倍才可提现
+      SystemConfig minlimitConfig =
+          systemConfigService.getConfigByKey(SystemConfigKey.WITHDRAW_MINIMUM_LIMIT);
+      if (minlimitConfig != null && minlimitConfig.getConfigValue() != null) {
+        BigDecimal minlimit = new BigDecimal(minlimitConfig.getConfigValue());
+        BigDecimal div = withdrawAmount.divide(minlimit, 0, BigDecimal.ROUND_DOWN);
+        if (withdrawAmount.compareTo(minlimit.multiply(div)) > 0) {
+          response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
+          response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
+          return response;
+        }
+      }
       if (withdrawAmount.compareTo(new BigDecimal(0)) <= 0) {
         response.setCode(CommonAttributes.FAIL_USER_WITHDRAW);
         response.setDesc(Message.error("rebate.withdraw.amount.error").getContent());
@@ -1842,7 +1854,6 @@ public class EndUserController extends MobileBaseController {
     response.setToken(newtoken);
     return response;
   }
-
 
   /**
    * 验证支付密码

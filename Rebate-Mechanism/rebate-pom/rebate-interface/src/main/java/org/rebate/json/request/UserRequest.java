@@ -96,6 +96,19 @@ public class UserRequest extends BaseRequest {
    */
   private BigDecimal amount;
 
+  /**
+   * 转账接收人手机号
+   */
+  private String receiverMobile;
+
+
+  public String getReceiverMobile() {
+    return receiverMobile;
+  }
+
+  public void setReceiverMobile(String receiverMobile) {
+    this.receiverMobile = receiverMobile;
+  }
 
   public BigDecimal getAmount() {
     return amount;
