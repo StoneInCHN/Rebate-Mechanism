@@ -329,8 +329,8 @@ public class BankCardController extends MobileBaseController {
         } else {
           boolean existBankCard =
               bankCardService.exists(Filter.eq("cardNum", request.getCardNum()),
-                  Filter.eq("delStatus", false));
-          if (existBankCard) {// 不能添加重复的银行卡
+                  Filter.eq("delStatus", false), Filter.eq("endUser", userId));
+          if (existBankCard) {// 同一个用户不能添加重复的银行卡
             response.setCode(CommonAttributes.FAIL_COMMON);
             response.setDesc(Message.error("rebate.bankCard.exists.error").getContent());
             return response;

@@ -252,6 +252,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           LeMindRecord leMindRecord = new LeMindRecord();
           leMindRecord.setEndUser(endUser);
           leMindRecord.setAmount(mind);
+          leMindRecord.setRemark("积分转化乐心");
           leMindRecord.setScore(mind.multiply(divideMind));
           leMindRecord.setStatus(CommonStatus.ACITVE);
           leMindRecord.setUserCurLeMind(endUser.getCurLeMind().add(mind));
@@ -302,6 +303,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           LeMindRecord leMindRecord = new LeMindRecord();
           leMindRecord.setEndUser(sellerEndUser);
           leMindRecord.setAmount(mind);
+          leMindRecord.setRemark("积分转化乐心");
           leMindRecord.setScore(mind.multiply(divideMind));
           leMindRecord.setStatus(CommonStatus.ACITVE);
           leMindRecord.setUserCurLeMind(sellerEndUser.getCurLeMind().add(mind));

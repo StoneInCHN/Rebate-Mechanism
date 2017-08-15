@@ -1391,7 +1391,7 @@ public class EndUserController extends MobileBaseController {
     pageable.setOrderProperty("createDate");
 
     Page<LeMindRecord> page = leMindRecordService.findPage(pageable);
-    String[] propertys = {"id", "amount", "createDate", "score", "userCurLeMind"};
+    String[] propertys = {"id", "amount", "createDate", "score", "userCurLeMind", "remark"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -1524,7 +1524,7 @@ public class EndUserController extends MobileBaseController {
     Page<LeBeanRecord> page = leBeanRecordService.findPage(pageable);
     String[] propertys =
         {"id", "amount", "seller.storePictureUrl", "seller.name", "createDate", "userCurLeBean",
-            "type", "recommender", "recommenderPhoto"};
+            "type", "recommender", "recommenderPhoto", "remark"};
     List<Map<String, Object>> result =
         FieldFilterUtils.filterCollectionMap(propertys, page.getContent());
 
@@ -2111,12 +2111,12 @@ public class EndUserController extends MobileBaseController {
       return response;
     }
 
-    UserAuth userAuthByIdCard = userAuthService.getUserAuthByIdCard(cardNo, true);
-    if (userAuthByIdCard != null) {
-      response.setCode(CommonAttributes.FAIL_COMMON);
-      response.setDesc(Message.error("rebate.userAuth.idCard.isAuthed").getContent());
-      return response;
-    }
+    // UserAuth userAuthByIdCard = userAuthService.getUserAuthByIdCard(cardNo, true);
+    // if (userAuthByIdCard != null) {
+    // response.setCode(CommonAttributes.FAIL_COMMON);
+    // response.setDesc(Message.error("rebate.userAuth.idCard.isAuthed").getContent());
+    // return response;
+    // }
 
     try {
       Map<String, String> params = new HashMap<String, String>();
