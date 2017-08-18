@@ -408,4 +408,14 @@ public class CommonEnum {
     /** 乐分 */
     LE_SCORE
   }
+  /**
+   * 支付渠道
+   *
+   */
+  public enum PaymentChannel {
+    /** 通联 */
+	ALLINPAY,
+    /** 九派 */
+	JIUPAI
+  }  
 }
