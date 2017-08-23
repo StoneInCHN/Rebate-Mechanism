@@ -142,6 +142,12 @@
 								<td>
 									${order.rebateAmount}
 								</td>
+								<th>
+									${message("rebate.order.discount")}:
+								</th>
+								<td>
+									${order.sellerIncome/order.amount}
+								</td>
 							</tr>
 							<tr>
 								<th>
