@@ -126,7 +126,13 @@
 						<a href="javascript:;" class="sort" name="paymentType">${message("rebate.order.paymentType")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" name="discount">${message("rebate.order.discount")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="amount">${message("rebate.order.amount")}</a>
+					</th>
+					<th>
+						<a href="javascript:;"  name="rebateAmount">${message("rebate.order.rebateAmount")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="status">${message("rebate.order.status")}</a>
@@ -164,7 +170,13 @@
 						${order.paymentType}
 					</td>
 					<td>
+						${order.sellerIncome/order.amount}
+					</td>
+					<td>
 						${order.amount}
+					</td>
+					<td>
+						${order.rebateAmount}
 					</td>
 					<td>
 						[#if  order.status =="UNPAID"]

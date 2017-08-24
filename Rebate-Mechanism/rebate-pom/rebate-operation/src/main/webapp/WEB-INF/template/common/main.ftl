@@ -277,6 +277,9 @@
 		                       </div>
 		                       <ul class="sidebar-trans" style="overflow: hidden; display: block;">
 		                     	  [@shiro.hasPermission name="rebate:report"]
+		                     	   <li>
+		                               <a href="../report/orderRealTimeReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.report.orderRealTimeReport")}</span></a>
+		                           </li>
 		                           <li>
 		                               <a href="../report/nationBonusReport.jhtml"  target="iframe"> <i class="fa fa-cog"></i><span class="text-normal">${message("rebate.report.nationBonusReport")}</span></a>
 		                           </li>

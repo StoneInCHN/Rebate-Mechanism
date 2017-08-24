@@ -1,22 +1,27 @@
 package org.rebate.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.NationBonusReport;
+import org.rebate.entity.Order;
 import org.rebate.entity.UserBonusReport;
 import org.rebate.entity.UserRegReport;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
 import org.rebate.service.EndUserService;
 import org.rebate.service.NationBonusReportService;
+import org.rebate.service.OrderService;
 import org.rebate.service.ThirdApiReportService;
 import org.rebate.service.UserBonusReportService;
 import org.rebate.service.UserRegReportService;
@@ -45,6 +50,9 @@ public class ReportController extends BaseController {
 
   @Resource(name = "thirdApiReportServiceImpl")
   private ThirdApiReportService thirdApiReportService;
+
+  @Resource(name = "orderServiceImpl")
+  private OrderService orderService;
 
   /**
    * 列表
@@ -227,5 +235,49 @@ public class ReportController extends BaseController {
     pageable.setOrders(orderings);
     model.addAttribute("page", thirdApiReportService.findPage(pageable));
     return "/report/thirdApiReport";
+  }
+
+
+  /**
+   * 当日订单数据实时统计
+   */
+  @RequestMapping(value = "/orderRealTimeReport", method = RequestMethod.GET)
+  public String orderRealTimeReport(ModelMap model) {
+    List<Filter> filters = new ArrayList<Filter>();
+    filters.add(Filter.ge("paymentTime", TimeUtils.formatDate2Day0(new Date())));
+    filters.add(Filter.le("paymentTime", TimeUtils.formatDate2Day59(new Date())));
+    filters.add(Filter.ne("status", OrderStatus.UNPAID));
+    List<Order> orders = orderService.findList(null, filters, null);
+
+    BigDecimal orderAmount = new BigDecimal(0);
+    BigDecimal sellerOrderAmount = new BigDecimal(0);
+    BigDecimal orderRebateAmount = new BigDecimal(0);
+    BigDecimal sellerOrderRebateAmount = new BigDecimal(0);
+    Integer orderCount = 0;
+    Integer sellerOrderCount = 0;
+
+    for (Order order : orders) {
+      if (BooleanUtils.isFalse(order.getIsSallerOrder())) {// 普通订单
+        orderAmount = orderAmount.add(order.getAmount());
+        orderRebateAmount = orderRebateAmount.add(order.getRebateAmount());
+        orderCount++;
+      }
+      if (BooleanUtils.isTrue(order.getIsSallerOrder())) {// 录单订单
+        sellerOrderAmount = sellerOrderAmount.add(order.getAmount());
+        sellerOrderRebateAmount = sellerOrderRebateAmount.add(order.getRebateAmount());
+        sellerOrderCount++;
+      }
+    }
+    model.addAttribute("currentTime",
+        TimeUtils.getDateFormatString("yyyy-MM-dd HH:mm:ss", new Date()));
+    model.addAttribute("orderCount", orderCount);
+    model.addAttribute("orderAmount", orderAmount);
+    model.addAttribute("orderRebateAmount", orderRebateAmount);
+
+    model.addAttribute("sellerOrderCount", sellerOrderCount);
+    model.addAttribute("sellerOrderAmount", sellerOrderAmount);
+    model.addAttribute("sellerOrderRebateAmount", sellerOrderRebateAmount);
+
+    return "/report/orderRealTimeReport";
   }
 }
