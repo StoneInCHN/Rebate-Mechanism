@@ -170,7 +170,7 @@
 						${order.paymentType}
 					</td>
 					<td>
-						${order.sellerIncome/order.amount}
+						${order.sellerIncome/order.amount*10}
 					</td>
 					<td>
 						${order.amount}

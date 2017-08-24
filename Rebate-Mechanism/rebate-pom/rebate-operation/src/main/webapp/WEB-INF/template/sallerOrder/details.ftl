@@ -146,7 +146,7 @@
 									${message("rebate.order.discount")}:
 								</th>
 								<td>
-									${order.sellerIncome/order.amount}
+									${order.sellerIncome/order.amount*10}
 								</td>
 							</tr>
 							<tr>
