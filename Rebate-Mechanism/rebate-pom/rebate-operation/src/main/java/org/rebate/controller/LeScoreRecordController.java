@@ -17,6 +17,7 @@ import org.rebate.job.LeScoreRecordJob;
 import org.rebate.request.LeScoreRecordReq;
 import org.rebate.service.BankCardService;
 import org.rebate.service.LeScoreRecordService;
+import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,12 +58,15 @@ public class LeScoreRecordController extends BaseController {
       model.addAttribute("withdrawStatus", req.getWithdrawStatus());
     }
     if (req.getBeginDate() != null) {
-      Filter dateGeFilter = new Filter("createDate", Operator.ge, req.getBeginDate());
+      Filter dateGeFilter =
+          new Filter("createDate", Operator.ge, TimeUtils.formatDate2Day(req.getBeginDate()));
       filters.add(dateGeFilter);
       model.addAttribute("beginDate", req.getBeginDate());
     }
     if (req.getEndDate() != null) {
-      Filter dateLeFilter = new Filter("createDate", Operator.le, req.getEndDate());
+      Filter dateLeFilter =
+          new Filter("createDate", Operator.le, TimeUtils.addDays(1,
+              TimeUtils.formatDate2Day(req.getEndDate())));
       filters.add(dateLeFilter);
       model.addAttribute("endDate", req.getEndDate());
     }

@@ -74,6 +74,20 @@ $(function() {
 									</select>
 								</td>
 							</tr>
+							[#if systemConfig.id==3]
+							<tr>
+								<th>
+									${message("rebate.systemConfig.pay.thirdChannel")}:
+								</th>
+								<td>
+									<select name="remark">
+										<option [#if systemConfig.remark && systemConfig.remark==0] selected="selected" [/#if] value="0">${message("rebate.systemConfig.pay.thirdChannel.allinpay")}</option>
+										<option [#if systemConfig.remark && systemConfig.remark==1] selected="selected" [/#if] value="1">${message("rebate.systemConfig.pay.thirdChannel.jiupaipay")}</option>
+									</select>
+								</td>
+							</tr> 
+							[/#if]
+							<!-- 
 							<tr>
 								<th>
 									${message("rebate.systemConfig.remark")}:
@@ -81,7 +95,8 @@ $(function() {
 								<td>
 									<textarea name="remark" cols="50" rows="5">${systemConfig.remark}</textarea>
 								</td>
-							</tr>
+							</tr> 
+							-->
 							<tr>
 								<th>
 									&nbsp;
