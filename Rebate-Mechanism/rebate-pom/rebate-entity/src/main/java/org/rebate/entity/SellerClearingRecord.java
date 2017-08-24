@@ -9,9 +9,11 @@ import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 /**
  * 商户货款结算记录
@@ -64,6 +66,16 @@ public class SellerClearingRecord extends BaseEntity {
    * 结算银行卡ID
    */
   private Long bankCardId;
+  
+  /**
+   * 持卡人姓名
+   */
+  private String ownerName;
+
+  /**
+   * 银行卡号
+   */
+  private String cardNum;
 
   /**
    * 结算货款单编号（用于显示）
@@ -79,10 +91,13 @@ public class SellerClearingRecord extends BaseEntity {
   private String sn;
 
   /**
-   * 货款记录是否有效, true:有效  false:失效(货款记录作废)
+   * 货款记录是否有效(有效:true 失效/作废:false)
    */
   private Boolean valid;
-
+  /**
+   * 支付渠道(通联:ALLINPAY 九派:JIUPAI)
+   */
+  private PaymentChannel paymentChannel;
   /**
    * 备注
    */
@@ -200,6 +215,32 @@ public class SellerClearingRecord extends BaseEntity {
 
 	public void setClearingStatus(ClearingStatus clearingStatus) {
 		this.clearingStatus = clearingStatus;
+	}
+	
+	@Transient
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+	
+	@Transient
+	public String getCardNum() {
+		return cardNum;
+	}
+
+	public void setCardNum(String cardNum) {
+		this.cardNum = cardNum;
+	}
+
+	public PaymentChannel getPaymentChannel() {
+		return paymentChannel;
+	}
+
+	public void setPaymentChannel(PaymentChannel paymentChannel) {
+		this.paymentChannel = paymentChannel;
 	}
 
 }

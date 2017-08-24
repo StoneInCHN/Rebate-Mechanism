@@ -9,11 +9,13 @@ import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 /**
  * 乐分记录
@@ -117,6 +119,16 @@ public class LeScoreRecord extends BaseEntity {
    * 提现方式(银行卡ID)
    */
   private Long withDrawType;
+  
+  /**
+   * 持卡人姓名
+   */
+  private String ownerName;
+
+  /**
+   * 银行卡号
+   */
+  private String cardNum;
 
   /**
    * 提现流水号
@@ -131,6 +143,11 @@ public class LeScoreRecord extends BaseEntity {
    * 记录序号，例如：0001
    */
   private String sn;
+  
+  /**
+   * 支付渠道(通联:ALLINPAY 九派:JIUPAI)
+   */
+  private PaymentChannel paymentChannel;
 
 
   @Column(length = 30)
@@ -318,6 +335,32 @@ public class LeScoreRecord extends BaseEntity {
 
   public void setStatus(ClearingStatus status) {
     this.status = status;
+  }
+  
+  @Transient
+  public String getOwnerName() {
+		return ownerName;
+  }
+
+  public void setOwnerName(String ownerName) {
+	this.ownerName = ownerName;
+  }
+	
+  @Transient
+  public String getCardNum() {
+	return cardNum;
+  }
+
+  public void setCardNum(String cardNum) {
+	this.cardNum = cardNum;
+  }
+	
+  public PaymentChannel getPaymentChannel() {
+	return paymentChannel;
+  }
+
+  public void setPaymentChannel(PaymentChannel paymentChannel) {
+	this.paymentChannel = paymentChannel;
   }
 
 }

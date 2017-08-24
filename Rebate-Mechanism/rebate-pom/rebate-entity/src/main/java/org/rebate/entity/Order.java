@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 /**
  * 用户消费订单
@@ -140,6 +141,11 @@ public class Order extends BaseEntity {
    * 批量录单时流水号
    */
   private String batchSn;
+  
+  /**
+   * 支付渠道(通联:ALLINPAY 九派:JIUPAI)
+   */
+  private PaymentChannel paymentChannel;
 
 
   /**
@@ -368,6 +374,14 @@ public class Order extends BaseEntity {
 
   public void setIsSallerOrder(Boolean isSallerOrder) {
     this.isSallerOrder = isSallerOrder;
+  }
+
+  public PaymentChannel getPaymentChannel() {
+	return paymentChannel;
+  }
+
+  public void setPaymentChannel(PaymentChannel paymentChannel) {
+	this.paymentChannel = paymentChannel;
   }
 
 
