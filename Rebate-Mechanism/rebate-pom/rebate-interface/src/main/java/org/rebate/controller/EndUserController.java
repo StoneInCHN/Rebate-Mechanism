@@ -207,6 +207,7 @@ public class EndUserController extends MobileBaseController {
     SystemConfig mindDivideConfig = systemConfigService.getConfigByKey(SystemConfigKey.MIND_DIVIDE);
     SystemConfig maxBonusPerConfig =
         systemConfigService.getConfigByKey(SystemConfigKey.BONUS_MAXIMUM);
+    List<Long> orderIds = new ArrayList<Long>();
     for (Order order : orders) {
 
       /**
@@ -271,11 +272,13 @@ public class EndUserController extends MobileBaseController {
         }
       }
       endUserService.update(endUser);
+      orderIds.add(order.getId());
     }
+    int size = orderIds.size();
+    orderService.delete((Long[]) orderIds.toArray(new Long[size]));
     response.setDesc("success");
     return response;
   }
-
 
   /**
    * 黑盒测试

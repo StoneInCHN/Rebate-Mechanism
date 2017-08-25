@@ -360,6 +360,130 @@ public class Setting implements Serializable {
   private String juheKeyCertificates;
 
 
+
+  /**
+   * 九派支付商户编号
+   */
+  private String jiupaiMerchantId;
+
+
+  /**
+   * 九派支付商户证书路径
+   */
+  private String jiupaiMerchantCertPath;
+
+
+  /**
+   * 九派支付商户证书秘钥
+   */
+  private String jiupaiMerchantCertPass;
+
+  /**
+   * 九派支付根证书路径
+   */
+  private String jiupaiRootCertPath;
+
+
+  /**
+   * 九派支付网关地址
+   */
+  private String jiupaiRequestUrl;
+
+
+  /**
+   * 九派支付请求字符集(默认00表示GB18030)
+   */
+  private String jiupaiCharset;
+
+  /**
+   * 九派支付请求接口版本号
+   */
+  private String jiupaiVersion;
+
+  /**
+   * 九派支付请求加密算法
+   */
+  private String jiupaiSignType;
+
+  /**
+   * 九派支付异步通知url
+   */
+  private String jiupaiNotifyUrl;
+
+
+
+  public String getJiupaiNotifyUrl() {
+    return jiupaiNotifyUrl;
+  }
+
+  public void setJiupaiNotifyUrl(String jiupaiNotifyUrl) {
+    this.jiupaiNotifyUrl = jiupaiNotifyUrl;
+  }
+
+  public String getJiupaiMerchantId() {
+    return jiupaiMerchantId;
+  }
+
+  public void setJiupaiMerchantId(String jiupaiMerchantId) {
+    this.jiupaiMerchantId = jiupaiMerchantId;
+  }
+
+  public String getJiupaiMerchantCertPath() {
+    return jiupaiMerchantCertPath;
+  }
+
+  public void setJiupaiMerchantCertPath(String jiupaiMerchantCertPath) {
+    this.jiupaiMerchantCertPath = jiupaiMerchantCertPath;
+  }
+
+  public String getJiupaiMerchantCertPass() {
+    return jiupaiMerchantCertPass;
+  }
+
+  public void setJiupaiMerchantCertPass(String jiupaiMerchantCertPass) {
+    this.jiupaiMerchantCertPass = jiupaiMerchantCertPass;
+  }
+
+  public String getJiupaiRootCertPath() {
+    return jiupaiRootCertPath;
+  }
+
+  public void setJiupaiRootCertPath(String jiupaiRootCertPath) {
+    this.jiupaiRootCertPath = jiupaiRootCertPath;
+  }
+
+  public String getJiupaiRequestUrl() {
+    return jiupaiRequestUrl;
+  }
+
+  public void setJiupaiRequestUrl(String jiupaiRequestUrl) {
+    this.jiupaiRequestUrl = jiupaiRequestUrl;
+  }
+
+  public String getJiupaiCharset() {
+    return jiupaiCharset;
+  }
+
+  public void setJiupaiCharset(String jiupaiCharset) {
+    this.jiupaiCharset = jiupaiCharset;
+  }
+
+  public String getJiupaiVersion() {
+    return jiupaiVersion;
+  }
+
+  public void setJiupaiVersion(String jiupaiVersion) {
+    this.jiupaiVersion = jiupaiVersion;
+  }
+
+  public String getJiupaiSignType() {
+    return jiupaiSignType;
+  }
+
+  public void setJiupaiSignType(String jiupaiSignType) {
+    this.jiupaiSignType = jiupaiSignType;
+  }
+
   public String getJuheVerifyCertificates() {
     return juheVerifyCertificates;
   }

@@ -1,6 +1,7 @@
 package org.rebate.controller;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -27,6 +29,7 @@ import org.rebate.utils.HttpServletRequestUtils;
 import org.rebate.utils.alipay.util.AlipayNotify;
 import org.rebate.utils.allinpay.PayNotify;
 import org.rebate.utils.allinpay.SybUtil;
+import org.rebate.utils.jiupaiPay.utils.RSASignUtil;
 import org.rebate.utils.wechat.WeixinUtil;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -511,6 +514,106 @@ public class NotifyController extends MobileBaseController {
       }
     }
     return "success";
+  }
+
+
+
+  /**
+   * 九派支付快捷支付回调接口
+   * 
+   * @param req
+   * @return
+   * @throws IOException
+   */
+  @RequestMapping(value = "/notify_jiupaipay", method = RequestMethod.POST)
+  public @ResponseBody String notify_jiupaipay(HttpServletRequest request) throws Exception {
+    // String MERC_ID = (String) request.getSession().getAttribute("MERC_ID");
+    // String merchantId = setting.getJiupaiMerchantId();
+    String charset = setting.getJiupaiCharset();
+    // if (MERC_ID != null) {
+    // merchantId = MERC_ID;
+    // }
+    String path = this.getClass().getResource("/").getPath();
+    // String merCert = merchantId + ".p12";
+    // String merchantCertPath = path + File.separator + merCert;
+    // String merchantCertPass = setting.getJiupaiMerchantCertPass();
+    String rootCertPath = path + File.separator + setting.getJiupaiRootCertPath();
+    request.setCharacterEncoding("UTF-8");
+    // 编码设置
+    String encoding = "";
+    if ("00".equals(charset)) {
+      request.setCharacterEncoding("GB18030");
+      encoding = "GB18030";
+    } else if ("01".equals(charset)) {
+      request.setCharacterEncoding("GB2312");
+      encoding = "GB2312";
+    } else if ("02".equals(charset)) {
+      request.setCharacterEncoding("UTF-8");
+      encoding = "UTF-8";
+    } else {
+      request.setCharacterEncoding("GBK");
+      encoding = "GBK";
+    }
+
+    Map<String, String> params = new HashMap<String, String>();
+    Map requestParams = request.getParameterMap();
+    for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+      String name = (String) iter.next();
+      String[] values = (String[]) requestParams.get(name);
+      String valueStr = "";
+      for (int i = 0; i < values.length; i++) {
+        valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+      }
+      // 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+      // valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
+      if (!StringUtils.equals(valueStr, "null") && !StringUtils.isBlank(valueStr)) {
+        params.put(name, valueStr);
+      }
+
+    }
+
+    if (LogUtil.isDebugEnabled(NotifyController.class)) {
+      LogUtil.debug(NotifyController.class, "notify_jiupaipay",
+          "jiupai pay notify callback method. response: %s", params);
+    }
+
+    // 商户订单号
+    String out_trade_no =
+        new String(request.getParameter("orderId").getBytes("ISO-8859-1"), "UTF-8");
+    // 交易金额
+    String total_fee = new String(request.getParameter("amount").getBytes("ISO-8859-1"), "UTF-8");
+    // 加密类型
+    String sign_type = new String(request.getParameter("signType").getBytes("ISO-8859-1"), "UTF-8");
+    RSASignUtil rsautil = new RSASignUtil(rootCertPath);
+    String returnData = rsautil.coverMap2String(params);
+    boolean flag =
+        rsautil.verify(returnData, request.getParameter("serverSign"),
+            request.getParameter("serverCert"), encoding);
+    if (flag) {
+      if (LogUtil.isDebugEnabled(NotifyController.class)) {
+        LogUtil
+            .debug(
+                NotifyController.class,
+                "notify_jiupaipay",
+                "user pay order call back successfully with jiupai pay. orderSn: %s, amount: %s,sign_type: %s",
+                out_trade_no, total_fee, sign_type);
+      }
+      taskExecutor.execute(new Runnable() {
+        public void run() {
+          orderService.callbackAfterPay(out_trade_no);
+        }
+      });
+    } else {// 签名验证失败
+      if (LogUtil.isDebugEnabled(NotifyController.class)) {
+        LogUtil
+            .debug(
+                NotifyController.class,
+                "notify_jiupaipay",
+                "user pay order call back verify sign failed with jiupai pay. orderSn: %s,sign_type: %s",
+                out_trade_no, sign_type);
+      }
+    }
+    return "SUCCESS";
   }
 
 

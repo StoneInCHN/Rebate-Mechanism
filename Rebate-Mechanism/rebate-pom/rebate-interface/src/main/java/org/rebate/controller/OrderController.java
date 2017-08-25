@@ -23,6 +23,7 @@ import org.rebate.entity.SellerEvaluate;
 import org.rebate.entity.SellerEvaluateImage;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
@@ -279,11 +280,29 @@ public class OrderController extends MobileBaseController {
         // + "");
         // response.getMsg().put("encourageAmount", order.getEncourageAmount());
       } else if ("3".equals(payTypeId)) {// 银行卡快捷支付
-        BigDecimal weChatPrice = payAmount.multiply(new BigDecimal(100));
-        response =
-            PayUtil.allinpayH5(order.getSn(), order.getSeller().getName(), userId.toString(), order
-                .getId().toString(), weChatPrice.intValue() + "");
-        response.getMsg().put("encourageAmount", order.getEncourageAmount());
+        SystemConfig quickPay = systemConfigService.find(Long.valueOf(payTypeId));
+        if ("0".equals(quickPay.getRemark())) {// 渠道为通联支付
+          BigDecimal weChatPrice = payAmount.multiply(new BigDecimal(100));
+          response =
+              PayUtil.allinpayH5(order.getSn(), order.getSeller().getName(), userId.toString(),
+                  order.getId().toString(), weChatPrice.intValue() + "");
+          response.getMsg().put("encourageAmount", order.getEncourageAmount());
+          response.getMsg().put("quickPayChannel", quickPay.getRemark());
+          order.setPaymentChannel(PaymentChannel.ALLINPAY);
+        } else if ("1".equals(quickPay.getRemark())) {// 渠道为九派支付
+          Map<String, Object> map = new HashMap<String, Object>();
+          map.put("quickPayChannel", quickPay.getRemark());
+          map.put("encourageAmount", order.getEncourageAmount());
+          map.put("out_trade_no", order.getSn());
+          response.setMsg(map);
+          order.setPaymentChannel(PaymentChannel.JIUPAI);
+        }
+
+        // BigDecimal weChatPrice = payAmount.multiply(new BigDecimal(100));
+        // response =
+        // PayUtil.allinpayH5(order.getSn(), order.getSeller().getName(), userId.toString(), order
+        // .getId().toString(), weChatPrice.intValue() + "");
+        // response.getMsg().put("encourageAmount", order.getEncourageAmount());
 
       }
     } catch (Exception e) {
@@ -391,10 +410,11 @@ public class OrderController extends MobileBaseController {
     // }
     BigDecimal totalFee = new BigDecimal("0");
     List<Order> orders = new ArrayList<Order>();
+
+
     if (orderSn.startsWith("90000")) {// 批量录单支付
       orders = orderService.getOrderByBatchSn(orderSn);
       for (Order order : orders) {
-
         totalFee = totalFee.add(order.getRebateAmount());
         order.setPaymentType(payType);
         order.setPaymentTypeId(payTypeId);
@@ -429,13 +449,34 @@ public class OrderController extends MobileBaseController {
         // BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
         // response = PayUtil.allinPay(orderSn, seller.getName(), weChatPrice.intValue() + "");
       } else if ("3".equals(payTypeId)) {// 银行卡快捷支付
+        SystemConfig quickPay = systemConfigService.find(Long.valueOf(payTypeId));
+        if ("0".equals(quickPay.getRemark())) {// 渠道为通联支付
+          BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
+          response =
+              PayUtil.allinpayH5(orderSn, seller.getName(), userId.toString(), orderSn,
+                  weChatPrice.intValue() + "");
+          response.getMsg().put("quickPayChannel", quickPay.getRemark());
+        } else if ("1".equals(quickPay.getRemark())) {// 渠道为九派支付
+          Map<String, Object> map = new HashMap<String, Object>();
+          map.put("quickPayChannel", quickPay.getRemark());
+          response.setMsg(map);
+        }
+
+        /**
+         * 更新订单快捷支付的支付渠道
+         */
+        for (Order order : orders) {
+          if ("0".equals(quickPay.getRemark())) {// 渠道为通联支付
+            order.setPaymentChannel(PaymentChannel.ALLINPAY);
+          } else if ("1".equals(quickPay.getRemark())) {// 渠道为九派支付
+            order.setPaymentChannel(PaymentChannel.JIUPAI);
+          }
+        }
+
+        // BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
         // response =
-        // PayUtil.yiPay(orderSn, seller.getName(), httpReq.getRemoteAddr(), orderSn, totalFee,
-        // userId.toString());
-        BigDecimal weChatPrice = totalFee.multiply(new BigDecimal(100));
-        response =
-            PayUtil.allinpayH5(orderSn, seller.getName(), userId.toString(), orderSn,
-                weChatPrice.intValue() + "");
+        // PayUtil.allinpayH5(orderSn, seller.getName(), userId.toString(), orderSn,
+        // weChatPrice.intValue() + "");
 
       }
     } catch (Exception e) {

@@ -55,7 +55,7 @@ public class TransferRebateController extends MobileBaseController {
    */
   @RequestMapping(value = "/doTransfer", method = RequestMethod.POST)
   @UserValidCheck(userType = CheckUserType.ENDUSER)
-  public @ResponseBody BaseResponse updatePwd(@RequestBody UserRequest req) {
+  public @ResponseBody BaseResponse doTransfer(@RequestBody UserRequest req) {
     BaseResponse response = new BaseResponse();
     String smsCode = req.getSmsCode();
     String cellPhoneNum = req.getCellPhoneNum();

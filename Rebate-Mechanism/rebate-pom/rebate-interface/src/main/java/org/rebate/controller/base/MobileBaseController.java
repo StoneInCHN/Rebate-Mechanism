@@ -52,4 +52,16 @@ public class MobileBaseController extends BaseController {
     return matcher.matches();
   }
 
+  /**
+   * 支付金额(大于0且最多2位小数)
+   * 
+   * @param email
+   * @return
+   */
+  public boolean isCNYAmount(String req) {
+    Pattern regex = Pattern.compile("^[1-9]\\d*(\\.\\d{1,2})?|(0\\.\\d{1,2})$");
+    Matcher matcher = regex.matcher(req);
+    return matcher.matches();
+  }
+
 }
