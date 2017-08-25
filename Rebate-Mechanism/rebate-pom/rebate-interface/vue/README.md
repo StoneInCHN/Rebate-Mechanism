@@ -5,7 +5,7 @@
 ## Build Setup
 
 ``` bash
-# install dependencies
+# install dependencies npm加载速度可能会很慢，可以切换成cnpm install ，不过需要先安装淘宝镜像，安装方法见百度。
 npm install
 
 # serve with hot reload at localhost:8080
