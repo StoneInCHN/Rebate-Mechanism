@@ -6,14 +6,12 @@
 		  </router-link>
 		</mt-header>
 		<div class="content">
-			<form>
 				<mt-field label="卡号" placeholder="请输入卡号" v-model="cardNo" :state="cardNoState"></mt-field>
 				<mt-field label="银行卡预留手机号" type="tel" placeholder="请输入预留手机号" v-model="phoneNum" :state="phoneNumState"></mt-field>
 				<mt-field label="身份证号" placeholder="身份证号" v-model="idNo" :state="idNoState"></mt-field>
 				<mt-field label="银行卡开户名" placeholder="银行卡开户名" v-model="userName" :state="userNameState"></mt-field>
 				<mt-button size="large" type="danger" @click="handleClick" :disabled="addState">同意协议并绑定</mt-button>
 				<mt-cell  class="agreement" title="《九派快捷支付服务协议》" to='protocol'></mt-cell>
-			</form>
 		</div>
 	</div>
 </template>

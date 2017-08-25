@@ -77,7 +77,7 @@ export default {
         contractId: this.cardItem.contractId
       }
       console.log(datas)
-      this.$api.rpmQuickPayInit(datas)
+      this.$api.rpmQuickPaySms(datas)
          .then(res => {
            console.log(res)
            if (res.code === '0000') {

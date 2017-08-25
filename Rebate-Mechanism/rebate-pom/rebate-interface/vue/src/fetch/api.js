@@ -47,42 +47,48 @@ export default{
    * 登陆
    */
   login (params) {
-    return fetch('rebate-interface/endUser/login.jhtml', params)
+    return fetch('/rebate-interface/endUser/login.jhtml', params)
   },
   /**
    * 银行卡绑定
    */
   rpmBindCard (params) {
-    return fetch('rebate-interface/jiupaiPay/rpmBindCard.jhtml', params)
+    return fetch('/rebate-interface/jiupaiPay/rpmBindCard.jhtml', params)
   },
   /**
    *查询用户绑卡信息
    */
   rpmMemberCardList (params) {
-    return fetch('rebate-interface/jiupaiPay/rpmMemberCardList.jhtml', params)
+    return fetch('/rebate-interface/jiupaiPay/rpmMemberCardList.jhtml', params)
   },
   /**
    *查询支持绑卡的银行列表
    */
   rpmBankList (params) {
-    return fetch('rebate-interface/jiupaiPay/rpmBankList.jhtml', params)
+    return fetch('/rebate-interface/jiupaiPay/rpmBankList.jhtml', params)
   },
   /**
    *用户解绑银行卡
    */
   rpmUnbindCard (params) {
-    return fetch('rebate-interface/jiupaiPay/rpmUnbindCard.jhtml', params)
+    return fetch('/rebate-interface/jiupaiPay/rpmUnbindCard.jhtml', params)
   },
   /**
    *快捷支付发起(九派验证短信)
    */
   rpmQuickPayInit (params) {
-    return fetch('rebate-interface/jiupaiPay/rpmQuickPayInit.jhtml', params)
+    return fetch('/rebate-interface/jiupaiPay/rpmQuickPayInit.jhtml', params)
+  },
+  /**
+   * 获取短信验证码
+   */
+  rpmQuickPaySms (params) {
+    return fetch('/rebate-interface/jiupaiPay/rpmQuickPaySms.jhtml', params)
   },
   /**
    *快捷支付提交(九派验证短信)
    */
   rpmQuickPayCommit (params) {
-    return fetch('rebate-interface/jiupaiPay/rpmQuickPayCommit.jhtml', params)
+    return fetch('/rebate-interface/jiupaiPay/rpmQuickPayCommit.jhtml', params)
   }
 }

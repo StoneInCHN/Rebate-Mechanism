@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    init: true,
     cellPhoneNum: '15902823856',
     password: 'bOrA1KqdhpV+nhsi+r9dixFGSxcIMB3dJBCYYw2BKPvK52TeGke/lpzhJIHym+Lnv24sgXkKnx5DrlLvJwPN4HMpafTXLRO7QS0TfsBXzWO/iKRwPVzsR9uUWo85UY7dVGTa7vg8vNA3BdgEdavw3LnG0X6y2n9VwwTdfvTvpbA=',
     token: '',
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     paidResultState: Boolean
   },
   mutations: {
+    setInit (state, {init}) {
+      state.init = init
+    },
     setCellPhoneNum (state, {cellPhoneNum}) {
       state.cellPhoneNum = cellPhoneNum
     },
@@ -51,6 +55,9 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    getInit (state) {
+      return state.init
+    },
     getCellPhoneNum (state) {
       return state.cellPhoneNum
     },
@@ -89,6 +96,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setInit (context, payload) {
+      context.commit('setInit', payload)
+    },
     setCellPhoneNum (context, payload) {
       context.commit('setCellPhoneNum', payload)
     },
