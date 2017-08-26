@@ -10,8 +10,8 @@
 			<h3>{{amount}}￥</h3>
 		</div>
 		<div class="content">
-			<mt-cell title="银行名称" :value="cardItem.bankName" to="bankList" is-link></mt-cell>
-			<mt-cell title="银行卡号" :value="cardItem.cardNo" to="bankList" is-link></mt-cell>
+			<mt-cell title="银行名称" :value="cardItem.bankName" ></mt-cell>
+			<mt-cell title="银行卡号" :value="cardItem.cardNo" ></mt-cell>
 			<mt-cell title="银行卡类型" :value="type" ></mt-cell>
 			<mt-cell  v-if="showHelp" class="help" title="支付帮助?"></mt-cell>
 			<mt-button size="large" type="danger" @click="handleClick">选择此卡进行支付</mt-button>

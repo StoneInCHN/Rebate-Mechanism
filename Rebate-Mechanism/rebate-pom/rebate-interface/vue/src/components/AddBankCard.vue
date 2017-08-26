@@ -69,7 +69,7 @@ export default {
         userName: this.userName,
         cellPhoneNum: this.phoneNum,
         idNo: this.idNo,
-        orderSn: '20170820200129222',
+        orderSn: this.$store.getters.getOrderSn,
         userId: this.$store.getters.getUserId,
         token: this.$store.getters.getToken
       }

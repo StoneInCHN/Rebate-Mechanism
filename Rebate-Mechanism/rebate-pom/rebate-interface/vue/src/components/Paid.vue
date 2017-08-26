@@ -60,10 +60,11 @@ export default {
            if (res.code === '0000') {
              this.$store.dispatch('updateToken', {token: res.token})
              this.$store.dispatch('updatePaidResultState', {paidResultState: true})
+             this.$router.push('paidResult')
            } else {
              this.$store.dispatch('updatePaidResultState', {paidResultState: false})
+             this.$toast(res.desc)
            }
-           this.$router.push('paidResult')
          })
           .catch(error => {
             console.log(error)
