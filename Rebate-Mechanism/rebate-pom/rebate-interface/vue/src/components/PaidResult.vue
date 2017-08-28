@@ -10,7 +10,9 @@
 				<img src="../assets/images/operationFailed.png" alt="11">
 				<p>很遗憾，支付失败！</p>
 			</div>
-			<mt-button size="large" type="primary" plain >返回商户</mt-button>
+			<mt-button size="large" type="primary" plain @click.native="returnAndroid">返回商户</mt-button>
+			<br>
+			<a href="wwww.baidu.com" >连接返回到android</a>
 		</div>
 	</div>
 </template>
@@ -20,6 +22,12 @@ export default {
   computed: {
     paidSuccess () {
       return this.$store.getters.getPaidResultState
+    }
+  },
+  methods: {
+    returnAndroid () {
+      console.log('return android')
+      window.Android.show()
     }
   }
 }
