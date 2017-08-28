@@ -122,6 +122,26 @@ public class EndUserController extends BaseController {
 
 
   /**
+   * 启用
+   */
+  @RequestMapping(value = "/active", method = RequestMethod.POST)
+  public @ResponseBody Message active(Long[] ids) {
+    List<EndUser> endUsers = new ArrayList<EndUser>();
+    if (ids != null && ids.length > 0) {
+      for (Long id : ids) {
+        EndUser endUser = endUserService.find(id);
+        if (!AccountStatus.ACTIVED.equals(endUser.getAccountStatus())) {
+          endUser.setAccountStatus(AccountStatus.ACTIVED);
+          endUsers.add(endUser);
+        }
+
+      }
+    }
+    endUserService.update(endUsers);
+    return SUCCESS_MESSAGE;
+  }
+
+  /**
    * 禁用
    */
   @RequestMapping(value = "/locked", method = RequestMethod.POST)
@@ -130,8 +150,10 @@ public class EndUserController extends BaseController {
     if (ids != null && ids.length > 0) {
       for (Long id : ids) {
         EndUser endUser = endUserService.find(id);
-        endUser.setAccountStatus(AccountStatus.LOCKED);
-        endUsers.add(endUser);
+        if (!AccountStatus.LOCKED.equals(endUser.getAccountStatus())) {
+          endUser.setAccountStatus(AccountStatus.LOCKED);
+          endUsers.add(endUser);
+        }
       }
     }
     endUserService.update(endUsers);

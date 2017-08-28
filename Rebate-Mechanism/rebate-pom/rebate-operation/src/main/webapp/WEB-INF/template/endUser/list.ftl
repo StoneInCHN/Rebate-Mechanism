@@ -100,6 +100,7 @@
          </div>
  		 <div class="button-group">
               <!--<a  id="deleteButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>删除</span></a>-->
+              <a  id="activeButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>启用</span></a>
               <a  id="lockedButton" class="btn btn-default disabled"><i class="fa fa-times"></i><span>禁用</span></a>
               <a  id="refreshButton" class="btn btn-default"> <i class="fa fa-refresh"></i><span>刷新</span></a>
          </div>
