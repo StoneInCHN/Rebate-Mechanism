@@ -32,6 +32,10 @@ export default {
       submitBtnStatus: true
     }
   },
+  created () {
+    this.$toast('短信验证码已发送,注意查收')
+    this.disabledCaptchaBtn()
+  },
   computed: {
     type () {
       return (this.cardItem.cardType === '1') ? '信用卡' : '储蓄卡'
@@ -78,7 +82,6 @@ export default {
       }
       this.$api.rpmQuickPaySms(datas)
          .then(res => {
-           console.log(res)
            if (res.code === '0000') {
              this.$store.dispatch('updateToken', {token: res.token})
            } else {
@@ -88,6 +91,9 @@ export default {
           .catch(error => {
             console.log(error)
           })
+      this.disabledCaptchaBtn()
+    },
+    disabledCaptchaBtn () {
       let _this = this
       let sec = 60
       for (let i = 0; i <= 60; i++) {

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<mt-header class="title" title="九派支付服务协议">
+		<mt-header class="title" fixed title="九派支付服务协议">
 		  <router-link to="addBankCard" slot="left">
 		    <mt-button icon="back">返回</mt-button>
 		  </router-link>
