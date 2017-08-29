@@ -18,6 +18,7 @@
 				/console/common/captcha.jhtml = anon
 				/console/common/captchaCheck.jhtml = anon
 				/console/job/** = anon
+				/console/jiupai/** = anon
 				/console/common/area.jhtml = anon
 				/console/password/** = anon
 				

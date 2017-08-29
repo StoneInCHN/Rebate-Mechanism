@@ -77,6 +77,15 @@ $().ready( function() {
 			return false;
 		}
 		var $checkedIds = $("#listTable input[name='ids']:enabled:checked");
+		if($checkedIds.length > 200){
+			$.dialog({
+				type: "warn",
+				content: "一次提现不要超过200条记录",
+				ok: message("admin.dialog.ok"),
+				onOk: function() {return false;}
+			});
+			return false;
+		}
 		$.dialog({
 			type: "warn",
 			content: message("admin.dialog.withdrawConfirm"),

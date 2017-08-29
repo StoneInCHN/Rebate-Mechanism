@@ -44,6 +44,18 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerClearingRecord.paymentChannel")}:
+								</th>
+								<td>
+									[#if sellerClearingRecord.paymentChannel??]
+										${message("rebate.sellerClearingRecord.paymentChannel."+sellerClearingRecord.paymentChannel)}
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.sellerClearingRecord.endUser")}:
 								</th>
 								<td>
@@ -269,12 +281,12 @@
 		$("#singlePay").click(function(){
 			var d = dialog({
 				title: '货款提现',
-				content: "确定要对货款进行支付吗?",
+				content: "确定要对货款单笔提现吗?",
 				okValue: '确定',
 				ok: function () {
 					var _that = this;
 					if(_that.cancelDisplay == true){
-						_that.content('提交中,请稍等...');
+						_that.content('提交中,请耐心稍等(不要关闭此窗口)...');
 						$.ajax({
 							url: "singlePay.jhtml",
 							type: "POST",
@@ -287,23 +299,32 @@
 							dataType: "json",
 							cache: false,
 							success: function(message) {
-								if(message.type == "success"){
-									_that.content(message.content);
 									setTimeout(function() {
-										location.reload();
+											_that.content(message.content+",正在跳转倒计时5秒...");
 									}, 1000);
-								}else{
-									_that.content(message.content);
-									$("#singlePay").attr("disabled",false);
-								}
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时4秒...");
+									}, 2000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时3秒...");
+									}, 3000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时2秒...");
+									}, 4000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时1秒...");
+									}, 5000);
+									setTimeout(function() {
+											location.reload();
+									}, 6000);
 							}
 						});
 				  }
-				  _that.cancelDisplay =false;
+				  _that.cancelDisplay = false;
 				  return false;
 				},
 				cancelValue: '取消',
-				cancel: function () {}
+				cancel: function () {}	
 			});
 			d.showModal();
 		});

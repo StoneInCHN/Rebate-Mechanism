@@ -102,6 +102,15 @@
 									${order.paymentType}
 								</td>
 							</tr>
+							<tr>			
+								<td>
+									[#if order.paymentChannel??]
+										${message("rebate.sellerClearingRecord.paymentChannel."+order.paymentChannel)}</span>
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
 							<tr>
 								<th>
 									${message("rebate.order.paymentTime")}:

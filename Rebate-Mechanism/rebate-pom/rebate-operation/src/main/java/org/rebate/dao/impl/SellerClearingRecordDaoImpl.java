@@ -3,14 +3,17 @@ package org.rebate.dao.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.FlushModeType;
 
 import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.SellerClearingRecord;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 import org.rebate.framework.dao.impl.BaseDaoImpl;
 import org.rebate.json.beans.SellerClearingResult;
+import org.rebate.utils.DateUtils;
 import org.springframework.stereotype.Repository;
 @Repository("sellerClearingRecordDaoImpl")
 public class SellerClearingRecordDaoImpl extends  BaseDaoImpl<SellerClearingRecord,Long> implements SellerClearingRecordDao {
@@ -34,5 +37,21 @@ public class SellerClearingRecordDaoImpl extends  BaseDaoImpl<SellerClearingReco
 	    }
 		return resultList;
 	}
+
+	@Override
+	public List<String> jiuPaiProcessingBatchNoList(Date endDate) {
+		int jiupaiOrdinal = PaymentChannel.JIUPAI.ordinal();
+		String dateStr = DateUtils.getDateFormatString("yyyy-MM-dd HH:mm:ss", endDate);
+		String sql = "select distinct req_sn from rm_seller_clearing_record where clearing_status = 0 and is_clearing = 0 and valid = 1 and sn is not null and payment_channel = " + jiupaiOrdinal + " and create_date <= '" + dateStr + "'";
+		@SuppressWarnings("rawtypes")
+		List list = entityManager.createNativeQuery(sql).setFlushMode(FlushModeType.COMMIT).getResultList();
+		List<String> batchNoList = new ArrayList<String>();
+	    for (Object object : list) {
+	    	 String entity = (String) object;
+	    	 batchNoList.add(entity);
+	    }
+		return batchNoList;
+	}
+
 
 }

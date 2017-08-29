@@ -76,6 +76,16 @@
 								<td>
 									<input type="text" id="endDate" name="endDate" class="text Wdate" onclick="WdatePicker({minDate: '#F{$dp.$D(\'beginDate\')}'});" readonly [#if endDate??]value="${endDate?string("yyyy-MM-dd")}" [/#if] />
 								</td>
+								<th>
+									${message("rebate.sellerClearingRecord.paymentChannel")}:
+								</th>
+								<td>
+									<select name="paymentChannel">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if paymentChannel == 'ALLINPAY'] selected="selected" [/#if] value="ALLINPAY">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</option>
+										<option [#if paymentChannel == 'JIUPAI'] selected="selected" [/#if] value="JIUPAI">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</option>
+									</select>
+								</td>								
 							</tr>
 						</table>
                   </div>
@@ -118,9 +128,9 @@
 					</th>	
 					<th>
 						<span>${message("rebate.leScoreRecord.withdraw.withdrawMsg")}</span>
-					</th>						
+					</th>		
 					<th>
-						<span>${message("rebate.leScoreRecord.remark")}</span>
+						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.paymentChannel")}</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
@@ -203,7 +213,7 @@
 						[#elseif leScoreRecord.status =="SUCCESS"]
 							<span class="label label-success">${message("rebate.leScoreRecord.withdraw.status.SUCCESS")}</span>
 						[#elseif leScoreRecord.status =="FAILED"]
-							<span class="label label-warning">${message("rebate.leScoreRecord.withdraw.status.FAILED")}</span>
+							<span class="label label-danger">${message("rebate.leScoreRecord.withdraw.status.FAILED")}</span>
 						[#else]
 							--
 						[/#if]
@@ -222,9 +232,22 @@
 							--
 						[/#if]
 					</td>
+					<!--
 					<td>
 						[#if  leScoreRecord.remark??]
 						<span data-toggle="tooltip" data-placement="left" title="${leScoreRecord.remark}">${leScoreRecord.remark}</span>
+						[#else]
+							--
+						[/#if]
+					</td>
+					-->
+					<td>
+						[#if leScoreRecord.paymentChannel??]
+							[#if  leScoreRecord.paymentChannel =="ALLINPAY"]
+								<span class="label label-info">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</span>
+							[#elseif leScoreRecord.paymentChannel =="JIUPAI"]
+								<span class="label label-primary">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</span>
+							[/#if]
 						[#else]
 							--
 						[/#if]
@@ -255,8 +278,8 @@
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
 <script>
 	$(function () {
-  $('[data-toggle="tooltip"]').tooltip();
-})
+  		$('[data-toggle="tooltip"]').tooltip();
+	})
 </script>
 </body>
 </html>

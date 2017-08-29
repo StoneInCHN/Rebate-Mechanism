@@ -12,13 +12,17 @@ import org.rebate.entity.BankCard;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.SystemWithdrawRecord;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.job.SystemWithdrawSingleJob;
 import org.rebate.service.SystemConfigService;
 import org.rebate.service.SystemWithdrawRecordService;
+import org.rebate.utils.CommonUtils;
 import org.rebate.utils.LogUtil;
-import org.rebate.utils.SpringUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
+import org.rebate.utils.jiupai.pojo.capSingleTransfer.SingleTransferReq;
+import org.rebate.utils.jiupai.service.GateWayService;
 import org.springframework.stereotype.Service;
 
 @Service("systemWithdrawRecordServiceImpl")
@@ -28,6 +32,9 @@ public class SystemWithdrawRecordServiceImpl extends BaseServiceImpl<SystemWithd
       private SystemWithdrawRecordDao systemWithdrawRecordDao;
       @Resource(name="systemConfigServiceImpl")
       private SystemConfigService systemConfigService;
+      
+      @Resource(name = "systemWithdrawSingleJob")
+      private SystemWithdrawSingleJob systemWithdrawSingleJob;
       
       @Resource(name="systemWithdrawRecordDaoImpl")
       public void setBaseDao(SystemWithdrawRecordDao systemWithdrawRecordDao) {
@@ -41,7 +48,6 @@ public class SystemWithdrawRecordServiceImpl extends BaseServiceImpl<SystemWithd
     public Message singlePay(Admin admin, BigDecimal amount, BankCard bankCard) {
           try {
                 TranxServiceImpl tranxService = new TranxServiceImpl();
-                tranxService.init();//初始化通联基础数据
                 SystemWithdrawRecord record = new SystemWithdrawRecord();
                 record.setOperator(admin.getUsername());
                 record.setCellPhoneNum(admin.getCellPhoneNum());
@@ -51,34 +57,82 @@ public class SystemWithdrawRecordServiceImpl extends BaseServiceImpl<SystemWithd
                 record.setBankCardId(bankCard.getId());
                 record.setCardNum(bankCard.getCardNum());
                 BigDecimal payAmount = amount.abs().subtract(handlingCharge);
-                //因为手续费要在结算金额里面扣除，所以结算金额应该至少多余手续费一分钱
-                //否者放弃代付此单，同时将其设置为处理失败，标明备注：结算金额不够支付手续费！方便后台手动处理
+
                 if (payAmount.subtract(new BigDecimal(0.01)).signum() <= 0) {
-                    record.setWithdrawMsg(SpringUtils.getMessage("rebate.sellerClearingRecord.incomeAmount.less.than.handlingCharge"));
+                    record.setWithdrawMsg("平台提现金额不够支付手续费");
                     record.setStatus(ClearingStatus.FAILED);
                     record.setIsWithdraw(false);
                     save(record);
-                    LogUtil.debug(this.getClass(), "singlePay", "Income Amount: %s is less than Handling Charge: %s !!!", record.getAmount(), handlingCharge);
-                    return Message.error("提现金额不够支付手续费");
+                    LogUtil.debug(this.getClass(), "singlePay", "(平台提现)提现金额:%s 不够支付手续费:%s", record.getAmount(), handlingCharge);
+                    return Message.error("平台提现金额不够支付手续费");
                 }
-                Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payAmount.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
-                if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
-                    String status = resultMap.get("status");
-                    if ("success".equals(status) || "error".equals(status)){
-                        String req_sn = resultMap.get("req_sn");
-                        String err_msg = resultMap.get("err_msg");
-                        record.setReqSn(req_sn);
-                        record.setWithdrawMsg(err_msg);
-                        if ("success".equals(status)) {
-                          record.setStatus(ClearingStatus.SUCCESS);
-                          record.setIsWithdraw(true);
-                        }else if ("error".equals(status)) {
-                          record.setStatus(ClearingStatus.FAILED);
-                          record.setIsWithdraw(false);
+                String payPenny = payAmount.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP).toString();
+                //获取支付渠道
+                PaymentChannel channel = CommonUtils.getPaymentChannel();
+                record.setPaymentChannel(channel);
+                //1. 通联支付渠道
+                if (PaymentChannel.ALLINPAY == channel) {
+                    Map<String, String> resultMap =  tranxService.singleDaiFushi(false, bankCard.getOwnerName(), bankCard.getCardNum(), payPenny);
+                    if (resultMap.containsKey("status") && resultMap.containsKey("req_sn")){
+                        String status = resultMap.get("status");
+                        if ("success".equals(status) || "error".equals(status)){
+                            String req_sn = resultMap.get("req_sn");
+                            String err_msg = resultMap.get("err_msg");
+                            record.setReqSn(req_sn);
+                            record.setWithdrawMsg(err_msg);
+                            if ("success".equals(status)) {
+                              record.setStatus(ClearingStatus.SUCCESS);
+                              record.setIsWithdraw(true);
+                            }else if ("error".equals(status)) {
+                              record.setStatus(ClearingStatus.FAILED);
+                              record.setIsWithdraw(false);
+                            }else if ("wait".equals(status)){
+                              //过十分钟后发起异步单笔查询请求(通联渠道)
+                              systemWithdrawSingleJob.updateRecordSingleByAllinpay(req_sn);
+                            }
+                            save(record);//保存平台提现记录
                         }
-                        save(record);//保存平台提现记录
                     }
-                }
+            	}
+                //2. 九派支付渠道
+                else if(PaymentChannel.JIUPAI == channel) {
+      	          GateWayService gateWayService = new GateWayService();
+    	          SingleTransferReq req = new SingleTransferReq();
+    	          req.setAmount(payPenny);//交易金额  单位：分
+    	          req.setCardNo(bankCard.getCardNum());//银行卡号
+    	          req.setAccName(bankCard.getOwnerName());//账户户名
+    	          req.setRemark("九派 平台提现");//订单备注
+    	          req.setCallBackUrl("/console/jiupai/notifySystemWithdraw.jhtml");//回调地址URL
+    	          //发起单笔代付
+    	          Map<String, String> resMap = gateWayService.capSingleTransfer(req, null);
+    	          String rspCode = resMap.get("rspCode");//应答码  IPS00000正常返回
+    	          String rspMessage = resMap.get("rspMessage");//交易成功
+    	          String orderSts = resMap.get("orderSts");//订单状态  U订单初始化  P处理中   S处理成功   F处理失败   R退汇   N待人工处理
+    	          String mcSequenceNo = resMap.get("mcSequenceNo");//商户交易流水
+    	          String mcTransDateTime = resMap.get("mcTransDateTime");//商户交易时间
+    	          String orderNo = resMap.get("orderNo");//原交易订单号
+    	          if ("IPS00000".equals(rspCode) && mcSequenceNo != null) {//正常返回
+                      record.setReqSn(mcSequenceNo);
+                      record.setWithdrawMsg(rspMessage);
+    	        	  if ("S".equals(orderSts)) {//处理成功，等待九派回调最终结果，暂时设置为处理中，未提现
+    	        		  record.setStatus(ClearingStatus.PROCESSING);
+                          record.setIsWithdraw(false);
+                          record.setWithdrawMsg(record.getWithdrawMsg()+",等待回调通知");
+    				  }
+    	        	  if ("F".equals(orderSts) || "R".equals(orderSts)) {//处理失败 
+    	        		  record.setStatus(ClearingStatus.FAILED);
+                          record.setIsWithdraw(false);
+    				  }
+    	        	  if ("U".equals(orderSts) || "P".equals(orderSts) || "N".equals(orderSts)) {//处理中 
+    	        		  record.setStatus(ClearingStatus.PROCESSING);
+                          record.setIsWithdraw(false);
+            			  //过十分钟后发起异步订单查询请求(九派渠道)
+            			  systemWithdrawSingleJob.updateRecordSingleByJiuPai(mcSequenceNo, mcTransDateTime, orderNo);
+    				  }
+    	        	  save(record);//保存平台提现记录
+    			  }
+            	}
+
             } catch (Exception e) {
               e.printStackTrace();
               return Message.error("rebate.common.system.error");

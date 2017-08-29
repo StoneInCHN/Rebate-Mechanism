@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.rebate.entity.commonenum.CommonEnum.ApplyStatus;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 public class LeScoreRecordReq {
 
@@ -32,6 +33,10 @@ public class LeScoreRecordReq {
    */
   private ApplyStatus withdrawStatus;
 
+  /**
+   * 支付渠道 (通联 ALLINPAY,九派 IUPAI)
+   */
+  private PaymentChannel paymentChannel;
   
   public String getUserName() {
     return userName;
@@ -79,6 +84,14 @@ public class LeScoreRecordReq {
 
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
+  }
+
+  public PaymentChannel getPaymentChannel() {
+	return paymentChannel;
+  }
+
+  public void setPaymentChannel(PaymentChannel paymentChannel) {
+	this.paymentChannel = paymentChannel;
   }
   
 }

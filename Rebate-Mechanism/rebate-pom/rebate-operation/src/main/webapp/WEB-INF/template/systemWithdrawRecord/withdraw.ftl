@@ -115,7 +115,7 @@
 				ok: function () {
 					var _that = this;
 					if(_that.cancelDisplay == true){
-					_that.content('提交中,请稍等...');
+					_that.content('提交中,请耐心稍等(不要关闭此窗口)...');
 							$.ajax({
 								url: "singlePay.jhtml",
 								type: "POST",
@@ -128,15 +128,24 @@
 								dataType: "json",
 								cache: false,
 								success: function(message) {
-									if(message.type == "success"){
-											_that.content(message.content);
-											setTimeout(function() {
-													location.href="list.jhtml"
-												}, 5000);
-									}else{
-										_that.content(message.content);
-										$("#singlePay").attr("disabled",false);
-									}
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时5秒...");
+									}, 1000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时4秒...");
+									}, 2000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时3秒...");
+									}, 3000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时2秒...");
+									}, 4000);
+									setTimeout(function() {
+											_that.content(message.content+",正在跳转倒计时1秒...");
+									}, 5000);
+									setTimeout(function() {
+											location.reload();
+									}, 6000);
 								}
 							});
 					}

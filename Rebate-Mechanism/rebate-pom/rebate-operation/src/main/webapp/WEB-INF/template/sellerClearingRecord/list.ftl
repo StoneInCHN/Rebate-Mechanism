@@ -111,6 +111,18 @@
 									</select>
 								</td>								
 							</tr>
+							<tr>
+								<th>
+									${message("rebate.sellerClearingRecord.paymentChannel")}:
+								</th>
+								<td>
+									<select name="paymentChannel">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if paymentChannel == 'ALLINPAY'] selected="selected" [/#if] value="ALLINPAY">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</option>
+										<option [#if paymentChannel == 'JIUPAI'] selected="selected" [/#if] value="JIUPAI">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</option>
+									</select>
+								</td>								
+							</tr>
 						</table>
                   </div>
              </div>
@@ -158,6 +170,9 @@
 						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.valid")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.paymentChannel")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="createDate">${message("rebate.common.createDate")}</a>
 					</th>
 					<th>
@@ -185,11 +200,11 @@
 					</td>
 					<td>
 						[#if  sellerClearingRecord.clearingStatus =="PROCESSING"]
-							<span class="label label-info">${message("rebate.sellerClearingRecord.clearingStatus.PROCESSING")}</span>
+							<span class="label label-warning">${message("rebate.sellerClearingRecord.clearingStatus.PROCESSING")}</span>
 						[#elseif sellerClearingRecord.clearingStatus =="SUCCESS"]
 							<span class="label label-success">${message("rebate.sellerClearingRecord.clearingStatus.SUCCESS")}</span>
 						[#elseif sellerClearingRecord.clearingStatus =="FAILED"]
-							<span class="label label-warning">${message("rebate.sellerClearingRecord.clearingStatus.FAILED")}</span>
+							<span class="label label-danger">${message("rebate.sellerClearingRecord.clearingStatus.FAILED")}</span>
 						[#else]
 							--
 						[/#if]
@@ -204,7 +219,7 @@
 						<span title="${sellerClearingRecord.sn}">${sellerClearingRecord.sn}</sapn>
 					</td>
 					<td>
-						<span title="${sellerClearingRecord.reqSn}">${sellerClearingRecord.reqSn}</sapn>
+						<span data-toggle="tooltip" data-placement="left" title="${sellerClearingRecord.reqSn}">${sellerClearingRecord.reqSn}</sapn>
 					</td>
 					<td>
 						[#if sellerClearingRecord.valid ??]
@@ -212,6 +227,17 @@
 							[#if !sellerClearingRecord.valid ] ${message("rebate.common.false")} [/#if] 
 						[#else] 
 							--		
+						[/#if]
+					</td>
+					<td>
+						[#if sellerClearingRecord.paymentChannel??]
+							[#if  sellerClearingRecord.paymentChannel =="ALLINPAY"]
+								<span class="label label-info">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</span>
+							[#elseif sellerClearingRecord.paymentChannel =="JIUPAI"]
+								<span class="label label-primary">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</span>
+							[/#if]
+						[#else]
+							--
 						[/#if]
 					</td>
 					<td>
@@ -235,7 +261,10 @@
 <script type="text/javascript" src="${base}/resources/js/common.js"></script>
 <script type="text/javascript" src="${base}/resources/js/list.js"></script>
 <script type="text/javascript" src="${base}/resources/js/datePicker/WdatePicker.js"></script>
-<script type="text/javascript">
+<script>
+	$(function () {
+  		$('[data-toggle="tooltip"]').tooltip();
+	})
 </script>
 </body>
 </html>

@@ -13,6 +13,7 @@ import org.rebate.controller.base.BaseController;
 import org.rebate.entity.BankCard;
 import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.SellerClearingRecord;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
@@ -20,6 +21,7 @@ import org.rebate.json.beans.SellerClearingResult;
 import org.rebate.request.SellerClearingRecordReq;
 import org.rebate.service.BankCardService;
 import org.rebate.service.SellerClearingRecordService;
+import org.rebate.utils.CommonUtils;
 import org.rebate.utils.ExportUtils;
 import org.rebate.utils.TimeUtils;
 import org.springframework.stereotype.Controller;
@@ -69,6 +71,10 @@ public class SellerClearingRecordController extends BaseController {
       filters.add(Filter.eq("clearingStatus", request.getClearingStatus()));
       model.addAttribute("clearingStatus", request.getClearingStatus());
     }
+    if (request.getPaymentChannel() != null) {
+        filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));
+        model.addAttribute("paymentChannel", request.getPaymentChannel());
+    }   
     if (request.getValid() != null) {
         filters.add(Filter.eq("valid", request.getValid()));
         model.addAttribute("valid", request.getValid());
@@ -136,7 +142,18 @@ public class SellerClearingRecordController extends BaseController {
 	    sellerClearingRecord.setBankCardId(bankCard.getId());
 	    sellerClearingRecordService.update(sellerClearingRecord);
      }	 
-     return sellerClearingRecordService.singlePay(sellerClearingRecord, bankCard);
+	 //获取支付渠道
+	 PaymentChannel channel = CommonUtils.getPaymentChannel();
+
+	 //1. 通联支付渠道
+	 if (PaymentChannel.ALLINPAY == channel) {
+		 return sellerClearingRecordService.singlePayByAllinpay(sellerClearingRecord, bankCard);
+	 }
+	 //2. 九派支付渠道 
+	 else if(PaymentChannel.JIUPAI == channel) {
+		 return sellerClearingRecordService.singlePayByJiuPai(sellerClearingRecord, bankCard);
+	 }	 
+	 return ERROR_MESSAGE;
   }
   /**
    * 数据导出

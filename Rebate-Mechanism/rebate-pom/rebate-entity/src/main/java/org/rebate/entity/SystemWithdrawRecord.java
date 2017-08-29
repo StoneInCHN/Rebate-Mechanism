@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import org.rebate.entity.base.BaseEntity;
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 /**
  * 系统提现记录（admin管理员系统内部提现）
@@ -73,6 +74,11 @@ public class SystemWithdrawRecord extends BaseEntity {
    * 交易批次号
    */
   private String reqSn;
+  
+  /**
+   * 支付渠道(通联:ALLINPAY 九派:JIUPAI)
+   */
+  private PaymentChannel paymentChannel;
 
   /**
    * 备注
@@ -171,6 +177,14 @@ public class SystemWithdrawRecord extends BaseEntity {
 
 	public void setStatus(ClearingStatus status) {
 		this.status = status;
+	}
+
+	public PaymentChannel getPaymentChannel() {
+		return paymentChannel;
+	}
+
+	public void setPaymentChannel(PaymentChannel paymentChannel) {
+		this.paymentChannel = paymentChannel;
 	}
 	
 }

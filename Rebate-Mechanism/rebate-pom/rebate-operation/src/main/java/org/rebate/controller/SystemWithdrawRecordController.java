@@ -133,6 +133,7 @@ public class SystemWithdrawRecordController extends BaseController {
 	    	  adminService.deleteSmsCode(cellPhoneNum);
 	    }
 	    Integer smsCode = (int) ((Math.random() * 9 + 1) * 1000);
+	    LogUtil.debug(this.getClass(), "reqeustSmsCode", "生成验证码:"+smsCode);
 	    ToolsUtils.sendSmsMsg(cellPhoneNum, message("rebate.admin.smsCodeContent", smsCode.toString()));// 发送短信验证码
 	    SMSVerificationCode newSmsCode = new SMSVerificationCode();
 	    newSmsCode.setCellPhoneNum(cellPhoneNum);

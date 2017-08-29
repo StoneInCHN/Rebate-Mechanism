@@ -9,6 +9,7 @@ import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.commonenum.CommonEnum.LeScoreType;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
@@ -18,6 +19,7 @@ import org.rebate.request.LeScoreRecordReq;
 import org.rebate.service.BankCardService;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.utils.TimeUtils;
+import org.rebate.utils.CommonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +59,10 @@ public class LeScoreRecordController extends BaseController {
       filters.add(Filter.eq("withdrawStatus", req.getWithdrawStatus()));
       model.addAttribute("withdrawStatus", req.getWithdrawStatus());
     }
+    if (req.getPaymentChannel() != null) {
+        filters.add(Filter.eq("paymentChannel", req.getPaymentChannel()));
+        model.addAttribute("paymentChannel", req.getPaymentChannel());
+    } 
     if (req.getBeginDate() != null) {
       Filter dateGeFilter =
           new Filter("createDate", Operator.ge, TimeUtils.formatDate2Day(req.getBeginDate()));
@@ -114,35 +120,24 @@ public class LeScoreRecordController extends BaseController {
     if (ids == null || ids.length == 0) {
       return Message.error("请至少选择一条记录！");
     }
+    //获取支付渠道
+    PaymentChannel channel = CommonUtils.getPaymentChannel();
 
-    String reqSn = leScoreRecordService.batchWithdrawal(ids);
-
-    if (reqSn != null) {
-
-      leScoreRecordJob.updateRecordStatus(reqSn);
-
-      return Message.success("批量提现执行成功!");
-    } else {
-      return Message.success("批量提现执行失败!");
-    }
+    //1. 通联支付渠道
+    if (PaymentChannel.ALLINPAY == channel) {
+        String reqSn = leScoreRecordService.batchWithdrawalByAllinpay(ids);
+        if (reqSn != null) {
+        	//隔一段时间 异步更新 提现记录状态
+        	leScoreRecordJob.notifyWithdrawRecordByAllinpay(reqSn);
+        } else {
+        	return Message.success("批量提现执行失败!");
+        }
+	}
+    //2. 九派支付渠道
+    else if(PaymentChannel.JIUPAI == channel) {
+    	leScoreRecordService.batchWithdrawalByJiuPai(ids);   
+	}
+    return Message.success("批量提现执行成功!");
   }
-  /**
-   * 单笔实时提现
-   */
-  // @RequestMapping(value = "/singlePay", method = RequestMethod.POST)
-  // public @ResponseBody Message singlePay(Long id) {
-  // LeScoreRecord record = null;
-  // if(id == null){
-  // return ERROR_MESSAGE;
-  // }
-  // record = leScoreRecordService.find(id);
-  // if (record == null) {
-  // return ERROR_MESSAGE;
-  // }
-  // BankCard bankCard = bankCardService.find(record.getWithDrawType());
-  // if (bankCard == null || bankCard.getBankName() == null || bankCard.getCardNum() == null) {
-  // return Message.error("无效的银行卡");
-  // }
-  // return leScoreRecordService.singlePay(record, bankCard);
-  // }
+
 }

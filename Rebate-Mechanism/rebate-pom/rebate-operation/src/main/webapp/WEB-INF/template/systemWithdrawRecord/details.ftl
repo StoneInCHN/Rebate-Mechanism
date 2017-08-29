@@ -144,7 +144,19 @@
 										--
 									[/#if]
 								</td>
-							</tr>		
+							</tr>	
+							<tr>
+								<th>
+									${message("rebate.sellerClearingRecord.paymentChannel")}:
+								</th>			
+								<td>
+									[#if record.paymentChannel??]
+										${message("rebate.sellerClearingRecord.paymentChannel."+record.paymentChannel)}</span>
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>	
 							<tr>
 								<th>
 									备注:

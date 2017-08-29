@@ -1,34 +1,19 @@
 package org.rebate.utils.allinpay.demo;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.rebate.dao.SellerClearingRecordDao;
 import org.rebate.entity.BankCard;
-import org.rebate.entity.EndUser;
 import org.rebate.entity.SellerClearingRecord;
-import org.rebate.framework.filter.Filter;
-import org.rebate.service.BankCardService;
-import org.rebate.service.SellerClearingRecordService;
-import org.rebate.utils.SpringUtils;
 import org.rebate.utils.TimeUtils;
-import org.rebate.utils.allinpay.pojo.TranxCon;
 import org.rebate.utils.allinpay.tools.FileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import com.aipg.common.AipgReq;
 import com.aipg.common.InfoReq;
@@ -47,8 +32,6 @@ public class TranxServiceImplTest {
   SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
   /**
-   * 批量代付 Andrea
-   * @param sellerClearingRecordService 
    * 
    * @throws Exception
    */

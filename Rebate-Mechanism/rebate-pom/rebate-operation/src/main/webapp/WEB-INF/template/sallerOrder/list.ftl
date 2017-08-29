@@ -89,6 +89,16 @@
 										<option [#if orderStatus == "FINISHED"] selected="selected" [/#if] value="FINISHED">${message("rebate.orderStatus.FINISHED")}</option>
 									</select>
 								</td>
+								<th>
+									${message("rebate.sellerClearingRecord.paymentChannel")}:
+								</th>
+								<td>
+									<select name="paymentChannel">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if paymentChannel == 'ALLINPAY'] selected="selected" [/#if] value="ALLINPAY">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</option>
+										<option [#if paymentChannel == 'JIUPAI'] selected="selected" [/#if] value="JIUPAI">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</option>
+									</select>
+								</td>
 							</tr>
 						</table>
                   </div>
@@ -135,6 +145,9 @@
 						<a href="javascript:;"  name="rebateAmount">${message("rebate.order.rebateAmount")}</a>
 					</th>
 					<th>
+						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.paymentChannel")}</a>
+					</th>
+					<th>
 						<a href="javascript:;" class="sort" name="status">${message("rebate.order.status")}</a>
 					</th>
 					<th>
@@ -177,6 +190,17 @@
 					</td>
 					<td>
 						${order.rebateAmount}
+					</td>
+					<td>
+						[#if order.paymentChannel??]
+							[#if  order.paymentChannel =="ALLINPAY"]
+								<span class="label label-info">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</span>
+							[#elseif order.paymentChannel =="JIUPAI"]
+								<span class="label label-primary">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</span>
+							[/#if]
+						[#else]
+							--
+						[/#if]
 					</td>
 					<td>
 						[#if  order.status =="UNPAID"]

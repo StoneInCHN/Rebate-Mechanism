@@ -228,38 +228,45 @@ public class Setting implements Serializable {
   private String smsPwd;
   
   /**
-   * 通联支付URL
+   * 支付渠道   (通联:ALLINPAY 九派:JIUPAI)
    */
-  private String allinpayUrl;
-  
+  private String paymentChannel;
   /**
-   * 通联公钥证书
+   * 通联支付渠道   基础数据配置
    */
+  //通联支付URL
+  private String allinpayUrl;  
+  //通联公钥证书
   private String tltcerPath; 
-  /**
-   * 通联私钥证书
-   */
+  //通联私钥证书
   private String pfxPath; 
-  /**
-   * 通联私钥密码
-   */
+  //通联私钥密码
   private String pfxPassword;
-  /**
-   * 通联商户号
-   */
+  //通联商户号
   private String allinpayMerchantId; 
-  /**
-   * 通联用户名
-   */
+  //通联用户名
   private String allinpayUserName; 
-  /**
-   * 通联用户名密码
-   */
+  //通联用户名密码
   private String allinpayPassword; 
-  /**
-   * 通联代付 业务代码
-   */
+  //通联代付 业务代码
   private String allinpayBusinessCode; 
+  /**
+   * 九派支付渠道   基础数据配置
+   */
+  //九派支付网关URL
+  private String jiupaiRequestUrl;
+  //九派商户号
+  private String jiupaiMerchantId;
+  //九派商户名
+  private String jiupaiMerchantName;
+  //九派私钥证书
+  private String jiupaiMerchantCertPath;
+  //九派通联私钥密码
+  private String jiupaiMerchantCertPass;
+  //九派公钥证书
+  private String jiupaiRootCertPath;
+  //九派回调URL
+  private String jiupaiNotifyUrl;
   
   /**
    * 聚合数据 银行卡四元素验证URL
@@ -724,6 +731,70 @@ public class Setting implements Serializable {
 
   public void setRecommendUrl(String recommendUrl) {
 	this.recommendUrl = recommendUrl;
+  }
+
+  public String getPaymentChannel() {
+	return paymentChannel;
+  }
+
+  public void setPaymentChannel(String paymentChannel) {
+	this.paymentChannel = paymentChannel;
+  }
+
+  public String getJiupaiRequestUrl() {
+	return jiupaiRequestUrl;
+  }
+
+  public void setJiupaiRequestUrl(String jiupaiRequestUrl) {
+	this.jiupaiRequestUrl = jiupaiRequestUrl;
+  }
+
+  public String getJiupaiMerchantId() {
+	return jiupaiMerchantId;
+  }
+
+  public void setJiupaiMerchantId(String jiupaiMerchantId) {
+	this.jiupaiMerchantId = jiupaiMerchantId;
+  }
+
+  public String getJiupaiMerchantName() {
+	return jiupaiMerchantName;
+  }
+
+  public void setJiupaiMerchantName(String jiupaiMerchantName) {
+	this.jiupaiMerchantName = jiupaiMerchantName;
+  }
+
+  public String getJiupaiMerchantCertPath() {
+	return jiupaiMerchantCertPath;
+  }
+
+  public void setJiupaiMerchantCertPath(String jiupaiMerchantCertPath) {
+	this.jiupaiMerchantCertPath = jiupaiMerchantCertPath;
+  }
+
+  public String getJiupaiMerchantCertPass() {
+	return jiupaiMerchantCertPass;
+  }
+
+  public void setJiupaiMerchantCertPass(String jiupaiMerchantCertPass) {
+	this.jiupaiMerchantCertPass = jiupaiMerchantCertPass;
+  }
+
+  public String getJiupaiRootCertPath() {
+	return jiupaiRootCertPath;
+  }
+
+  public void setJiupaiRootCertPath(String jiupaiRootCertPath) {
+	this.jiupaiRootCertPath = jiupaiRootCertPath;
+  }
+
+  public String getJiupaiNotifyUrl() {
+	return jiupaiNotifyUrl;
+  }
+
+  public void setJiupaiNotifyUrl(String jiupaiNotifyUrl) {
+	this.jiupaiNotifyUrl = jiupaiNotifyUrl;
   }
     
 	

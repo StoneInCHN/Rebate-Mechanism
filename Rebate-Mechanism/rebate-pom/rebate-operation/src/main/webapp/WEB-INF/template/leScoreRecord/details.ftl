@@ -44,6 +44,18 @@
 							</tr>
 							<tr>
 								<th>
+									${message("rebate.sellerClearingRecord.paymentChannel")}:
+								</th>
+								<td>
+									[#if leScoreRecord.paymentChannel??]
+										${message("rebate.sellerClearingRecord.paymentChannel."+leScoreRecord.paymentChannel)}
+									[#else]
+										--
+									[/#if]
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.leScoreRecord.endUser.userName")}:
 								</th>
 								<td>

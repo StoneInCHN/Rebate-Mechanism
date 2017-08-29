@@ -122,6 +122,9 @@
 						<span>交易批次号</span>
 					</th>	
 					<th>
+						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.paymentChannel")}</a>
+					</th>
+					<th>
 						<span>${message("rebate.leScoreRecord.remark")}</span>
 					</th>
 					<th>
@@ -194,6 +197,17 @@
 							--
 						[/#if]
 					</td>	
+					<td>
+						[#if record.paymentChannel??]
+							[#if  record.paymentChannel =="ALLINPAY"]
+								<span class="label label-info">${message("rebate.sellerClearingRecord.paymentChannel.ALLINPAY")}</span>
+							[#elseif record.paymentChannel =="JIUPAI"]
+								<span class="label label-primary">${message("rebate.sellerClearingRecord.paymentChannel.JIUPAI")}</span>
+							[/#if]
+						[#else]
+							--
+						[/#if]
+					</td>
 					<td>
 						[#if  record.remark??]
 						<span data-toggle="tooltip" data-placement="left" title="${leScoreRecord.remark}">${leScoreRecord.remark}</span>

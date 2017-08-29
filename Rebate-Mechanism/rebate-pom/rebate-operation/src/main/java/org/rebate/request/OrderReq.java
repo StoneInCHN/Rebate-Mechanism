@@ -3,6 +3,7 @@ package org.rebate.request;
 import java.util.Date;
 
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 public class OrderReq {
   /**
@@ -49,7 +50,10 @@ public class OrderReq {
    */
   private String paymentType;
 
-
+  /**
+   * 支付渠道 (通联 ALLINPAY,九派 IUPAI)
+   */
+  private PaymentChannel paymentChannel;
 
   public String getEndUserNickName() {
     return endUserNickName;
@@ -113,6 +117,14 @@ public class OrderReq {
 
   public void setPaymentType(String paymentType) {
     this.paymentType = paymentType;
+  }
+
+  public PaymentChannel getPaymentChannel() {
+	return paymentChannel;
+  }
+
+  public void setPaymentChannel(PaymentChannel paymentChannel) {
+	this.paymentChannel = paymentChannel;
   }
 
 

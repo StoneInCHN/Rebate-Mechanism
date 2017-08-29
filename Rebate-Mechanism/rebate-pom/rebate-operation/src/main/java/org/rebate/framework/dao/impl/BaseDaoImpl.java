@@ -416,8 +416,18 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
                     (String) filter.getValue()));
         }
       } else if (filter.getOperator() == Operator.in && filter.getValue() != null) {
-        restrictions =
-            criteriaBuilder.and(restrictions, root.get(filter.getProperty()).in(filter.getValue()));
+//        restrictions =
+//            criteriaBuilder.and(restrictions, root.get(filter.getProperty()).in(filter.getValue()));
+    	    if (filter.getValue() instanceof Object[]) {
+    	          // 传递多个参数 Object... values
+    	          Object[] objects = (Object[]) filter.getValue();
+    	          restrictions =
+    	              criteriaBuilder.and(restrictions, root.get(filter.getProperty()).in(objects));
+    	        } else {
+    	          restrictions =
+    	              criteriaBuilder.and(restrictions, root.get(filter.getProperty())
+    	                  .in(filter.getValue()));
+    	        }
       } else if (filter.getOperator() == Operator.isNull) {
         restrictions = criteriaBuilder.and(restrictions, root.get(filter.getProperty()).isNull());
       } else if (filter.getOperator() == Operator.isNotNull) {
@@ -589,9 +599,19 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> implements BaseDao
           }
 
         } else if (filter.getOperator() == Operator.in && filter.getValue() != null) {
-          restrictions =
-              criteriaBuilder.and(restrictions, root.get(filter.getProperty())
-                  .in(filter.getValue()));
+//          restrictions =
+//              criteriaBuilder.and(restrictions, root.get(filter.getProperty())
+//                  .in(filter.getValue()));
+            if (filter.getValue() instanceof Object[]) {
+                // 传递多个参数 Object... values
+                Object[] objects = (Object[]) filter.getValue();
+                restrictions =
+                    criteriaBuilder.and(restrictions, root.get(filter.getProperty()).in(objects));
+              } else {
+                restrictions =
+                    criteriaBuilder.and(restrictions, root.get(filter.getProperty())
+                        .in(filter.getValue()));
+              }
         } else if (filter.getOperator() == Operator.isNull) {
           restrictions = criteriaBuilder.and(restrictions, root.get(filter.getProperty()).isNull());
         } else if (filter.getOperator() == Operator.isNotNull) {

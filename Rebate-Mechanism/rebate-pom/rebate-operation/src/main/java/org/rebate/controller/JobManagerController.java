@@ -9,7 +9,7 @@ import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.job.AreaConsumeReportJob;
 import org.rebate.job.LeScoreRecordJob;
-import org.rebate.job.SellerClearingRecordJob;
+import org.rebate.job.SellerClearingBatchJob;
 import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.QuartzManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ public class JobManagerController extends BaseController {
   @Autowired
   QuartzManagerService quartzManagerService;
   
-  @Resource(name = "sellerClearingRecordJob")
-  private SellerClearingRecordJob sellerClearingRecordJob;
+  @Resource(name = "sellerClearingBatchJob")
+  private SellerClearingBatchJob sellerClearingBatchJob;
   
   @Resource(name = "areaConsumeReportJob")
   private AreaConsumeReportJob areaConsumeReportJob;
@@ -66,8 +66,8 @@ public class JobManagerController extends BaseController {
   @RequestMapping(value = "/manualClearingRecordJob", method = RequestMethod.POST)
   public @ResponseBody Message manualReconciliationJob(Date manualDate) {
       try {
-          SellerClearingRecordJob.date = manualDate;
-          sellerClearingRecordJob.sellerClearingCalculate();
+          SellerClearingBatchJob.date = manualDate;
+          sellerClearingBatchJob.sellerClearingCalculate();
           return SUCCESS_MESSAGE;
       } catch (Exception e) {
           return Message.error(e.getMessage());
@@ -97,7 +97,7 @@ public class JobManagerController extends BaseController {
   public @ResponseBody Message manualAreaConsumeJob(String reqSn) {
       try {
     	  if (reqSn != null) {
-    	      leScoreRecordJob.updateRecordStatus(reqSn);
+    	      leScoreRecordJob.notifyWithdrawRecordByAllinpay(reqSn);
     	      return Message.success("手动查询代付交易结果并更新乐分记录!");
     	    } else {
     	      return Message.success("reqSn参数为空!");

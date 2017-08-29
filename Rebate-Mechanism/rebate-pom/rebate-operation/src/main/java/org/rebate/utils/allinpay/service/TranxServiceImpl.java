@@ -1,6 +1,5 @@
 package org.rebate.utils.allinpay.service;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -14,15 +13,12 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.rebate.beans.Setting;
-import org.rebate.entity.BankCard;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.SellerClearingRecord;
-import org.rebate.service.BankCardService;
+import org.rebate.utils.DateUtils;
 import org.rebate.utils.LogUtil;
-import org.rebate.utils.SettingUtils;
 import org.rebate.utils.TimeUtils;
-import org.rebate.utils.allinpay.pojo.TranxCon;
+import org.rebate.utils.allinpay.pojo.AllinpayConfig;
 import org.rebate.utils.allinpay.tools.FileUtil;
 
 import com.aipg.common.AipgReq;
@@ -38,30 +34,15 @@ import com.allinpay.XmlTools;
 
 public class TranxServiceImpl {
 	
-  TranxCon tranxContants = null;
-  SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-  Setting setting = SettingUtils.get();
+  //通联配置参数
+  private AllinpayConfig config = AllinpayConfig.getConfig();
 	
-  public void init(){//初始化通联基础数据
-	  tranxContants = new TranxCon();
-	  String path = tranxContants.getClass().getResource("/").getPath();
-	  String pfxPath = path + File.separator + setting.getPfxPath();
-	  String tltcerPath = path + File.separator + setting.getTltcerPath(); 
-	  tranxContants.setPfxPath(pfxPath);  
-	  tranxContants.setTltcerPath(tltcerPath);
-	  tranxContants.setUrl(setting.getAllinpayUrl());
-	  tranxContants.setPfxPassword(setting.getPfxPassword());
-	  tranxContants.setUserName(setting.getAllinpayUserName());
-	  tranxContants.setPassword(setting.getAllinpayPassword());
-	  tranxContants.setMerchantId(setting.getAllinpayMerchantId());
-	  tranxContants.setBusinessCode(setting.getAllinpayBusinessCode());
-  }
   /**
    * 乐分批量提现（批量代付）
    * @return
    */
   public List<LeScoreRecord> batchWithdrawalLeScore(boolean isTLTFront, String totalItem, String totalSum, 
-		  List<LeScoreRecord> records, BankCardService bankCardService) throws Exception {
+		  List<LeScoreRecord> records) throws Exception {
 	    
 	    String xmlRequest = "";
 	    AipgReq aipg = new AipgReq();
@@ -70,8 +51,8 @@ public class TranxServiceImpl {
 	    
 	    Body body = new Body();
 	    Trans_Sum trans_sum = new Trans_Sum();
-	    trans_sum.setBUSINESS_CODE(tranxContants.getBusinessCode()); 
-	    trans_sum.setMERCHANT_ID(tranxContants.getMerchantId());
+	    trans_sum.setBUSINESS_CODE(config.getBusinessCode()); 
+	    trans_sum.setMERCHANT_ID(config.getMerchantId());
 	    trans_sum.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
 	    trans_sum.setTOTAL_ITEM(totalItem);
 	    trans_sum.setTOTAL_SUM(totalSum);
@@ -81,20 +62,14 @@ public class TranxServiceImpl {
 	    for (int i = 0; i < records.size(); i++) {
 	      LeScoreRecord record = records.get(i);
 	      record.setReqSn(info.getREQ_SN());
-	      BankCard bankCard = bankCardService.find(record.getWithDrawType());
-	      if (bankCard == null) {//批量提现的话，是整批次成功或整批次失败，不允许某一单银行卡为空
-	    	LogUtil.debug(this.getClass(), "batchWithdrawalLeScore", "TranxServiceImpl.batchWithdrawalLeScore-->Cannot find BankCard:"+record.getWithDrawType());
-	    	records.remove(record);
-	    	continue;
-		  }
 	      Trans_Detail trans_detail = new Trans_Detail();
 	      String sn = genSn(i);
 	      trans_detail.setSN(sn);//记录序号，同一个请求内必须唯一，从0001,0002..开始递增
 	      record.setSn(sn);
 	      recordMap.put(sn, record);
-	      trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
+	      trans_detail.setACCOUNT_NAME(record.getOwnerName()); // 银行卡姓名
 	      trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
-	      trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
+	      trans_detail.setACCOUNT_NO(record.getCardNum()); // 银行卡账号
 		  BigDecimal leAmount = record.getAmount().abs();
 		  leAmount = leAmount.setScale(2,BigDecimal.ROUND_HALF_UP);
 	      BigDecimal payAmount = leAmount.subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
@@ -109,7 +84,7 @@ public class TranxServiceImpl {
 
 	    xmlRequest = XmlTools.buildXml(aipg, true);
 	    
-	    String xmlResponse = isFront(xmlRequest, isTLTFront, tranxContants.getUrl());
+	    String xmlResponse = isFront(xmlRequest, isTLTFront, config.getUrl());
 	    
 	    if (xmlResponse != null) {
 	        Document doc = DocumentHelper.parseText(xmlResponse);
@@ -137,12 +112,12 @@ public class TranxServiceImpl {
   }
 
   /**
-   * 商家货款批量代付
+   * 商家货款批量代付(交易代码：100002)
    * 
    * @throws Exception
    */
   public List<SellerClearingRecord> batchDaiFu(boolean isTLTFront, String totalItem, String totalSum,
-      List<SellerClearingRecord> records, BankCardService bankCardService) throws Exception {
+      List<SellerClearingRecord> records) throws Exception {
     
     String xmlRequest = "";
     AipgReq aipg = new AipgReq();
@@ -151,9 +126,9 @@ public class TranxServiceImpl {
     
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
-    trans_sum.setBUSINESS_CODE(tranxContants.getBusinessCode()); 
-    trans_sum.setMERCHANT_ID(tranxContants.getMerchantId());
-    trans_sum.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
+    trans_sum.setBUSINESS_CODE(config.getBusinessCode()); 
+    trans_sum.setMERCHANT_ID(config.getMerchantId());
+    trans_sum.setSUBMIT_TIME(DateUtils.getDateFormatString("yyyyMMddHHmmss", new Date()));
     trans_sum.setTOTAL_ITEM(totalItem);
     trans_sum.setTOTAL_SUM(totalSum);
     body.setTRANS_SUM(trans_sum);
@@ -162,20 +137,14 @@ public class TranxServiceImpl {
     for (int i = 0; i < records.size(); i++) {
       SellerClearingRecord record = records.get(i);
       record.setReqSn(info.getREQ_SN());
-      BankCard bankCard = bankCardService.find(record.getBankCardId());
-      if (bankCard == null) {//批量代付的话，是整批次成功或整批次失败，不允许某一单银行卡为空
-    	  LogUtil.debug(this.getClass(), "batchDaiFu", "TranxServiceImpl.batchDaiFu-->Cannot find BankCard:"+record.getBankCardId());
-    	records.remove(record);
-    	continue;
-	  }
       Trans_Detail trans_detail = new Trans_Detail();
       String sn = genSn(i);
       trans_detail.setSN(sn);//记录序号，同一个请求内必须唯一，从0001,0002..开始递增
       record.setSn(sn);
       recordMap.put(sn, record);
-      trans_detail.setACCOUNT_NAME(bankCard.getOwnerName()); // 银行卡姓名
+      trans_detail.setACCOUNT_NAME(record.getOwnerName()); // 银行卡姓名
       trans_detail.setACCOUNT_PROP("0"); // 0私人，1公司。不填时，默认为私人0。
-      trans_detail.setACCOUNT_NO(bankCard.getCardNum()); // 银行卡账号
+      trans_detail.setACCOUNT_NO(record.getCardNum()); // 银行卡账号
       BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());//提现金额=结算金额-手续费，即商家自己付提现的手续费
       trans_detail.setAMOUNT(payAmount.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_UP).toString());//金额单位：分
       //trans_detail.setBANK_CODE("0105");//银行代码："0"+"105"对应中国建设银行，不传值的情况下，通联可以通过银行卡账号自动识别所属银行
@@ -188,7 +157,7 @@ public class TranxServiceImpl {
 
     xmlRequest = XmlTools.buildXml(aipg, true);    
     
-    String xmlResponse = isFront(xmlRequest, isTLTFront, tranxContants.getUrl());
+    String xmlResponse = isFront(xmlRequest, isTLTFront, config.getUrl());
     
     if (xmlResponse != null) {
         Document doc = DocumentHelper.parseText(xmlResponse);
@@ -196,16 +165,16 @@ public class TranxServiceImpl {
         Element infoElement = root.element("INFO");
         String ret_code = infoElement.elementText("RET_CODE");
         String err_msg = infoElement.elementText("ERR_MSG");
-        if ("0000".equals(ret_code)) {//0000表示通联接受请求
-        	Element detailsElement = root.element("BODY").element("RET_DETAILS");
-        	Iterator<Element> details = detailsElement.elementIterator("RET_DETAIL");
-        	while (details.hasNext()) {
-        		Element detail = (Element) details.next();
-        		String sn = detail.elementText("SN");
-        		if (!"0000".equals(detail.elementText("RET_CODE"))) {
-        			records.remove(recordMap.get(sn));
-				}
-            }
+        if ("0000".equals(ret_code)) {//0000表示受理成功
+//        	Element detailsElement = root.element("BODY").element("RET_DETAILS");
+//        	Iterator<Element> details = detailsElement.elementIterator("RET_DETAIL");
+//        	while (details.hasNext()) {
+//        		Element detail = (Element) details.next();
+//        		String sn = detail.elementText("SN");
+//        		if (!"0000".equals(detail.elementText("RET_CODE"))) {
+//        			records.remove(recordMap.get(sn));
+//				}
+//            }
         	LogUtil.debug(this.getClass(), "batchDaiFu", "批量代付成功！RET_CODE="+ret_code+",ERR_MSG="+err_msg);
         	return records;
 		}else {
@@ -226,8 +195,8 @@ public class TranxServiceImpl {
     InfoReq info = makeReq("100014");
     aipg.setINFO(info);
     Trans trans = new Trans();
-    trans.setBUSINESS_CODE(tranxContants.getBusinessCode());
-    trans.setMERCHANT_ID(tranxContants.getMerchantId());
+    trans.setBUSINESS_CODE(config.getBusinessCode());
+    trans.setMERCHANT_ID(config.getMerchantId());
     trans.setSUBMIT_TIME(TimeUtils.format("yyyyMMddHHmmss", new Date().getTime()));
     trans.setACCOUNT_NAME(accountName);// 银行卡姓名
     trans.setACCOUNT_NO(accountNo);
@@ -242,7 +211,7 @@ public class TranxServiceImpl {
 
     xml = XmlTools.buildXml(aipg, true);
     
-    String xmlResponse = isFront(xml, isTLTFront, tranxContants.getUrl());
+    String xmlResponse = isFront(xml, isTLTFront, config.getUrl());
     
     Map<String, String> resultMap = new HashMap<String, String>(); 
     
@@ -292,7 +261,8 @@ public class TranxServiceImpl {
     aipg.setINFO(info);
     Trans trans = new Trans();
     trans.setBUSINESS_CODE("00600");
-    trans.setMERCHANT_ID(tranxContants.getMerchantId());
+    trans.setMERCHANT_ID(config.getMerchantId());
+    SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
     trans.setSUBMIT_TIME(df.format(new Date()));
     trans.setACCOUNT_NAME("测试试");
     trans.setACCOUNT_NO("622588121251757643");
@@ -324,7 +294,7 @@ public class TranxServiceImpl {
     Body body = new Body();
     Trans_Sum trans_sum = new Trans_Sum();
     trans_sum.setBUSINESS_CODE("10600");
-    trans_sum.setMERCHANT_ID(tranxContants.getMerchantId());
+    trans_sum.setMERCHANT_ID(config.getMerchantId());
     trans_sum.setTOTAL_ITEM("3");
     trans_sum.setTOTAL_SUM("100002");
     body.setTRANS_SUM(trans_sum);
@@ -385,10 +355,10 @@ public class TranxServiceImpl {
 
     InfoReq info = new InfoReq();
     info.setTRX_CODE(trxcod);
-    info.setREQ_SN(tranxContants.getMerchantId() + String.valueOf(System.currentTimeMillis()));
-    info.setUSER_NAME(tranxContants.getUserName());
-    info.setUSER_PASS(tranxContants.getPassword());
-    info.setMERCHANT_ID(tranxContants.getMerchantId());
+    info.setREQ_SN(config.getMerchantId() + String.valueOf(System.currentTimeMillis()));
+    info.setUSER_NAME(config.getUserName());
+    info.setUSER_PASS(config.getPassword());
+    info.setMERCHANT_ID(config.getMerchantId());
     info.setLEVEL("5");
     info.setDATA_TYPE("2");
     info.setVERSION("03");
@@ -398,13 +368,11 @@ public class TranxServiceImpl {
   public String sendXml(String xml, String url, boolean isFront)
       throws UnsupportedEncodingException, Exception {
 	LogUtil.debug(this.getClass(), "sendXml", "xmlRequest after sign: \n======================发送报文======================：\n%s", xml);
-	//System.out.println("======================发送报文======================：\n" + xml);
     String resp = XmlTools.send(url, new String(xml.getBytes(), "UTF-8"));
     //String resp = XmlTools.send(url, new String(xml.getBytes(), "GBK"));
-    //System.out.println("======================响应内容======================");
     LogUtil.debug(this.getClass(), "sendXml", "xmlRequest after send, xmlResponse: \n======================响应内容======================：\n%s", resp);
-    // System.out.println(new String(resp.getBytes(),"GBK")) ;
-    boolean flag = this.verifyMsg(resp, tranxContants.getTltcerPath(), isFront);
+    //System.out.println(new String(resp.getBytes(),"GBK"));
+    boolean flag = this.verifyMsg(resp, config.getTltcerPath(), isFront);
     if (flag) {
     	LogUtil.debug(this.getClass(), "sendXml", "响应内容验证通过");
     } else {
@@ -415,7 +383,7 @@ public class TranxServiceImpl {
 
   public String isFront(String xml, boolean flag, String url) {
 	LogUtil.debug(this.getClass(), "isFront", "isTLTFront: %s, url: %s", flag, url);
-    LogUtil.debug(this.getClass(), "isFront", "xmlRequest before sign: \n%s", xml);
+    //LogUtil.debug(this.getClass(), "isFront", "xmlRequest before sign: \n%s", xml);
     try {
       if (!flag) {
         xml = this.signMsg(xml);
@@ -438,7 +406,7 @@ public class TranxServiceImpl {
    * @throws Exception
    */
   public String signMsg(String xml) throws Exception {
-    xml = XmlTools.signMsg(xml, tranxContants.getPfxPath(), tranxContants.getPfxPassword(), false);
+    xml = XmlTools.signMsg(xml, config.getPfxPath(), config.getPfxPassword(), false);
     return xml;
   }
 
@@ -468,7 +436,7 @@ public class TranxServiceImpl {
     aipgReq.setINFO(info);
     aipgReq.addTrx(dqr);
     dqr.setSTATUS(2);
-    dqr.setMERCHANT_ID(tranxContants.getMerchantId());
+    dqr.setMERCHANT_ID(config.getMerchantId());
     dqr.setTYPE(1);
     dqr.setSTART_DAY("20121217");
     dqr.setEND_DAY("20121218");
@@ -508,7 +476,7 @@ public class TranxServiceImpl {
    * 下载简单对账文件
    */
   public void downSimpleBills(String uRL11, boolean isTLTFront) throws Exception {
-    String MERID = tranxContants.getMerchantId();
+    String MERID = config.getMerchantId();
     String SETTDAY = "20130527";
     String REQTIME = "20130527121212";// df.format(new Date());
     String CONTFEE = "";
@@ -516,7 +484,7 @@ public class TranxServiceImpl {
     CONTFEE = SETTDAY + "|" + REQTIME + "|" + MERID;
     System.out.println(CONTFEE);
     SIGN =
-        XmlTools.signPlain(CONTFEE, tranxContants.getPfxPath(), tranxContants.getPfxPassword(),
+        XmlTools.signPlain(CONTFEE, config.getPfxPath(), config.getPfxPassword(),
             false);
     uRL11 =
         uRL11.replaceAll("@xxx", SETTDAY).replaceAll("@yyy", REQTIME).replaceAll("@zzz", MERID)
@@ -543,7 +511,7 @@ public class TranxServiceImpl {
     aipgReq.setINFO(info);
     TransQueryReq dr = new TransQueryReq();
     aipgReq.addTrx(dr);
-    dr.setMERCHANT_ID(tranxContants.getMerchantId());
+    dr.setMERCHANT_ID(config.getMerchantId());
     dr.setQUERY_SN(reqsn);
     dr.setSTATUS(2);
     dr.setTYPE(1);
@@ -554,7 +522,7 @@ public class TranxServiceImpl {
     xml = XmlTools.buildXml(aipgReq, true);// .replaceAll("</INFO>",
                                            // "</INFO><BODY>").replaceAll("</AIPG>",
                                            // "</BODY></AIPG>");
-    String xmlResponse = isFront(xml, isTLTFront, tranxContants.getUrl());
+    String xmlResponse = isFront(xml, isTLTFront, config.getUrl());
     return xmlResponse;
   }
 

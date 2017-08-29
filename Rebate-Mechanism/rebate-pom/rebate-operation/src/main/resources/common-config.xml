@@ -45,42 +45,80 @@
 	
 	<!-- recommend url -->
 	<setting name="recommendUrl" value="http://120.27.26.85:10001/rebate-interface/share/reg.html" />
-		
-	<!-- 通联 测试环境 -->
+	
+	<!-- 支付渠道   (通联:ALLINPAY 九派:JIUPAI)-->	
+	<setting name="paymentChannel" value="JIUPAI"/>
+	
+	<!-- 通联 测试环境  基础数据配置 -->
 	<!-- 通联支付URL -->
 	<setting name="allinpayUrl" value="https://113.108.182.3/aipg/ProcessServlet" />
-	<!-- 公钥证书 -->
+	<!-- 通联公钥证书 -->
 	<setting name="tltcerPath" value="allinpayConfig/test/allinpay-pds.cer" /> 
-	<!-- 私钥证书 -->
+	<!-- 通联私钥证书 -->
 	<setting name="pfxPath" value="allinpayConfig/test/20060400000044502.p12" /> 
-	<!-- 私钥密码 -->
+	<!-- 通联私钥密码 -->
 	<setting name="pfxPassword" value="111111" /> 
-	<!-- 商户号-->
+	<!-- 通联商户号-->
 	<setting name="allinpayMerchantId" value="200604000000445" /> 
-	<!-- 用户名 -->
+	<!-- 通联用户名 -->
 	<setting name="allinpayUserName" value="20060400000044502" /> 
-	<!-- 用户名密码 -->
+	<!-- 通联用户名密码 -->
 	<setting name="allinpayPassword" value="`12qwe" /> 
-	<!-- 代付 业务代码：测试环境：虚拟账户取现-->
+	<!-- 通联代付 业务代码：测试环境：虚拟账户取现-->
 	<setting name="allinpayBusinessCode" value="09400" />	
+
+	<!-- 九派 测试环境  基础数据配置-->
+	<!-- 九派支付网关URL-->
+	<setting name="jiupaiRequestUrl" value="http://43.227.141.32/paygateway/mpsGate/mpsTransaction" />		
+	<!-- 九派商户号-->
+	<setting name="jiupaiMerchantId" value="800002308510001" />
+	<!-- 九派商户名-->
+	<setting name="jiupaiMerchantName" value="九派商户10001" />
+	<!-- 九派公钥证书-->
+	<setting name="jiupaiRootCertPath" value="jiupaiConfig/test/rootca.cer" />
+	<!-- 九派私钥证书-->
+	<setting name="jiupaiMerchantCertPath" value="jiupaiConfig/test/800002308510001.p12" />
+	<!-- 九派通联私钥密码-->
+	<setting name="jiupaiMerchantCertPass" value="PcIJwM" />
+	<!-- 九派回调URL-->
+	<setting name="jiupaiNotifyUrl" value="http://118.190.83.191:8080" />
+
 	
-	<!-- 通联 生产环境 -->
+	<!-- 通联 生产环境  基础数据配置 -->
 	<!-- 通联支付URL -->
 	<!-- <setting name="allinpayUrl" value="https://tlt.allinpay.com/aipg/ProcessServlet" />	-->
-	<!-- 公钥证书 -->
+	<!-- 通联公钥证书 -->
 	<!-- <setting name="tltcerPath" value="allinpayConfig/product/allinpay-pds.cer" />	-->
-	<!-- 私钥证书 -->
+	<!-- 通联私钥证书 -->
 	<!-- <setting name="pfxPath" value="allinpayConfig/product/20070100000440901.p12" />	-->
-	<!-- 私钥密码 -->
+	<!-- 通联私钥密码 -->
 	<!-- <setting name="pfxPassword" value="111111" />-->
-	<!-- 商户号-->
+	<!-- 通联商户号-->
 	<!-- <setting name="allinpayMerchantId" value="200701000004409" />-->
-	<!-- 用户名 -->
+	<!-- 通联用户名 -->
 	<!-- <setting name="allinpayUserName" value="20070100000440901" />-->
-	<!-- 用户名密码 -->
+	<!-- 通联用户名密码 -->
 	<!-- <setting name="allinpayPassword" value="allinpay_123" />-->
-	<!-- 代付 业务代码：生产环境：代付-->
+	<!-- 通联代付 业务代码：生产环境：代付-->
 	<!-- <setting name="allinpayBusinessCode" value="09900" />	-->
+	
+	<!-- 九派 生产环境  基础数据配置-->
+	<!-- 九派支付网关URL-->
+	<!-- <setting name="jiupaiRequestUrl" value="https://jd.kingpass.cn/paygateway/mpsGate/mpsTransaction" />	-->		
+	<!-- 九派商户号-->
+	<!-- <setting name="jiupaiMerchantId" value="800002308510001" />	-->
+	<!-- 九派商户名-->
+	<!-- <setting name="jiupaiMerchantName" value="九派商户10001" />	-->
+	<!-- 九派公钥证书-->
+	<!-- <setting name="jiupaiRootCertPath" value="jiupaiConfig/product/rootca.cer" />	-->
+	<!-- 九派私钥证书-->
+	<!-- <setting name="jiupaiMerchantCertPath" value="jiupaiConfig/product/800002308510001.p12" />	-->
+	<!-- 九派通联私钥密码-->
+	<!-- <setting name="jiupaiMerchantCertPass" value="XyUDSj" />	-->
+	<!-- 九派回调URL-->
+	<!-- <setting name="jiupaiNotifyUrl" value="http://118.190.83.191:8080" />	-->
+	
+	
 	<!-- 聚合数据 银行卡四元素验证URL -->
 	<setting name="juheVerifyBankcard4" value="http://v.juhe.cn/verifybankcard4/query"/>		
 	<!-- 聚合数据 申请的key -->

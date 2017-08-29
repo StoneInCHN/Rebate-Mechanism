@@ -21,6 +21,14 @@
 						<table class="input">
 							<tr>
 								<th>
+									提现流水号:
+								</th>
+								<td>
+									${leScoreRecord.withDrawSn}
+								</td>
+							</tr>
+							<tr>
+								<th>
 									${message("rebate.leScoreRecord.endUser.userName")}:
 								</th>
 								<td>

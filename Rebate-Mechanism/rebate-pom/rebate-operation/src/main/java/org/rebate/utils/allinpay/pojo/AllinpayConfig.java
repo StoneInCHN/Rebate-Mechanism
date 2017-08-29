@@ -1,9 +1,15 @@
 package org.rebate.utils.allinpay.pojo;
 
+import java.io.File;
+
+import org.rebate.beans.Setting;
+import org.rebate.utils.SettingUtils;
 
 /**
+ * 
+ *通联参数配置
  */
-public class TranxCon {
+public class AllinpayConfig {
 	  /**
 	   * XML参数
 	   */    
@@ -15,6 +21,27 @@ public class TranxCon {
 	  private String businessCode;
 	  private String pfxPath;
 	  private String tltcerPath;
+	  
+	  public AllinpayConfig() {}
+	  private static AllinpayConfig config;
+	  public static AllinpayConfig getConfig() {
+	     if(config == null) {
+	          config = new AllinpayConfig();//初始化通联基础数据
+	          Setting setting = SettingUtils.get();
+	      	  String path = config.getClass().getResource("/").getPath();
+	    	  String pfxPath = path + File.separator + setting.getPfxPath();
+	    	  String tltcerPath = path + File.separator + setting.getTltcerPath(); 
+	    	  config.setPfxPath(pfxPath);  
+	    	  config.setTltcerPath(tltcerPath);
+	    	  config.setUrl(setting.getAllinpayUrl());
+	    	  config.setPfxPassword(setting.getPfxPassword());
+	    	  config.setUserName(setting.getAllinpayUserName());
+	    	  config.setPassword(setting.getAllinpayPassword());
+	    	  config.setMerchantId(setting.getAllinpayMerchantId());
+	    	  config.setBusinessCode(setting.getAllinpayBusinessCode());
+	      }
+	      return config;
+	  }
 
 	  public String getMerchantId() {
 	    return merchantId;

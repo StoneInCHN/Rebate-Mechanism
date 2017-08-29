@@ -40,22 +40,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Lazy(false)
 public class LeScoreRecordJob {
 	
-	  @Resource(name = "leScoreRecordServiceImpl")
-	  private LeScoreRecordService leScoreRecordService;
+	@Resource(name = "leScoreRecordServiceImpl")
+	private LeScoreRecordService leScoreRecordService;
 
-	  @Resource(name = "endUserServiceImpl")
-	  private EndUserService endUserService;
+	@Resource(name = "endUserServiceImpl")
+	private EndUserService endUserService;
 	  
-	  @Resource(name = "bankCardServiceImpl")
-	  private BankCardService bankCardService;
+	@Resource(name = "bankCardServiceImpl")
+	private BankCardService bankCardService;
 	  
-	  @Resource(name="systemConfigServiceImpl") 
-	  private SystemConfigService systemConfigService; 
+	@Resource(name="systemConfigServiceImpl") 
+	private SystemConfigService systemConfigService; 
 	  
-	  @Resource(name="paramConfigServiceImpl")
-	  private ParamConfigService paramConfigService;
+	@Resource(name="paramConfigServiceImpl")
+	private ParamConfigService paramConfigService;
 	  
-	  public void updateRecordStatus(String reqSn){
+    public void notifyWithdrawRecordByAllinpay(String reqSn){
 
       Timer timer=new Timer();
       long delay = getDelayVal();//延迟10分钟后
@@ -65,23 +65,18 @@ public class LeScoreRecordJob {
 			public void run(){
 				  try {
 					    TranxServiceImpl tranxService = new TranxServiceImpl();
-					    tranxService.init();//初始化通联基础数据
 					    String xmlResponse = tranxService.queryTradeNew(reqSn, false);
 					    if (xmlResponse != null) {
-					    	//LogUtil.debug(this.getClass(), "sellerClearingCalculate", "queryTradeNew: %s", xmlResponse);
 					        Document doc = DocumentHelper.parseText(xmlResponse);
 					        Element root = doc.getRootElement();// AIPG
 					        Element infoElement = root.element("INFO");
 					        String ret_code = infoElement.elementText("RET_CODE");
-					        //String req_sn = infoElement.elementText("REQ_SN");
 					        if ("0000".equals(ret_code)) {//处理完毕
 					        @SuppressWarnings("unchecked")
 							Iterator<Element> qtdetails = root.element("QTRANSRSP").elementIterator("QTDETAIL");
 					        	try {
 					        		handleQueryTradeNew(qtdetails, reqSn);
-					        		//cancel();//结束
 								} catch (Exception e) {
-									//cancel();//结束
 									LogUtil.debug(this.getClass(), "batchWithdrawal(handleQueryTradeNew)", "Catch Exception: %s", e.getMessage());
 									e.printStackTrace();
 								} finally{
@@ -161,7 +156,7 @@ public class LeScoreRecordJob {
    */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
   private void handleQueryTradeNew(Iterator<Element> qtdetails, String reqSn) throws Exception{
-	  	List<LeScoreRecord> mergeList = new ArrayList<LeScoreRecord>();
+	    List<LeScoreRecord> mergeList = new ArrayList<LeScoreRecord>();
 	  	while (qtdetails.hasNext()) {
 			Element qtdetail = (Element) qtdetails.next();
 			String sn = qtdetail.elementText("SN");
@@ -170,39 +165,54 @@ public class LeScoreRecordJob {
 			//根据reqSn和sn，获取需要更新提现状态的乐分提现记录
 			LeScoreRecord record = findNeedLeScoreRecord(reqSn, sn);
 			if (record != null) {
-				LogUtil.debug(this.getClass(), "handleQueryTradeNew", qtdetail_err_msg +" for LeScoreRecord(Id): %s", record.getId());
+				LogUtil.debug(this.getClass(), "handleQueryTradeNew","[%s:%s] 乐分提现记录Id: %s", qtdetail_ret_code, qtdetail_err_msg, record.getId());
 		    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
-		    		record.setIsWithdraw(true);
-		    		record.setStatus(ClearingStatus.SUCCESS);
-		    		record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
-		    		mergeList.add(record);
+		    		LeScoreRecord successRecord = updateRecord(record, ClearingStatus.SUCCESS, qtdetail_err_msg);
+		    		mergeList.add(successRecord);
 		    	}else {//处理失败
-		    		record.setIsWithdraw(false);
-		    		record.setStatus(ClearingStatus.FAILED);
-		    		record.setWithdrawMsg(qtdetail_err_msg);//提现返回消息
-		    		mergeList.add(record);
-		    		// 提现失败 把 乐分还回到用户手中
-		    		EndUser endUser = null;
-		    		if (record.getEndUser().getId() != null) {
-		    			endUser = endUserService.find(record.getEndUser().getId());
-					}
-		    		if (endUser != null) {
-		    			refundLeScore(endUser, record);//退回乐分
-		
-					}
+		    		LeScoreRecord failedRecord = updateRecord(record, ClearingStatus.FAILED, qtdetail_err_msg);
+		    		mergeList.add(failedRecord);
 		    	}
 			}
 			LogUtil.debug(this.getClass(), "handleQueryTradeNew", "req_sn: %s, sn: %s", reqSn, sn);
 	  }
-	  leScoreRecordService.update(mergeList);
+	  if (mergeList != null) {
+	  	 leScoreRecordService.update(mergeList);
+	  }
+	  
+  }
+  /**
+   * 更新乐分提现相关信息
+   * @param record
+   */
+  public LeScoreRecord updateRecord(LeScoreRecord record, ClearingStatus status, String msg) throws Exception{
+	  LogUtil.debug(this.getClass(), "updateRecord", "更新乐分提现记录  recordId:%s, status: %s, msg: %s", record.getId(), status.toString(), msg);
+	  if (status == ClearingStatus.SUCCESS) {
+	  		record.setIsWithdraw(true);
+	  		record.setStatus(ClearingStatus.SUCCESS);
+	  		record.setWithdrawMsg(msg);//提现返回消息
+	  }else if (status == ClearingStatus.FAILED) {
+	  		record.setIsWithdraw(false);
+	  		record.setStatus(ClearingStatus.FAILED);
+	  		record.setWithdrawMsg(msg);//提现返回消息
+	  		// 提现失败 把 乐分还回到用户手中
+	  		EndUser endUser = null;
+	  		if (record.getEndUser().getId() != null) {
+	  			endUser = endUserService.find(record.getEndUser().getId());
+				}
+	  		if (endUser != null) {
+	  			refundLeScore(endUser, record);//退回乐分
+			}
+	  }
+	  return record;
   }
   /**
    * 退回乐分给用户，并生成乐分退回记录
    * @param endUser
    * @param record
    */
-  //@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
-  private void refundLeScore(EndUser endUser, LeScoreRecord record) throws Exception{
+  public void refundLeScore(EndUser endUser, LeScoreRecord record) throws Exception{
+	    LogUtil.debug(this.getClass(), "refundLeScore", "退回乐分给用户Id:%s",endUser.getId());
   		// 当前乐分
   		BigDecimal curLeScore = record.getAmount();
   		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
@@ -213,13 +223,13 @@ public class LeScoreRecordJob {
   		BigDecimal agentLeScore = record.getAgentLeScore();
   		if (endUser.getCurLeScore() != null && curLeScore != null) {
   			endUser.setCurLeScore(endUser.getCurLeScore().add(curLeScore.abs()));
-			}
+		}
   		if (endUser.getMotivateLeScore() != null && motivateLeScore != null) {
   			endUser.setMotivateLeScore(endUser.getMotivateLeScore().add(motivateLeScore.abs()));
-			}
+		}
   		if (endUser.getAgentLeScore() != null && agentLeScore != null) {
   			endUser.setAgentLeScore(endUser.getAgentLeScore().add(agentLeScore.abs()));
-			}
+		}
   		if (endUser.getIncomeLeScore() != null && incomeLeScore != null) {
   			endUser.setIncomeLeScore(endUser.getIncomeLeScore().add(incomeLeScore.abs()));
 		}
@@ -239,6 +249,7 @@ public class LeScoreRecordJob {
     	refundRecord.setRemark(SpringUtils.getMessage("rebate.endUser.leScore.type.WITHDRAW") + record.getWithdrawMsg()
     	    		+SpringUtils.getMessage("rebate.endUser.leScore.type.REFUND"));
     	leScoreRecordService.save(refundRecord);
+    	LogUtil.debug(this.getClass(), "refundLeScore", "并生成乐分退回记录Id:%s",refundRecord.getId());
   }
   
 }

@@ -60,6 +60,10 @@ public class OrderController extends BaseController {
       filters.add(Filter.eq("status", request.getOrderStatus()));
       model.addAttribute("orderStatus", request.getOrderStatus());
     }
+    if (request.getPaymentChannel() != null) {
+        filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));
+        model.addAttribute("paymentChannel", request.getPaymentChannel());
+    } 
     if (request.getOrderDateFrom() != null) {
       filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getOrderDateFrom())));
       model.addAttribute("orderDateFrom", request.getOrderDateFrom());

@@ -3,6 +3,7 @@ package org.rebate.request;
 import java.util.Date;
 
 import org.rebate.entity.commonenum.CommonEnum.ClearingStatus;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 
 public class SellerClearingRecordReq {
   
@@ -36,6 +37,11 @@ public class SellerClearingRecordReq {
    * 是否有效
    */
   private Boolean valid;
+  
+  /**
+   * 支付渠道 (通联 ALLINPAY,九派 IUPAI)
+   */
+  private PaymentChannel paymentChannel;
 
   public Boolean getIsClearing() {
     return isClearing;
@@ -115,6 +121,14 @@ public class SellerClearingRecordReq {
 
   public void setValid(Boolean valid) {
 	this.valid = valid;
+  }
+
+  public PaymentChannel getPaymentChannel() {
+	return paymentChannel;
+  }
+
+  public void setPaymentChannel(PaymentChannel paymentChannel) {
+	this.paymentChannel = paymentChannel;
   }
   
 }
