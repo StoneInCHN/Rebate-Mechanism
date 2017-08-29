@@ -35,7 +35,6 @@ export default {
     handleClick () {
       this.$api.rpmBindCard(this.datas)
          .then(res => {
-           console.log(res)
            if (res.code === '0000') {
              this.$router.push('bankList')
            } else {

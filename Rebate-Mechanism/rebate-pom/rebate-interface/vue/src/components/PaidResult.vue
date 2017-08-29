@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     returnAndroid () {
-      console.log('return android')
+      console.log('return')
       window.Android.show()
     }
   }

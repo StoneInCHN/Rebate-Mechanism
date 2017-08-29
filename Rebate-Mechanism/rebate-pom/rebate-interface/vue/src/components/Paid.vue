@@ -56,7 +56,6 @@ export default {
       }
       this.$api.rpmQuickPayCommit(datas)
          .then(res => {
-           console.log(res)
            if (res.code === '0000') {
              this.$store.dispatch('updateToken', {token: res.token})
              this.$store.dispatch('updatePaidResultState', {paidResultState: true})
@@ -77,7 +76,6 @@ export default {
         token: this.$store.getters.getToken,
         contractId: this.cardItem.contractId
       }
-      console.log(datas)
       this.$api.rpmQuickPaySms(datas)
          .then(res => {
            console.log(res)

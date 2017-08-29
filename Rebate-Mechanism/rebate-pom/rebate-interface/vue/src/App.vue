@@ -46,10 +46,9 @@ export default {
           let str = url.substr(1)
           let strs = str.split('&')
           for (var i = 0; i < strs.length; i++) {
-            theRequest[strs[i].split('=')[0]] = unescape(strs[i].split('=')[1])
+            theRequest[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1])
           }
         }
-        console.log(theRequest)
         let params = ['userId', 'token', 'amount', 'clientIP', 'goodsName', 'orderSn']
         for (let index in params) {
           let param = params[index]
@@ -82,7 +81,6 @@ export default {
         }
         this.$store.dispatch('setInit', {init: false})
       }
-      console.log(this.dataFlag)
       if (!this.dataFlag) {
         this.$router.push('bankList')
       } else {

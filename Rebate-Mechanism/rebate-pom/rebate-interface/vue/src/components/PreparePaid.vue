@@ -45,7 +45,6 @@ export default {
         clientIP: this.$store.state.clientIP,
         goodsName: this.goodsName
       }
-      console.log(datas)
       this.$api.rpmQuickPayInit(datas)
          .then(res => {
            console.log(res)

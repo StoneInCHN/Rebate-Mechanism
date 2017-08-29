@@ -38,7 +38,6 @@ export default {
     getCardList () {
       this.$api.rpmMemberCardList(this.datas)
          .then(res => {
-           console.log(res)
            if (res.code === '0000') {
              this.$store.dispatch('updateToken', {token: res.token})
              if (res.msg.cardList) {
