@@ -41,7 +41,7 @@
 		<setting name="appKey" value="eb1ec435f9a7e7305c51621a" />
 		<setting name="masterSecret" value="e658c652b6b824afd582ab26" />
 		
-		<!-- 九派支付平台 -->
+		<!-- 九派支付平台  测试环境-->
 		<!-- 九派支付商户编号 -->
 		<setting name="jiupaiMerchantId" value="800002308510001" />
 		<!--九派支付商户证书路径 -->
@@ -50,7 +50,7 @@
 		<setting name="jiupaiMerchantCertPass" value="PcIJwM" />
 		<!--九派支付根证书路径 -->
 		<setting name="jiupaiRootCertPath" value="jiupaiConfig/test/rootca.cer" />
-		<!--九派支付根证书路径 -->
+		<!--九派支付请求url -->
 		<setting name="jiupaiRequestUrl" value="http://43.227.141.32/paygateway/mpsGate/mpsTransaction" />
 		<!--九派支付请求字符集 -->
 		<setting name="jiupaiCharset" value="02" />
@@ -62,6 +62,26 @@
 		<setting name="jiupaiNotifyUrl" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_jiupaipay.jhtml"/>
 		<!-- 九派支付平台 -->
 		
+		<!-- 九派支付平台  生产环境-->
+		<!-- 九派支付商户编号 -->
+		<setting name="jiupaiMerchantId" value="800002308510001" />
+		<!--九派支付商户证书路径 -->
+		<setting name="jiupaiMerchantCertPath" value="jiupaiConfig/product/" />
+		<!--九派支付商户证书秘钥 -->
+		<setting name="jiupaiMerchantCertPass" value="XyUDSj" />
+		<!--九派支付根证书路径 -->
+		<setting name="jiupaiRootCertPath" value="jiupaiConfig/product/rootca.cer" />
+		<!--九派支付请求url -->
+		<setting name="jiupaiRequestUrl" value="https://jd.kingpass.cn/paygateway/mpsGate/mpsTransaction" />
+		<!--九派支付请求字符集 -->
+		<setting name="jiupaiCharset" value="02" />
+		<!--九派支付请求接口版本号 -->
+		<setting name="jiupaiVersion" value="1.0" />
+		<!--九派支付请求加密算法 -->
+		<setting name="jiupaiSignType" value="RSA256" />
+		<!--九派支付回调url -->
+		<setting name="jiupaiNotifyUrl" value="http://118.190.83.191:10001/rebate-interface/payNotify/notify_jiupaipay.jhtml"/>
+		<!-- 九派支付平台 -->
 		
 		
 		<!-- 通联支付平台 -->
