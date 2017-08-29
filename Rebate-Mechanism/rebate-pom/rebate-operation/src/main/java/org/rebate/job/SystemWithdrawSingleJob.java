@@ -119,12 +119,12 @@ public class SystemWithdrawSingleJob {
 				        		  "rspCode:%s,rspMessage:%s,ordsts:%s,mcTransDateTime:%s,orderNo:%s,amountPenny:%s,amount:%s", 
 				        		  rspCode,rspMessage,ordsts,mcTransDateTime,orderNo,amountPenny,amount);
 				          if ("IPS00000".equals(rspCode)) {//正常返回
-				        	  //test
-							   	//测试环境 预下单 当成处理成功
-					        	if ("P".equals(ordsts) && orderNo.indexOf("800002308510001") >= 0) { 
-					        		ordsts = "S";
-					        	}
-				        	  //test
+//				        	  //test
+//							   	//测试环境 预下单 当成处理成功
+//					        	if ("P".equals(ordsts) && orderNo.indexOf("800002308510001") >= 0) { 
+//					        		ordsts = "S";
+//					        	}
+//				        	  //test
 				        	  //有最终结果  处理成功 或者 处理失败
 				        	  if ("S".equals(ordsts) || "F".equals(ordsts) || "R".equals(ordsts)) { 
 						        	try {

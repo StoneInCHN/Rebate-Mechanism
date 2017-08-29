@@ -433,11 +433,11 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 	          String mcTransDateTime = resMap.get("mcTransDateTime");//商户交易时间
 	          String orderNo = resMap.get("orderNo");//原交易订单号
 	          if ("IPS00000".equals(rspCode) && mcSequenceNo != null) {//正常返回
-	        	  //test
-	        	  if ("P".equals(orderSts) && orderNo.indexOf("800002308510001") >= 0) { 
-	        		  orderSts = "S";
-	        	  }
-	        	  //test
+//	        	  //test
+//	        	  if ("P".equals(orderSts) && orderNo.indexOf("800002308510001") >= 0) { 
+//	        		  orderSts = "S";
+//	        	  }
+//	        	  //test
 	        	  if ("S".equals(orderSts)) {//处理成功
 	        		  singlePayHandle(record, "success", mcSequenceNo, newClearingSn, rspMessage, handlingCharge, PaymentChannel.JIUPAI);
 	        		  return Message.success(rspMessage);

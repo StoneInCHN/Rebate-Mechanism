@@ -188,12 +188,12 @@ public class SellerClearingBatchJob {
 					  SellerClearingRecord record = findNeedClearingRecord(resBatchNo, null, clearingSn);
 					   if (record != null) {
 						   	String msg = tamTxTyp + ordSts;
-						   	//test
-						   	//测试环境 预下单 当成处理成功
-				        	if ("预下单".equals(ordSts) && mercOrdNo.indexOf("800002308510001") >= 0) { 
-				        		ordSts = "处理成功";
-				        	}
-						   	//test
+//						   	//test
+//						   	//测试环境 预下单 当成处理成功
+//				        	if ("预下单".equals(ordSts) && mercOrdNo.indexOf("800002308510001") >= 0) { 
+//				        		ordSts = "处理成功";
+//				        	}
+//						   	//test
 						    if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
 						    	updateRecord(record, ClearingStatus.SUCCESS, msg);
 							}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
@@ -252,12 +252,12 @@ public class SellerClearingBatchJob {
 					  LeScoreRecord record = findNeedWithdrawRecord(resBatchNo, null, withDrawSn);
 					   if (record != null) {
 						   	String msg = tamTxTyp + ordSts;
-						   	//test
-						   	//测试环境 预下单 当成处理成功
-				        	if ("预下单".equals(ordSts) && mercOrdNo.indexOf("800002308510001") >= 0) { 
-				        		ordSts = "处理成功";
-				        	}
-						   	//test
+//						   	//test
+//						   	//测试环境 预下单 当成处理成功
+//				        	if ("预下单".equals(ordSts) && mercOrdNo.indexOf("800002308510001") >= 0) { 
+//				        		ordSts = "处理成功";
+//				        	}
+//						   	//test
 						    if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
 //						    	LeScoreRecord successRecord = leScoreRecordJob.updateRecord(record, ClearingStatus.SUCCESS, msg);
 //						    	leScoreRecordService.update(successRecord);//不能重用leScoreRecordJob的updateRecord方法，会报detached entity passed to persist
