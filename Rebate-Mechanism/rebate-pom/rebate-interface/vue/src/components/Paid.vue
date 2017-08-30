@@ -96,6 +96,7 @@ export default {
     disabledCaptchaBtn () {
       let _this = this
       let sec = 60
+      _this.disabled = true
       for (let i = 0; i <= 60; i++) {
         window.setTimeout(function () {
           if (sec !== 0) {
