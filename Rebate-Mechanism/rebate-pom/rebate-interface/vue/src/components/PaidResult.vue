@@ -10,7 +10,7 @@
 				<img src="../assets/images/operationFailed.png" alt="11">
 				<p>很遗憾，支付失败！</p>
 			</div>
-			<mt-button size="large" type="primary" plain @click.native="returnAndroid">返回商户</mt-button>
+			<mt-button size="large" type="primary" plain @click.native="returnPhone">返回商户</mt-button>
 		</div>
 	</div>
 </template>
@@ -23,8 +23,8 @@ export default {
     }
   },
   methods: {
-    returnAndroid () {
-      window.Android.show()
+    returnPhone () {
+      window.location.href = 'www.baidu.com'
     }
   }
 }
