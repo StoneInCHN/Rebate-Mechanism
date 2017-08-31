@@ -267,7 +267,7 @@ public class SellerApplication extends BaseEntity {
     this.storePhoto = storePhoto;
   }
 
-  @Column(scale = 6, precision = 10)
+  @Column(scale = 12, precision = 16)
   public BigDecimal getLatitude() {
     return latitude;
   }
@@ -276,7 +276,7 @@ public class SellerApplication extends BaseEntity {
     this.latitude = latitude;
   }
 
-  @Column(scale = 6, precision = 10)
+  @Column(scale = 12, precision = 16)
   public BigDecimal getLongitude() {
     return longitude;
   }
