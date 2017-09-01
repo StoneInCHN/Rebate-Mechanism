@@ -457,6 +457,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 	        		  singlePayWait(record, "wait", mcSequenceNo, newClearingSn, errMsg, handlingCharge, PaymentChannel.JIUPAI, mcTransDateTime, orderNo);
 	        		  return Message.error(rspMessage);
 				  }
+			  }else {//例如rspCode=IPS05000  rspMessage=余额不足 
+        		  singlePayHandle(record, "error", mcSequenceNo, newClearingSn, rspMessage, handlingCharge, PaymentChannel.JIUPAI);
+        		  return Message.error(rspMessage);
 			  }
 	          return Message.error("rebate.common.system.error");	
 	        } catch (Exception e) {

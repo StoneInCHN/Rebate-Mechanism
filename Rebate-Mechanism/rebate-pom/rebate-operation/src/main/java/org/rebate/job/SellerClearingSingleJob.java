@@ -118,7 +118,7 @@ public class SellerClearingSingleJob {
 						  //根据reqSn，获取需要更新状态的实时货款提现(单笔)
 						  SellerClearingRecord record = findNeedClearingRecord(reqSn);
 						  if (record == null || record.getAmount() == null) {
-							  LogUtil.debug(SellerClearingSingleJob.class, "updateRecordSingleByJiuPai", "不能通过:%s找到货款记录，或者货款记录无金额", reqSn);
+							  LogUtil.debug(SellerClearingSingleJob.class, "updateRecordSingleByJiuPai", "不能通过:%s找到处理中货款记录，或者货款记录无金额", reqSn);
 							  cancel();//结束
 						  }
 						  String amountPenny = getPennyStr(record.getAmount());//金额单位：分
@@ -134,7 +134,6 @@ public class SellerClearingSingleJob {
 				          if ("IPS00000".equals(rspCode)) {//正常返回
 				        	  //有最终结果  处理成功 或者 处理失败
 //				        	  //test
-//				        	  //如果是测试环境的话，把P处理中 当做是处理成功(说是银行有挡板，真烦，九派也不知道返回假数据处理成功给我们)
 //				        	  if ("P".equals(ordsts) && orderNo.indexOf("800002308510001") >= 0) { 
 //				        		  ordsts = "S";
 //				        	  }
@@ -245,6 +244,8 @@ public class SellerClearingSingleJob {
 	  SellerClearingRecord record = null;
 	  List<Filter> filters = new ArrayList<Filter>();
 	  filters.add(Filter.eq("reqSn", reqSn));//单号
+	  filters.add(Filter.eq("clearingStatus", ClearingStatus.PROCESSING));
+	  filters.add(Filter.eq("isClearing", false));//未结算
 	  List<SellerClearingRecord> records = sellerClearingRecordService.findList(null, filters, null);
 	  if (records != null && records.size() > 0) {
 		  if (records.size() > 1) {

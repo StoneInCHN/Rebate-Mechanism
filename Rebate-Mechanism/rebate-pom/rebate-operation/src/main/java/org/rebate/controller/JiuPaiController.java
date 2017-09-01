@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.ClearingOrderRelation;
 import org.rebate.entity.Order;
@@ -31,6 +32,7 @@ import org.rebate.utils.jiupai.pojo.capBatchTransfer.BatchTransferReq;
 import org.rebate.utils.jiupai.pojo.capOrderQueryReq.OrderQueryReq;
 import org.rebate.utils.jiupai.pojo.capSingleTransfer.SingleTransferReq;
 import org.rebate.utils.jiupai.service.GateWayService;
+import org.rebate.utils.jiupai.tools.RSASignUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -151,23 +153,32 @@ public class JiuPaiController extends BaseController {
    */
   @RequestMapping(value = "/notifyClearingRecord", method = RequestMethod.POST)
   public @ResponseBody String notifyClearingRecord(HttpServletRequest request) throws Exception {
-	LogUtil.debug(this.getClass(), "notifyClearingRecord", "进入 (九派渠道)单笔货款结算 回调接口");
+	LogUtil.debug(this.getClass(), "notifyClearingRecord", "进入 (九派回调  单笔结算) 接口");
     //获取九派反馈信息
 	request.setCharacterEncoding("GB18030");//九派默认回调请求参数 编码格式 GB18030
 	String responseStr = HttpServletRequestUtils.getRequestParam(request, "GB18030");
-	LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派渠道)单笔货款结算 回调接口 responseStr:" + responseStr);
-    //String merchantId = new String(request.getParameter("merchantId").getBytes("ISO-8859-1"), "UTF-8");
+	LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派回调  单笔结算) responseStr:" + responseStr);
 	//String merchantId = new String(request.getParameter("merchantId").getBytes("ISO-8859-1"), "GB18030");
-	String charset = request.getParameter("charset");
-	String merchantId = request.getParameter("merchantId");
-	String orderSts = request.getParameter("orderSts");
-	String orderNo = request.getParameter("orderNo");
-	LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派渠道)单笔货款结算 回调接口  charset:%s, merchantId:%s, orderSts:%s, orderNo:%s", 
+	Map<String, String> resMap = null;
+	if (StringUtils.isNotBlank(responseStr) && responseStr.indexOf("orderSts") >= 0) {
+		RSASignUtil resUtil = new RSASignUtil();
+		resMap = resUtil.coverString2Map(responseStr);
+	}else {
+		return "result=FAILED";
+	}
+	if (resMap == null) {
+		return "result=FAILED";
+	}
+	String charset = resMap.get("charset");
+	String merchantId = resMap.get("merchantId");
+	String orderSts = resMap.get("orderSts");
+	String orderNo = resMap.get("orderNo");
+	LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派回调  单笔结算) charset:%s, merchantId:%s, orderSts:%s, orderNo:%s", 
 			charset, merchantId, orderSts, orderNo);
 	String clearingSn = null;
 	if (orderNo.startsWith(merchantId)) {
 		clearingSn = orderNo.replace(merchantId, "");//merchantId  +  withDrawSn = 订单号
-		LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派渠道)单笔货款结算 回调接口  clearingSn:%s", clearingSn);
+		LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派回调  单笔结算)  clearingSn:%s", clearingSn);
 		SellerClearingRecord record = null;
 		List<Filter> filters = new ArrayList<Filter>();
 		filters.add(Filter.eq("clearingSn", clearingSn));//结算货款单编号
@@ -176,7 +187,7 @@ public class JiuPaiController extends BaseController {
 		List<SellerClearingRecord> records = sellerClearingRecordService.findList(null, filters, null);
 		if (records != null && records.size() > 0) {
 			  if (records.size() > 1) {
-				  LogUtil.debug(this.getClass(), "notifyClearingRecord", "找到多个商家货款记录");//这种情况不应该出现
+				  LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派回调  单笔结算) 找到多个商家货款记录");//这种情况不应该出现
 			  }
 			  record = records.get(0);
 			  if ("S".equals(orderSts)) {//处理成功
@@ -215,7 +226,7 @@ public class JiuPaiController extends BaseController {
         	    	return "result=SUCCESS";
 			  }
 		}else {
-			  LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派渠道  回调通知)未找到商家货款记录");
+			  LogUtil.debug(this.getClass(), "notifyClearingRecord", "(九派回调  单笔结算)未找到处理中记录");
 		}
 	}
     return "result=FAILED";
@@ -229,16 +240,27 @@ public class JiuPaiController extends BaseController {
    */
   @RequestMapping(value = "/notifySystemWithdraw", method = RequestMethod.POST)
   public @ResponseBody String notifySystemWithdraw(HttpServletRequest request) throws Exception {
+	  LogUtil.debug(this.getClass(), "notifyClearingRecord", "进入 (九派回调  平台提现) 接口");
     //获取九派反馈信息
 	request.setCharacterEncoding("GB18030");//九派默认回调请求参数 编码格式 GB18030
 	String responseStr = HttpServletRequestUtils.getRequestParam(request, "GB18030");
-	LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派渠道)平台提现 回调接口 responseStr:" + responseStr);
-    //String merchantId = new String(request.getParameter("merchantId").getBytes("ISO-8859-1"), "UTF-8");
-	String charset = request.getParameter("charset");
-	String merchantId = request.getParameter("merchantId");
-	String orderSts = request.getParameter("orderSts");
-	String orderNo = request.getParameter("orderNo");
-	LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派渠道)平台提现 回调接口  charset:%s, merchantId:%s, orderSts:%s, orderNo:%s", 
+	LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派回调  平台提现) responseStr:" + responseStr);
+    //String merchantId = new String(request.getParameter("merchantId").getBytes("ISO-8859-1"), "GB18030");
+	Map<String, String> resMap = null;
+	if (StringUtils.isNotBlank(responseStr) && responseStr.indexOf("orderSts") >= 0) {
+		RSASignUtil resUtil = new RSASignUtil();
+		resMap = resUtil.coverString2Map(responseStr);
+	}else {
+		return "result=FAILED";
+	}
+	if (resMap == null) {
+		return "result=FAILED";
+	}
+	String charset = resMap.get("charset");
+	String merchantId = resMap.get("merchantId");
+	String orderSts = resMap.get("orderSts");
+	String orderNo = resMap.get("orderNo");
+	LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派回调  平台提现) charset:%s, merchantId:%s, orderSts:%s, orderNo:%s", 
 			charset, merchantId, orderSts, orderNo);
 	if (orderNo.startsWith(merchantId)) {
 		SystemWithdrawRecord record = null;
@@ -249,7 +271,7 @@ public class JiuPaiController extends BaseController {
 		List<SystemWithdrawRecord> records = systemWithdrawRecordService.findList(null, filters, null);
 		if (records != null && records.size() > 0) {
 			  if (records.size() > 1) {
-				  LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派渠道)平台提现 回调接口 找到多个商家货款记录");//这种情况不应该出现
+				  LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派回调  平台提现) 找到多个商家货款记录");//这种情况不应该出现
 			  }
 			  record = records.get(0);
 			  if ("S".equals(orderSts)) {//处理成功
@@ -267,7 +289,7 @@ public class JiuPaiController extends BaseController {
 	            	return "result=SUCCESS";
 			  }
 		}else {
-			  LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派渠道)平台提现 回调接口  未找到商家货款记录");
+			  LogUtil.debug(this.getClass(), "notifySystemWithdraw", "(九派回调  平台提现)未找到处理中记录");
 		}
 	}
     return "result=FAILED";
