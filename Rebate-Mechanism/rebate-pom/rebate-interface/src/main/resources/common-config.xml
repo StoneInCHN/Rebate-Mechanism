@@ -38,8 +38,8 @@
 		<setting name="downloadUrl" value="http://120.27.26.85:8080/upload/apkversion/天飞翼享生活.apk" />
 
 		<!-- 极光推送Key -->
-		<setting name="appKey" value="eb1ec435f9a7e7305c51621a" />
-		<setting name="masterSecret" value="e658c652b6b824afd582ab26" />
+		<setting name="appKey" value="185adad8b0cb08eb9a2e6354" />
+		<setting name="masterSecret" value="0d1228989af3072885a5cd47" />
 		
 		<!-- 九派支付平台  测试环境-->
 		<!-- 九派支付商户编号 -->
