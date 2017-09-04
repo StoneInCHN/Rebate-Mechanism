@@ -105,7 +105,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   		filters.add(Filter.eq("isClearing", false));//未结算订单
   		filters.add(Filter.eq("isSallerOrder", false));//普通订单(非录单)
   		filters.add(Filter.le("paymentTime", endDate));//支付时间在  截止日期之前
-  		//filters.add(Filter.eq("paymentChannel", channel));//订单的支付渠道
+  		filters.add(Filter.eq("paymentChannel", channel));//订单的支付渠道
   		List<Order> orderList = orderService.findList(null, filters, null);
   		List<Order> orders = new ArrayList<Order>();//实际需要结算的订单
   		for (int i = 0; i < orderList.size(); i++) {
@@ -311,6 +311,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
     		}
     	    req.setCount(reqInfoList.size());
     	    req.setInfoList(reqInfoList);
+    	    String reqSn = null;
     	    try {
     	    	//开始批量代付
     	    	GateWayService gateWayService = new GateWayService();
@@ -340,6 +341,9 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   						   	if ("CAP00500".equals(errorCode)) {//CAP00500受理成功
   						    	record.setReqSn(batchNo);
   						    	record.setSn(sn);
+  						    	if (reqSn == null) {
+  						    		reqSn = batchNo;
+								}
   						   	}else {//未受理  例如CAP00530不支持此银行卡  先保存失败的记录  然后走货款单笔结算流程
   						    	record.setClearingStatus(ClearingStatus.FAILED);
   							}
@@ -353,7 +357,6 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 								relation.setOrder(order);
 								clearingOrderRelationService.save(relation);
 							}
-							return batchNo;
   					   }
   				   }
   			  	}
@@ -363,7 +366,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 				LogUtil.debug(this.getClass(), "sellerClearingByJiuPai", "商家货款批量代付(九派渠道)失败  捕获异常: %s", e.getMessage());
 				return null;
     	    }
-    	      
+    	    return reqSn;  
     	}else {
     		LogUtil.debug(this.getClass(), "sellerClearingByJiuPai", "(九派渠道)无需要结算的商家货款记录");
 		}

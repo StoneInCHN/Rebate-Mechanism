@@ -96,14 +96,14 @@ public class SellerClearingBatchJob {
     Date startDate = DateUtils.startOfDay(date, -1);//获取昨天的开始时间 00:00:00
     Date endDate = DateUtils.endOfDay(date, -1);//获取昨天的结束时间 23:59:59 999
 
-    LogUtil.debug(this.getClass(), "sellerClearingCalculate", "Clearing Job Start! Time Period:"
+    LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "Clearing Job Start! Time Period:"
         + startDate + " - " + endDate);
     try {
       //获取支付渠道
       PaymentChannel channel = CommonUtils.getPaymentChannel();
       //生成需要结算的商家货款记录
       List<SellerClearingOrders> records = sellerClearingRecordService.getNeedClearingRecords(startDate, endDate, channel);
-      LogUtil.debug(this.getClass(), "sellerClearingCalculate", "需要结算的商家货款数量:"+records.size());
+      LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "需要结算的商家货款数量:"+records.size());
       //1. 通联支付渠道
       if (PaymentChannel.ALLINPAY == channel) {
     	  //商家货款批量代付(通联渠道)
@@ -120,7 +120,7 @@ public class SellerClearingBatchJob {
     	//updateClearingRecordByJiupai(endDate);  
     	//商家货款批量代付(九派渠道)
     	if (records.size() == 0) {
-    		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "(九派渠道)无需要结算的商家货款记录");
+    		LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "(九派渠道)无需要结算的商家货款记录");
     	}else {
     		int count = (records.size()/200) + 1;//结算次数(九派批量代付   一批次最多200条记录)
     		for (int i = 0; i < count; i++) {
@@ -129,7 +129,7 @@ public class SellerClearingBatchJob {
     			if (i + 1 == count) {
     				toIndex = records.size();
     			}
-    			LogUtil.debug(this.getClass(), "sellerClearingCalculate", "(九派支付渠道) fromIndex=%s, toIndex=%s", fromIndex, toIndex);
+    			LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "(九派支付渠道) fromIndex=%s, toIndex=%s", fromIndex, toIndex);
     			List<SellerClearingOrders> recordList = records.subList(fromIndex, toIndex);
     			String reqSn = sellerClearingRecordService.sellerClearingByJiuPai(recordList); 	
     	        if (reqSn != null) {
@@ -142,11 +142,11 @@ public class SellerClearingBatchJob {
 
     } catch (Exception e) {
       date = null;
-      LogUtil.debug(this.getClass(), "sellerClearingCalculate", "捕获异常:"+e.getMessage());
+      LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "捕获异常:"+e.getMessage());
       e.printStackTrace();
     }
 
-    LogUtil.debug(this.getClass(), "sellerClearingCalculate", "Clearing Job End! Time Period:"
+    LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "Clearing Job End! Time Period:"
         + startDate + " - " + endDate);
     date = null;
   }
@@ -163,7 +163,7 @@ public class SellerClearingBatchJob {
 		  TimerTask task = new TimerTask(){
 			public void run(){
 				  try {
-					    LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "开始(九派渠道|异步)隔一段时间请求通联交易结果查询接口");
+					    LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "开始(九派渠道|异步)隔一段时间请求通联交易结果查询接口");
 						GateWayService gateWayService = new GateWayService();
 						BatchQueryReq req = new BatchQueryReq();
 						req.setBatchNo(reqSn);//交易批次号
@@ -183,10 +183,10 @@ public class SellerClearingBatchJob {
 									  String mercOrdNo = jsonObject.getString("mercOrdNo");
 									  String ordSts = jsonObject.getString("ordSts");
 									  String tamTxTyp = jsonObject.getString("tamTxTyp");
-				  					  LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+				  					  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
 				  							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
 									  if (!mercOrdNo.startsWith(merchantId)) {
-										  LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+										  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
 										  continue; 
 									  }
 									  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
@@ -201,19 +201,19 @@ public class SellerClearingBatchJob {
 													updateRecord(record, ClearingStatus.FAILED, msg);
 												}
 								        	} catch (Exception e) {
-								        		LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "(updateRecord)Catch Exception: %s", e.getMessage());
+								        		LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "(updateRecord)Catch Exception: %s", e.getMessage());
 								        		e.printStackTrace();
 								        	} finally{
 								        		cancel();//结束Timer
 								        	}
 									   }
-									   LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", reqSn, mercOrdNo);
+									   LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", reqSn, mercOrdNo);
 								  }
 							  }
 						}
 				} catch (Exception e) {
 					cancel();//结束Timer
-					LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "Catch Exception: %s", e.getMessage());
+					LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "Catch Exception: %s", e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -251,10 +251,10 @@ public class SellerClearingBatchJob {
 					  String ordSts = jsonObject.getString("ordSts");
 					  String tamTxTyp = jsonObject.getString("tamTxTyp");
 					  
-  					  LogUtil.debug(this.getClass(), "updateClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+  					  LogUtil.debug(SellerClearingBatchJob.class, "updateClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
   							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
 					  if (!mercOrdNo.startsWith(merchantId)) {
-						  LogUtil.debug(this.getClass(), "updateClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+						  LogUtil.debug(SellerClearingBatchJob.class, "updateClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
 						  continue; 
 					  }
 					  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
@@ -275,13 +275,13 @@ public class SellerClearingBatchJob {
 								//处理中 或 预下单 这种不管，等第二天10点会继续查询 批量代付 查询接口
 							}
 					   }
-					   LogUtil.debug(this.getClass(), "updateClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", batchNo, mercOrdNo);
+					   LogUtil.debug(SellerClearingBatchJob.class, "updateClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", batchNo, mercOrdNo);
 				  }
 			  }
 			  
 		  }
 	  }else {
-		  LogUtil.debug(this.getClass(), "updateWithdrawRecordByJiupai", "(九派渠道)无需要更新状态的货款记录");
+		  LogUtil.debug(SellerClearingBatchJob.class, "updateWithdrawRecordByJiupai", "(九派渠道)无需要更新状态的货款记录");
 	  }
   }
   /**
@@ -315,10 +315,10 @@ public class SellerClearingBatchJob {
 					  String ordSts = jsonObject.getString("ordSts");
 					  String tamTxTyp = jsonObject.getString("tamTxTyp");
 					  
-  					  LogUtil.debug(this.getClass(), "updateWithdrawRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+  					  LogUtil.debug(SellerClearingBatchJob.class, "updateWithdrawRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
   							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
 					  if (!mercOrdNo.startsWith(merchantId)) {
-						  LogUtil.debug(this.getClass(), "updateWithdrawRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+						  LogUtil.debug(SellerClearingBatchJob.class, "updateWithdrawRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
 						  continue; 
 					  }
 					  String withDrawSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
@@ -343,13 +343,13 @@ public class SellerClearingBatchJob {
 								//处理中 或 预下单 这种不管，等第二天10点会继续查询 批量代付 查询接口
 							}
 					   }
-					   LogUtil.debug(this.getClass(), "updateWithdrawRecordByJiupai", "batchNo: %s, mercOrdNo: %s", batchNo, mercOrdNo);
+					   LogUtil.debug(SellerClearingBatchJob.class, "updateWithdrawRecordByJiupai", "batchNo: %s, mercOrdNo: %s", batchNo, mercOrdNo);
 				  }
 			  }
 			  
 		  }
 	  }else {
-		  LogUtil.debug(this.getClass(), "updateWithdrawRecordByJiupai", "(九派渠道)无需要更新提现状态乐分提现记录");
+		  LogUtil.debug(SellerClearingBatchJob.class, "updateWithdrawRecordByJiupai", "(九派渠道)无需要更新提现状态乐分提现记录");
 	  }
   }
   /**
@@ -357,7 +357,7 @@ public class SellerClearingBatchJob {
    * @param record
    */
   public LeScoreRecord updateRecord(LeScoreRecord record, ClearingStatus status, String msg) throws Exception{
-	  LogUtil.debug(this.getClass(), "updateRecord", "更新乐分提现记录  recordId:%s, status: %s, msg: %s", record.getId(), status.toString(), msg);
+	  LogUtil.debug(SellerClearingBatchJob.class, "updateRecord", "更新乐分提现记录  recordId:%s, status: %s, msg: %s", record.getId(), status.toString(), msg);
 	  if (status == ClearingStatus.SUCCESS) {
 	  		record.setIsWithdraw(true);
 	  		record.setStatus(ClearingStatus.SUCCESS);
@@ -385,7 +385,7 @@ public class SellerClearingBatchJob {
    * @param record
    */
   public void refundLeScore(EndUser endUser, LeScoreRecord record) throws Exception{
-	    LogUtil.debug(this.getClass(), "refundLeScore", "退回乐分给用户Id:%s",endUser.getId());
+	    LogUtil.debug(SellerClearingBatchJob.class, "refundLeScore", "退回乐分给用户Id:%s",endUser.getId());
   		// 当前乐分
   		BigDecimal curLeScore = record.getAmount();
   		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
@@ -422,7 +422,7 @@ public class SellerClearingBatchJob {
     	refundRecord.setRemark(SpringUtils.getMessage("rebate.endUser.leScore.type.WITHDRAW") + record.getWithdrawMsg()
     	    		+SpringUtils.getMessage("rebate.endUser.leScore.type.REFUND"));
     	leScoreRecordService.save(refundRecord);
-    	LogUtil.debug(this.getClass(), "refundLeScore", "并生成乐分退回记录Id:%s",refundRecord.getId());
+    	LogUtil.debug(SellerClearingBatchJob.class, "refundLeScore", "并生成乐分退回记录Id:%s",refundRecord.getId());
   }
   /**
    * (异步)隔一段时间请求通联交易结果查询接口，自动更新商家货款记录的状态
@@ -437,7 +437,7 @@ public class SellerClearingBatchJob {
 		  TimerTask task = new TimerTask(){
 			public void run(){
 				  try {
-					    LogUtil.debug(this.getClass(), "notifyClearingRecordByAllinpay", "开始(通联渠道|异步)隔一段时间请求通联交易结果查询接口");
+					    LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByAllinpay", "开始(通联渠道|异步)隔一段时间请求通联交易结果查询接口");
 					    String xmlResponse = tranxService.queryTradeNew(reqSn, false);
 					    if (xmlResponse != null) {
 					        Document doc = DocumentHelper.parseText(xmlResponse);
@@ -445,13 +445,13 @@ public class SellerClearingBatchJob {
 					        Element infoElement = root.element("INFO");
 					        String ret_code = infoElement.elementText("RET_CODE");
 					        if ("0000".equals(ret_code)) {//处理完毕
-					        	LogUtil.debug(this.getClass(), "notifyClearingRecordByAllinpay", "通联交易结果查询接口返回:%s 已处理完毕",reqSn);
+					        	LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByAllinpay", "通联交易结果查询接口返回:%s 已处理完毕",reqSn);
 					        	@SuppressWarnings("unchecked")
 					        	Iterator<Element> qtdetails = root.element("QTRANSRSP").elementIterator("QTDETAIL");
 					        	try {
 					        		handleQueryTradeNew(qtdetails, reqSn);
 					        	} catch (Exception e) {
-					        		LogUtil.debug(this.getClass(), "handleQueryTradeNew", "Catch Exception: %s", e.getMessage());
+					        		LogUtil.debug(SellerClearingBatchJob.class, "handleQueryTradeNew", "Catch Exception: %s", e.getMessage());
 					        		e.printStackTrace();
 					        	} finally{
 					        		cancel();//结束Timer
@@ -460,7 +460,7 @@ public class SellerClearingBatchJob {
 						}
 				} catch (Exception e) {
 					cancel();//结束Timer
-					LogUtil.debug(this.getClass(), "notifyClearingRecordByAllinpay", "Catch Exception: %s", e.getMessage());
+					LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByAllinpay", "Catch Exception: %s", e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -482,7 +482,7 @@ public class SellerClearingBatchJob {
 				updateRecord(record, ClearingStatus.FAILED, qtdetail_err_msg);
 			}
 		}
-		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "req_sn: %s, sn: %s", reqSn, sn);
+		LogUtil.debug(SellerClearingBatchJob.class, "sellerClearingCalculate", "req_sn: %s, sn: %s", reqSn, sn);
 	}
   }
 
@@ -492,7 +492,7 @@ public class SellerClearingBatchJob {
    * @param status
    */
   private void updateRecord(SellerClearingRecord record, ClearingStatus clearingStatus, String errMsg){
-	  LogUtil.debug(this.getClass(), "updateRecord", "更新商家货款记  recordId:%s, clearingStatus: %s, errMsg: %s", record.getId(), clearingStatus.toString(), errMsg);
+	  LogUtil.debug(SellerClearingBatchJob.class, "updateRecord", "更新商家货款记  recordId:%s, clearingStatus: %s, errMsg: %s", record.getId(), clearingStatus.toString(), errMsg);
 	  if (clearingStatus == ClearingStatus.SUCCESS) {
 		  	//将货款的结算状态改为处理成功即结算成功，是否结算改为true
 	    	record.setClearingStatus(ClearingStatus.SUCCESS);
@@ -535,7 +535,7 @@ public class SellerClearingBatchJob {
    */
   private LeScoreRecord findNeedWithdrawRecord(String reqSn, String sn, String withDrawSn){
 	  
-	  LogUtil.debug(this.getClass(), "findNeedWithdrawRecord", "查询条件 req_sn: %s, sn: %s, withDrawSn: %s", reqSn, sn, withDrawSn);
+	  LogUtil.debug(SellerClearingBatchJob.class, "findNeedWithdrawRecord", "查询条件 req_sn: %s, sn: %s, withDrawSn: %s", reqSn, sn, withDrawSn);
 	  
 	  LeScoreRecord record = null;
 	  List<Filter> filters = new ArrayList<Filter>();
@@ -551,11 +551,11 @@ public class SellerClearingBatchJob {
 	  List<LeScoreRecord> records = leScoreRecordService.findList(null, filters, null);
 	  if (records != null && records.size() > 0) {
 		  if (records.size() > 1) {
-			  LogUtil.debug(this.getClass(), "findNeedWithdrawRecord", "找到多个乐分提现记录");//这种情况不应该出现
+			  LogUtil.debug(SellerClearingBatchJob.class, "findNeedWithdrawRecord", "找到多个乐分提现记录");//这种情况不应该出现
 		  }
 		  record = records.get(0);
 	  }else {
-		  LogUtil.debug(this.getClass(), "findNeedWithdrawRecord", "未找到乐分提现记录");
+		  LogUtil.debug(SellerClearingBatchJob.class, "findNeedWithdrawRecord", "未找到乐分提现记录");
 	  }
 	  return record;
   }
@@ -565,7 +565,7 @@ public class SellerClearingBatchJob {
    */
   private SellerClearingRecord findNeedClearingRecord(String reqSn, String sn, String clearingSn){
 	  
-	  LogUtil.debug(this.getClass(), "findNeedClearingRecord", "查询条件 reqSn: %s, sn: %s, clearingSn: %s", reqSn, sn, clearingSn);
+	  LogUtil.debug(SellerClearingBatchJob.class, "findNeedClearingRecord", "查询条件 reqSn: %s, sn: %s, clearingSn: %s", reqSn, sn, clearingSn);
 	  
 	  SellerClearingRecord record = null;
 	  List<Filter> filters = new ArrayList<Filter>();
@@ -581,11 +581,11 @@ public class SellerClearingBatchJob {
 	  List<SellerClearingRecord> records = sellerClearingRecordService.findList(null, filters, null);
 	  if (records != null && records.size() > 0) {
 		  if (records.size() > 1) {
-			  LogUtil.debug(this.getClass(), "findNeedClearingRecord", "找到多个商家货款记录");//这种情况不应该出现
+			  LogUtil.debug(SellerClearingBatchJob.class, "findNeedClearingRecord", "找到多个商家货款记录");//这种情况不应该出现
 		  }
 		  record = records.get(0);
 	  }else {
-		  LogUtil.debug(this.getClass(), "findNeedWithdrawRecord", "未找到商家货款记录");
+		  LogUtil.debug(SellerClearingBatchJob.class, "findNeedWithdrawRecord", "未找到商家货款记录");
 	  }
 	  return record;
   }
@@ -601,7 +601,7 @@ public class SellerClearingBatchJob {
 	    	  delay = new Long(config.getConfigValue());
 	      }
 	  } catch (Exception e) {
-		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
+		  LogUtil.debug(SellerClearingBatchJob.class, "getDelayVal", "Catch Exception: %s", e.getMessage());
 	  }
       return delay;
   }
@@ -617,7 +617,7 @@ public class SellerClearingBatchJob {
 	    	  period = new Long(periodConfig.getConfigValue());
 	      } 
 	  } catch (Exception e) {
-		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
+		  LogUtil.debug(SellerClearingBatchJob.class, "getDelayVal", "Catch Exception: %s", e.getMessage());
 	  }
       return period;
   }

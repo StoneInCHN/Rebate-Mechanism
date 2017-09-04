@@ -90,7 +90,7 @@ public class LeScoreRecordJob {
 					        	try {
 					        		handleQueryTradeNew(qtdetails, reqSn);
 								} catch (Exception e) {
-									LogUtil.debug(this.getClass(), "batchWithdrawal(handleQueryTradeNew)", "Catch Exception: %s", e.getMessage());
+									LogUtil.debug(LeScoreRecordJob.class, "batchWithdrawal(handleQueryTradeNew)", "Catch Exception: %s", e.getMessage());
 									e.printStackTrace();
 								} finally{
 									cancel();//结束
@@ -99,7 +99,7 @@ public class LeScoreRecordJob {
 						}
 				} catch (Exception e) {
 					cancel();//结束
-					LogUtil.debug(this.getClass(), "batchWithdrawal", "Catch Exception: %s", e.getMessage());
+					LogUtil.debug(LeScoreRecordJob.class, "batchWithdrawal", "Catch Exception: %s", e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -139,10 +139,10 @@ public class LeScoreRecordJob {
 									  String ordSts = jsonObject.getString("ordSts");
 									  String tamTxTyp = jsonObject.getString("tamTxTyp");
 									  
-				  					  LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+				  					  LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
 				  							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
 									  if (!mercOrdNo.startsWith(merchantId)) {
-										  LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+										  LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
 										  continue; 
 									  }
 									  String withDrawSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
@@ -152,25 +152,27 @@ public class LeScoreRecordJob {
 								        	try {
 												String msg = tamTxTyp + ordSts;
 												if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
-													updateRecord(record, ClearingStatus.SUCCESS, msg);
+													LeScoreRecord successRecord = updateRecord(record, ClearingStatus.SUCCESS, msg);
+													leScoreRecordService.update(successRecord);
 												}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
-													updateRecord(record, ClearingStatus.FAILED, msg);
+													LeScoreRecord failedRecord = updateRecord(record, ClearingStatus.FAILED, msg);
+													leScoreRecordService.update(failedRecord);
 												}
 											} catch (Exception e) {
-												LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "(updateRecord)Catch Exception: %s", e.getMessage());
+												LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "(updateRecord)Catch Exception: %s", e.getMessage());
 												e.printStackTrace();
 											} finally{
 												cancel();//结束
 											}
 									   }
-									   LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "batchNo: %s, mercOrdNo: %s", resBatchNo, mercOrdNo);
+									   LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "batchNo: %s, mercOrdNo: %s", resBatchNo, mercOrdNo);
 								  }
 							  }
 					   }
 				  
 				} catch (Exception e) {
 					cancel();//结束
-					LogUtil.debug(this.getClass(), "batchWithdrawal", "Catch Exception: %s", e.getMessage());
+					LogUtil.debug(LeScoreRecordJob.class, "batchWithdrawal", "Catch Exception: %s", e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -184,7 +186,7 @@ public class LeScoreRecordJob {
    * @return
    */
   private LeScoreRecord findNeedLeScoreRecord(String reqSn, String sn, String withDrawSn){
-	  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "查询条件 reqSn: %s, sn: %s, withDrawSn: %s", reqSn, sn, withDrawSn);
+	  LogUtil.debug(LeScoreRecordJob.class, "findNeedLeScoreRecord", "查询条件 reqSn: %s, sn: %s, withDrawSn: %s", reqSn, sn, withDrawSn);
 	  LeScoreRecord record = null;
 	  List<Filter> filters = new ArrayList<Filter>();
 	  filters.add(Filter.eq("reqSn", reqSn));//批量代付总单号
@@ -200,11 +202,11 @@ public class LeScoreRecordJob {
 	  if (records != null && records.size() > 0) {
 		  if (records.size() > 1) {
 			  //这种情况不应该出现
-			  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "Find more than one record by req_sn: %s, sn: %s", reqSn, sn);
+			  LogUtil.debug(LeScoreRecordJob.class, "findNeedLeScoreRecord", "Find more than one record by req_sn: %s, sn: %s", reqSn, sn);
 		  }
 		  record = records.get(0);
 	  }else {
-		  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "未找到乐分提现记录");
+		  LogUtil.debug(LeScoreRecordJob.class, "findNeedLeScoreRecord", "未找到乐分提现记录");
 	  }
 	  return record;
   }
@@ -220,7 +222,7 @@ public class LeScoreRecordJob {
 	    	  delay = new Long(config.getConfigValue());
 	      }
 	  } catch (Exception e) {
-		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
+		  LogUtil.debug(LeScoreRecordJob.class, "getDelayVal", "Catch Exception: %s", e.getMessage());
 		  delay = 600000;//10分钟
 	  }
       return delay;
@@ -237,7 +239,7 @@ public class LeScoreRecordJob {
 	    	  period = new Long(periodConfig.getConfigValue());
 	      } 
 	  } catch (Exception e) {
-		  LogUtil.debug(this.getClass(), "getDelayVal", "Catch Exception: %s", e.getMessage());
+		  LogUtil.debug(LeScoreRecordJob.class, "getDelayVal", "Catch Exception: %s", e.getMessage());
 		  period = 300000;//5分钟
 	  }
       return period;
@@ -259,7 +261,7 @@ public class LeScoreRecordJob {
 			//根据reqSn和sn，获取需要更新提现状态的乐分提现记录
 			LeScoreRecord record = findNeedLeScoreRecord(reqSn, sn, null);
 			if (record != null) {
-				LogUtil.debug(this.getClass(), "handleQueryTradeNew","[%s:%s] 乐分提现记录Id: %s", qtdetail_ret_code, qtdetail_err_msg, record.getId());
+				LogUtil.debug(LeScoreRecordJob.class, "handleQueryTradeNew","[%s:%s] 乐分提现记录Id: %s", qtdetail_ret_code, qtdetail_err_msg, record.getId());
 		    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
 		    		LeScoreRecord successRecord = updateRecord(record, ClearingStatus.SUCCESS, qtdetail_err_msg);
 		    		mergeList.add(successRecord);
@@ -268,7 +270,7 @@ public class LeScoreRecordJob {
 		    		mergeList.add(failedRecord);
 		    	}
 			}
-			LogUtil.debug(this.getClass(), "handleQueryTradeNew", "req_sn: %s, sn: %s", reqSn, sn);
+			LogUtil.debug(LeScoreRecordJob.class, "handleQueryTradeNew", "req_sn: %s, sn: %s", reqSn, sn);
 	  }
 	  if (mergeList != null) {
 	  	 leScoreRecordService.update(mergeList);
@@ -280,7 +282,7 @@ public class LeScoreRecordJob {
    * @param record
    */
   public LeScoreRecord updateRecord(LeScoreRecord record, ClearingStatus status, String msg) throws Exception{
-	  LogUtil.debug(this.getClass(), "updateRecord", "更新乐分提现记录  recordId:%s, status: %s, msg: %s", record.getId(), status.toString(), msg);
+	  LogUtil.debug(LeScoreRecordJob.class, "updateRecord", "更新乐分提现记录  recordId:%s, status: %s, msg: %s", record.getId(), status.toString(), msg);
 	  if (status == ClearingStatus.SUCCESS) {
 	  		record.setIsWithdraw(true);
 	  		record.setStatus(ClearingStatus.SUCCESS);
@@ -306,7 +308,7 @@ public class LeScoreRecordJob {
    * @param record
    */
   public void refundLeScore(EndUser endUser, LeScoreRecord record) throws Exception{
-	    LogUtil.debug(this.getClass(), "refundLeScore", "退回乐分给用户Id:%s",endUser.getId());
+	    LogUtil.debug(LeScoreRecordJob.class, "refundLeScore", "退回乐分给用户Id:%s",endUser.getId());
   		// 当前乐分
   		BigDecimal curLeScore = record.getAmount();
   		// 激励乐分(包括乐心分红乐分，推荐获得乐分)
@@ -343,7 +345,7 @@ public class LeScoreRecordJob {
     	refundRecord.setRemark(SpringUtils.getMessage("rebate.endUser.leScore.type.WITHDRAW") + record.getWithdrawMsg()
     	    		+SpringUtils.getMessage("rebate.endUser.leScore.type.REFUND"));
     	leScoreRecordService.save(refundRecord);
-    	LogUtil.debug(this.getClass(), "refundLeScore", "并生成乐分退回记录Id:%s",refundRecord.getId());
+    	LogUtil.debug(LeScoreRecordJob.class, "refundLeScore", "并生成乐分退回记录Id:%s",refundRecord.getId());
   }
 
 }

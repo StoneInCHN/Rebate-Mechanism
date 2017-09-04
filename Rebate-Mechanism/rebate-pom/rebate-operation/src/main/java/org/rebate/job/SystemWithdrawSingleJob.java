@@ -208,6 +208,8 @@ public class SystemWithdrawSingleJob {
 	  SystemWithdrawRecord record = null;
 	  List<Filter> filters = new ArrayList<Filter>();
 	  filters.add(Filter.eq("reqSn", reqSn));//单号
+	  filters.add(Filter.eq("status", ClearingStatus.PROCESSING));//处理中
+	  filters.add(Filter.eq("isWithdraw", false));//未提现
 	  List<SystemWithdrawRecord> records = systemWithdrawRecordService.findList(null, filters, null);
 	  if (records != null && records.size() > 0) {
 		  if (records.size() > 1) {

@@ -277,14 +277,14 @@ public class JiuPaiController extends BaseController {
 			  if ("S".equals(orderSts)) {//处理成功
 	      	    	record.setStatus(ClearingStatus.SUCCESS);
 	      	    	record.setIsWithdraw(true);
-	      	    	record.setRemark(record.getRemark() + ";回调通知:处理成功");
+	      	    	record.setWithdrawMsg(record.getWithdrawMsg() + ";回调通知:处理成功");
 	      	    	systemWithdrawRecordService.update(record);
 	            	return "result=SUCCESS";
 			  }
         	  if ("F".equals(orderSts) || "R".equals(orderSts)) {//处理失败 
 	      	    	record.setStatus(ClearingStatus.FAILED);
 	      	    	record.setIsWithdraw(true);
-	      	    	record.setRemark(record.getRemark() + ";回调通知:处理失败");
+	      	    	record.setWithdrawMsg(record.getWithdrawMsg() + ";回调通知:处理失败");
 	      	    	systemWithdrawRecordService.update(record);
 	            	return "result=SUCCESS";
 			  }
