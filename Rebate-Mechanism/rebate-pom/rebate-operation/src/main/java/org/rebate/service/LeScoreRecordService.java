@@ -25,7 +25,7 @@ public interface LeScoreRecordService extends BaseService<LeScoreRecord,Long>{
    * @param ids
    * @return
    */
-  void batchWithdrawalByJiuPai(Long[] ids);
+  String batchWithdrawalByJiuPai(Long[] ids);
 
 	/**
 	 * 九派需要更新提现状态的交易批次号list

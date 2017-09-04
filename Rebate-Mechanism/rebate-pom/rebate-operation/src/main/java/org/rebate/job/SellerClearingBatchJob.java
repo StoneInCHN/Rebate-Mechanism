@@ -109,15 +109,15 @@ public class SellerClearingBatchJob {
     	  //商家货款批量代付(通联渠道)
           String reqSn = sellerClearingRecordService.sellerClearingByAllinPay(records);     
           if (reqSn != null) {
-        	  //隔一段时间请求通联交易结果查询接口，自动更新商家货款记录的状态
+        	  //隔一段时间请求通联批量代付交易结果查询接口，自动更新商家货款记录的状态
         	  notifyClearingRecordByAllinpay(reqSn);
     	  }
 	  }
       //2. 九派支付渠道
       else if(PaymentChannel.JIUPAI == channel) {
 		//更新之前九派未更新状态的乐分提现记录和货款记录
-    	updateWithdrawRecordByJiupai(endDate);
-    	updateClearingRecordByJiupai(endDate);  
+    	//updateWithdrawRecordByJiupai(endDate);
+    	//updateClearingRecordByJiupai(endDate);  
     	//商家货款批量代付(九派渠道)
     	if (records.size() == 0) {
     		LogUtil.debug(this.getClass(), "sellerClearingCalculate", "(九派渠道)无需要结算的商家货款记录");
@@ -131,7 +131,11 @@ public class SellerClearingBatchJob {
     			}
     			LogUtil.debug(this.getClass(), "sellerClearingCalculate", "(九派支付渠道) fromIndex=%s, toIndex=%s", fromIndex, toIndex);
     			List<SellerClearingOrders> recordList = records.subList(fromIndex, toIndex);
-    			sellerClearingRecordService.sellerClearingByJiuPai(recordList); 	
+    			String reqSn = sellerClearingRecordService.sellerClearingByJiuPai(recordList); 	
+    	        if (reqSn != null) {
+    	        	  //隔一段时间请求九派批量代付交易结果查询接口，自动更新商家货款记录的状态
+    	        	notifyClearingRecordByJiupai(reqSn);
+    	    	}
     		}
 		}
 	  }
@@ -146,7 +150,76 @@ public class SellerClearingBatchJob {
         + startDate + " - " + endDate);
     date = null;
   }
-
+  /**
+   * (异步)隔一段时间请求九派批量代付交易结果查询接口，自动更新商家货款记录的状态
+   * @param reqSn
+   */
+  @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
+  private void notifyClearingRecordByJiupai(String reqSn){
+      Timer timer=new Timer();
+      long delay = getDelayVal();//延迟10分钟后
+      long period = getPeriodVal();//每5分钟执行一次
+     
+		  TimerTask task = new TimerTask(){
+			public void run(){
+				  try {
+					    LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "开始(九派渠道|异步)隔一段时间请求通联交易结果查询接口");
+						GateWayService gateWayService = new GateWayService();
+						BatchQueryReq req = new BatchQueryReq();
+						req.setBatchNo(reqSn);//交易批次号
+						req.setPageNum(1);
+						req.setPageSize(200);
+						//代收付批量查询
+						Map<String, String> resMap = gateWayService.capBatchQuery(req);
+					    if (resMap.get("tamtCapQueryList") != null) {
+							  String queryListStr = resMap.get("tamtCapQueryList");
+							  JSONArray jsonArray = JSON.parseArray(queryListStr);
+							  if (jsonArray.size() > 0) {
+								  for (int j = 0; j < jsonArray.size(); j++) {
+									  JSONObject jsonObject = jsonArray.getJSONObject(j);
+									  Setting setting = SettingUtils.get();
+									  String merchantId = setting.getJiupaiMerchantId();
+									  String resBatchNo = jsonObject.getString("batchNo");
+									  String mercOrdNo = jsonObject.getString("mercOrdNo");
+									  String ordSts = jsonObject.getString("ordSts");
+									  String tamTxTyp = jsonObject.getString("tamTxTyp");
+				  					  LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+				  							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
+									  if (!mercOrdNo.startsWith(merchantId)) {
+										  LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+										  continue; 
+									  }
+									  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
+									  SellerClearingRecord record = findNeedClearingRecord(resBatchNo, null, clearingSn);
+									   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
+											   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
+								        	try {
+											   	String msg = tamTxTyp + ordSts;
+											    if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
+											    	updateRecord(record, ClearingStatus.SUCCESS, msg);
+												}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
+													updateRecord(record, ClearingStatus.FAILED, msg);
+												}
+								        	} catch (Exception e) {
+								        		LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "(updateRecord)Catch Exception: %s", e.getMessage());
+								        		e.printStackTrace();
+								        	} finally{
+								        		cancel();//结束Timer
+								        	}
+									   }
+									   LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", reqSn, mercOrdNo);
+								  }
+							  }
+						}
+				} catch (Exception e) {
+					cancel();//结束Timer
+					LogUtil.debug(this.getClass(), "notifyClearingRecordByJiupai", "Catch Exception: %s", e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		};
+		timer.schedule(task, delay, period);//延迟10分钟后，每5分钟执行一次
+  }
   /**
    * 更新之前九派未更新状态的货款记录
    * @param startDate
@@ -387,7 +460,7 @@ public class SellerClearingBatchJob {
 						}
 				} catch (Exception e) {
 					cancel();//结束Timer
-					LogUtil.debug(this.getClass(), "sellerClearingCalculate", "Catch Exception: %s", e.getMessage());
+					LogUtil.debug(this.getClass(), "notifyClearingRecordByAllinpay", "Catch Exception: %s", e.getMessage());
 					e.printStackTrace();
 				}
 			}

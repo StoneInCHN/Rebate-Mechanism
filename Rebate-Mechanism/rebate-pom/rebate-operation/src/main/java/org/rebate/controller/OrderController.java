@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Order;
+import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.paging.Pageable;
@@ -57,8 +58,13 @@ public class OrderController extends BaseController {
       model.addAttribute("paymentType", request.getPaymentType());
     }
     if (request.getOrderStatus() != null) {
-      filters.add(Filter.eq("status", request.getOrderStatus()));
-      model.addAttribute("orderStatus", request.getOrderStatus());
+    	if (OrderStatus.PAID == request.getOrderStatus()) {
+			OrderStatus[] statusArray = {OrderStatus.PAID,OrderStatus.FINISHED};
+			filters.add(Filter.in("status", statusArray));
+		}else {
+			filters.add(Filter.eq("status", request.getOrderStatus()));
+		}
+        model.addAttribute("orderStatus", request.getOrderStatus());
     }
     if (request.getPaymentChannel() != null) {
         filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));

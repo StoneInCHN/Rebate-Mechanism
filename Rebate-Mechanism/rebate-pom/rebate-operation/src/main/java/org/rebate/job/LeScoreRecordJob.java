@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -12,6 +13,7 @@ import javax.annotation.Resource;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.rebate.beans.Setting;
 import org.rebate.entity.EndUser;
 import org.rebate.entity.LeScoreRecord;
 import org.rebate.entity.ParamConfig;
@@ -25,12 +27,19 @@ import org.rebate.service.LeScoreRecordService;
 import org.rebate.service.ParamConfigService;
 import org.rebate.service.SystemConfigService;
 import org.rebate.utils.LogUtil;
+import org.rebate.utils.SettingUtils;
 import org.rebate.utils.SpringUtils;
 import org.rebate.utils.allinpay.service.TranxServiceImpl;
+import org.rebate.utils.jiupai.pojo.capBatchQuery.BatchQueryReq;
+import org.rebate.utils.jiupai.service.GateWayService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 乐分提现 交易结果更新
@@ -55,6 +64,10 @@ public class LeScoreRecordJob {
 	@Resource(name="paramConfigServiceImpl")
 	private ParamConfigService paramConfigService;
 	  
+	/**
+	 * [通联渠道]隔一段时间 异步更新 提现记录状态
+	 * @param reqSn
+	 */
     public void notifyWithdrawRecordByAllinpay(String reqSn){
 
       Timer timer=new Timer();
@@ -94,16 +107,95 @@ public class LeScoreRecordJob {
 		timer.schedule(task, delay, period);//延迟20分钟后，每5分钟执行一次
   
   }
+  /**
+   * [九派渠道]隔一段时间 异步更新 提现记录状态
+   * @param reqSn
+   */
+  public void notifyWithdrawRecordByJiuPai(String reqSn) {
+      Timer timer=new Timer();
+      long delay = getDelayVal();//延迟10分钟后
+      long period = getPeriodVal();//每5分钟执行一次
+     
+		  TimerTask task = new TimerTask(){
+			public void run(){
+				  try {
+					  GateWayService gateWayService = new GateWayService();
+					  BatchQueryReq req = new BatchQueryReq();
+					  req.setBatchNo(reqSn);//交易批次号
+					  req.setPageNum(1);
+					  req.setPageSize(200);
+					  //代收付批量查询
+					  Map<String, String> resMap = gateWayService.capBatchQuery(req);
+					  if (resMap.get("tamtCapQueryList") != null) {
+					    	String queryListStr = resMap.get("tamtCapQueryList");
+							  JSONArray jsonArray = JSON.parseArray(queryListStr);
+							  if (jsonArray.size() > 0) {
+								  for (int j = 0; j < jsonArray.size(); j++) {
+									  JSONObject jsonObject = jsonArray.getJSONObject(j);
+									  Setting setting = SettingUtils.get();
+									  String merchantId = setting.getJiupaiMerchantId();
+									  String resBatchNo = jsonObject.getString("batchNo");
+									  String mercOrdNo = jsonObject.getString("mercOrdNo");
+									  String ordSts = jsonObject.getString("ordSts");
+									  String tamTxTyp = jsonObject.getString("tamTxTyp");
+									  
+				  					  LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+				  							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
+									  if (!mercOrdNo.startsWith(merchantId)) {
+										  LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+										  continue; 
+									  }
+									  String withDrawSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
+									  LeScoreRecord record = findNeedLeScoreRecord(resBatchNo, null, withDrawSn);
+									   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
+											   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
+								        	try {
+												String msg = tamTxTyp + ordSts;
+												if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
+													updateRecord(record, ClearingStatus.SUCCESS, msg);
+												}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
+													updateRecord(record, ClearingStatus.FAILED, msg);
+												}
+											} catch (Exception e) {
+												LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "(updateRecord)Catch Exception: %s", e.getMessage());
+												e.printStackTrace();
+											} finally{
+												cancel();//结束
+											}
+									   }
+									   LogUtil.debug(this.getClass(), "notifyWithdrawRecordByJiuPai", "batchNo: %s, mercOrdNo: %s", resBatchNo, mercOrdNo);
+								  }
+							  }
+					   }
+				  
+				} catch (Exception e) {
+					cancel();//结束
+					LogUtil.debug(this.getClass(), "batchWithdrawal", "Catch Exception: %s", e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		};
+		timer.schedule(task, delay, period);//延迟20分钟后，每5分钟执行一次
+    	
+  }
 
   /**
-   * 根据reqSn和sn，获取需要更新提现状态的乐分提现记录
+   * 根据reqSn,sn,withDrawSn 获取需要更新提现状态的乐分提现记录
    * @return
    */
-  private LeScoreRecord findNeedLeScoreRecord(String reqSn, String sn){
+  private LeScoreRecord findNeedLeScoreRecord(String reqSn, String sn, String withDrawSn){
+	  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "查询条件 reqSn: %s, sn: %s, withDrawSn: %s", reqSn, sn, withDrawSn);
 	  LeScoreRecord record = null;
 	  List<Filter> filters = new ArrayList<Filter>();
 	  filters.add(Filter.eq("reqSn", reqSn));//批量代付总单号
-	  filters.add(Filter.eq("sn", sn));//子单号
+	  if (sn != null) {
+		  filters.add(Filter.eq("sn", sn));//子单号
+	  }
+	  if (withDrawSn != null) {
+		  filters.add(Filter.eq("withDrawSn", withDrawSn));//提现流水号
+	  }
+	  filters.add(Filter.eq("status", ClearingStatus.PROCESSING));//处理中
+	  filters.add(Filter.eq("isWithdraw", false));//未提现
 	  List<LeScoreRecord> records = leScoreRecordService.findList(null, filters, null);
 	  if (records != null && records.size() > 0) {
 		  if (records.size() > 1) {
@@ -111,6 +203,8 @@ public class LeScoreRecordJob {
 			  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "Find more than one record by req_sn: %s, sn: %s", reqSn, sn);
 		  }
 		  record = records.get(0);
+	  }else {
+		  LogUtil.debug(this.getClass(), "findNeedLeScoreRecord", "未找到乐分提现记录");
 	  }
 	  return record;
   }
@@ -163,7 +257,7 @@ public class LeScoreRecordJob {
 			String qtdetail_ret_code = qtdetail.elementText("RET_CODE");
 			String qtdetail_err_msg = qtdetail.elementText("ERR_MSG");
 			//根据reqSn和sn，获取需要更新提现状态的乐分提现记录
-			LeScoreRecord record = findNeedLeScoreRecord(reqSn, sn);
+			LeScoreRecord record = findNeedLeScoreRecord(reqSn, sn, null);
 			if (record != null) {
 				LogUtil.debug(this.getClass(), "handleQueryTradeNew","[%s:%s] 乐分提现记录Id: %s", qtdetail_ret_code, qtdetail_err_msg, record.getId());
 		    	if ("0000".equals(qtdetail_ret_code) || "4000".equals(qtdetail_ret_code)) {//处理成功
@@ -251,5 +345,5 @@ public class LeScoreRecordJob {
     	leScoreRecordService.save(refundRecord);
     	LogUtil.debug(this.getClass(), "refundLeScore", "并生成乐分退回记录Id:%s",refundRecord.getId());
   }
-  
+
 }

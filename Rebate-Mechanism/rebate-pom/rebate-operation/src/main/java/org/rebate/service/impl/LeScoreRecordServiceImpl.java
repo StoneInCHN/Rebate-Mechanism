@@ -218,7 +218,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
    */
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public void batchWithdrawalByJiuPai(Long[] ids){
+  public String batchWithdrawalByJiuPai(Long[] ids){
 		List<LeScoreRecord> records = new ArrayList<LeScoreRecord>();
 	    for (Long id : ids) {
 	    	  LeScoreRecord record = leScoreRecordDao.find(id);
@@ -260,6 +260,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 	    }
 	    if (records.size() == 0) {
 	    	LogUtil.debug(this.getClass(), "batchWithdrawalByJiuPai", "(九派渠道)没有符合批量提现的记录");
+	    	return null;
 		}else {
     		Map<String, LeScoreRecord> snWithdrawRecordMap = new HashMap<String, LeScoreRecord>();//乐分提现编号(KEY) : 乐分提现记录 (VALUE)
     	 	for (LeScoreRecord record: records) {
@@ -286,19 +287,20 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
     	    req.setCount(reqInfoList.size());
     	    req.setInfoList(reqInfoList);
     	    //开始批量代付
-			capBatchTransfer(req, snWithdrawRecordMap);
+			return capBatchTransfer(req, snWithdrawRecordMap);
 		}
     }
   	/**
   	 * (九派渠道)批量代付
   	 * @param req
   	 */
-    private void capBatchTransfer(BatchTransferReq req, Map<String, LeScoreRecord> snWithdrawRecordMap){
+    private String capBatchTransfer(BatchTransferReq req, Map<String, LeScoreRecord> snWithdrawRecordMap){
     	//开始批量代付
     	GateWayService gateWayService = new GateWayService();
     	Map<String, String> resMap = gateWayService.capBatchTransfer(req);
     	//获取响应 infoList
     	String resInfoList = resMap.get("infoList");
+    	String reqSn = null;
 		JSONArray jsonArray = JSON.parseArray(resInfoList);
 		if (jsonArray.size() > 0) {
 		  	  String merchantId = setting.getJiupaiMerchantId();
@@ -325,7 +327,10 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 					    	record.setWithdrawMsg(errorMsg);
 					    	//更新已经受理的乐分提现记录（已赋值了reqSn和sn）
 					    	update(record);
-						}else {//例如CAP00533 不在指定金额区间
+						   	if (reqSn == null) {
+						   		reqSn = batchNo;
+							}
+						}else {//例如  CAP00533:不在指定金额区间        CAP00001:数据库操作异常
 					  		record.setIsWithdraw(false);
 					  		record.setStatus(ClearingStatus.FAILED);
 					  		record.setWithdrawMsg(errorMsg);//提现返回消息
@@ -342,6 +347,7 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 				   }
 			   }
 		 }
+		return reqSn;
     }
     /**
      * 退回乐分给用户，并生成乐分退回记录

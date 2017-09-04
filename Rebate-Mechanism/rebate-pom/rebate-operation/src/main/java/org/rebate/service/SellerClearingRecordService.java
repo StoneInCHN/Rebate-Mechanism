@@ -27,8 +27,9 @@ public interface SellerClearingRecordService extends BaseService<SellerClearingR
 	Message singlePayByAllinpay(SellerClearingRecord sellerClearingRecord, BankCard bankCard);
     /**
      * 商家货款批量代付(九派渠道)
+     * @return 
      */
-	void sellerClearingByJiuPai(List<SellerClearingOrders> records);
+	String sellerClearingByJiuPai(List<SellerClearingOrders> records);
 	/**
 	 * 货款单笔代付(九派渠道)
 	 */

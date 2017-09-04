@@ -56,8 +56,13 @@ public class SallerOrderController extends BaseController {
       model.addAttribute("sellerName", request.getSellerName());
     }
     if (request.getOrderStatus() != null) {
-      filters.add(Filter.eq("status", request.getOrderStatus()));
-      model.addAttribute("orderStatus", request.getOrderStatus());
+    	if (OrderStatus.PAID == request.getOrderStatus()) {
+			OrderStatus[] statusArray = {OrderStatus.PAID,OrderStatus.FINISHED};
+			filters.add(Filter.in("status", statusArray));
+		}else {
+			filters.add(Filter.eq("status", request.getOrderStatus()));
+		}
+        model.addAttribute("orderStatus", request.getOrderStatus());
     }
     if (request.getPaymentChannel() != null) {
         filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));

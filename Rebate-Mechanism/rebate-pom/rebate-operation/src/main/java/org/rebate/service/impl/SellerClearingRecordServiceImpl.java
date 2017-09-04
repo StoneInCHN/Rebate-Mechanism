@@ -285,7 +285,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
      */
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
-	public void sellerClearingByJiuPai(List<SellerClearingOrders> clearingOrdersList) {
+	public String sellerClearingByJiuPai(List<SellerClearingOrders> clearingOrdersList) {
     	if (clearingOrdersList.size() > 0) {
     		Map<String, Set<Order>> sellerOrdersMap = new HashMap<String, Set<Order>>();//商家货款编号(KEY) : 订单列表 (VALUE)
     		Map<String, SellerClearingRecord> snClearingRecordMap = new HashMap<String, SellerClearingRecord>();//结算货款单编号(KEY) : 结算货款记录 (VALUE)
@@ -353,6 +353,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 								relation.setOrder(order);
 								clearingOrderRelationService.save(relation);
 							}
+							return batchNo;
   					   }
   				   }
   			  	}
@@ -360,11 +361,13 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
     	    } catch (Exception e) {
 				e.printStackTrace();
 				LogUtil.debug(this.getClass(), "sellerClearingByJiuPai", "商家货款批量代付(九派渠道)失败  捕获异常: %s", e.getMessage());
+				return null;
     	    }
     	      
     	}else {
     		LogUtil.debug(this.getClass(), "sellerClearingByJiuPai", "(九派渠道)无需要结算的商家货款记录");
 		}
+    	return null;
 	}
   	/**
   	 * (通联渠道)单笔实时付款（代付）

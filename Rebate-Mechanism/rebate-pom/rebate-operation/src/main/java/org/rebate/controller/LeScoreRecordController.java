@@ -135,7 +135,13 @@ public class LeScoreRecordController extends BaseController {
 	}
     //2. 九派支付渠道
     else if(PaymentChannel.JIUPAI == channel) {
-    	leScoreRecordService.batchWithdrawalByJiuPai(ids);   
+    	String reqSn = leScoreRecordService.batchWithdrawalByJiuPai(ids);  
+        if (reqSn != null) {
+        	//隔一段时间 异步更新 提现记录状态
+        	leScoreRecordJob.notifyWithdrawRecordByJiuPai(reqSn);
+        } else {
+        	return Message.success("批量提现执行失败!");
+        }
 	}
     return Message.success("批量提现执行成功!");
   }

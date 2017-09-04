@@ -91,7 +91,7 @@
 									<select  name="orderStatus">
 										<option value="">${message("rebate.common.All")}</option>
 										<option [#if orderStatus == "UNPAID"] selected="selected" [/#if] value="UNPAID">${message("rebate.orderStatus.UNPAID")}</option>
-										<option [#if orderStatus == "PAID"] selected="selected" [/#if] value="PAID">${message("rebate.orderStatus.PAID")}</option>
+										<option [#if orderStatus == "PAID"] selected="selected" [/#if] value="PAID">${message("rebate.orderStatus.PAID")}(包含 已完成)</option>
 										<option [#if orderStatus == "FINISHED"] selected="selected" [/#if] value="FINISHED">${message("rebate.orderStatus.FINISHED")}</option>
 									</select>
 								</td>
