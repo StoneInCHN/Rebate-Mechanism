@@ -116,8 +116,7 @@
 	<!-- 九派通联私钥密码-->
 	<!-- <setting name="jiupaiMerchantCertPass" value="XyUDSj" />	-->
 	<!-- 九派回调URL-->
-	<!-- <setting name="jiupaiNotifyUrl" value="http://118.190.83.191:8080" />	-->
-	
+	<!-- <setting name="jiupaiNotifyUrl" value="http://112.74.41.10:8080" />	-->
 	
 	<!-- 聚合数据 银行卡四元素验证URL -->
 	<setting name="juheVerifyBankcard4" value="http://v.juhe.cn/verifybankcard4/query"/>		
