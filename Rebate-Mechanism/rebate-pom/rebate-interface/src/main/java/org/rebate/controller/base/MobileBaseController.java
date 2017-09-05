@@ -1,10 +1,15 @@
 package org.rebate.controller.base;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.rebate.beans.Setting;
+import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
+import org.rebate.utils.JPushUtil;
 import org.rebate.utils.SettingUtils;
+
+import cn.jpush.api.push.model.PushPayload;
 
 public class MobileBaseController extends BaseController {
 
@@ -64,4 +69,29 @@ public class MobileBaseController extends BaseController {
     return matcher.matches();
   }
 
+  /**
+   * 消息推送
+   * 
+   * @param appPlatform
+   * @param map
+   * @param regId
+   */
+  public void pushMsg(AppPlatform appPlatform, Map<String, String> map, String... regIds) {
+    try {
+      PushPayload payload = null;
+      if (AppPlatform.ANDROID.equals(appPlatform)) {
+        payload = JPushUtil.buildPushObject_android_registerId(map.get("alert"), null, regIds);
+      }
+      if (AppPlatform.IOS.equals(appPlatform)) {
+        payload = JPushUtil.buildPushObject_ios_registerId(map.get("alert"), null, regIds);
+      }
+
+      if (payload != null) {
+        JPushUtil.sendPush(payload, null, null);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
 }
