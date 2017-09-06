@@ -90,6 +90,19 @@
 									</select>
 								</td>
 								<th>
+									${message("rebate.order.paymentType")}:
+								</th>
+								<td>
+									<select  name="paymentType">
+										<option value="">${message("rebate.common.All")}</option>
+										<option [#if paymentType == "1"] selected="selected" [/#if] value="1">${message("rebate.order.paymentType.wechatpay")}</option>
+										<option [#if paymentType == "2"] selected="selected" [/#if] value="2">${message("rebate.order.paymentType.alipay")}</option>
+										<option [#if paymentType == "3"] selected="selected" [/#if] value="3">${message("rebate.order.paymentType.quickpay")}</option>
+										<option [#if paymentType == "4"] selected="selected" [/#if] value="4">${message("rebate.order.paymentType.leBeanpay")}</option>
+										<option [#if paymentType == "5"] selected="selected" [/#if] value="5">${message("rebate.order.paymentType.leScorepay")}</option>
+									</select>
+								</td>
+								<th>
 									${message("rebate.sellerClearingRecord.paymentChannel")}:
 								</th>
 								<td>

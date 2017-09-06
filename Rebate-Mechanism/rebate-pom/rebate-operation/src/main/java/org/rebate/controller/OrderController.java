@@ -54,22 +54,22 @@ public class OrderController extends BaseController {
       model.addAttribute("sellerName", request.getSellerName());
     }
     if (StringUtils.isNotEmpty(request.getPaymentType())) {
-      filters.add(Filter.like("paymentType", "%" + request.getPaymentType() + "%"));
+      filters.add(Filter.eq("paymentTypeId", request.getPaymentType()));
       model.addAttribute("paymentType", request.getPaymentType());
     }
     if (request.getOrderStatus() != null) {
-    	if (OrderStatus.PAID == request.getOrderStatus()) {
-			OrderStatus[] statusArray = {OrderStatus.PAID,OrderStatus.FINISHED};
-			filters.add(Filter.in("status", statusArray));
-		}else {
-			filters.add(Filter.eq("status", request.getOrderStatus()));
-		}
-        model.addAttribute("orderStatus", request.getOrderStatus());
+      if (OrderStatus.PAID == request.getOrderStatus()) {
+        OrderStatus[] statusArray = {OrderStatus.PAID, OrderStatus.FINISHED};
+        filters.add(Filter.in("status", statusArray));
+      } else {
+        filters.add(Filter.eq("status", request.getOrderStatus()));
+      }
+      model.addAttribute("orderStatus", request.getOrderStatus());
     }
     if (request.getPaymentChannel() != null) {
-        filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));
-        model.addAttribute("paymentChannel", request.getPaymentChannel());
-    } 
+      filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));
+      model.addAttribute("paymentChannel", request.getPaymentChannel());
+    }
     if (request.getOrderDateFrom() != null) {
       filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getOrderDateFrom())));
       model.addAttribute("orderDateFrom", request.getOrderDateFrom());
@@ -97,14 +97,14 @@ public class OrderController extends BaseController {
     model.addAttribute("order", order);
     return "/order/details";
   }
-  
+
   /**
    * 数据导出
    */
-  @RequestMapping(value = "/dataExport", method = {RequestMethod.GET,RequestMethod.POST})
+  @RequestMapping(value = "/dataExport", method = {RequestMethod.GET, RequestMethod.POST})
   public void dataExport(OrderReq request, HttpServletResponse response) {
     List<Filter> filters = new ArrayList<Filter>();
-    filters.add(Filter.eq("isSallerOrder", false));//false为订单，true为录单
+    filters.add(Filter.eq("isSallerOrder", false));// false为订单，true为录单
     if (StringUtils.isNotEmpty(request.getSn())) {
       filters.add(Filter.like("sn", "%" + request.getSn() + "%"));
     }
@@ -133,14 +133,13 @@ public class OrderController extends BaseController {
     List<Order> lists = orderService.findList(null, filters, null);
     if (lists != null && lists.size() > 0) {
       String title = "Order List"; // 工作簿标题，同时也是excel文件名前缀
-      String[] headers = {"sn", "endUserPhone","endUserName","sellerID", "sellerName", 
-          "sellerCategory","sellerDiscount","createDate","amount","paymentType",
-          "paymentTime", "status", "sellerIncome","rebateAmount","userScore",
-          "sellerScore","isClearing"}; // 需要导出的字段
-      String[] headersName = {"订单编号", "用户手机号","用户昵称","店铺编号", "店铺名", 
-          "店铺类别","店铺折扣","下单时间","消费金额","支付方式",
-          "支付时间", "订单状态", "商家直接收益","返利金额","用户积分返利",
-          "商家积分返利","是否结算(提现)"}; // 字段对应列的列名
+      String[] headers =
+          {"sn", "endUserPhone", "endUserName", "sellerID", "sellerName", "sellerCategory",
+              "sellerDiscount", "createDate", "amount", "paymentType", "paymentTime", "status",
+              "sellerIncome", "rebateAmount", "userScore", "sellerScore", "isClearing"}; // 需要导出的字段
+      String[] headersName =
+          {"订单编号", "用户手机号", "用户昵称", "店铺编号", "店铺名", "店铺类别", "店铺折扣", "下单时间", "消费金额", "支付方式", "支付时间",
+              "订单状态", "商家直接收益", "返利金额", "用户积分返利", "商家积分返利", "是否结算(提现)"}; // 字段对应列的列名
       List<Map<String, String>> mapList = ExportUtils.prepareExportOrder(lists);
       if (mapList.size() > 0) {
         exportListToExcel(response, mapList, title, headers, headersName);

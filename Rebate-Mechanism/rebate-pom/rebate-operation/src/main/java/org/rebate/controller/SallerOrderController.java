@@ -9,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
 import org.rebate.entity.Order;
-import org.rebate.entity.Seller;
-import org.rebate.entity.commonenum.CommonEnum.AccountStatus;
 import org.rebate.entity.commonenum.CommonEnum.OrderStatus;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.ordering.Ordering;
@@ -55,19 +53,23 @@ public class SallerOrderController extends BaseController {
       filters.add(Filter.like("seller&name", "%" + request.getSellerName() + "%"));
       model.addAttribute("sellerName", request.getSellerName());
     }
+    if (StringUtils.isNotEmpty(request.getPaymentType())) {
+      filters.add(Filter.eq("paymentTypeId", request.getPaymentType()));
+      model.addAttribute("paymentType", request.getPaymentType());
+    }
     if (request.getOrderStatus() != null) {
-    	if (OrderStatus.PAID == request.getOrderStatus()) {
-			OrderStatus[] statusArray = {OrderStatus.PAID,OrderStatus.FINISHED};
-			filters.add(Filter.in("status", statusArray));
-		}else {
-			filters.add(Filter.eq("status", request.getOrderStatus()));
-		}
-        model.addAttribute("orderStatus", request.getOrderStatus());
+      if (OrderStatus.PAID == request.getOrderStatus()) {
+        OrderStatus[] statusArray = {OrderStatus.PAID, OrderStatus.FINISHED};
+        filters.add(Filter.in("status", statusArray));
+      } else {
+        filters.add(Filter.eq("status", request.getOrderStatus()));
+      }
+      model.addAttribute("orderStatus", request.getOrderStatus());
     }
     if (request.getPaymentChannel() != null) {
-        filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));
-        model.addAttribute("paymentChannel", request.getPaymentChannel());
-    } 
+      filters.add(Filter.eq("paymentChannel", request.getPaymentChannel()));
+      model.addAttribute("paymentChannel", request.getPaymentChannel());
+    }
     if (request.getOrderDateFrom() != null) {
       filters.add(Filter.ge("createDate", TimeUtils.formatDate2Day(request.getOrderDateFrom())));
       model.addAttribute("orderDateFrom", request.getOrderDateFrom());
@@ -107,7 +109,7 @@ public class SallerOrderController extends BaseController {
     orderService.updateSallerOrderStatus(id, status);
     return SUCCESS_MESSAGE;
   }
-  
+
   /**
    * 删除
    */
@@ -116,12 +118,12 @@ public class SallerOrderController extends BaseController {
     if (ids != null && ids.length > 0) {
       for (Long id : ids) {
         Order order = orderService.find(id);
-       if(order.getIsSallerOrder() && OrderStatus.UNPAID.ordinal() == order.getStatus().ordinal()){
-         orderService.delete(id);
-       }
+        if (order.getIsSallerOrder() && OrderStatus.UNPAID.ordinal() == order.getStatus().ordinal()) {
+          orderService.delete(id);
+        }
       }
     }
     return SUCCESS_MESSAGE;
   }
-  
+
 }
