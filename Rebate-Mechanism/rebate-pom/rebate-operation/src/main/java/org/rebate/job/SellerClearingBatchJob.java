@@ -155,7 +155,7 @@ public class SellerClearingBatchJob {
    * @param reqSn
    */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) 
-  private void notifyClearingRecordByJiupai(String reqSn){
+  public void notifyClearingRecordByJiupai(String reqSn){
       Timer timer=new Timer();
       long delay = getDelayVal();//延迟10分钟后
       long period = getPeriodVal();//每5分钟执行一次
@@ -179,7 +179,8 @@ public class SellerClearingBatchJob {
 								  for (int j = 0; j < jsonArray.size(); j++) {
 									  JSONObject jsonObject = jsonArray.getJSONObject(j);
 									  String ordSts = jsonObject.getString("ordSts");
-									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)) {//即非最终结果
+									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)
+											&& ordSts.indexOf("S") < 0 && ordSts.indexOf("F") < 0) {//即非最终结果 
 										  allSuccess = false;
 										  break;
 									  }
@@ -207,12 +208,12 @@ public class SellerClearingBatchJob {
 										  }
 										  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
 										  SellerClearingRecord record = findNeedClearingRecord(resBatchNo, null, clearingSn);
-										   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
-												   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
+										   if (record != null && (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts) 
+												   || ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts))) {//即有最终结果
 												   	String msg = tamTxTyp + ordSts;
-												    if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
+												    if (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts)) {//处理成功
 												    	updateRecord(record, ClearingStatus.SUCCESS, msg);
-													}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
+													}else if (ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts)){//处理失败
 														updateRecord(record, ClearingStatus.FAILED, msg);
 													}
 										   }
@@ -443,7 +444,7 @@ public class SellerClearingBatchJob {
    * (异步)隔一段时间请求通联交易结果查询接口，自动更新商家货款记录的状态
    * @param reqSn
    */
-  private void notifyClearingRecordByAllinpay(String reqSn){
+  public void notifyClearingRecordByAllinpay(String reqSn){
 	  TranxServiceImpl tranxService = new TranxServiceImpl();
       Timer timer=new Timer();
       long delay = getDelayVal();//延迟10分钟后

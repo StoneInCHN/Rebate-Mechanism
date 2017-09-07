@@ -103,10 +103,10 @@ public class JiuPaiController extends BaseController {
    * @return
    */
   @RequestMapping(value = "/capBatchQuery", method = RequestMethod.POST)
-  public @ResponseBody Map<String, String> capBatchQuery() {
+  public @ResponseBody Map<String, String> capBatchQuery(String reqSn) {
       GateWayService gateWayService = new GateWayService();
 	  BatchQueryReq req = new BatchQueryReq();
-	  req.setBatchNo("20170819225505");
+	  req.setBatchNo(reqSn);
 	  req.setPageNum(1);
 	  req.setPageSize(200);
       return gateWayService.capBatchQuery(req);

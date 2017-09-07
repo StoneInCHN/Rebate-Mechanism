@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.quartz.Job;
 import org.rebate.beans.Message;
 import org.rebate.controller.base.BaseController;
+import org.rebate.entity.commonenum.CommonEnum.PaymentChannel;
 import org.rebate.job.AreaConsumeReportJob;
 import org.rebate.job.LeScoreRecordJob;
 import org.rebate.job.SellerClearingBatchJob;
@@ -94,10 +95,38 @@ public class JobManagerController extends BaseController {
    * @return
    */
   @RequestMapping(value = "/manualQueryLeScoreJob", method = RequestMethod.POST)
-  public @ResponseBody Message manualAreaConsumeJob(String reqSn) {
+  public @ResponseBody Message manualAreaConsumeJob(String reqSn, PaymentChannel channel) {
       try {
     	  if (reqSn != null) {
-    	      leScoreRecordJob.notifyWithdrawRecordByAllinpay(reqSn);
+    		  if (PaymentChannel.ALLINPAY == channel) {
+    			  leScoreRecordJob.notifyWithdrawRecordByAllinpay(reqSn);
+			  }
+    		  if (PaymentChannel.JIUPAI == channel) {
+    			  leScoreRecordJob.notifyWithdrawRecordByJiuPai(reqSn);
+			  }  
+    	      return Message.success("手动查询代付交易结果并更新乐分记录!");
+    	    } else {
+    	      return Message.success("reqSn参数为空!");
+    	    }
+      } catch (Exception e) {
+          return Message.error(e.getMessage());
+      }
+  }
+  /**
+   * 手动查询货款批量结算交易结果并更货款记录
+   * @param manualDate
+   * @return
+   */
+  @RequestMapping(value = "/manualQueryClearingJob", method = RequestMethod.POST)
+  public @ResponseBody Message manualQueryClearingJob(String reqSn, PaymentChannel channel) {
+      try {
+    	  if (reqSn != null) {
+    		  if (PaymentChannel.ALLINPAY == channel) {
+    			  sellerClearingBatchJob.notifyClearingRecordByAllinpay(reqSn);
+			  }
+    		  if (PaymentChannel.JIUPAI == channel) {
+    			  sellerClearingBatchJob.notifyClearingRecordByJiupai(reqSn);
+			  }    		  
     	      return Message.success("手动查询代付交易结果并更新乐分记录!");
     	    } else {
     	      return Message.success("reqSn参数为空!");

@@ -135,7 +135,8 @@ public class LeScoreRecordJob {
 								  for (int j = 0; j < jsonArray.size(); j++) {
 									  JSONObject jsonObject = jsonArray.getJSONObject(j);
 									  String ordSts = jsonObject.getString("ordSts");
-									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)) {//即非最终结果
+									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)
+												&& ordSts.indexOf("S") < 0 && ordSts.indexOf("F") < 0) {//即非最终结果
 										  allSuccess = false;
 										  break;
 									  }
@@ -164,14 +165,14 @@ public class LeScoreRecordJob {
 									  }
 									  String withDrawSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
 									  LeScoreRecord record = findNeedLeScoreRecord(resBatchNo, null, withDrawSn);
-									   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
-											   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
+									   if (record != null && (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts) 
+											   || ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts))) {//即有最终结果
 										   
 												String msg = tamTxTyp + ordSts;
-												if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
+												if (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts)) {//处理成功
 													LeScoreRecord successRecord = updateRecord(record, ClearingStatus.SUCCESS, msg);
 													leScoreRecordService.update(successRecord);
-												}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
+												}else if (ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts)){//处理失败
 													LeScoreRecord failedRecord = updateRecord(record, ClearingStatus.FAILED, msg);
 													leScoreRecordService.update(failedRecord);
 												}
