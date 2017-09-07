@@ -128,8 +128,25 @@ public class LeScoreRecordJob {
 					  Map<String, String> resMap = gateWayService.capBatchQuery(req);
 					  if (resMap.get("tamtCapQueryList") != null) {
 					    	String queryListStr = resMap.get("tamtCapQueryList");
-							  JSONArray jsonArray = JSON.parseArray(queryListStr);
-							  if (jsonArray.size() > 0) {
+					    	
+							boolean allSuccess = true;//标记是否完全处理完成
+							JSONArray jsonArray = JSON.parseArray(queryListStr);
+							if (jsonArray.size() > 0) {
+								  for (int j = 0; j < jsonArray.size(); j++) {
+									  JSONObject jsonObject = jsonArray.getJSONObject(j);
+									  String ordSts = jsonObject.getString("ordSts");
+									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)) {//即非最终结果
+										  allSuccess = false;
+										  break;
+									  }
+								  }
+							}else {
+								  allSuccess = false;
+								  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "tamtCapQueryList size is 0");
+							}
+							  
+							if (allSuccess) {
+								try {
 								  for (int j = 0; j < jsonArray.size(); j++) {
 									  JSONObject jsonObject = jsonArray.getJSONObject(j);
 									  Setting setting = SettingUtils.get();
@@ -149,7 +166,7 @@ public class LeScoreRecordJob {
 									  LeScoreRecord record = findNeedLeScoreRecord(resBatchNo, null, withDrawSn);
 									   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
 											   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
-								        	try {
+										   
 												String msg = tamTxTyp + ordSts;
 												if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
 													LeScoreRecord successRecord = updateRecord(record, ClearingStatus.SUCCESS, msg);
@@ -158,15 +175,15 @@ public class LeScoreRecordJob {
 													LeScoreRecord failedRecord = updateRecord(record, ClearingStatus.FAILED, msg);
 													leScoreRecordService.update(failedRecord);
 												}
-											} catch (Exception e) {
-												LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "(updateRecord)Catch Exception: %s", e.getMessage());
-												e.printStackTrace();
-											} finally{
-												cancel();//结束
-											}
 									   }
 									   LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "batchNo: %s, mercOrdNo: %s", resBatchNo, mercOrdNo);
 								  }
+								} catch (Exception e) {
+									LogUtil.debug(LeScoreRecordJob.class, "notifyWithdrawRecordByJiuPai", "(updateRecord)Catch Exception: %s", e.getMessage());
+									e.printStackTrace();
+								} finally{
+									cancel();//结束
+								}
 							  }
 					   }
 				  

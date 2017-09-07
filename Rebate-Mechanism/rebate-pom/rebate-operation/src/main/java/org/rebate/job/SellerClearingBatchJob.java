@@ -173,42 +173,57 @@ public class SellerClearingBatchJob {
 						Map<String, String> resMap = gateWayService.capBatchQuery(req);
 					    if (resMap.get("tamtCapQueryList") != null) {
 							  String queryListStr = resMap.get("tamtCapQueryList");
+							  boolean allSuccess = true;//标记是否完全处理完成
 							  JSONArray jsonArray = JSON.parseArray(queryListStr);
 							  if (jsonArray.size() > 0) {
 								  for (int j = 0; j < jsonArray.size(); j++) {
 									  JSONObject jsonObject = jsonArray.getJSONObject(j);
-									  Setting setting = SettingUtils.get();
-									  String merchantId = setting.getJiupaiMerchantId();
-									  String resBatchNo = jsonObject.getString("batchNo");
-									  String mercOrdNo = jsonObject.getString("mercOrdNo");
 									  String ordSts = jsonObject.getString("ordSts");
-									  String tamTxTyp = jsonObject.getString("tamTxTyp");
-				  					  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
-				  							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
-									  if (!mercOrdNo.startsWith(merchantId)) {
-										  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
-										  continue; 
+									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)) {//即非最终结果
+										  allSuccess = false;
+										  break;
 									  }
-									  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
-									  SellerClearingRecord record = findNeedClearingRecord(resBatchNo, null, clearingSn);
-									   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
-											   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
-								        	try {
-											   	String msg = tamTxTyp + ordSts;
-											    if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
-											    	updateRecord(record, ClearingStatus.SUCCESS, msg);
-												}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
-													updateRecord(record, ClearingStatus.FAILED, msg);
-												}
-								        	} catch (Exception e) {
-								        		LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "(updateRecord)Catch Exception: %s", e.getMessage());
-								        		e.printStackTrace();
-								        	} finally{
-								        		cancel();//结束Timer
-								        	}
-									   }
-									   LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", reqSn, mercOrdNo);
 								  }
+							  }else {
+								  allSuccess = false;
+								  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "tamtCapQueryList size is 0");
+							  }
+							  
+							  if (allSuccess) {
+								  try {
+									  for (int j = 0; j < jsonArray.size(); j++) {
+										  JSONObject jsonObject = jsonArray.getJSONObject(j);
+										  Setting setting = SettingUtils.get();
+										  String merchantId = setting.getJiupaiMerchantId();
+										  String resBatchNo = jsonObject.getString("batchNo");
+										  String mercOrdNo = jsonObject.getString("mercOrdNo");
+										  String ordSts = jsonObject.getString("ordSts");
+										  String tamTxTyp = jsonObject.getString("tamTxTyp");
+					  					  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "merchantId: %s, batchNo: %s, mercOrdNo: %s,ordSts: %s, tamTxTyp: %s",
+					  							merchantId, resBatchNo, mercOrdNo, ordSts, tamTxTyp);
+										  if (!mercOrdNo.startsWith(merchantId)) {
+											  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "merchantId + withDrawSn != 商户订单号(mercOrdNo)");
+											  continue; 
+										  }
+										  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
+										  SellerClearingRecord record = findNeedClearingRecord(resBatchNo, null, clearingSn);
+										   if (record != null && ("S".equals(ordSts) || "处理成功".equals(ordSts) 
+												   || "N".equals(ordSts) || "处理失败".equals(ordSts))) {//即有最终结果
+												   	String msg = tamTxTyp + ordSts;
+												    if ("S".equals(ordSts) || "处理成功".equals(ordSts)) {//处理成功
+												    	updateRecord(record, ClearingStatus.SUCCESS, msg);
+													}else if ("N".equals(ordSts) || "处理失败".equals(ordSts)){//处理失败
+														updateRecord(record, ClearingStatus.FAILED, msg);
+													}
+										   }
+										   LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "batchNo: %s, mercOrdNo: %s", reqSn, mercOrdNo);
+									  }
+						        	} catch (Exception e) {
+						        		LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "(updateRecord)Catch Exception: %s", e.getMessage());
+						        		e.printStackTrace();
+						        	} finally{
+						        		cancel();//结束Timer
+						        	}
 							  }
 						}
 				} catch (Exception e) {

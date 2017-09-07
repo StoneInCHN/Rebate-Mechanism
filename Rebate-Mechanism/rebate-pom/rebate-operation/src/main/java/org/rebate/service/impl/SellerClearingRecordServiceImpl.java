@@ -246,8 +246,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
 
     BigDecimal totalClearingAmount = new BigDecimal(0);// 货款结算总金额
     BigDecimal totalHandlingCharge = new BigDecimal(0);// 手续费总金额
-    Map<String, Set<Order>> sellerOrdersMap = new HashMap<String, Set<Order>>();// 商家货款编号(KEY) :
-                                                                                // 订单列表 (VALUE)
+    Map<String, Set<Order>> sellerOrdersMap = new HashMap<String, Set<Order>>();// 商家货款编号(KEY) :  订单列表 (VALUE)
     List<SellerClearingRecord> records = new ArrayList<SellerClearingRecord>();
     for (SellerClearingOrders clearingOrders : clearingOrdersList) {
       SellerClearingRecord record = clearingOrders.getRecord();
@@ -304,8 +303,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public String sellerClearingByJiuPai(List<SellerClearingOrders> clearingOrdersList) {
     if (clearingOrdersList.size() > 0) {
-      Map<String, Set<Order>> sellerOrdersMap = new HashMap<String, Set<Order>>();// 商家货款编号(KEY) :
-                                                                                  // 订单列表 (VALUE)
+      Map<String, Set<Order>> sellerOrdersMap = new HashMap<String, Set<Order>>();// 商家货款编号(KEY) : 订单列表 (VALUE)
       Map<String, SellerClearingRecord> snClearingRecordMap =
           new HashMap<String, SellerClearingRecord>();// 结算货款单编号(KEY) : 结算货款记录 (VALUE)
       for (SellerClearingOrders clearingOrders : clearingOrdersList) {
@@ -319,8 +317,7 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
       for (Map.Entry<String, SellerClearingRecord> entry : snClearingRecordMap.entrySet()) {
         SellerClearingRecord record = entry.getValue();
         BatchTransferInfo info = new BatchTransferInfo();
-        BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());// 结算金额 - 手续费
-                                                                                       // = 代付的金额
+        BigDecimal payAmount = record.getAmount().subtract(record.getHandlingCharge());// 结算金额 - 手续费  = 代付的金额
         String payStr =
             payAmount.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP)
                 .toString();// 金额单位：分
@@ -372,6 +369,8 @@ public class SellerClearingRecordServiceImpl extends BaseServiceImpl<SellerClear
                   reqSn = batchNo;
                 }
               } else {// 未受理 例如CAP00530不支持此银行卡 先保存失败的记录 然后走货款单笔结算流程
+                record.setReqSn(batchNo);
+                record.setSn(sn);
                 record.setClearingStatus(ClearingStatus.FAILED);
               }
               record.setRemark(errorMsg);
