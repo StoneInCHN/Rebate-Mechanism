@@ -20,7 +20,9 @@ import org.rebate.entity.commonenum.CommonEnum.SettingConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.json.base.BaseRequest;
+import org.rebate.json.base.BaseResponse;
 import org.rebate.json.base.ResponseOne;
+import org.rebate.json.request.PushMsgRequest;
 import org.rebate.json.request.SettingConfigRequest;
 import org.rebate.service.ApkVersionService;
 import org.rebate.service.EndUserService;
@@ -109,6 +111,38 @@ public class CommonController extends MobileBaseController {
     return response;
   }
 
+
+  /**
+   * 设置消息推送是否开启
+   * 
+   * @param req
+   * @return
+   */
+  @RequestMapping(value = "/pushMsgSwitch", method = RequestMethod.POST)
+  @UserValidCheck(userType = CheckUserType.ENDUSER)
+  public @ResponseBody BaseResponse pushMsgSwitch(@RequestBody PushMsgRequest req) {
+
+    BaseResponse response = new BaseResponse();
+    Long userId = req.getUserId();
+    String token = req.getToken();
+    Boolean msgSwitch = req.getMsgSwitch();
+
+
+    EndUser endUser = endUserService.find(userId);
+    endUser.setIsPushMsg(msgSwitch);
+    endUserService.update(endUser);
+
+    if (LogUtil.isDebugEnabled(CommonController.class)) {
+      LogUtil.debug(CommonController.class, "pushMsgSwitch",
+          "push msg switch changed.userId: %s, msgSwitch: %s", userId, msgSwitch);
+    }
+
+    String newtoken = TokenGenerator.generateToken(token);
+    endUserService.createEndUserToken(newtoken, userId);
+    response.setToken(newtoken);
+    response.setCode(CommonAttributes.SUCCESS);
+    return response;
+  }
 
   /**
    * 获取app版本更新信息

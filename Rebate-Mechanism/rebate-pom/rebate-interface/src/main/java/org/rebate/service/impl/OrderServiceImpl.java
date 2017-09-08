@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.rebate.beans.Message;
 import org.rebate.common.log.LogUtil;
 import org.rebate.dao.AgentCommissionConfigDao;
@@ -38,6 +39,7 @@ import org.rebate.entity.SettingConfig;
 import org.rebate.entity.Sn.Type;
 import org.rebate.entity.SystemConfig;
 import org.rebate.entity.UserRecommendRelation;
+import org.rebate.entity.commonenum.CommonEnum.AppPlatform;
 import org.rebate.entity.commonenum.CommonEnum.CommonStatus;
 import org.rebate.entity.commonenum.CommonEnum.ImageType;
 import org.rebate.entity.commonenum.CommonEnum.LeBeanChangeType;
@@ -48,14 +50,20 @@ import org.rebate.entity.commonenum.CommonEnum.SystemConfigKey;
 import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.service.impl.BaseServiceImpl;
+import org.rebate.json.request.PushMsgRequest;
 import org.rebate.service.FileService;
 import org.rebate.service.OrderService;
+import org.rebate.utils.JPushUtil;
+import org.rebate.utils.SpringUtils;
 import org.rebate.utils.TimeUtils;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import cn.jpush.api.push.model.PushPayload;
 
 
 @Service("orderServiceImpl")
@@ -95,6 +103,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   @Resource(name = "salesmanSellerRelationDaoImpl")
   private SalesmanSellerRelationDao salesmanSellerRelationDao;
+
+  @Resource(name = "taskExecutor")
+  private TaskExecutor taskExecutor;
 
   @Resource(name = "orderDaoImpl")
   public void setBaseDao(OrderDao orderDao) {
@@ -294,6 +305,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public Order updateOrderInfo(Order order) {
 
+    List<PushMsgRequest> pushMsgReqs = new ArrayList<PushMsgRequest>();
     Long orderId = order.getId();
     EndUser endUser = order.getEndUser();
     Seller seller = order.getSeller();
@@ -305,6 +317,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
       seller.setTotalOrderAmount(seller.getTotalOrderAmount().add(order.getAmount()));
       seller.setUnClearingAmount(seller.getUnClearingAmount().add(order.getSellerIncome()));
       sellerDao.merge(seller);
+
+      /**
+       * 推送to商家
+       */
+      addMsg("0", sellerEndUser,
+          SpringUtils.getMessage("rebate.sms.order.seller", endUser.getCellPhoneNum()), pushMsgReqs);
     }
 
     if (BooleanUtils.isTrue(order.getIsSallerOrder())) {
@@ -551,7 +569,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           && limitConfig != null && limitConfig.getConfigValue() != null) {
         List<EndUser> records =
             userRecommendIncome(userRecommendRelation, directUserConfig, indirectUserConfig, null,
-                0, rebateAmount, limitConfig, orderId, endUser);
+                0, rebateAmount, limitConfig, orderId, endUser, pushMsgReqs);
         if (!CollectionUtils.isEmpty(records)) {
           endUserDao.merge(records);
         }
@@ -604,13 +622,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         salesmanSellerRelation.setTotalRecommendLeScore(salesmanSellerRelation
             .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
         salesmanSellerRelationDao.merge(salesmanSellerRelation);
+
+        /**
+         * 推送to业务员
+         */
+        addMsg("2", salesman,
+            SpringUtils.getMessage("rebate.sms.order.salesman", seller.getName()), pushMsgReqs);
+
       }
       // }
 
       /**
        * 分销商提成
        */
-      List<EndUser> agents = agentCommissionIncome(rebateAmount, seller.getArea());
+      List<EndUser> agents =
+          agentCommissionIncome(rebateAmount, seller.getArea(), seller.getName(), pushMsgReqs);
       if (!CollectionUtils.isEmpty(agents)) {
         endUserDao.merge(agents);
       }
@@ -622,10 +648,19 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             "updateOrderInfo",
             "update order info finished for pay callback. orderId: %s,sn: %s,orderStatus: %s,payTime: %s",
             order.getId(), order.getSn(), order.getStatus().toString(), order.getPaymentTime());
+
+
+    taskExecutor.execute(new Runnable() {
+      public void run() {
+        pushMsg(pushMsgReqs, order.getSn());
+      }
+    });
+
     return order;
   }
 
-  private List<EndUser> agentCommissionIncome(BigDecimal rebateAmount, Area area) {
+  private List<EndUser> agentCommissionIncome(BigDecimal rebateAmount, Area area,
+      String sellerName, List<PushMsgRequest> reqs) {
     List<EndUser> records = new ArrayList<EndUser>();
     if (area != null) {
       EndUser agent = endUserDao.getAgentByArea(area);
@@ -646,9 +681,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
           agent.setTotalLeScore(agent.getTotalLeScore().add(agentAmount));
           agent.getLeScoreRecords().add(leScoreRecord);
           records.add(agent);
+
+          /**
+           * 推送to代理商
+           */
+          addMsg("3", agent, SpringUtils.getMessage("rebate.sms.order.agent", sellerName), reqs);
         }
       }
-      records.addAll(agentCommissionIncome(rebateAmount, area.getParent()));
+      records.addAll(agentCommissionIncome(rebateAmount, area.getParent(), sellerName, reqs));
     }
     return records;
 
@@ -656,7 +696,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
   private List<EndUser> userRecommendIncome(UserRecommendRelation userRecommendRelation,
       SystemConfig directUser, SystemConfig indirectUser, SystemConfig leScorePer, int i,
-      BigDecimal rebateAmount, SystemConfig limitConfig, Long orderId, EndUser consumeUser) {
+      BigDecimal rebateAmount, SystemConfig limitConfig, Long orderId, EndUser consumeUser,
+      List<PushMsgRequest> reqs) {
 
     List<EndUser> records = new ArrayList<EndUser>();
     Integer limitLevel = Integer.parseInt(limitConfig.getConfigValue());
@@ -704,10 +745,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             .getTotalRecommendLeScore().add(leScoreRecord.getAmount()));
         userRecommendRelationDao.merge(userRecommendRelation);
         records.add(userRecommend);
+
+        /**
+         * 推送to上级推荐好友
+         */
+        addMsg("1", userRecommend,
+            SpringUtils.getMessage("rebate.sms.order.recommender", consumeUser.getCellPhoneNum()),
+            reqs);
       }
 
       records.addAll(userRecommendIncome(userRecommendRelation.getParent(), directUser,
-          indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId, consumeUser));
+          indirectUser, leScorePer, i, rebateAmount, limitConfig, orderId, consumeUser, reqs));
     }
     return records;
   }
@@ -962,5 +1010,64 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
   }
 
 
+  /**
+   * 组装消息推送实体
+   * 
+   * @param type
+   * @param endUser
+   * @param alert
+   * @param pushReqs
+   */
+  public void addMsg(String type, EndUser endUser, String alert, List<PushMsgRequest> pushReqs) {
+    if (!StringUtils.isEmpty(endUser.getJpushRegId())
+        && BooleanUtils.isTrue(endUser.getIsPushMsg())) {
+      PushMsgRequest req = new PushMsgRequest();
+      req.setType(type);
+      req.setAlert(alert);
+      req.setRegId(endUser.getJpushRegId());
+      req.setUserId(endUser.getId());
+      AppPlatform appPlatform = endUserDao.getEndUserAppPlatform(endUser.getId());
+      req.setAppPlatform(appPlatform);
+      pushReqs.add(req);
+    }
 
+  }
+
+  /**
+   * 消息推送
+   * 
+   * @param appPlatform
+   * @param map
+   * @param regId
+   */
+  public void pushMsg(List<PushMsgRequest> reqs, String orderSn) {
+    try {
+      List<Long> userIds = new ArrayList<Long>();
+      for (PushMsgRequest req : reqs) {
+        userIds.add(req.getUserId());
+        PushPayload payload = null;
+        if (AppPlatform.ANDROID.equals(req.getAppPlatform())) {
+          payload =
+              JPushUtil.buildPushObject_android_registerId(req.getAlert(), null, req.getRegId());
+        }
+        if (AppPlatform.IOS.equals(req.getAppPlatform())) {
+          payload = JPushUtil.buildPushObject_ios_registerId(req.getAlert(), null, req.getRegId());
+        }
+        if (payload != null) {
+          JPushUtil.sendPush(payload, null, null);
+        }
+      }
+      LogUtil
+          .debug(
+              OrderServiceImpl.class,
+              "pushMsg",
+              "push msg to users successfully after pay order. msgSize: %s,orderSn: %s,pushUserIds: %s",
+              reqs.size(), orderSn, userIds.toString());
+    } catch (Exception e) {
+      LogUtil.debug(OrderServiceImpl.class, "pushMsg",
+          "Occur Exception when push msg to users. msgSize: %s", reqs.size());
+      e.printStackTrace();
+    }
+
+  }
 }

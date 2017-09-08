@@ -1119,7 +1119,7 @@ public class EndUserController extends MobileBaseController {
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",
             "area.id", "area.name", "curScore", "curLeMind", "curLeScore", "totalScore",
             "totalLeMind", "totalLeScore", "curLeBean", "totalLeBean", "isBindWeChat",
-            "wechatNickName", "isSalesman", "isSalesmanApply"};
+            "wechatNickName", "isSalesman", "isSalesmanApply", "isPushMsg"};
     Map<String, Object> map = FieldFilterUtils.filterEntityMap(properties, endUser);
     Agent agent = endUser.getAgent();
     if (agent != null) {

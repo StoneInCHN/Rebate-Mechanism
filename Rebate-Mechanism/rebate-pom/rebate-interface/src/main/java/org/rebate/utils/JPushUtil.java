@@ -7,6 +7,7 @@ import org.rebate.beans.Setting;
 
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
+import cn.jpush.api.push.model.Options;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
@@ -139,14 +140,14 @@ public class JPushUtil {
   public static PushPayload buildPushObject_ios_registerId(String alert,
       Map<String, String> extras, String... registrationIds) {
     // ios推送生产环境setApnsProduction(true)
-    // return PushPayload.newBuilder().setPlatform(Platform.ios())
-    // .setAudience(Audience.registrationId(registrationIds))
-    // .setNotification(Notification.ios(alert, extras))
-    // .setOptions(Options.newBuilder().setApnsProduction(true).build()).build();
-    // ios推送开发环境
     return PushPayload.newBuilder().setPlatform(Platform.ios())
         .setAudience(Audience.registrationId(registrationIds))
-        .setNotification(Notification.ios(alert, extras)).build();
+        .setNotification(Notification.ios(alert, extras))
+        .setOptions(Options.newBuilder().setApnsProduction(true).build()).build();
+    // // ios推送开发环境
+    // return PushPayload.newBuilder().setPlatform(Platform.ios())
+    // .setAudience(Audience.registrationId(registrationIds))
+    // .setNotification(Notification.ios(alert, extras)).build();
   }
 
   /**
@@ -187,10 +188,11 @@ public class JPushUtil {
     map.put("id", "我是ID");
     map.put("title", "我是title");
     String[] regIds = {"18071adc0337926978c"};
-    PushPayload payload =
-        JPushUtil.buildPushObject_android_registerId("推送广播，推送到指定regId设备", map, regIds);// 100d85590944b10139b
     // PushPayload payload =
-    // JPushUtil.buildPushObject_ios_registerId("推送广播，推送到指定regId设备", map, "13165ffa4e320612bdc");//
+    // JPushUtil.buildPushObject_android_registerId("推送广播，推送到指定regId设备", map, regIds);//
+    // 100d85590944b10139b
+    PushPayload payload =
+        JPushUtil.buildPushObject_ios_registerId("推送广播，推送到指定regId设备", map, "101d8559097d52768af");//
     JPushUtil.sendPush(payload, setting.getMasterSecret(), setting.getAppKey());
 
   }

@@ -298,6 +298,20 @@ public class EndUser extends BaseEntity {
    */
   private BigDecimal tmpBonus = new BigDecimal("0");
 
+  /**
+   * 是否开启消息推送
+   */
+  private Boolean isPushMsg;
+
+
+  public Boolean getIsPushMsg() {
+    return isPushMsg;
+  }
+
+  public void setIsPushMsg(Boolean isPushMsg) {
+    this.isPushMsg = isPushMsg;
+  }
+
   @Column(scale = 4, precision = 12)
   public BigDecimal getTmpBonus() {
     return tmpBonus;
