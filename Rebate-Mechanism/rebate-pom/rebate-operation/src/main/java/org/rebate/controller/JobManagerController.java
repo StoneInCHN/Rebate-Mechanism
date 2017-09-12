@@ -106,7 +106,7 @@ public class JobManagerController extends BaseController {
 			  }  
     	      return Message.success("手动查询代付交易结果并更新乐分记录!");
     	    } else {
-    	      return Message.success("reqSn参数为空!");
+    	      return Message.success("reqSn 或者 channel 参数为空!");
     	    }
       } catch (Exception e) {
           return Message.error(e.getMessage());
@@ -120,16 +120,16 @@ public class JobManagerController extends BaseController {
   @RequestMapping(value = "/manualQueryClearingJob", method = RequestMethod.POST)
   public @ResponseBody Message manualQueryClearingJob(String reqSn, PaymentChannel channel) {
       try {
-    	  if (reqSn != null) {
+    	  if (reqSn != null || channel == null) {
     		  if (PaymentChannel.ALLINPAY == channel) {
     			  sellerClearingBatchJob.notifyClearingRecordByAllinpay(reqSn);
 			  }
     		  if (PaymentChannel.JIUPAI == channel) {
     			  sellerClearingBatchJob.notifyClearingRecordByJiupai(reqSn);
 			  }    		  
-    	      return Message.success("手动查询代付交易结果并更新乐分记录!");
+    	      return Message.success("手动查询货款批量结算交易结果并更货款记录!");
     	    } else {
-    	      return Message.success("reqSn参数为空!");
+    	      return Message.success("reqSn 或者 channel 参数为空!");
     	    }
       } catch (Exception e) {
           return Message.error(e.getMessage());

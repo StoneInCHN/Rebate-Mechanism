@@ -128,7 +128,10 @@
 					</th>	
 					<th>
 						<span>${message("rebate.leScoreRecord.withdraw.withdrawMsg")}</span>
-					</th>		
+					</th>	
+					<th>
+						<a href="javascript:;" class="sort" name="reqSn">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交易流水号(交易批次号+记录编号)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+					</th>	
 					<th>
 						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.paymentChannel")}</a>
 					</th>
@@ -241,6 +244,9 @@
 						[/#if]
 					</td>
 					-->
+					<td>
+						<span title="${leScoreRecord.reqSn}${leScoreRecord.sn}">${leScoreRecord.reqSn}${leScoreRecord.sn}</sapn>
+					</td>
 					<td>
 						[#if leScoreRecord.paymentChannel??]
 							[#if  leScoreRecord.paymentChannel =="ALLINPAY"]

@@ -179,8 +179,13 @@ public class SellerClearingBatchJob {
 								  for (int j = 0; j < jsonArray.size(); j++) {
 									  JSONObject jsonObject = jsonArray.getJSONObject(j);
 									  String ordSts = jsonObject.getString("ordSts");
-									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)
-											&& ordSts.indexOf("S") < 0 && ordSts.indexOf("F") < 0) {//即非最终结果 
+									  //预下单、处理失败 、处理中、成功、已退款、已退汇
+//									  if (!"处理成功".equals(ordSts) && !"处理失败".equals(ordSts)
+//											&& ordSts.indexOf("S") < 0 && ordSts.indexOf("F") < 0) {//即非最终结果 
+//										  allSuccess = false;
+//										  break;
+//									  }
+									  if ("预下单".equals(ordSts) || "处理中".equals(ordSts)) {//即非最终结果
 										  allSuccess = false;
 										  break;
 									  }
@@ -189,7 +194,7 @@ public class SellerClearingBatchJob {
 								  allSuccess = false;
 								  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "tamtCapQueryList size is 0");
 							  }
-							  
+							  LogUtil.debug(SellerClearingBatchJob.class, "notifyClearingRecordByJiupai", "allSuccess="+allSuccess); 
 							  if (allSuccess) {
 								  try {
 									  for (int j = 0; j < jsonArray.size(); j++) {
@@ -208,12 +213,22 @@ public class SellerClearingBatchJob {
 										  }
 										  String clearingSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");
 										  SellerClearingRecord record = findNeedClearingRecord(resBatchNo, null, clearingSn);
-										   if (record != null && (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts) 
-												   || ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts))) {//即有最终结果
+//										   if (record != null && (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts) 
+//												   || ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts))) {//即有最终结果
+//												   	String msg = tamTxTyp + ordSts;
+//												    if (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts)) {//处理成功
+//												    	updateRecord(record, ClearingStatus.SUCCESS, msg);
+//													}else if (ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts)){//处理失败
+//														updateRecord(record, ClearingStatus.FAILED, msg);
+//													}
+//										   }
+										   if (record != null && (ordSts.indexOf("成功") >= 0 || "处理失败".equals(ordSts) 
+												   || "已退款".equals(ordSts) || "已退汇".equals(ordSts))) {//即有最终结果
 												   	String msg = tamTxTyp + ordSts;
-												    if (ordSts.indexOf("S") == 0 || "处理成功".equals(ordSts)) {//处理成功
+												    if (ordSts.indexOf("成功") >= 0) {//处理成功
 												    	updateRecord(record, ClearingStatus.SUCCESS, msg);
-													}else if (ordSts.indexOf("F") == 0 || "处理失败".equals(ordSts)){//处理失败
+													}else if ("处理失败".equals(ordSts) 
+															   || "已退款".equals(ordSts) || "已退汇".equals(ordSts)){//处理失败
 														updateRecord(record, ClearingStatus.FAILED, msg);
 													}
 										   }

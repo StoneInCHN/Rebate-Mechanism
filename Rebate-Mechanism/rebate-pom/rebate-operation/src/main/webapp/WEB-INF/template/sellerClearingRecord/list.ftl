@@ -161,10 +161,7 @@
 						<a href="javascript:;" class="sort" name="clearingSn">${message("rebate.sellerClearingRecord.clearingSn")}</a>
 					</th>
 					<th>
-						<a href="javascript:;" class="sort" name="sn">${message("rebate.sellerClearingRecord.sn")}</a>
-					</th>
-					<th>
-						<a href="javascript:;" class="sort" name="reqSn">${message("rebate.sellerClearingRecord.reqSn")}</a>
+						<a href="javascript:;" class="sort" name="reqSn">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交易流水号(交易批次号+记录编号)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 					</th>
 					<th>
 						<a href="javascript:;" class="sort" name="valid">${message("rebate.sellerClearingRecord.valid")}</a>
@@ -216,10 +213,7 @@
 						<span title="${sellerClearingRecord.clearingSn}">${sellerClearingRecord.clearingSn}</sapn>
 					</td>
 					<td>
-						<span title="${sellerClearingRecord.sn}">${sellerClearingRecord.sn}</sapn>
-					</td>
-					<td>
-						<span data-toggle="tooltip" data-placement="left" title="${sellerClearingRecord.reqSn}">${sellerClearingRecord.reqSn}</sapn>
+						<span title="${sellerClearingRecord.reqSn}${sellerClearingRecord.sn}">${sellerClearingRecord.reqSn}${sellerClearingRecord.sn}</sapn>
 					</td>
 					<td>
 						[#if sellerClearingRecord.valid ??]

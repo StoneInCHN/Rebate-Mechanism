@@ -313,13 +313,13 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 				  String errorMsg = jsonObject.getString("errorMsg");
 				  LogUtil.debug(this.getClass(), "capBatchTransfer", "(九派渠道)批量提现 merchantId: %s, batchNo: %s, jrnNo: %s, mercOrdNo: %s,errorCode: %s, errorMsg: %s",
 						merchantId, batchNo, jrnNo, mercOrdNo, errorCode, errorMsg);
-			  if (!mercOrdNo.startsWith(merchantId) || !jrnNo.startsWith(batchNo)) {
-				  LogUtil.debug(this.getClass(), "capBatchTransfer", "(九派渠道)批量提现 merchantId + withDrawSn != 商户订单号(mercOrdNo) 或   batchNo + sn != 交易流水 (jrnNo)");
-				  continue; 
-			  }
-			  String withDrawSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");//乐分提现记录编号
-			  String sn = jrnNo.replace(batchNo, "");//记录序号，例如：0001
-			  LeScoreRecord record = snWithdrawRecordMap.get(withDrawSn);
+				  if (!mercOrdNo.startsWith(merchantId) || !jrnNo.startsWith(batchNo)) {
+					  LogUtil.debug(this.getClass(), "capBatchTransfer", "(九派渠道)批量提现 merchantId + withDrawSn != 商户订单号(mercOrdNo) 或   batchNo + sn != 交易流水 (jrnNo)");
+					  continue; 
+				  }
+				  String withDrawSn = mercOrdNo.replace(setting.getJiupaiMerchantId(), "");//乐分提现记录编号
+				  String sn = jrnNo.replace(batchNo, "");//记录序号，例如：0001
+				  LeScoreRecord record = snWithdrawRecordMap.get(withDrawSn);
 				   if (record != null) {
 					    if ("CAP00500".equals(errorCode)) {//受理成功CAP00500
 					    	record.setReqSn(batchNo);
@@ -331,6 +331,8 @@ public class LeScoreRecordServiceImpl extends BaseServiceImpl<LeScoreRecord, Lon
 						   		reqSn = batchNo;
 							}
 						}else {//例如  CAP00533:不在指定金额区间        CAP00001:数据库操作异常
+					    	record.setReqSn(batchNo);
+					    	record.setSn(sn);
 					  		record.setIsWithdraw(false);
 					  		record.setStatus(ClearingStatus.FAILED);
 					  		record.setWithdrawMsg(errorMsg);//提现返回消息
