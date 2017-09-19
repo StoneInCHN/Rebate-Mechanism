@@ -2019,7 +2019,7 @@ public class EndUserController extends MobileBaseController {
 
     EndUser endUser = endUserService.find(userId);
 
-    Seller seller = endUser.getSellers().iterator().next();
+    Seller seller = endUser.getSeller();
 
     if (seller == null) {
       response.setCode(CommonAttributes.USER_INVALID);
