@@ -356,4 +356,42 @@ public class EndUserController extends BaseController {
     return SUCCESS_MESSAGE;
   }
 
+
+  /**
+   * 修改用户乐分(用户特殊需求) leScoreAmount:减去的乐分
+   */
+  @RequestMapping(value = "/updateLeScore", method = RequestMethod.POST)
+  public @ResponseBody Message updateLeScore(Long id, BigDecimal leScoreAmount) {
+    if (id == null || leScoreAmount == null) {
+      return ERROR_MESSAGE;
+    }
+    EndUser endUser = endUserService.find(id);
+    BigDecimal curLeScore = endUser.getCurLeScore();
+    if (leScoreAmount.compareTo(curLeScore) > 0) {
+      return ERROR_MESSAGE;
+    }
+    if (endUser.getMotivateLeScore().compareTo(leScoreAmount) >= 0) {// 优先消耗激励乐分
+      endUser.setMotivateLeScore(endUser.getMotivateLeScore().subtract(leScoreAmount));
+    } else {
+      BigDecimal diff = leScoreAmount.subtract(endUser.getMotivateLeScore());
+      endUser.setMotivateLeScore(new BigDecimal(0));
+      if (endUser.getIncomeLeScore().compareTo(diff) >= 0) {// 然后消耗业务员乐分
+        endUser.setIncomeLeScore(endUser.getIncomeLeScore().subtract(diff));
+      } else {// 最后消耗代理商乐分
+        BigDecimal remain = diff.subtract(endUser.getIncomeLeScore());
+        endUser.setIncomeLeScore(new BigDecimal(0));
+        endUser.setAgentLeScore(endUser.getAgentLeScore().subtract(remain));
+      }
+    }
+    endUser.setCurLeScore(curLeScore.subtract(leScoreAmount));
+    LogUtil
+        .debug(
+            EndUserController.class,
+            "updateLeScore",
+            "Force update user LeScore! UserId: %s,CellPhone: %s,originalLeScore: %s, subtractLeScore: %s",
+            id, endUser.getCellPhoneNum(), curLeScore, leScoreAmount);
+    endUserService.update(endUser);
+    return SUCCESS_MESSAGE;
+  }
+
 }

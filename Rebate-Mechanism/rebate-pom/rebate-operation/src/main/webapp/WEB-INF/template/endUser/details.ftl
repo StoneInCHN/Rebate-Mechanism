@@ -233,6 +233,7 @@
 									[/#if]
 									<input type="button" class="btn btn-primary" value="${message("rebate.common.back")}" onclick="location.href='list.jhtml'" />
 									<input type="button" id="updateLeMind" class="btn btn-info" value="${message("rebate.endUser.update.leMind")}" />
+									<input type="button" id="updateLeScore" class="btn btn-info" value="修改乐分" />
 								</td>
 							</tr>
 						</table>	
@@ -260,7 +261,9 @@
 		$("#updateLeMind").click(function(){
 			updateLeMind();
 		});
-		
+		$("#updateLeScore").click(function(){
+			updateLeScore();
+		});
 		
 		function updateLeMind(){
 			var content= "<span class='requiredField'>*</span>${message("rebate.endUser.update.cuLeMind")}:<input type='text'  onkeypress='return event.keyCode>=48&&event.keyCode<=57' ng-pattern='/[^a-zA-Z]/' id='mindAmount' value='${endUser.curLeMind}'/>";
@@ -296,6 +299,39 @@
 			d.show();
 		}
 		
+		function updateLeScore(){
+			var content= "<span class='requiredField'>*</span>扣除乐分:<input type='text'  onkeypress='return (event.keyCode>=48&&event.keyCode<=57)||event.keyCode==46' ng-pattern='/[^a-zA-Z]/' id='leScoreAmount' value='0'/>";
+			var d = dialog({
+				title: '提示',
+				content: content,
+				okValue: '确定',
+				ok: function () {
+					$.ajax({
+						url: "updateLeScore.jhtml",
+						type: "POST",
+						data: {
+							id:${endUser.id},
+							leScoreAmount:$("#leScoreAmount").val()
+						},
+						dataType: "json",
+						cache: false,
+						success: function(message) {
+							if(message.type == "success"){
+									alert(message.content);
+									setTimeout(function() {
+										location.reload();
+									}, 1000);
+							}else{
+								alert(message.content);
+							}
+						}
+					});
+				},
+				cancelValue: '取消',
+				cancel: function () {}
+			});
+			d.show();
+		}
 		
 		function setSalesMan(flag){
 			var content = "";
