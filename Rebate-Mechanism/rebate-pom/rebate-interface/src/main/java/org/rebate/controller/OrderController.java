@@ -220,7 +220,7 @@ public class OrderController extends MobileBaseController {
       }
     }
 
-    Order order =
+    final Order order =
         orderService.create(userId, payTypeId, payType, amount, sellerId, remark, isBeanPay,
             deductLeBean);
     if (LogUtil.isDebugEnabled(OrderController.class)) {

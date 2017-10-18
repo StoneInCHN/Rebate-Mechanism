@@ -50,7 +50,7 @@
 				<prop key="hibernate.connection.isolation">2</prop>
 				<prop key="javax.persistence.validation.mode">none</prop>
 				<prop key="hibernate.search.default.directory_provider">org.hibernate.search.store.impl.FSDirectoryProvider</prop>
-    			<prop key="hibernate.search.default.indexBase">E:/index/csh</prop>
+    			<prop key="hibernate.search.default.indexBase">D:/index/csh</prop>
     			<prop key="hibernate.search.default.exclusive_index_use">false</prop>
     			<prop key="hibernate.search.default.locking_strategy">simple</prop>
 			</props>

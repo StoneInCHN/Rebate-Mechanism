@@ -213,7 +213,10 @@ public class EndUser extends BaseEntity {
    * 当前乐豆
    */
   private BigDecimal curLeBean = new BigDecimal("0");
-
+  /**
+   * 预扣除乐豆
+   */
+  private BigDecimal prePayLeBean = new BigDecimal("0");
   /**
    * 累计乐豆（无法提取）
    */
@@ -408,6 +411,15 @@ public class EndUser extends BaseEntity {
 
   public void setCurLeBean(BigDecimal curLeBean) {
     this.curLeBean = curLeBean;
+  }
+
+  @Column(scale = 4, precision = 12)
+  public BigDecimal getPrePayLeBean() {
+    return prePayLeBean;
+  }
+
+  public void setPrePayLeBean(BigDecimal prePayLeBean) {
+    this.prePayLeBean = prePayLeBean;
   }
 
   @Column(scale = 4, precision = 12)

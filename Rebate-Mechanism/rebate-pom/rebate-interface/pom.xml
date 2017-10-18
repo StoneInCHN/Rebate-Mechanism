@@ -1,56 +1,56 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.rebate</groupId>
-    <artifactId>rebate-mechanism</artifactId>
-    <version>0.0.1</version>
-  </parent>
-  <groupId>com.rebate.interface</groupId>
-  <artifactId>rebate-interface</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <name>rebate-interface</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-  		<dependency>
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.rebate</groupId>
+		<artifactId>rebate-mechanism</artifactId>
+		<version>0.0.1</version>
+	</parent>
+	<groupId>com.rebate.interface</groupId>
+	<artifactId>rebate-interface</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>rebate-interface</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			
+
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit-dep</artifactId>
-			
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			
+
 		</dependency>
 		<!-- Expression Language (depends on spring-core) Define this if you use 
 			Spring Expression APIs (org.springframework.expression.*) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
-			
+
 		</dependency>
 		<!-- Bean Factory and JavaBeans utilities (depends on spring-core) Define 
 			this if you use Spring Bean APIs (org.springframework.beans.*) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			
+
 		</dependency>
 		<!-- Aspect Oriented Programming (AOP) Framework (depends on spring-core, 
 			spring-beans) Define this if you use Spring AOP APIs (org.springframework.aop.*) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			
+
 		</dependency>
 		<!-- Application Context (depends on spring-core, spring-expression, spring-aop, 
 			spring-beans) This is the central artifact for Spring's Dependency Injection 
@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			
+
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			
+
 		</dependency>
 		<!-- Transaction Management Abstraction (depends on spring-core, spring-beans, 
 			spring-aop, spring-context) Define this if you use Spring Transactions or 
@@ -79,14 +79,14 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			
+
 		</dependency>
 		<!-- JDBC Data Access Library (depends on spring-core, spring-beans, spring-context, 
 			spring-tx) Define this if you use Spring's JdbcTemplate API (org.springframework.jdbc.*) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			
+
 		</dependency>
 		<!-- Object-to-Relation-Mapping (ORM) integration with Hibernate, JPA, 
 			and iBatis. (depends on spring-core, spring-beans, spring-context, spring-tx) 
@@ -94,7 +94,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			
+
 		</dependency>
 		<!-- Object-to-XML Mapping (OXM) abstraction and integration with JAXB, 
 			JiBX, Castor, XStream, and XML Beans. (depends on spring-core, spring-beans, 
@@ -102,7 +102,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
-			
+
 		</dependency>
 		<!-- Web application development utilities applicable to both Servlet and 
 			Portlet Environments (depends on spring-core, spring-beans, spring-context) 
@@ -111,7 +111,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			
+
 		</dependency>
 		<!-- Spring MVC for Servlet Environments (depends on spring-core, spring-beans, 
 			spring-context, spring-web) Define this if you use Spring MVC with a Servlet 
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			
+
 		</dependency>
 
 		<!-- Support for testing Spring applications with tools such as JUnit and 
@@ -128,55 +128,55 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			
+
 		</dependency>
 
-         <!-- AOP -->
-        <dependency>  
-		    <groupId>org.aspectj</groupId>  
-		    <artifactId>aspectjweaver</artifactId>  
-		</dependency> 
-		
+		<!-- AOP -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
 		<!-- MySQL jdbc driver -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			
+
 		</dependency>
 
 		<!-- Log -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			
+
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			
+
 		</dependency>
 
 		<!-- Hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.1-api</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
-			
+
 		</dependency>
 		<!-- <dependency>
 			<groupId>org.hibernate</groupId>
@@ -186,49 +186,49 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-envers</artifactId>
-			
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-infinispan</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-jbosscache</artifactId>
-			
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-oscache</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-proxool</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-swarmcache</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-testing</artifactId>
-			
+
 		</dependency>
 
 		<!-- Cache -->
@@ -245,8 +245,8 @@
 
 		<!-- Datasource -->
 		<dependency>
-				<groupId>com.mchange</groupId>
-				<artifactId>c3p0</artifactId>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
 		</dependency>
 
 		<!-- Json -->
@@ -254,44 +254,44 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			
+
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			
+
 		</dependency>
 		<dependency>
-         	<groupId>org.wltea</groupId>
-            <artifactId>IKAnalyzer</artifactId>
-            
-        </dependency>
+			<groupId>org.wltea</groupId>
+			<artifactId>IKAnalyzer</artifactId>
+
+		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-search</artifactId>
-			
+
 		</dependency>
 		<!-- Others -->
 		<dependency>
@@ -302,34 +302,34 @@
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			
+
 		</dependency>
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			
+
 		</dependency>
-		
+
 		<!-- <dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-all</artifactId>
@@ -341,87 +341,87 @@
 			<artifactId>jcaptcha</artifactId>
 			
 		</dependency> -->
-		
+
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			
+
 		</dependency>
-		
+
 		<!-- Freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-		
+
 		<!-- jedis -->
 		<dependency>
-		    <groupId>redis.clients</groupId>
-		    <artifactId>jedis</artifactId>
-		    
-		    <type>jar</type>
-		    <scope>compile</scope>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
-		  <groupId>org.springframework.data</groupId>
-		  <artifactId>spring-data-redis</artifactId>
-		  
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+
 		</dependency>
-			<!-- mail -->
+		<!-- mail -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
 		</dependency>
-		
+
 		<dependency>
-		  <groupId>com.rebate.entity</groupId>
-		  <artifactId>rebate-entity</artifactId>
-		  <version>0.0.1-SNAPSHOT</version>
+			<groupId>com.rebate.entity</groupId>
+			<artifactId>rebate-entity</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- jpush -->
 		<dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-       	</dependency>
-       	<dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp</groupId>
-            <artifactId>mockwebserver</artifactId>
-        </dependency>
-        <dependency>
-	    	<groupId>cn.jpush.api</groupId>
-	   	    <artifactId>jpush-client</artifactId>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>mockwebserver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jpush-client</artifactId>
 		</dependency>
 		<!-- http://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
 		<dependency>
-		    <groupId>commons-httpclient</groupId>
-		    <artifactId>commons-httpclient</artifactId>
-		    <version>3.1</version>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpclient</artifactId>
-		    <version>4.4.1</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpmime</artifactId>
-		    <version>4.4.1</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.4.1</version>
 		</dependency>
 		<!-- wechat pay -->
-		 <dependency>
-	    	<groupId>wx.pay</groupId>
-	   	    <artifactId>java</artifactId>
-	   	    <version>1.0</version>
+		<dependency>
+			<groupId>wx.pay</groupId>
+			<artifactId>java</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
-				<groupId>com.google.zxing</groupId>
-				<artifactId>core</artifactId>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
 		</dependency>
 		<!-- 通联支付 -->
 		<dependency>
@@ -440,18 +440,18 @@
 			<version>1.4.1</version>
 		</dependency>
 		<!-- chinese convert pingyin -->
-		 <!-- <dependency>
-	    	<groupId>hanzi2pingyin</groupId>
-	   	    <artifactId>pingyin4j</artifactId>
-	   	    <version>2.5.0</version>
-		</dependency> -->
-  </dependencies>
-  
-    <properties> 
-  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
-  		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format> 
-  	</properties> 
- 	<build>
+		<!-- <dependency>
+           <groupId>hanzi2pingyin</groupId>
+              <artifactId>pingyin4j</artifactId>
+              <version>2.5.0</version>
+       </dependency> -->
+	</dependencies>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+	</properties>
+	<build>
 		<!-- <finalName>rebate-interface-${maven.build.timestamp}</finalName> -->
 		<finalName>rebate-interface</finalName>
 		<pluginManagement>
@@ -480,5 +480,5 @@
 				</includes>
 			</resource>
 		</resources>
-  </build>
+	</build>
 </project>

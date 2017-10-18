@@ -132,7 +132,7 @@ public class NotifyController extends MobileBaseController {
     }
 
     // 商户订单号
-    String out_trade_no =
+    final String out_trade_no =
         new String(request.getParameter("orderNo").getBytes("ISO-8859-1"), "UTF-8");
     // 交易金额
     String total_fee =
@@ -182,7 +182,7 @@ public class NotifyController extends MobileBaseController {
     String retncode = request.getParameter("RETNCODE");// 处理结果码
     String retninfo = request.getParameter("RETNINFO");// 处理结果解释码
     String orderreqtranseq = request.getParameter("ORDERREQTRANSEQ");// 订单请求交易流水号
-    String orderseq = request.getParameter("ORDERSEQ");// 订单号
+    final String orderseq = request.getParameter("ORDERSEQ");// 订单号
     String orderamount = request.getParameter("ORDERAMOUNT");// 订单总金额
     // String productamount = request.getParameter("PRODUCTAMOUNT");
     // String attachamount = request.getParameter("ATTACHAMOUNT");
@@ -294,7 +294,7 @@ public class NotifyController extends MobileBaseController {
         // 处理回调结果
         if ("SUCCESS".equals(xmlMap.get("result_code"))) {
           // 系统订单编号
-          String out_trade_no = xmlMap.get("out_trade_no").toString();
+          final String out_trade_no = xmlMap.get("out_trade_no").toString();
           // 支付的金额
           String total_fee = xmlMap.get("total_fee").toString();
           // 货币种类
@@ -415,7 +415,7 @@ public class NotifyController extends MobileBaseController {
     }
   }
 
-  private void alipayNotifySuccess(String out_trade_no, String total_fee, String trade_status) {
+  private void alipayNotifySuccess(final String out_trade_no, String total_fee, String trade_status) {
     // BigDecimal amount = new BigDecimal(total_fee);
 
     if (LogUtil.isDebugEnabled(NotifyController.class)) {

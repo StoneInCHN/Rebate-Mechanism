@@ -91,6 +91,10 @@ public final class CommonAttributes {
   //
   /** 操作失败 */
   public static final String FAIL_COMMON = "1000"; // 操作失败
+  /** 乐豆预扣除失败 */
+  public static final String FAIL_PRE_PAY_LEBEAN = "4000"; // 操作失败
+  /** 乐豆预扣除失败 */
+  public static final String FAIL_CUR_PAY_LEBEAN = "4001"; // 操作失败
 
   public static final String USER_INVALID = "3000";// 用户非法（禁用）
 
