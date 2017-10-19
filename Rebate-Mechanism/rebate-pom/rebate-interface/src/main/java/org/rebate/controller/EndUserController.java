@@ -265,94 +265,94 @@ public class EndUserController extends MobileBaseController {
     String password = userLoginReq.getPassword();
     String smsCode = userLoginReq.getSmsCode();
 
-    if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
-      response.setCode(CommonAttributes.FAIL_LOGIN);
-      response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
-      return response;
-    }
-    if (LogUtil.isDebugEnabled(EndUserController.class)) {
-      LogUtil.debug(EndUserController.class, "login",
-          "Fetching User from database with CellPhoneNum: %s", cellPhoneNum);
-    }
+//    if (StringUtils.isEmpty(cellPhoneNum) || !isMobileNumber(cellPhoneNum)) {
+//      response.setCode(CommonAttributes.FAIL_LOGIN);
+//      response.setDesc(Message.error("rebate.mobile.invaliable").getContent());
+//      return response;
+//    }
+//    if (LogUtil.isDebugEnabled(EndUserController.class)) {
+//      LogUtil.debug(EndUserController.class, "login",
+//          "Fetching User from database with CellPhoneNum: %s", cellPhoneNum);
+//    }
     EndUser loginUser = endUserService.findByUserMobile(cellPhoneNum);
-    /**
-     * 密码登录
-     */
-    if (!StringUtils.isEmpty(password)) {
-      if (loginUser == null) {
-        response.setCode(CommonAttributes.FAIL_LOGIN);
-        response.setDesc(Message.error("rebate.user.noexist").getContent());
-        return response;
-      }
-      try {
-        password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      // 密码rsa解密后非空验证
-      if (password == null) {
-        response.setCode(CommonAttributes.FAIL_COMMON);
-        response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
-        return response;
-      }
-      // 密码长度验证
-      if (password.length() < setting.getPasswordMinlength()) {
-        response.setCode(CommonAttributes.FAIL_LOGIN);
-        response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
-            .getContent());
-        return response;
-      }
-
-      if (!DigestUtils.md5Hex(password).equals(loginUser.getLoginPwd())) {
-        response.setCode(CommonAttributes.FAIL_LOGIN);
-        response.setDesc(Message.error("rebate.nameorpwd.error").getContent());
-        return response;
-      }
-    }
-    /**
-     * 短信验证码登录 1.手机号已注册，直接登录 2.手机号未注册，注册该手机号并登录
-     */
-    else {
-      SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(cellPhoneNum);
-      if (smsVerficationCode == null) {
-        response.setCode(CommonAttributes.FAIL_LOGIN);
-        response.setDesc(Message.error("rebate.sms.invaliable").getContent());
-        return response;
-      } else {
-        String code = smsVerficationCode.getSmsCode();
-        String timeoutToken = smsVerficationCode.getTimeoutToken();
-        if (timeoutToken != null
-            && !TokenGenerator.smsCodeTokenTimeOut(timeoutToken, setting.getSmsCodeTimeOut())) {
-          if (!smsCode.equals(code)) {
-            response.setCode(CommonAttributes.FAIL_LOGIN);
-            response.setDesc(Message.error("rebate.sms.token.error").getContent());
-            return response;
-          } else {
-            endUserService.deleteSmsCode(cellPhoneNum);
-            if (loginUser == null) {// 用户不存在，登录成功的同时注册该手机号
-              loginUser = endUserService.userReg(cellPhoneNum, null, null);
-              if (LogUtil.isDebugEnabled(EndUserController.class)) {
-                LogUtil.debug(EndUserController.class, "login",
-                    "enduser smsCode login with cellPhoneNum no exist.Reg the cellPhoneNum: %s",
-                    cellPhoneNum);
-              }
-            }
-          }
-        } else {
-          response.setCode(CommonAttributes.FAIL_LOGIN);
-          response.setDesc(Message.error("rebate.sms.token.timeout").getContent());
-          return response;
-        }
-      }
-    }
-
-    if (AccountStatus.LOCKED.equals(loginUser.getAccountStatus())
-        || AccountStatus.DELETE.equals(loginUser.getAccountStatus())) {
-      response.setCode(CommonAttributes.FAIL_LOGIN);
-      response.setDesc(Message.error("rebate.current.user.invalid").getContent());
-      return response;
-    }
+//    /**
+//     * 密码登录
+//     */
+//    if (!StringUtils.isEmpty(password)) {
+//      if (loginUser == null) {
+//        response.setCode(CommonAttributes.FAIL_LOGIN);
+//        response.setDesc(Message.error("rebate.user.noexist").getContent());
+//        return response;
+//      }
+//      try {
+//        password = KeyGenerator.decrypt(password, RSAHelper.getPrivateKey(serverPrivateKey));
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//      }
+//
+//      // 密码rsa解密后非空验证
+//      if (password == null) {
+//        response.setCode(CommonAttributes.FAIL_COMMON);
+//        response.setDesc(Message.error("rebate.pwd.rsa.decrypt.error").getContent());
+//        return response;
+//      }
+//      // 密码长度验证
+//      if (password.length() < setting.getPasswordMinlength()) {
+//        response.setCode(CommonAttributes.FAIL_LOGIN);
+//        response.setDesc(Message.error("rebate.pwd.length.error", setting.getPasswordMinlength())
+//            .getContent());
+//        return response;
+//      }
+//
+//      if (!DigestUtils.md5Hex(password).equals(loginUser.getLoginPwd())) {
+//        response.setCode(CommonAttributes.FAIL_LOGIN);
+//        response.setDesc(Message.error("rebate.nameorpwd.error").getContent());
+//        return response;
+//      }
+//    }
+//    /**
+//     * 短信验证码登录 1.手机号已注册，直接登录 2.手机号未注册，注册该手机号并登录
+//     */
+//    else {
+//      SMSVerificationCode smsVerficationCode = endUserService.getSmsCode(cellPhoneNum);
+//      if (smsVerficationCode == null) {
+//        response.setCode(CommonAttributes.FAIL_LOGIN);
+//        response.setDesc(Message.error("rebate.sms.invaliable").getContent());
+//        return response;
+//      } else {
+//        String code = smsVerficationCode.getSmsCode();
+//        String timeoutToken = smsVerficationCode.getTimeoutToken();
+//        if (timeoutToken != null
+//            && !TokenGenerator.smsCodeTokenTimeOut(timeoutToken, setting.getSmsCodeTimeOut())) {
+//          if (!smsCode.equals(code)) {
+//            response.setCode(CommonAttributes.FAIL_LOGIN);
+//            response.setDesc(Message.error("rebate.sms.token.error").getContent());
+//            return response;
+//          } else {
+//            endUserService.deleteSmsCode(cellPhoneNum);
+//            if (loginUser == null) {// 用户不存在，登录成功的同时注册该手机号
+//              loginUser = endUserService.userReg(cellPhoneNum, null, null);
+//              if (LogUtil.isDebugEnabled(EndUserController.class)) {
+//                LogUtil.debug(EndUserController.class, "login",
+//                    "enduser smsCode login with cellPhoneNum no exist.Reg the cellPhoneNum: %s",
+//                    cellPhoneNum);
+//              }
+//            }
+//          }
+//        } else {
+//          response.setCode(CommonAttributes.FAIL_LOGIN);
+//          response.setDesc(Message.error("rebate.sms.token.timeout").getContent());
+//          return response;
+//        }
+//      }
+//    }
+//
+//    if (AccountStatus.LOCKED.equals(loginUser.getAccountStatus())
+//        || AccountStatus.DELETE.equals(loginUser.getAccountStatus())) {
+//      response.setCode(CommonAttributes.FAIL_LOGIN);
+//      response.setDesc(Message.error("rebate.current.user.invalid").getContent());
+//      return response;
+//    }
 
     String[] properties =
         {"id", "cellPhoneNum", "nickName", "userPhoto", "recommender", "agent.agencyLevel",

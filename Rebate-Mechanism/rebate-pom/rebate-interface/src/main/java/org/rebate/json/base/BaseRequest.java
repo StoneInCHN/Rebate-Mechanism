@@ -1,5 +1,7 @@
 package org.rebate.json.base;
 
+import java.math.BigDecimal;
+
 public class BaseRequest {
 
   /**
@@ -32,6 +34,10 @@ public class BaseRequest {
    * 分页-当前页码
    */
   private Integer pageNumber;
+
+  private Integer type;//pss类型
+
+  private BigDecimal amount;//金额
 
   public Long getEntityId() {
     return entityId;
@@ -96,4 +102,20 @@ public class BaseRequest {
   // public void setMobileNum(String mobileNum) {
   // this.mobileNum = mobileNum;
   // }
+
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
+
+  public Integer getType() {
+    return type;
+  }
+
+  public void setType(Integer type) {
+    this.type = type;
+  }
 }

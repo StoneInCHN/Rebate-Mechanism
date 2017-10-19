@@ -415,6 +415,9 @@ public class EndUser extends BaseEntity {
 
   @Column(scale = 4, precision = 12)
   public BigDecimal getPrePayLeBean() {
+    if(prePayLeBean==null){
+      prePayLeBean = new BigDecimal(0);
+    }
     return prePayLeBean;
   }
 
