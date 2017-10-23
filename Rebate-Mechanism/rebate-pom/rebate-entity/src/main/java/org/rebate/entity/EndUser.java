@@ -234,6 +234,11 @@ public class EndUser extends BaseEntity {
   private BigDecimal curLeBean = new BigDecimal("0");
 
   /**
+   * 预扣除乐豆
+   */
+  private BigDecimal prePayLeBean = new BigDecimal("0");
+
+  /**
    * 累计乐豆（无法提取）
    */
   private BigDecimal totalLeBean = new BigDecimal("0");
@@ -775,5 +780,13 @@ public class EndUser extends BaseEntity {
 
   public void setProvince(Long province) {
     this.province = province;
+  }
+
+  public BigDecimal getPrePayLeBean() {
+    return prePayLeBean;
+  }
+
+  public void setPrePayLeBean(BigDecimal prePayLeBean) {
+    this.prePayLeBean = prePayLeBean;
   }
 }

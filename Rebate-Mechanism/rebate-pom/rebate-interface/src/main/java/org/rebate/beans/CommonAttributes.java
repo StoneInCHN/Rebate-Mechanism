@@ -95,6 +95,11 @@ public final class CommonAttributes {
   public static final String USER_INVALID = "3000";// 用户非法（禁用）
 
   public static final int PAGE_SIZE = 10;//默认每页10条数据
+
+  /** 乐豆预扣除失败 */
+  public static final String FAIL_PRE_PAY_LEBEAN = "4000"; // 操作失败
+  /** 乐豆预扣除失败 */
+  public static final String FAIL_CUR_PAY_LEBEAN = "4001"; // 操作失败
   /**
    * 不可实例化
    */
