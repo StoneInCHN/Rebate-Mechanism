@@ -12,6 +12,7 @@ import org.rebate.framework.filter.Filter;
 import org.rebate.framework.filter.Filter.Operator;
 import org.rebate.framework.ordering.Ordering;
 import org.rebate.framework.ordering.Ordering.Direction;
+import org.rebate.json.base.BasePssRequest;
 import org.rebate.json.base.BaseRequest;
 import org.rebate.json.base.ResponseMultiple;
 import org.rebate.service.AreaService;
@@ -53,7 +54,7 @@ public class PssController extends MobileBaseController{
      * @return
      */
     @RequestMapping(value = "/validateToken", method = RequestMethod.POST)
-    public @ResponseBody ResponseMultiple<Map<String, Object>> validateToken(@RequestBody BaseRequest request) {
+    public @ResponseBody ResponseMultiple<Map<String, Object>> validateToken(@RequestBody BasePssRequest request) {
 
         ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
@@ -79,7 +80,7 @@ public class PssController extends MobileBaseController{
      * @return
      */
     @RequestMapping(value = "/getLeBeanAmount", method = RequestMethod.POST)
-    public @ResponseBody ResponseMultiple<Map<String, Object>> getLeBeanAmount(@RequestBody BaseRequest request) {
+    public @ResponseBody ResponseMultiple<Map<String, Object>> getLeBeanAmount(@RequestBody BasePssRequest request) {
 
         ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
@@ -104,7 +105,7 @@ public class PssController extends MobileBaseController{
      * @return
      */
     @RequestMapping(value = "/doLeBeanAmount", method = RequestMethod.POST)
-    public @ResponseBody ResponseMultiple<Map<String, Object>> doLeBeanAmount(@RequestBody BaseRequest request) {
+    public @ResponseBody ResponseMultiple<Map<String, Object>> doLeBeanAmount(@RequestBody BasePssRequest request) {
 
         ResponseMultiple<Map<String, Object>> response = new ResponseMultiple<Map<String, Object>>();
 
