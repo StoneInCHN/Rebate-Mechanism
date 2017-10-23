@@ -191,10 +191,10 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-infinispan</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-jbosscache</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
